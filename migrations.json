@@ -1,49 +1,67 @@
 {
   "migrations": [
     {
-      "version": "23.1.0-beta.0",
-      "requires": {
-        "eslint": ">=9.0.0"
-      },
-      "description": "Convert remaining ESLint configs to flat config for ESLint v9 and keep the workspace lint-passing, disabling rules whose preset defaults changed.",
-      "implementation": "./dist/src/migrations/update-23-1-0/convert-to-flat-config",
-      "prompt": "tools/ai-migrations/@nx/eslint/23.1.3/convert-to-flat-config.md",
-      "package": "@nx/eslint",
-      "name": "update-23-1-0-convert-to-flat-config"
+      "version": "22.0.0",
+      "description": "Adds `ChangeDetectionStrategy.Eager` to all components.",
+      "factory": "./bundles/change-detection-eager.cjs#migrate",
+      "package": "@angular/core",
+      "name": "change-detection-eager"
     },
     {
-      "version": "23.1.0-beta.5",
-      "description": "Handle typescript-eslint rules removed in v8 in ESLint flat configs, since referencing a removed rule stops the config from loading. Deletes the removed formatting/extension rules (e.g. @typescript-eslint/no-extra-semi) and rewrites the safe 1:1 renames (no-throw-literal -> only-throw-error, no-useless-template-literals -> no-unnecessary-template-expression) to preserve enforcement.",
-      "implementation": "./dist/src/migrations/update-23-1-0/remove-removed-typescript-eslint-extension-rules",
-      "package": "@nx/eslint",
-      "name": "update-23-1-0-remove-removed-typescript-eslint-extension-rules"
+      "version": "22.0.0",
+      "description": "Adds 'withXhr' to 'provideHttpClient' function calls when the 'HttpXhrBackend' is used. For more information see: https://angular.dev/api/common/http/withXhr",
+      "factory": "./bundles/http-xhr-backend.cjs#migrate",
+      "package": "@angular/core",
+      "name": "http-xhr-backend"
     },
     {
-      "version": "23.1.0-beta.5",
-      "description": "Migrate the removed @typescript-eslint/ban-types rule to its v8 successors (no-empty-object-type, no-unsafe-function-type, no-wrapper-object-types), whose options do not map 1:1 - so it is driven by an AI prompt rather than a deterministic codemod.",
-      "prompt": "tools/ai-migrations/@nx/eslint/23.1.3/migrate-ban-types-rule.md",
-      "package": "@nx/eslint",
-      "name": "update-23-1-0-migrate-ban-types-rule"
+      "version": "22.0.0",
+      "description": "Adds 'strictTemplates: false' in tsconfig.json when not set.",
+      "factory": "./bundles/strict-templates-default.cjs#migrate",
+      "package": "@angular/core",
+      "name": "strict-templates-default"
     },
     {
-      "version": "23.1.0-beta.4",
-      "requires": {
-        "ts-jest": ">=29.2.0"
-      },
-      "description": "Set `isolatedModules: true` in `tsconfig.spec.json` for ts-jest projects on TypeScript < 6 (ts-jest 29.2+ forces `moduleResolution: node10` on the CommonJS path, which ignores package `exports` maps and breaks resolution of exports-only workspace libraries), then verify the workspace still typechecks and remedy any failures the change surfaced.",
-      "implementation": "./dist/src/migrations/update-23-1-0/set-ts-jest-isolated-modules",
-      "prompt": "tools/ai-migrations/@nx/jest/23.1.3/verify-typecheck.md",
-      "documentation": "./dist/src/migrations/update-23-1-0/set-ts-jest-isolated-modules.md",
-      "package": "@nx/jest",
-      "name": "set-ts-jest-isolated-modules"
+      "version": "22.0.0",
+      "description": "Adds the required third argument to canMatch callsites.",
+      "factory": "./bundles/can-match-snapshot-required.cjs#migrate",
+      "package": "@angular/core",
+      "name": "can-match-snapshot-required"
     },
     {
-      "version": "23.1.0-rc.3",
-      "description": "Add optional webpack, Module Federation, and Rspack packages when existing targets require them.",
-      "factory": "./dist/src/migrations/update-23-1-0/add-optional-webpack-packages",
-      "documentation": "./dist/src/migrations/update-23-1-0/add-optional-webpack-packages.md",
-      "package": "@nx/angular",
-      "name": "update-23-1-0-add-optional-webpack-packages"
+      "version": "22.0.0",
+      "description": "Adds withNoIncrementalHydration() opt out to provideClientHydration() when incremental hydration is not enabled to retain pre-v22 behavior-.",
+      "factory": "./bundles/incremental-hydration.cjs#migrate",
+      "package": "@angular/core",
+      "name": "incremental-hydration"
+    },
+    {
+      "version": "22.0.0",
+      "description": "Disables the 'nullishCoalescingNotNullable & optionalChainNotNullable extended diagnostics.",
+      "factory": "./bundles/strict-safe-navigation-narrow.cjs#migrate",
+      "package": "@angular/core",
+      "name": "strict-safe-navigation-narrow"
+    },
+    {
+      "version": "22.0.0",
+      "description": "Migrate broken duplicate outputs",
+      "factory": "./bundles/model-output.cjs#migrate",
+      "package": "@angular/core",
+      "name": "model-output"
+    },
+    {
+      "version": "22.0.0",
+      "description": "Wraps optional chaining expressions in $safeNavigationMigration().",
+      "factory": "./bundles/safe-optional-chaining.cjs#migrate",
+      "package": "@angular/core",
+      "name": "safe-optional-chaining"
+    },
+    {
+      "version": "22.0.0-0",
+      "description": "Updates the Angular CDK to v22",
+      "factory": "./ng-update/index#updateToV22",
+      "package": "@angular/cdk",
+      "name": "migration-v22"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from 'rxjs';
@@ -19,6 +19,7 @@ import { ReCaptchaV3Service } from 'ng-recaptcha-2';
   selector: 'nus-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class LoginComponent {

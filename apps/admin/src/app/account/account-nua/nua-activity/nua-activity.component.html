@@ -7,7 +7,7 @@
         routerLink="../..">
         {{ 'generic.back' | translate }}
       </pa-button>
-      <h1>{{ 'account.nua_key_activity_title' | translate: { key: (client | async)?.title } }}</h1>
+      <h1>{{ 'account.nua_key_activity_title' | translate: { key: $safeNavigationMigration((client | async)?.title) } }}</h1>
     </div>
 
     <small>{{ 'account.nua_key_activity_subtitle' | translate }}</small>

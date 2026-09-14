@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { map } from 'rxjs';
 import { UploadService } from '../upload.service';
 import { UploadProgressDialogComponent } from '../upload-progress/upload-progress-dialog.component';
@@ -11,6 +11,7 @@ import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
   selector: 'stf-upload-bar',
   templateUrl: './upload-bar.component.html',
   styleUrls: ['./upload-bar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CommonModule, PaButtonModule, ProgressBarComponent, TranslateModule],
 })
 export class UploadBarComponent {

@@ -7,6 +7,13 @@
     "useDefineForClassFields": false,
     "moduleResolution": "bundler"
   },
-  "angularCompilerOptions": {},
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  },
   "files": ["src/main.ts", "src/polyfills.ts"]
 }

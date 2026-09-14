@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BrandService, OAuthConsentData, OAuthService } from '@flaps/core';
 
@@ -8,6 +8,7 @@ const INVISIBLE_SCOPES = ['offline'];
   selector: 'stf-consent',
   templateUrl: './consent.component.html',
   styleUrls: ['./consent.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class ConsentComponent implements OnInit {

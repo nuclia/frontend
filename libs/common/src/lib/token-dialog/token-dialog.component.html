@@ -14,7 +14,7 @@
   <pa-modal-content>
     <p [innerHTML]="modal.config.data?.['modalDescription'] || 'account.token_description' | translate"></p>
     <div class="token-container">
-      <div class="token-dialog-value">{{ modal.config.data?.['token'] | slice: 1 : 30 }}…</div>
+      <div class="token-dialog-value">{{ $safeNavigationMigration(modal.config.data?.['token']) | slice: 1 : 30 }}…</div>
       @if (clipboardSupported) {
         <pa-button
           data-cy="copy-token"

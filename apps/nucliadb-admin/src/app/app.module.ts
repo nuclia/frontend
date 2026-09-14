@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
-import { HttpBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpBackend, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
 import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
@@ -65,7 +65,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '/admin' },
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
   ],
 })
 export class AppModule {}

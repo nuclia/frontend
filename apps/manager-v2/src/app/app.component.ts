@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AppInitService } from '@flaps/core';
 
 @Component({
   selector: 'nma-root',
   template: '@if (ready) {<nma-main></nma-main>} @else {Loading…}',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent implements OnInit {

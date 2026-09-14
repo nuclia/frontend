@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   AccordionBodyDirective,
   AccordionItemComponent,
@@ -13,6 +13,7 @@ import { ParentNode } from '../../workflow.models';
   selector: 'app-node-functions',
   templateUrl: 'node-functions.component.html',
   styleUrls: ['./node-functions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [AccordionBodyDirective, AccordionItemComponent, PaButtonModule, PaTextFieldModule, TranslateModule],
 })
 export class NodeFunctionsComponent {

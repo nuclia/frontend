@@ -1,21 +1,30 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef, DOCUMENT } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DOCUMENT,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 
-import { TranslateService } from '@ngx-translate/core';
+import { FeaturesModalComponent } from '@flaps/common';
 import {
   BackendConfigurationService,
+  FeaturesService,
   LabelsService,
+  PendoService,
   SDKService,
   STFSplashScreenService,
   STFUtils,
   UserService,
-  FeaturesService,
-  PendoService,
 } from '@flaps/core';
-import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
-import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesModalComponent } from '@flaps/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency
@@ -25,6 +34,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {

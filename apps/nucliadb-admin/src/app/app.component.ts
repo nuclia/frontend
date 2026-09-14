@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { LabelsService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
@@ -12,6 +12,7 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
   selector: 'nad-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {
