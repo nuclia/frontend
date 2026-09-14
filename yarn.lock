@@ -5292,28 +5292,28 @@ __metadata:
 "@nx/nx-linux-arm64-gnu@npm:23.0.2":
   version: 23.0.2
   resolution: "@nx/nx-linux-arm64-gnu@npm:23.0.2"
-  conditions: os=linux & cpu=arm64 & libc=glibc
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
 "@nx/nx-linux-arm64-musl@npm:23.0.2":
   version: 23.0.2
   resolution: "@nx/nx-linux-arm64-musl@npm:23.0.2"
-  conditions: os=linux & cpu=arm64 & libc=musl
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
 "@nx/nx-linux-x64-gnu@npm:23.0.2":
   version: 23.0.2
   resolution: "@nx/nx-linux-x64-gnu@npm:23.0.2"
-  conditions: os=linux & cpu=x64 & libc=glibc
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
 "@nx/nx-linux-x64-musl@npm:23.0.2":
   version: 23.0.2
   resolution: "@nx/nx-linux-x64-musl@npm:23.0.2"
-  conditions: os=linux & cpu=x64 & libc=musl
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
@@ -5970,7 +5970,7 @@ __metadata:
 "@rolldown/binding-linux-arm64-gnu@npm:1.2.8":
   version: 1.2.8
   resolution: "@rolldown/binding-linux-arm64-gnu@npm:1.2.8"
-  conditions: os=linux & cpu=arm64 & libc=glibc
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -5984,21 +5984,21 @@ __metadata:
 "@rolldown/binding-linux-arm64-musl@npm:1.2.8":
   version: 1.2.8
   resolution: "@rolldown/binding-linux-arm64-musl@npm:1.2.8"
-  conditions: os=linux & cpu=arm64 & libc=musl
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
 "@rolldown/binding-linux-ppc64-gnu@npm:1.2.8":
   version: 1.2.8
   resolution: "@rolldown/binding-linux-ppc64-gnu@npm:1.2.8"
-  conditions: os=linux & cpu=ppc64 & libc=glibc
+  conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
 "@rolldown/binding-linux-s390x-gnu@npm:1.2.8":
   version: 1.2.8
   resolution: "@rolldown/binding-linux-s390x-gnu@npm:1.2.8"
-  conditions: os=linux & cpu=s390x & libc=glibc
+  conditions: os=linux & cpu=s390x
   languageName: node
   linkType: hard
 
@@ -6012,7 +6012,7 @@ __metadata:
 "@rolldown/binding-linux-x64-gnu@npm:1.2.8":
   version: 1.2.8
   resolution: "@rolldown/binding-linux-x64-gnu@npm:1.2.8"
-  conditions: os=linux & cpu=x64 & libc=glibc
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
@@ -6026,7 +6026,7 @@ __metadata:
 "@rolldown/binding-linux-x64-musl@npm:1.2.8":
   version: 1.2.8
   resolution: "@rolldown/binding-linux-x64-musl@npm:1.2.8"
-  conditions: os=linux & cpu=x64 & libc=musl
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
@@ -17341,28 +17341,28 @@ __metadata:
 "lightningcss-linux-arm64-gnu@npm:1.33.0":
   version: 1.33.0
   resolution: "lightningcss-linux-arm64-gnu@npm:1.33.0"
-  conditions: os=linux & cpu=arm64 & libc=glibc
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
 "lightningcss-linux-arm64-musl@npm:1.33.0":
   version: 1.33.0
   resolution: "lightningcss-linux-arm64-musl@npm:1.33.0"
-  conditions: os=linux & cpu=arm64 & libc=musl
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
 "lightningcss-linux-x64-gnu@npm:1.33.0":
   version: 1.33.0
   resolution: "lightningcss-linux-x64-gnu@npm:1.33.0"
-  conditions: os=linux & cpu=x64 & libc=glibc
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
 "lightningcss-linux-x64-musl@npm:1.33.0":
   version: 1.33.0
   resolution: "lightningcss-linux-x64-musl@npm:1.33.0"
-  conditions: os=linux & cpu=x64 & libc=musl
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
