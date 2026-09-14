@@ -61,7 +61,7 @@
         ],
         "styles": ["apps/rao/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/rao/src"]
+          "includePaths": ["apps/rao/src", "."]
         },
         "scripts": [],
         "ngswConfigPath": "apps/rao/src/ngsw-config.json",

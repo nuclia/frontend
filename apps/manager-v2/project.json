@@ -55,7 +55,7 @@
         ],
         "styles": ["apps/manager-v2/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/manager-v2/src"]
+          "includePaths": ["apps/manager-v2/src", "."]
         },
         "scripts": []
       },

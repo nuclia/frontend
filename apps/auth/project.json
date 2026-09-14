@@ -61,7 +61,7 @@
         ],
         "styles": ["apps/auth/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/auth/src"]
+          "includePaths": ["apps/auth/src", "."]
         },
         "scripts": [],
         "ngswConfigPath": "apps/auth/src/ngsw-config.json",

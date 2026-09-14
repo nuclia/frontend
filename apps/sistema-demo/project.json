@@ -71,7 +71,7 @@
         "styles": ["apps/sistema-demo/src/styles.scss"],
         "scripts": [],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/sistema-demo/src"]
+          "includePaths": ["apps/sistema-demo/src", "."]
         }
       },
       "configurations": {

@@ -61,7 +61,7 @@
         ],
         "styles": ["apps/admin/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/admin/src"]
+          "includePaths": ["apps/admin/src", "."]
         },
         "scripts": [],
         "ngswConfigPath": "apps/admin/src/ngsw-config.json",
