@@ -297,6 +297,12 @@ export class UserMenuComponent implements OnInit {
           action: () => this.go('configuration/nua'),
         },
         {
+          label: 'navbar.nua-guard',
+          icon: 'forbidden',
+          dataCy: 'go-to-nua-guard',
+          action: () => this.go('configuration/nua-guard'),
+        },
+        {
           label: 'navbar.models',
           icon: 'settings',
           dataCy: 'go-to-models',

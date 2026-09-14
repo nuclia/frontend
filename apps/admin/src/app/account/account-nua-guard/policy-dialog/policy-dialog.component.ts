@@ -67,7 +67,7 @@ export class PolicyDialogComponent implements OnInit {
 
     // Display/prototype logic:
     // - For existing policies (edit mode), show the assigned region (readonly).
-    // - For new policies, region starts empty by default, with multi-select enabled.
+    // - For new policies, region starts empty by default (single select).
     this.zones.pipe(take(1)).subscribe((zones) => {
       if (this.data) {
         const hasZone = zones.some((z) => z.value === this.data?.zone);
