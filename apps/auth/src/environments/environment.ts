@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  client: 'rao',
+  client: 'auth',
   backend: {
     social_login: true,
     new_api: true,

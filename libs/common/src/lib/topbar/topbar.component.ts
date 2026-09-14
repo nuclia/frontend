@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  AccountEntryContextService,
-  BackendConfigurationService,
-  NavigationService,
-  SDKService,
-  UserService,
-} from '@flaps/core';
-import { map, of, shareReplay, switchMap, take } from 'rxjs';
+import { AccountEntryContextService, BrandService, NavigationService, SDKService, UserService } from '@flaps/core';
+import { combineLatest, map, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -25,22 +19,22 @@ export class TopbarComponent {
   inAdminApp = this.navigationService.inAdminApp;
   standalone = this.standaloneService.standalone;
 
-  private backendConfig = inject(BackendConfigurationService);
+  private brandService = inject(BrandService);
   private entryContext = inject(AccountEntryContextService);
-  brandName = this.backendConfig.getBrandName();
+  brandName = this.brandService.brandName;
   simpleMode = this.navigationService.simpleMode;
   private isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
     shareReplay(1),
   );
-  logoPath = this.isCowork.pipe(
-    map((isCowork) => {
+  logoPath = combineLatest([this.isCowork, this.brandService.logoPath]).pipe(
+    map(([isCowork, logoPath]) => {
       if (isCowork) {
         return 'assets/logos/logo-context-box.svg';
       } else if (this.standalone) {
         return 'assets/logos/nucliadb.svg';
       } else {
-        return this.backendConfig.getLogoPath();
+        return logoPath;
       }
     }),
   );

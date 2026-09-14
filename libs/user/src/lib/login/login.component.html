@@ -1,8 +1,10 @@
 <nus-user-container>
   <div class="main-container">
-    <header>
-      <p class="body-m">{{ 'login.subtitle' | translate }}</p>
-    </header>
+    @if ((isPDP | async) === false) {
+      <header>
+        <p class="body-m">{{ 'login.subtitle' | translate }}</p>
+      </header>
+    }
     @if (message() || error) {
       <div
         class="login_alert title-xxs"
@@ -56,7 +58,7 @@
           name="login_challenge"
           [value]="loginChallenge" />
         <div class="login_policy body-xs">
-          <span [innerHTML]="'user.consent' | translate"></span>
+          <span [innerHTML]="'user.consent' | translate: { name: (brandName | async) || '' }"></span>
         </div>
         <div class="login_submit">
           <pa-button
@@ -85,7 +87,7 @@
     <div class="login_signup">
       <span>{{ 'login.have_account' | translate }}</span>
       <a
-        [href]="signUpUrl"
+        [href]="signUpUrl | async"
         class="accent-link"
         data-cy="create-account">
         {{ 'login.create_one' | translate }}

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, SDKService } from '@flaps/core';
+import { AuthService, OAuthService, SDKService } from '@flaps/core';
 import { MagicAction } from '@nuclia/core';
 import { catchError, map, of, tap } from 'rxjs';
 
@@ -15,12 +15,16 @@ export class MagicService {
     private authService: AuthService,
     private sdk: SDKService,
     private router: Router,
+    private oAuthService: OAuthService,
   ) {}
 
   execute(action: MagicAction) {
     this.authService.setNextUrl(null);
     this.sdk.cleanAccount();
     this.cameFrom = action.came_from || '';
+    if (action.came_from) {
+      this.oAuthService.setCameFrom(action.came_from);
+    }
 
     if (action.action === 'join_regional_kb') {
       // Action to join a kb has a different flow

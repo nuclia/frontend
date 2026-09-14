@@ -1,6 +1,6 @@
 import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { APP_BASE_HREF } from '@angular/common';
-import { BackendConfigurationService } from '@flaps/core';
+import { BrandService } from '@flaps/core';
 
 @Component({
   selector: 'app-page-not-found',
@@ -11,7 +11,7 @@ import { BackendConfigurationService } from '@flaps/core';
 })
 export class PageNotFoundComponent {
   baseHref = inject(APP_BASE_HREF, { optional: true }) || '/';
-  private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
-  brandName = this.backendConfig.getBrandName();
+  private brandService = inject(BrandService);
+  logoPath = this.brandService.logoPath;
+  brandName = this.brandService.brandName;
 }

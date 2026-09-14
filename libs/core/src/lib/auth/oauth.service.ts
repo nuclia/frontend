@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { OAuthConsentData, OAuthLoginData } from '../models';
 import { SDKService } from '../api';
 
@@ -16,6 +16,9 @@ const CAME_FROM_KEY = 'SIGNUP_CAME_FROM';
 })
 export class OAuthService {
   private sdk = inject(SDKService);
+
+  private _cameFrom = new BehaviorSubject<string | undefined>(undefined);
+  cameFrom = this._cameFrom.asObservable();
 
   loginUrl() {
     return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;
@@ -38,10 +41,11 @@ export class OAuthService {
   }
 
   getCameFrom() {
-    return localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginForApp('rag');
+    return this._cameFrom.value || localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginForApp('rag');
   }
 
   setCameFrom(cameFrom: string) {
+    this._cameFrom.next(cameFrom);
     localStorage.setItem(CAME_FROM_KEY, cameFrom);
   }
 }

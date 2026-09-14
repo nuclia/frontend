@@ -2,10 +2,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData, FeaturesService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  OAuthService,
+  SAMLService,
+  OAuthLoginData,
+  FeaturesService,
+  BrandService,
+} from '@flaps/core';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
 import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
 import { LoginComponent } from './login.component';
@@ -16,6 +23,7 @@ describe('LoginComponent', () => {
 
   let router: { navigate: jest.Mock };
   let oAuthService: { getCameFrom: jest.Mock; loginUrl: jest.Mock };
+  let brandService: { signUpUrl: Observable<string> };
   let config: {
     useRemoteLogin: jest.Mock;
     getRecaptchaKey: jest.Mock;
@@ -52,6 +60,7 @@ describe('LoginComponent', () => {
         { provide: BackendConfigurationService, useValue: config },
         { provide: SAMLService, useValue: samlService },
         { provide: FeaturesService, useValue: featuresService },
+        { provide: BrandService, useValue: brandService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -74,6 +83,9 @@ describe('LoginComponent', () => {
     oAuthService = {
       getCameFrom: jest.fn(() => 'http://app.local'),
       loginUrl: jest.fn(() => 'http://oauth.here/login'),
+    };
+    brandService = {
+      signUpUrl: of('http://oauth.here/sign-up'),
     };
     config = {
       useRemoteLogin: jest.fn(() => false),
@@ -105,7 +117,7 @@ describe('LoginComponent', () => {
 
   it('should build signUpUrl from cameFrom', async () => {
     await buildComponent();
-    expect(component.signUpUrl).toBe('http://app.local/user/signup');
+    await expect(firstValueFrom(component.signUpUrl)).resolves.toBe('http://app.local/user/signup');
   });
 
   it('should navigate to recover page when initial password is required', async () => {

@@ -1,9 +1,16 @@
 import { Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, FeaturesService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  BrandService,
+  FeaturesService,
+  OAuthLoginData,
+  OAuthService,
+  SAMLService,
+} from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -56,7 +63,6 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
-  signUpUrl = '';
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -69,6 +75,23 @@ export class LoginComponent {
     }),
     map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
   );
+  isPDP = this.brandService.isPDP;
+  brandName = this.brandService.brandName;
+
+  signUpUrl = combineLatest([
+    this.featuresService.unstable.progressComSignup,
+    this.brandService.signUpUrl,
+    this.route.queryParams,
+  ]).pipe(
+    map(([hasProgressComSignup, signUpUrl]) => {
+      if (hasProgressComSignup) {
+        return signUpUrl;
+      } else {
+        const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
+        return `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
+      }
+    }),
+  );
 
   constructor(
     private oAuthService: OAuthService,
@@ -78,18 +101,11 @@ export class LoginComponent {
     public config: BackendConfigurationService,
     private samlService: SAMLService,
     private featuresService: FeaturesService,
+    private brandService: BrandService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
-    const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
-    this.featuresService.unstable.progressComSignup.subscribe((hasProgressComSignup) => {
-      if (hasProgressComSignup) {
-        this.signUpUrl = 'https://www.progress.com/agentic-rag/free-trial-sign-up';
-      } else {
-        this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
-      }
-    });
     this.route.data.subscribe((data) => {
       if (data['loginData']?.['needs_initial_setpassword']) {
         this.router.navigate(['/user/recover'], {
