@@ -14,6 +14,14 @@
       ariaControls="configuration-section-panel">
       {{ 'navbar.nua-keys' | translate }}
     </pa-tab>
+    <pa-tab
+      routerLink="nua-guard"
+      routerLinkActive
+      #rlaGuard="routerLinkActive"
+      [active]="rlaGuard.isActive"
+      ariaControls="configuration-section-panel">
+      {{ 'navbar.nua-guard' | translate }}
+    </pa-tab>
     @if (isModelManagementEnabled | async) {
       <pa-tab
         routerLink="models"

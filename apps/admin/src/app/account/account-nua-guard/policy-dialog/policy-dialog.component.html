@@ -1,0 +1,69 @@
+<pa-modal-advanced>
+  <pa-modal-title>{{ (editMode ? 'account.nua-guard.edit-policy' : 'account.nua-guard.create-policy') | translate }}</pa-modal-title>
+
+  <pa-modal-content>
+    <form
+      class="policy-form"
+      [formGroup]="policyForm"
+      (ngSubmit)="save()">
+      <pa-input
+        formControlName="name"
+        [errorMessages]="validationMessages.name">
+        {{ 'account.nua-guard.field.name' | translate }}*
+      </pa-input>
+
+      <pa-textarea
+        formControlName="description"
+        help="account.nua-guard.field.description-help"
+        [rows]="2">
+        {{ 'account.nua-guard.field.description' | translate }}
+      </pa-textarea>
+
+      <pa-textarea
+        formControlName="instruction"
+        help="account.nua-guard.field.instruction-help"
+        [rows]="2"
+        [errorMessages]="validationMessages.instruction">
+        {{ 'account.nua-guard.field.instruction' | translate }}*
+      </pa-textarea>
+
+      <pa-textarea
+        formControlName="query"
+        help="account.nua-guard.field.query-help"
+        [rows]="2"
+        [errorMessages]="validationMessages.query">
+        {{ 'account.nua-guard.field.query' | translate }}*
+      </pa-textarea>
+
+      @let zoneOptions = (zones | async) || [];
+      <!-- Display-only prototype behavior: region is readonly when editing existing policies, multi-select when creating new policies -->
+      <pa-select
+        formControlName="zone"
+        [options]="zoneOptions"
+        [multiple]="!editMode"
+        [readonly]="editMode || zoneOptions.length <= 1"
+        [label]="'account.nua-guard.field.zone-help' | translate"></pa-select>
+
+      <pa-toggle
+        formControlName="blocking"
+        labelOnRight>
+        {{ 'account.nua-guard.field.blocking' | translate }}
+      </pa-toggle>
+    </form>
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="policyForm.pristine || policyForm.invalid"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
