@@ -1,4 +1,4 @@
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { APP_BASE_HREF } from '@angular/common';
 import { BrandService } from '@flaps/core';
 
@@ -7,6 +7,7 @@ import { BrandService } from '@flaps/core';
   templateUrl: './page-not-found.component.html',
   styleUrls: ['./page-not-found.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class PageNotFoundComponent {

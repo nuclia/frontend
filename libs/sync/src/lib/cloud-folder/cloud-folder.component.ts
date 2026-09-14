@@ -8,6 +8,7 @@ import {
   OnInit,
   Output,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SyncService } from '../logic';
@@ -36,6 +37,7 @@ import {
   ],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['cloud-folder.component.scss'],
 })
 export class CloudFolderComponent implements OnInit {

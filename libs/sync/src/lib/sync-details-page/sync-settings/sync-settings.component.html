@@ -67,7 +67,7 @@
     </span>
     <div class="body-s settings-item">
       @if (sync.isCloud) {
-        <ng-container *ngTemplateOutlet="tagList; context: { items: sync.file_filter?.extensions }"></ng-container>
+        <ng-container *ngTemplateOutlet="tagList; context: { items: $safeNavigationMigration(sync.file_filter?.extensions) }"></ng-container>
       } @else {
         @if (sync.filters?.fileExtensions?.extensions; as extensions) {
           <div class="row-container">
@@ -91,7 +91,7 @@
       <div class="separator-line"></div>
       <span>{{ 'sync.add-page.file-patterns.title' | translate }}</span>
       <div class="body-s settings-item">
-        <ng-container *ngTemplateOutlet="tagList; context: { items: sync.file_filter?.glob_patterns }"></ng-container>
+        <ng-container *ngTemplateOutlet="tagList; context: { items: $safeNavigationMigration(sync.file_filter?.glob_patterns) }"></ng-container>
       </div>
     }
 

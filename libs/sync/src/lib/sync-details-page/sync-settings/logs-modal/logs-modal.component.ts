@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -27,6 +27,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
     TranslateModule,
   ],
   templateUrl: './logs-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './logs-modal.component.scss',
 })
 export class LogsModalComponent {

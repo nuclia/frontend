@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillingService } from '@flaps/core';
 import { take } from 'rxjs';
 
 @Component({
   template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class RedirectComponent {
