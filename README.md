@@ -7,6 +7,7 @@
 
 - [Before Installation](#before-installation)
 - [Installation](#installation)
+- [Dependencies Updates](#dependencies-updates)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
 - [Auth app](#auth-app)
@@ -83,6 +84,47 @@ If it fails for any reason, you can try to clone Pastanaga manually:
 cd libs
 git clone git@github.com:plone/pastanaga-angular.git
 ```
+
+## Dependencies Updates
+
+It's important to keep all our dependencies up-to-date, and we use nx migration tool in order to update our nx and angular dependencies.
+Now we have an npm harness in place in order to protect our repo from supply chain attacks, with a minimal age gate of two weeks for new packages.
+
+When running the migration command, you may encounter the following error:
+
+```sh
+nx migrate 23.2 --verbose
+
+ NX   An error occurred while checking the provenance of nx@latest. This might be due to a custom registry configuration (https://pkg.harness.io/pkg/ct8onj8YTdaXtKaFsYCRLg/org-nuclia-npm/npm/). Please check whether provenance is correctly configured for your registry. To disable this check at your own risk, you can set the NX_SKIP_PROVENANCE_CHECK environment variable to true.
+
+ Error: No attestation URL found
+Error: An error occurred while checking the provenance of nx@latest. This might be due to a custom registry configuration (https://pkg.harness.io/pkg/ct8onj8YTdaXtKaFsYCRLg/org-nuclia-npm/npm/). Please check whether provenance is correctly configured for your registry. To disable this check at your own risk, you can set the NX_SKIP_PROVENANCE_CHECK environment variable to true.
+ Error: No attestation URL found
+    at ensurePackageHasProvenance (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/utils/provenance.js:40:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async nxCliPath (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/command-line/migrate/migrate.js:2415:5)
+    at async /Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/command-line/migrate/migrate.js:2333:23
+    at async handleErrors (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/utils/handle-errors.js:9:24)
+    at async Object.handler (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/command-line/migrate/command-object.js:15:39)
+```
+
+In which case, simply add the env variable at the beginning of the command:
+
+```sh
+NX_SKIP_PROVENANCE_CHECK=true nx migrate 23.2 --verbose
+```
+
+You may still have an error message in case some packages are not old enough:
+
+```sh
+NX_SKIP_PROVENANCE_CHECK=true nx migrate 23.2 --verbose
+
+ NX   All versions satisfying "23.2" are quarantined
+
+Wait until a matching version is older than the configured window, lower yarn npmMinimalAgeGate (20160 min), or add nx to npmPreapprovedPackages in .yarnrc.yml.
+```
+
+in which case you just have to check the release date of the targetted packages and try again once they're more than 2 weeks old.
 
 ## Dashboard
 
