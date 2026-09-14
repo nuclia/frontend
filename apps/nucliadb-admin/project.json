@@ -62,7 +62,7 @@
         ],
         "styles": ["apps/nucliadb-admin/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/nucliadb-admin/src"]
+          "includePaths": ["apps/nucliadb-admin/src", "."]
         },
         "scripts": []
       },

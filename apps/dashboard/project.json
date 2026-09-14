@@ -61,7 +61,7 @@
         ],
         "styles": ["apps/dashboard/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/dashboard/src"]
+          "includePaths": ["apps/dashboard/src", "."]
         },
         "scripts": [],
         "ngswConfigPath": "apps/dashboard/src/ngsw-config.json",
