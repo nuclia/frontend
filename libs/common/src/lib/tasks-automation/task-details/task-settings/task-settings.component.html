@@ -157,7 +157,23 @@
           @if (labelOperation?.multiple) {
             <div class="separator-line"></div>
             <div class="setting">
-              <span>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</span>
+              @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
+                <span>{{ 'tasks-automation.form.labels-selection.multiple-labels.resources' | translate }}</span>
+              } @else {
+                <span>{{ 'tasks-automation.form.labels-selection.multiple-labels.text-blocks' | translate }}</span>
+              }
+            </div>
+          }
+          @if (labelOperation?.paragraph_filter_expression_json) {
+            <div class="separator-line"></div>
+            <div class="setting">
+              <span>{{ 'tasks-automation.form.labels-selection.use-filters' | translate }}</span>
+              <div>
+                <pa-textarea
+                  rows="4"
+                  readonly
+                  [value]="labelOperation.paragraph_filter_expression_json"></pa-textarea>
+              </div>
             </div>
           }
           @if (labelOperation?.description) {

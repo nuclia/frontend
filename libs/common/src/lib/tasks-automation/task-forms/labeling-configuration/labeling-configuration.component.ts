@@ -10,7 +10,12 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import {
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  SisModalService,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { LabelModule, LabelSetFormModalComponent, LabelsService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -28,6 +33,7 @@ import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, Subj
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { shareReplay, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
 import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
+import { FilterExpressionModalComponent } from '../../../search-widget';
 
 export interface LabelingConfiguration {
   operations: LabelOperation[];
@@ -39,6 +45,7 @@ export interface LabelingConfiguration {
   selector: 'stf-labeling-configuration',
   imports: [
     CommonModule,
+    ExpandableTextareaComponent,
     InfoCardComponent,
     LabelModule,
     PaButtonModule,
@@ -90,6 +97,8 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
         ident: FormControl<string>;
         description: FormControl<string>;
         multiple: FormControl<boolean>;
+        useFilters: FormControl<boolean>;
+        paragraph_filter_expression_json: FormControl<string>;
         labels: FormArray<
           FormGroup<{
             label: FormControl<string>;
@@ -156,8 +165,17 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.labelingForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      const operations = this.labelingForm.controls.operations.getRawValue().map((operation) => {
+        const { useFilters, paragraph_filter_expression_json, ...data } = operation;
+        const canFilterByParagraph =
+          this.type === 'text-blocks' && useFilters && paragraph_filter_expression_json.trim();
+        return {
+          ...data,
+          paragraph_filter_expression_json: canFilterByParagraph ? paragraph_filter_expression_json : undefined,
+        };
+      });
       this.configurationChange.emit({
-        operations: this.labelingForm.controls.operations.getRawValue(),
+        operations,
         valid: this.labelingForm.valid,
         on: this.type === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
       });
@@ -177,7 +195,10 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       this.labelingForm.controls.operations.clear();
       operations.forEach((operation, index) => {
         this.addOperation(operation.labels?.length || 0);
-        this.operationControls[index].patchValue(operation);
+        this.operationControls[index].patchValue({
+          ...operation,
+          useFilters: !!operation.paragraph_filter_expression_json?.trim(),
+        });
       });
     }
     this.cdr.markForCheck();
@@ -188,6 +209,8 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       ident: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       description: new FormControl('', { nonNullable: true }),
       multiple: new FormControl<boolean>(false, { nonNullable: true }),
+      useFilters: new FormControl<boolean>(false, { nonNullable: true }),
+      paragraph_filter_expression_json: new FormControl('', { nonNullable: true }),
       labels: new FormArray<
         FormGroup<{
           label: FormControl<string>;
@@ -298,5 +321,28 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   }
   updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
     this._updateLabelsets(type).subscribe(() => this.cdr.markForCheck());
+  }
+
+  openFilterExpression(index: number) {
+    const filterExpression = this.operationControls[index].controls.paragraph_filter_expression_json;
+    this.modalService
+      .openModal(
+        FilterExpressionModalComponent,
+        new ModalConfig({
+          data: {
+            filterExpression: `{ "paragraph": ${filterExpression.value} }`,
+            onlyParagraphs: true,
+          },
+        }),
+      )
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => {
+        try {
+          const parsedFilters = JSON.parse(filters);
+          filterExpression.patchValue(parsedFilters?.paragraph ? JSON.stringify(parsedFilters.paragraph, null, 2) : '');
+        } catch {
+          filterExpression.patchValue('');
+        }
+      });
   }
 }

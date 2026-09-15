@@ -68,6 +68,7 @@ export interface LabelOperation extends BaseOperation {
   ident?: string;
   multiple?: boolean;
   description?: string;
+  paragraph_filter_expression_json?: string;
 }
 
 export interface GraphOperation extends BaseOperation {
