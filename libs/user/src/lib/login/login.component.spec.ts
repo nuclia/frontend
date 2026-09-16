@@ -1,19 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BackendConfigurationService,
+  BrandService,
+  FeaturesService,
+  OAuthLoginData,
   OAuthService,
   SAMLService,
-  OAuthLoginData,
-  FeaturesService,
-  BrandService,
 } from '@flaps/core';
+import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
-import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
 import { LoginComponent } from './login.component';
 
@@ -167,7 +167,11 @@ describe('LoginComponent', () => {
   });
 
   it('should trigger remoteLogin when remote login is enabled', async () => {
-    const remoteLoginSpy = jest.spyOn(LoginComponent.prototype as never, 'remoteLogin' as never);
+    // Stub the implementation: the real remoteLogin assigns `location.href`, which jsdom
+    // doesn't implement and logs a noisy "not implemented: navigation" console.error.
+    const remoteLoginSpy = jest
+      .spyOn(LoginComponent.prototype as never, 'remoteLogin' as never)
+      .mockImplementation(() => undefined);
     config.useRemoteLogin.mockReturnValue(true);
 
     await buildComponent();

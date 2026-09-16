@@ -108,8 +108,8 @@ export class CallbackComponent implements OnInit {
     const token = this.route.snapshot.queryParamMap.get('token');
     const state = this.route.snapshot.queryParamMap.get('state');
     if (consentUrl) {
-      // OAuth flow: navigate to consent challenge URL
-      this.document.location.href = consentUrl;
+      // OAuth flow: navigate to consent challenge URL, guarding against an off-domain redirect
+      this.document.location.href = isCameFromLegit(consentUrl, this.config.getAPIOrigin()) ? consentUrl : '/';
     } else if (token) {
       // Regular flow: exchange token for access token and authenticate
       this.samlService.getToken(token).subscribe((authTokens) => {

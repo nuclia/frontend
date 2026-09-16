@@ -1,11 +1,12 @@
+import { DOCUMENT } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router, RouterModule } from '@angular/router';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
-import { CallbackComponent } from './callback.component';
-import { TranslateService } from '@ngx-translate/core';
 import { isCameFromLegit } from '../login-error.util';
+import { CallbackComponent } from './callback.component';
 
 describe('CallbackComponent', () => {
   let component: CallbackComponent;
@@ -27,6 +28,8 @@ describe('CallbackComponent', () => {
   };
   let toaster: { error: jest.Mock };
   let translate: { instant: jest.Mock };
+  let mockLocation: { href: string };
+  let documentMock: Document;
 
   let snapshotQueryParams: Record<string, any>;
   let snapshotData: Record<string, any>;
@@ -44,6 +47,7 @@ describe('CallbackComponent', () => {
         { provide: SDKService, useValue: sdk },
         { provide: SisToastService, useValue: toaster },
         { provide: TranslateService, useValue: translate },
+        { provide: DOCUMENT, useValue: documentMock },
       ],
     }).compileComponents();
 
@@ -91,6 +95,19 @@ describe('CallbackComponent', () => {
     };
     toaster = { error: jest.fn() };
     translate = { instant: jest.fn((key) => key) };
+    mockLocation = { href: '' };
+    // Proxy the real document so TestBed can still render the component (it needs the real
+    // querySelectorAll/createElement etc.), while `location` is stubbed to avoid jsdom's
+    // "not implemented: navigation" console noise when the component assigns `location.href`.
+    documentMock = new Proxy(document, {
+      get(target, prop) {
+        if (prop === 'location') {
+          return mockLocation;
+        }
+        const value = Reflect.get(target, prop, target);
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
     jest.clearAllMocks();
   });
 
@@ -191,14 +208,25 @@ describe('CallbackComponent', () => {
     expect(authenticateSpy).toHaveBeenCalledWith({ access_token: 'url-access', refresh_token: 'url-refresh' });
   });
 
-  it('should redirect to consent url in handleSAMLCallback', async () => {
-    snapshotQueryParams = { consent_url: 'https://oauth.here/consent' };
+  it('should redirect to consent url in handleSAMLCallback when it is same-domain', async () => {
+    snapshotQueryParams = { consent_url: 'https://oauth.progress.cloud/consent' };
     await createComponent();
 
     component.handleSAMLCallback();
 
     expect(samlService.getToken).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
+    expect(mockLocation.href).toBe('https://oauth.progress.cloud/consent');
+  });
+
+  it('should reject an off-domain consent_url in handleSAMLCallback', async () => {
+    snapshotQueryParams = { consent_url: 'https://evil.example.com/consent' };
+    await createComponent();
+
+    component.handleSAMLCallback();
+
+    expect(samlService.getToken).not.toHaveBeenCalled();
+    expect(mockLocation.href).toBe('/');
   });
 
   it('should exchange saml token and authenticate in handleSAMLCallback', async () => {
@@ -305,7 +333,10 @@ describe('CallbackComponent', () => {
   it('should display a message in ssoLogin when error_code is user_not_registered', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(
-      throwError(() => ({ status: 403, body: { error_code: 'user_not_registered', detail: 'No account is registered with this email.' } })),
+      throwError(() => ({
+        status: 403,
+        body: { error_code: 'user_not_registered', detail: 'No account is registered with this email.' },
+      })),
     );
     await createComponent();
 
