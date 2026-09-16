@@ -11,3 +11,8 @@
 # index.html files contain inline scripts with SHA-256 hashes in nginx CSP headers.
 # Reformatting these files changes the script content and invalidates the hashes.
 apps/*/src/index.html
+
+# production app-config.json files are sed templates, not valid JSON: STF_DOCKER_CONFIG_*
+# placeholders get substituted at container start (see docker/30-environment-*.sh). noStripe in
+# particular must stay unquoted so it becomes a real JSON boolean, which prettier can't parse.
+apps/*/src/environments_config/production/app-config.json
