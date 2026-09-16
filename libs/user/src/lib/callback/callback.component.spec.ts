@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router, RouterModule } from '@angular/router';
+import { DOCUMENT } from '@angular/core';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
@@ -27,6 +28,7 @@ describe('CallbackComponent', () => {
   };
   let toaster: { error: jest.Mock };
   let translate: { instant: jest.Mock };
+  let documentMock: { location: { href: string } };
 
   let snapshotQueryParams: Record<string, any>;
   let snapshotData: Record<string, any>;
@@ -44,6 +46,7 @@ describe('CallbackComponent', () => {
         { provide: SDKService, useValue: sdk },
         { provide: SisToastService, useValue: toaster },
         { provide: TranslateService, useValue: translate },
+        { provide: DOCUMENT, useValue: documentMock },
       ],
     }).compileComponents();
 
@@ -91,6 +94,7 @@ describe('CallbackComponent', () => {
     };
     toaster = { error: jest.fn() };
     translate = { instant: jest.fn((key) => key) };
+    documentMock = { location: { href: '' } };
     jest.clearAllMocks();
   });
 
@@ -191,14 +195,25 @@ describe('CallbackComponent', () => {
     expect(authenticateSpy).toHaveBeenCalledWith({ access_token: 'url-access', refresh_token: 'url-refresh' });
   });
 
-  it('should redirect to consent url in handleSAMLCallback', async () => {
-    snapshotQueryParams = { consent_url: 'https://oauth.here/consent' };
+  it('should redirect to consent url in handleSAMLCallback when it is same-domain', async () => {
+    snapshotQueryParams = { consent_url: 'https://oauth.progress.cloud/consent' };
     await createComponent();
 
     component.handleSAMLCallback();
 
     expect(samlService.getToken).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
+    expect(documentMock.location.href).toBe('https://oauth.progress.cloud/consent');
+  });
+
+  it('should reject an off-domain consent_url in handleSAMLCallback', async () => {
+    snapshotQueryParams = { consent_url: 'https://evil.example.com/consent' };
+    await createComponent();
+
+    component.handleSAMLCallback();
+
+    expect(samlService.getToken).not.toHaveBeenCalled();
+    expect(documentMock.location.href).toBe('/');
   });
 
   it('should exchange saml token and authenticate in handleSAMLCallback', async () => {
