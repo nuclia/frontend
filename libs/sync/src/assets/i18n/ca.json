@@ -203,6 +203,8 @@
 	"sync.home-page.connect.source-list.title": "Connexions",
 	"sync.home-page.connect.source-list.type": "Tipus",
 	"sync.home-page.connect.title": "Connectar",
+	"sync.home-page.data.description": "Gestiona els teus recursos, sincronitza contingut i connecta fonts externes.",
+	"sync.home-page.data.title": "Dades",
 	"sync.home-page.synchronize.add-sources.description": "Envieu automàticament contingut de fonts locals al vostre Knowledge Box",
 	"sync.home-page.synchronize.add-sources.disabled-source-tooltip": "Activa un servidor de sincronització",
 	"sync.home-page.synchronize.add-sources.title": "Afegeix fonts",
@@ -230,5 +232,6 @@
 	"sync.home-page.synchronize.sync-list.table-columns.resources": "Recursos",
 	"sync.home-page.synchronize.sync-list.table-columns.sync": "Sincronització",
 	"sync.home-page.synchronize.sync-list.title": "Sincronitzacions",
-	"sync.home-page.synchronize.title": "Sincronitzar"
+	"sync.home-page.synchronize.title": "Sincronitzar",
+	"sync.home-page.tabs.resources": "Recursos"
 }

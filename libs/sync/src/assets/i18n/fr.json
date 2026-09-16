@@ -203,6 +203,8 @@
 	"sync.home-page.connect.source-list.title": "Connexions",
 	"sync.home-page.connect.source-list.type": "Taper",
 	"sync.home-page.connect.title": "Connecter",
+	"sync.home-page.data.description": "Gérez vos ressources, synchronisez du contenu et connectez des sources externes.",
+	"sync.home-page.data.title": "Données",
 	"sync.home-page.synchronize.add-sources.description": "Transférez automatiquement le contenu de sources locales vers votre Knowledge Box",
 	"sync.home-page.synchronize.add-sources.disabled-source-tooltip": "Activer un serveur de synchronisation",
 	"sync.home-page.synchronize.add-sources.title": "Ajouter des sources",
@@ -230,5 +232,6 @@
 	"sync.home-page.synchronize.sync-list.table-columns.resources": "Ressources",
 	"sync.home-page.synchronize.sync-list.table-columns.sync": "Synchronisation",
 	"sync.home-page.synchronize.sync-list.title": "Synchronisations",
-	"sync.home-page.synchronize.title": "Synchroniser"
+	"sync.home-page.synchronize.title": "Synchroniser",
+	"sync.home-page.tabs.resources": "Ressources"
 }

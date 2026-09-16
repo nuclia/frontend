@@ -1,25 +1,51 @@
-@if (isAgenticSearchEnabled()) {
-  <pa-tabs>
-    <pa-tab
-      (click)="navigateTo('synchronize')"
-      [active]="!isConnectActive()"
-      ariaControls="home-page-panel">
-      {{ 'sync.home-page.synchronize.title' | translate }}
-    </pa-tab>
-    <pa-tab
-      (click)="navigateTo('connect')"
-      [active]="isConnectActive()"
-      ariaControls="home-page-panel">
-      <div class="tab-with-badge">
-        {{ 'sync.home-page.connect.title' | translate }}
-        <nsi-badge kind="tertiary">BETA</nsi-badge>
+<div class="page-spacing">
+  <header>
+    <div class="page-title">
+      {{ 'sync.home-page.data.title' | translate }}
+      <div class="page-title-actions">
+        @if (isResourcesActive()) {
+          <pa-button
+            kind="primary"
+            aspect="basic"
+            icon="refresh"
+            iconAndText
+            (click)="refreshResources()">
+            {{ 'generic.refresh' | translate }}
+          </pa-button>
+        }
+        <stf-upload-button></stf-upload-button>
       </div>
-    </pa-tab>
-  </pa-tabs>
-}
+    </div>
+    <div class="page-description">{{ 'sync.home-page.data.description' | translate }}</div>
+  </header>
 
-<div
-  id="home-page-panel"
-  class="page-spacing">
-  <router-outlet></router-outlet>
+  @if (isAgenticSearchEnabled()) {
+    <pa-tabs>
+      <pa-tab
+        (click)="navigateTo('resources')"
+        [active]="isResourcesActive()"
+        ariaControls="home-page-panel">
+        {{ 'sync.home-page.tabs.resources' | translate }}
+      </pa-tab>
+      <pa-tab
+        (click)="navigateTo('synchronize')"
+        [active]="isSyncActive()"
+        ariaControls="home-page-panel">
+        {{ 'sync.home-page.synchronize.title' | translate }}
+      </pa-tab>
+      <pa-tab
+        (click)="navigateTo('connect')"
+        [active]="isConnectActive()"
+        ariaControls="home-page-panel">
+        <div class="tab-with-badge">
+          {{ 'sync.home-page.connect.title' | translate }}
+          <nsi-badge kind="tertiary">BETA</nsi-badge>
+        </div>
+      </pa-tab>
+    </pa-tabs>
+  }
+
+  <div id="home-page-panel">
+    <router-outlet></router-outlet>
+  </div>
 </div>

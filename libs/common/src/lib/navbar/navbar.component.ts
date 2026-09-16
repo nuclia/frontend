@@ -85,7 +85,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isModelManagementEnabled = this.features.unstable.modelManagement;
   isRaoWidgetEnabled = this.features.unstable.raoWidget;
   isAragWithMemory = this.sdk.isAragWithMemory;
-  isAgenticSearchEnabled = this.features.unstable.agenticSearch;
 
   isPromptLabAuthorized = this.features.authorized.promptLab;
 

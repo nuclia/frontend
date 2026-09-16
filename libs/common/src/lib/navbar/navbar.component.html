@@ -30,24 +30,13 @@
                 <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
               </a>
               <a
-                [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
-                routerLinkActive="active"
-                class="nav-link"
-                data-cy="go-to-resources"
-                [class.disabled]="invalidKey | async">
-                <pa-icon name="list"></pa-icon>
-                <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
-              </a>
-              <a
-                [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/sync' : null"
+                [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/sync/resources' : null"
                 routerLinkActive="active"
                 class="nav-link"
                 data-cy="go-to-sync"
                 [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                 <pa-icon name="connectors"></pa-icon>
-                <span class="nav-link-title">
-                  {{ ((isAgenticSearchEnabled | async) ? 'navbar.sync' : 'navbar.sync-only') | translate }}
-                </span>
+                <span class="nav-link-title">{{ 'navbar.data' | translate }}</span>
               </a>
               <a
                 class="nav-link"
