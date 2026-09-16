@@ -77,7 +77,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAragAdmin = this.features.isAragAdmin;
   isAccountManager = this.features.isAccountManager;
   noStripe = this.backendConfig.noStripe();
-  versionHash = this.backendConfig.getVersion().replace(/^\d+\.\d+\.\d+-/, '');
+  versionHash = this.backendConfig.getVersionHash();
   isStageOrDev = this.featureFlagService.isStageOrDev;
   showFooter = this.isStageOrDev || !!this.versionHash;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
