@@ -22,9 +22,9 @@ app-root {
 }
 
 #stf-splash-screen .logo {
-  width: 220px;
+  width: 330px;
   margin: 0 auto;
-  animation: pulse 1.75s ease-in-out infinite;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   will-change: opacity;
 }
 
@@ -36,10 +36,10 @@ app-root {
 @keyframes pulse {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 1;
   }
   50% {
-    opacity: 1;
+    opacity: 0.5;
   }
 }
 
