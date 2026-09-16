@@ -11,7 +11,6 @@ $height-pagination: rhythm(9);
     align-items: center;
     display: flex;
     gap: rhythm(1);
-    height: $height-table-header;
   }
 
   .resource-bulk-actions {
@@ -19,17 +18,12 @@ $height-pagination: rhythm(9);
     display: flex;
     font-weight: $font-weight-regular;
     gap: rhythm(1.5);
+    height: $height-table-header;
     padding-left: rhythm(0.5);
   }
 
   .selected-count {
     color: $color-neutral-regular;
-  }
-
-  .table-options {
-    display: flex;
-    gap: rhythm(1);
-    margin-left: auto;
   }
 
   .selection-bar {

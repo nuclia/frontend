@@ -1,4 +1,6 @@
-<div class="resource-list page-spacing">
+<div
+  class="resource-list"
+  [class.page-spacing]="!isNestedInDataPage">
   @if ((loading | async) === true) {
     <div class="resource-list-skeleton">
       <div class="skeleton-filters">
@@ -218,19 +220,65 @@
         </div>
 
         <div class="header-actions">
-          @if (isMainView || isProcessedView) {
-            <pa-button
-              kind="primary"
-              aspect="basic"
-              icon="refresh"
-              iconAndText
-              (click)="refresh()">
-              {{ 'generic.refresh' | translate }}
-            </pa-button>
+          @if (isMainView && resourcesTable; as table) {
+            @if ((table.visibleColumnsId | async)?.includes('classification')) {
+              <pa-button
+                aspect="basic"
+                iconAndText
+                [icon]="table.fullLabels ? 'collapse' : 'expand'"
+                (click)="table.fullLabels = !table.fullLabels">
+                {{ (table.fullLabels ? 'resource.collapse-labels' : 'resource.expand-labels') | translate }}
+              </pa-button>
+            }
+            @if ((table.visibleColumnsId | async)?.includes('key-value-fields')) {
+              <pa-button
+                aspect="basic"
+                iconAndText
+                [icon]="table.fullKeyValue ? 'collapse' : 'expand'"
+                (click)="table.fullKeyValue = !table.fullKeyValue">
+                {{ (table.fullKeyValue ? 'resource.collapse-key-value' : 'resource.expand-key-value') | translate }}
+              </pa-button>
+            }
+            <div>
+              <nsi-dropdown-button
+                freeWidth
+                aspect="basic"
+                data-cy="visible-columns-dropdown"
+                [popupRef]="visibleColumns">
+                {{ 'resource.visible_columns_dropdown' | translate }}
+              </nsi-dropdown-button>
+              <pa-dropdown #visibleColumns>
+                @for (column of table.optionalColumns; track column.id) {
+                  <pa-option
+                    [value]="column.id"
+                    (selectOption)="table.toggleColumn(column, $event)"
+                    dontCloseOnSelect>
+                    <pa-checkbox
+                      [value]="(table.selectedColumns | async)?.includes(column.id)"
+                      (valueChange)="table.toggleColumn(column)">
+                      {{ column.label | translate }}
+                    </pa-checkbox>
+                  </pa-option>
+                }
+              </pa-dropdown>
+            </div>
           }
 
-          @if (isAdminOrContrib | async) {
-            <stf-upload-button></stf-upload-button>
+          @if (!isNestedInDataPage) {
+            @if (isMainView || isProcessedView) {
+              <pa-button
+                kind="primary"
+                aspect="basic"
+                icon="refresh"
+                iconAndText
+                (click)="refresh()">
+                {{ 'generic.refresh' | translate }}
+              </pa-button>
+            }
+
+            @if (isAdminOrContrib | async) {
+              <stf-upload-button></stf-upload-button>
+            }
           }
         </div>
       </div>

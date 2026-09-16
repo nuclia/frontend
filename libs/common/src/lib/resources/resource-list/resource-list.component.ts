@@ -81,6 +81,7 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
 })
 export class ResourceListComponent implements OnDestroy {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
+  @ViewChild(ResourcesTableComponent) resourcesTable?: ResourcesTableComponent;
 
   unsubscribeAll = new Subject<void>();
 
@@ -90,6 +91,10 @@ export class ResourceListComponent implements OnDestroy {
   uploadInProgress = this.uploadService.uploadInProgress;
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
+  // Hide the built-in refresh/upload toolbar when this list is embedded in the consolidated
+  // Data page (`/sync/resources`), which already provides its own refresh/upload actions in its
+  // page header — only show it on the standalone `/resources` route, which has no page header of its own.
+  isNestedInDataPage = this.router.url.includes('/sync/resources');
   query = this.resourceListService.query;
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
