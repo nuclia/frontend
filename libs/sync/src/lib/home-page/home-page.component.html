@@ -3,16 +3,6 @@
     <div class="page-title">
       {{ 'sync.home-page.data.title' | translate }}
       <div class="page-title-actions">
-        @if (isResourcesActive()) {
-          <pa-button
-            kind="primary"
-            aspect="basic"
-            icon="refresh"
-            iconAndText
-            (click)="refreshResources()">
-            {{ 'generic.refresh' | translate }}
-          </pa-button>
-        }
         <stf-upload-button></stf-upload-button>
       </div>
     </div>
@@ -20,7 +10,7 @@
   </header>
 
   @if (isAgenticSearchEnabled()) {
-    <pa-tabs>
+    <pa-tabs notFullWidth>
       <pa-tab
         (click)="navigateTo('resources')"
         [active]="isResourcesActive()"

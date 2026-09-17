@@ -264,18 +264,18 @@
             </div>
           }
 
-          @if (!isNestedInDataPage) {
-            @if (isMainView || isProcessedView) {
-              <pa-button
-                kind="primary"
-                aspect="basic"
-                icon="refresh"
-                iconAndText
-                (click)="refresh()">
-                {{ 'generic.refresh' | translate }}
-              </pa-button>
-            }
+          @if (isMainView || isProcessedView) {
+            <pa-button
+              kind="primary"
+              aspect="basic"
+              icon="refresh"
+              iconAndText
+              (click)="refresh()">
+              {{ 'generic.refresh' | translate }}
+            </pa-button>
+          }
 
+          @if (!isNestedInDataPage) {
             @if (isAdminOrContrib | async) {
               <stf-upload-button></stf-upload-button>
             }
