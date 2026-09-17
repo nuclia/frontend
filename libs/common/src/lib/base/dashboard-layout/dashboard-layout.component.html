@@ -27,6 +27,11 @@
       tabindex="-1"
       [class.with-status-bar]="showStatusBar | async">
       <div class="dashboard-main-content">
+        @if (showOnboardingBanner | async) {
+          <app-resource-handling-banner
+            class="onboarding-banner"
+            [kbUrl]="(kbUrl | async) ?? ''"></app-resource-handling-banner>
+        }
         <router-outlet></router-outlet>
       </div>
     </main>
