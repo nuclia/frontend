@@ -116,10 +116,6 @@ export class NavigationService {
     const pattern = `${aragUrl}/(${settingsPages.join('|')})`;
     return new RegExp(pattern).test(path);
   }
-  inKbUpload(path: string, kbUrl: string): boolean {
-    const pattern = `${kbUrl}/upload`;
-    return new RegExp(pattern).test(path);
-  }
 
   getAccountUrl(accountSlug: string): string {
     return `/at/${accountSlug}`;

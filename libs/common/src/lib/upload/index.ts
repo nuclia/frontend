@@ -4,7 +4,6 @@ export * from './csv-select/csv-select.component';
 export * from './desktop-upload.service';
 export * from './extraction-select/extraction-select.component';
 export * from './upload-bar/upload-bar.component';
-export * from './upload-data/upload-data.component';
 export * from './upload-files/upload-files.component';
 export * from './upload-files/upload-files-dialog.component';
 export * from './upload-progress/upload-progress.component';

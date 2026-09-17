@@ -104,10 +104,6 @@ const routes: Routes = [
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.ContextBoxPageModule),
               },
               {
-                path: 'upload',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.UploadModule),
-              },
-              {
                 path: 'resources',
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.RESOURCE_ROUTES),
               },
