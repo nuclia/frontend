@@ -12,7 +12,6 @@ export class STFSplashScreenService {
   splashScreenEl: any;
   player: AnimationPlayer | undefined;
   shown: boolean;
-  last: string;
 
   constructor(
     private _animationBuilder: AnimationBuilder,
@@ -21,7 +20,6 @@ export class STFSplashScreenService {
   ) {
     // Initialize
     this._init();
-    this.last = 'Be patient my friend ' + String.fromCodePoint(128513);
     this.shown = false;
   }
 
@@ -35,16 +33,19 @@ export class STFSplashScreenService {
 
     // If the splash screen element exists...
     if (this.splashScreenEl) {
-      // Hide it on the first NavigationEnd event
+      // Hide it once routing has resolved. `ApplicationRef.isStable` was tried as an extra guard
+      // against hiding before the routed view paints, but it isn't a safe signal here: it can stay
+      // false indefinitely in apps with ongoing background activity (polling, websockets, etc. inside
+      // the zone), which left the splash stuck on-screen forever. Two animation frames after
+      // NavigationEnd is enough to let the browser paint the new route before removing the overlay,
+      // without depending on the whole app ever going fully idle.
       this._router.events
         .pipe(
           filter((event) => event instanceof NavigationEnd),
           take(1),
         )
         .subscribe(() => {
-          setTimeout(() => {
-            this.hide();
-          });
+          requestAnimationFrame(() => requestAnimationFrame(() => this.hide()));
         });
     }
   }
@@ -53,16 +54,7 @@ export class STFSplashScreenService {
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
-  show(text?: string, emoji?: number): void {
-    if (text) {
-      this.last = this.splashScreenEl.querySelector('#stf-splash-screen-text').textContent;
-      if (emoji) {
-        text = text + ' ' + String.fromCodePoint(emoji);
-      }
-      this.splashScreenEl.querySelector('#stf-splash-screen-text').innerText = text;
-    } else {
-      this.splashScreenEl.querySelector('#stf-splash-screen-text').innerText = this.last;
-    }
+  show(): void {
     this.shown = true;
     this.player = this._animationBuilder
       .build([

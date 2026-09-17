@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewContainerRef,
-  DOCUMENT,
-} from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef, DOCUMENT } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -36,7 +27,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
   styleUrls: ['./app.component.scss'],
   standalone: false,
 })
-export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
 
   private unsubscribeAll: Subject<void>;
@@ -45,6 +36,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   constructor(
     private user: UserService,
+    // Injected only to force instantiation (providedIn: 'root' services are lazy) — the service
+    // hides the splash screen itself once routing settles and the app becomes stable.
     private splashScreenService: STFSplashScreenService,
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
@@ -84,10 +77,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
     this.cleanUpEventListener();
-  }
-
-  ngAfterViewInit() {
-    this.splashScreenService.hide();
   }
 
   initTranslate(userLocale?: string) {
