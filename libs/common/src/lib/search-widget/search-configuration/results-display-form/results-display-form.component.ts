@@ -48,7 +48,8 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     if (value) {
       const { metadatas, ...rest } = value;
       const formattedMetadata = (metadatas || []).join('\n');
-      this.form.patchValue({ ...rest, metadatas: formattedMetadata });
+      // emitEvent: false — see search-box-form's config setter for rationale.
+      this.form.patchValue({ ...rest, metadatas: formattedMetadata }, { emitEvent: false });
     }
   }
   @Input() modelNames: { [key: string]: string } = {};
@@ -199,10 +200,12 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
    */
   disableCitations(jsonOutputEnabled: boolean, generateAnswer: boolean) {
     if (jsonOutputEnabled || !generateAnswer) {
-      this.showResultTypeControl.patchValue('all-resources');
-      this.showResultTypeControl.disable();
+      // emitEvent: false — this is a system-driven constraint (citations unsupported in this mode),
+      // not a user edit, and must not trigger configChanged / flag the configuration as modified.
+      this.showResultTypeControl.patchValue('all-resources', { emitEvent: false });
+      this.showResultTypeControl.disable({ emitEvent: false });
     } else if (this.showResultTypeControl.disabled) {
-      this.showResultTypeControl.enable();
+      this.showResultTypeControl.enable({ emitEvent: false });
     }
   }
 

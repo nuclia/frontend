@@ -201,7 +201,10 @@ describe('RoutingFormComponent', () => {
       // Now let B's timer fire
       tick(500);
       expect(patchValueSpy).toHaveBeenCalledTimes(1);
-      expect(patchValueSpy).toHaveBeenCalledWith(expect.objectContaining({ useRouting: configWith3Rules.useRouting }));
+      // emitEvent: false — loading a config is not a user edit and must not trigger configChanged.
+      expect(patchValueSpy).toHaveBeenCalledWith(expect.objectContaining({ useRouting: configWith3Rules.useRouting }), {
+        emitEvent: false,
+      });
     }));
   });
 
@@ -210,7 +213,7 @@ describe('RoutingFormComponent', () => {
   // =========================================================================
 
   describe('configChanged emission', () => {
-    it('3a — no emission during FormArray structural setup (emitEvent:false)', fakeAsync(() => {
+    it('3a — no emission when loading a config, even after the delayed patch fires (emitEvent:false)', fakeAsync(() => {
       const emittedValues: Widget.RoutingConfig[] = [];
       component.configChanged.subscribe((v) => emittedValues.push(v));
 
@@ -221,9 +224,10 @@ describe('RoutingFormComponent', () => {
       // Before the 500ms patch-value timer fires, there must be no emissions
       expect(emittedValues.length).toBe(0);
 
-      // After the timer fires, patchValue triggers valueChanges → one emission is expected
+      // The delayed patchValue also uses emitEvent:false — loading a config must never itself count
+      // as a user edit, so there should still be no emission after the timer fires.
       tick(500);
-      expect(emittedValues.length).toBe(1);
+      expect(emittedValues.length).toBe(0);
     }));
 
     it('3b — addRule() emits configChanged', fakeAsync(() => {

@@ -67,6 +67,7 @@ import {
   getChatOptions,
   getFindOptions,
   isSameConfigurations,
+  isSameWidgetConfiguration,
 } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
 import { AgenticConfigurationComponent } from './agentic-configuration';
@@ -148,10 +149,10 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
   @Output() widgetConfigUpdate = new EventEmitter<Widget.WidgetConfiguration>();
-  @Output() createWidget = new EventEmitter<void>();
   @Output() getEmbedCode = new EventEmitter<string>();
 
   @ViewChild('widgetOptions', { read: AccordionItemComponent }) widgetOptionsItem?: AccordionItemComponent;
+  @ViewChild(WidgetOptionsFormComponent) widgetOptionsFormComponent?: WidgetOptionsFormComponent;
   @ViewChild('agenticConfig', { read: AccordionItemComponent }) agenticConfigItem?: AccordionItemComponent;
   @ViewChild(AgenticConfigurationComponent) agenticConfigComponent?: AgenticConfigurationComponent;
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
@@ -193,8 +194,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   isConfigModified = false;
   isConfigUnsupported = false;
   canModifyConfig = this.features.isKbAdmin;
-  ignoreChanges = false;
-  ignoreNextRoutingRefresh = false;
 
   searchMode = signal<'agentic' | 'simple-rag' | 'search'>('simple-rag');
   currentKbSource = signal<{ id: string; label: string } | null>(null);
@@ -230,6 +229,18 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
+  }
+
+  /**
+   * A configuration counts as modified if either the search-behavior config (retrieval/generative/
+   * results/routing) or the "Widget options" (appearance/deployment) form has unsaved changes — Save
+   * must be enabled for either, not just the former.
+   */
+  private computeIsConfigModified(): boolean {
+    const searchConfigModified =
+      !!this.currentConfig && !!this.savedConfig && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    const widgetOptionsModified = !isSameWidgetConfiguration(this.currentWidgetOptions(), this.widgetOptionsConfig());
+    return searchConfigModified || widgetOptionsModified;
   }
 
   /**
@@ -445,6 +456,15 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         this.isConfigModified = false;
         this._syncModeSignals(this.savedConfig);
         this.refreshLinkedWidget(this.savedConfig.id);
+        // Also resync the "Widget options" form/state to the newly-selected config's own appearance
+        // settings — otherwise `currentWidgetOptions` keeps holding whatever was last edited/left over
+        // from the previous config, which then never matches the new config's `widgetOptionsConfig()`
+        // and leaves the modified-state banner stuck on even after everything else correctly matches.
+        const newWidgetOptions = this.widgetOptionsConfig();
+        this.currentWidgetOptions.set(newWidgetOptions);
+        if (this.widgetOptionsFormComponent) {
+          this.widgetOptionsFormComponent.config = newWidgetOptions;
+        }
         if (this.savedConfig.type === 'api') {
           this.isConfigUnsupported = true;
           this.originalJsonConfig = JSON.stringify(this.savedConfig.value.config, null, 2);
@@ -456,13 +476,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         this.currentJsonConfig = this.originalJsonConfig;
         this.updateWidget();
         this.cdr.markForCheck();
-        // after selecting a config, all the forms trigger a value change, and as old config might not be aligned
-        // with the latest supported properties, it may display a warning message to the user saying the config has changed
-        // so for 200ms we just ignore any changes
-        this.ignoreChanges = true;
-        this.ignoreNextRoutingRefresh = true;
-        setTimeout(() => (this.ignoreChanges = false), 200);
-        setTimeout(() => (this.ignoreNextRoutingRefresh = false), 1000);
       });
   }
 
@@ -528,7 +541,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     if (mode !== 'agentic') {
       this.useGenerativeAnswer = generativeAnswer.generateAnswer;
     }
-    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
 
@@ -544,22 +557,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       // doesn't wipe out the other agentic fields already on currentConfig.
       ...(partial.agentic ? { agentic: { ...originalAgentic, ...partial.agentic } } : {}),
     };
-    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
     this.updateAgenticConfigHeight();
-  }
-
-  triggerCreateWidget() {
-    if (this.isConfigModified) {
-      this.modalService.openConfirm({
-        title: 'search.configuration.save-changes-modal.title',
-        description: 'search.configuration.save-changes-modal.description',
-        confirmLabel: 'Ok',
-        onlyConfirm: true,
-      });
-    } else {
-      this.createWidget.emit();
-    }
   }
 
   /**
@@ -616,17 +616,30 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
           resultDisplay: this.savedConfig.resultDisplay ? { ...this.savedConfig.resultDisplay } : undefined,
           routing: this.savedConfig.routing ? { ...this.savedConfig.routing } : undefined,
         };
+        // Keep currentConfig directly in sync with the freshly-reset savedConfig instead of relying on
+        // each child form (search box, generative answer, results, routing) to notice its `[config]`
+        // input changed and re-emit — that cascade is fragile and previously left currentConfig stale,
+        // causing isConfigModified to flip back to true on the very next recompute.
+        this.currentConfig = { ...this.savedConfig };
         this._syncModeSignals(this.savedConfig);
       } else {
         this.currentJsonConfig = this.originalJsonConfig;
         this.useGenerativeAnswer = this.savedConfig.value.kind === 'ask';
+      }
+      // Also revert the "Widget options" form back to the last saved appearance — the search-config
+      // reset above doesn't touch it, and since widgetOptionsConfig() is a computed signal that only
+      // changes when linkedWidget() changes, the form input setter wouldn't otherwise re-fire.
+      const savedWidgetOptions = this.widgetOptionsConfig();
+      this.currentWidgetOptions.set(savedWidgetOptions);
+      if (this.widgetOptionsFormComponent) {
+        this.widgetOptionsFormComponent.config = savedWidgetOptions;
       }
       this.isConfigModified = false;
     }
   }
 
   saveConfig() {
-    if (this.isConfigModified) {
+    if (this.validateConfigBeforeSave()) {
       this.modalService
         .openModal(SaveConfigModalComponent)
         .onClose.pipe(
@@ -640,9 +653,37 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   overwriteConfig() {
-    if (this.isConfigModified && this.currentConfig) {
-      this._saveConfig(this.currentConfig.id, false).subscribe();
+    if (this.validateConfigBeforeSave() && this.currentConfig) {
+      const configName = this.currentConfig.id;
+      this.modalService
+        .openConfirm({
+          title: this.translate.instant('search.configuration.overwrite-config-confirm.title', { configName }),
+          description: 'search.configuration.overwrite-config-confirm.description',
+          confirmLabel: 'search.configuration.action.overwrite',
+        })
+        .onClose.pipe(
+          filter((confirm) => !!confirm),
+          // Refresh from the server after overwriting, same as `saveConfig()`'s "save as new" path —
+          // otherwise `savedConfig` stays stale (pre-overwrite) while `isConfigModified` is forced false,
+          // so the very next cascaded form emission compares against outdated saved state and flips the
+          // banner back on.
+          switchMap(() => this._saveConfig(configName, false)),
+          filter((success) => !!success),
+          switchMap(() => this.setConfigurations()),
+        )
+        .subscribe();
     }
+  }
+
+  private validateConfigBeforeSave(): boolean {
+    if (!this.isConfigModified) {
+      return false;
+    }
+    if (this.searchMode() === 'agentic' && !this.agenticSourcesValid()) {
+      this.toaster.warning('search.configuration.agentic.sources-required');
+      return false;
+    }
+    return true;
   }
 
   deleteConfig() {
@@ -786,7 +827,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, searchBox: config };
-    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
   updateGenerativeAnswerConfig(config: Widget.GenerativeAnswerConfig) {
@@ -795,7 +836,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, generativeAnswer: config };
-    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = this.computeIsConfigModified();
     this.useGenerativeAnswer = config.generateAnswer;
     this.updateWidget();
   }
@@ -805,11 +846,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, resultDisplay: config };
-    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
   updateWidgetOptionsConfig(config: Widget.WidgetConfiguration) {
     this.currentWidgetOptions.set(config);
+    this.isConfigModified = this.computeIsConfigModified();
     this.widgetConfigUpdate.emit(config);
   }
 
@@ -825,8 +867,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         }
       : config;
     this.currentConfig = { ...currentConfig, routing: cleanConfig };
-    this.isConfigModified =
-      !this.ignoreNextRoutingRefresh && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
 

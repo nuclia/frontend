@@ -80,6 +80,13 @@ export function isSameConfigurations(
   return deepEqual(configA, configB);
 }
 
+export function isSameWidgetConfiguration(
+  configA: Widget.WidgetConfiguration,
+  configB: Widget.WidgetConfiguration,
+): boolean {
+  return deepEqual(configA, configB);
+}
+
 function getBaseSearchOptions(searchConfig: { searchBox: Widget.SearchBoxConfig }): BaseSearchOptions {
   const options: BaseSearchOptions = {
     vectorset: searchConfig.searchBox.vectorset || undefined,

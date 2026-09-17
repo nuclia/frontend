@@ -57,10 +57,17 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   @Input() set config(value: Widget.SearchBoxConfig | undefined) {
     if (value) {
-      this.form.patchValue({
-        ...value,
-        initialFilters: value.initialFilters ?? '',
-      });
+      // emitEvent: false — loading a config into the form is not a user edit and must not trigger
+      // configChanged, otherwise the parent sees a spurious diff from the form's own normalization
+      // (e.g. `initialFilters` defaulting to '' here vs. being undefined/absent on the saved config)
+      // and incorrectly flags the configuration as modified.
+      this.form.patchValue(
+        {
+          ...value,
+          initialFilters: value.initialFilters ?? '',
+        },
+        { emitEvent: false },
+      );
     }
   }
   @Input({ required: true }) semanticModels: OptionModel[] = [];

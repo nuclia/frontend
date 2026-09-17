@@ -13,17 +13,16 @@ import {
   DOCUMENT,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ModalConfig, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { UploadEventService } from '@flaps/core';
-import { filter, map, switchMap, take } from 'rxjs';
+import { take } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
-import { DEFAULT_WIDGET_CONFIG } from './search-widget.models';
 import { SearchWidgetService } from './search-widget.service';
-import { CreateWidgetDialogComponent, EmbedWidgetDialogComponent } from './widgets';
+import { EmbedWidgetDialogComponent } from './widgets';
 
 @Component({
   selector: 'stf-search-page',
@@ -35,7 +34,6 @@ import { CreateWidgetDialogComponent, EmbedWidgetDialogComponent } from './widge
 })
 export class SearchPageComponent implements OnDestroy {
   private destroyRef = inject(DestroyRef);
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
@@ -68,23 +66,6 @@ export class SearchPageComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
-  }
-
-  createWidget() {
-    if (this.searchConfig?.type === 'config') {
-      const searchConfigId = this.searchConfig.id;
-      this.modalService
-        .openModal(CreateWidgetDialogComponent)
-        .onClose.pipe(
-          filter((widgetName) => !!widgetName),
-          map((widgetName) => widgetName as string),
-          switchMap((widgetName) =>
-            this.searchWidgetService.createWidget(widgetName, DEFAULT_WIDGET_CONFIG, searchConfigId),
-          ),
-          switchMap((widgetSlug) => this.router.navigate(['../widgets', widgetSlug], { relativeTo: this.route })),
-        )
-        .subscribe();
-    }
   }
 
   /**

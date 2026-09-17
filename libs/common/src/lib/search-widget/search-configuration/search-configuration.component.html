@@ -17,25 +17,29 @@
   @if (displayWidgetButtonLine) {
     <div class="config-actions">
       @if (canModifyConfig | async) {
-        <nsi-button-mini
-          icon="widget"
-          (click)="triggerCreateWidget()">
-          {{ 'search.configuration.action.create-widget' | translate }}
-        </nsi-button-mini>
-      }
-      @if (!(inArag | async) && (canModifyConfig | async)) {
-        <nsi-button-mini
-          icon="list"
-          (click)="manageWidgets()">
-          {{ 'search.configuration.action.manage-widgets' | translate }}
-        </nsi-button-mini>
+        <div>
+          <nsi-button-mini
+            icon="download"
+            [disabled]="!isConfigModified"
+            [paPopup]="isNucliaConfig ? null : saveMenu"
+            (click)="isNucliaConfig ? saveConfig() : null">
+            {{ 'search.configuration.action.save' | translate }}
+          </nsi-button-mini>
+          <pa-dropdown #saveMenu>
+            <pa-option (selectOption)="saveConfig()">
+              {{ 'search.configuration.action.save-as-new' | translate }}
+            </pa-option>
+            <pa-option (selectOption)="overwriteConfig()">
+              {{ 'search.configuration.action.overwrite' | translate }}
+            </pa-option>
+          </pa-dropdown>
+        </div>
       }
       <nsi-button-mini
-        icon="code"
-        [disabled]="!lastQuery"
-        [paTooltip]="!lastQuery ? 'search.configuration.action.get-code-tooltip' : undefined"
-        (click)="showLastRequest()">
-        {{ 'search.configuration.action.get-code' | translate }}
+        icon="undo"
+        [disabled]="!isConfigModified"
+        (click)="resetConfig()">
+        {{ 'search.configuration.action.reset' | translate }}
       </nsi-button-mini>
       @if (!(inArag | async) && (canModifyConfig | async)) {
         <nsi-button-mini
@@ -46,72 +50,40 @@
           {{ 'search.configuration.action.get-embed-code' | translate }}
         </nsi-button-mini>
       }
-      @if (isRagLabAuthorized | async) {
+      <div>
         <nsi-button-mini
-          icon="lab"
-          routerLink="../rag-lab"
-          [disabled]="configurations.length <= 1 || isConfigUnsupported"
-          paTooltip="search.configuration.action.rag-lab-tooltip">
-          {{ 'search.configuration.action.rag-lab' | translate }}
-        </nsi-button-mini>
-      }
-      @if (!isNucliaConfig && (canModifyConfig | async)) {
-        <nsi-button-mini
-          icon="trash"
-          destructive
-          (click)="deleteConfig()"></nsi-button-mini>
-      }
+          icon="more-vertical"
+          [paPopup]="moreMenu"></nsi-button-mini>
+        <pa-dropdown #moreMenu>
+          @if (!(inArag | async) && (canModifyConfig | async)) {
+            <pa-option (selectOption)="manageWidgets()">
+              {{ 'search.configuration.action.manage-widgets' | translate }}
+            </pa-option>
+          }
+          <pa-option
+            [disabled]="isConfigUnsupported"
+            (selectOption)="switchToJsonMode()">
+            {{ 'search.configuration.action.switch-to-json' | translate }}
+          </pa-option>
+          <pa-option
+            [disabled]="!lastQuery"
+            (selectOption)="showLastRequest()">
+            {{ 'search.configuration.action.get-code' | translate }}
+          </pa-option>
+          @if (isRagLabAuthorized | async) {
+            <pa-option
+              routerLink="../rag-lab"
+              [disabled]="configurations.length <= 1 || isConfigUnsupported">
+              {{ 'search.configuration.action.rag-lab' | translate }}
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
     </div>
   }
 </section>
 
 <section [style]="bottomSectionStyle">
-  @if (isConfigModified || displayWidgetButtonLine) {
-    <div class="current-config-title">
-      <div class="section-title">
-        @if (displayWidgetButtonLine) {
-          {{ 'search.configuration.current-config-title' | translate }}
-        }
-      </div>
-
-      <div class="config-actions">
-        <nsi-button-mini
-          icon="file-code"
-          [disabled]="isConfigUnsupported"
-          (click)="switchToJsonMode()"
-          [paPopover]="switchHelp"></nsi-button-mini>
-        <pa-popover #switchHelp>
-          <span [innerHTML]="'search.configuration.action.switch-mode' | translate"></span>
-        </pa-popover>
-        <nsi-button-mini
-          icon="undo"
-          [disabled]="!isConfigModified"
-          (click)="resetConfig()">
-          {{ 'search.configuration.action.reset' | translate }}
-        </nsi-button-mini>
-        @if (canModifyConfig | async) {
-          <div>
-            <nsi-button-mini
-              icon="download"
-              [disabled]="!isConfigModified || (searchMode() === 'agentic' && !agenticSourcesValid())"
-              [paPopup]="isNucliaConfig ? null : saveMenu"
-              (click)="isNucliaConfig ? saveConfig() : null">
-              {{ 'search.configuration.action.save' | translate }}
-            </nsi-button-mini>
-            <pa-dropdown #saveMenu>
-              <pa-option (selectOption)="saveConfig()">
-                {{ 'search.configuration.action.save-as-new' | translate }}
-              </pa-option>
-              <pa-option (selectOption)="overwriteConfig()">
-                {{ 'search.configuration.action.overwrite' | translate }}
-              </pa-option>
-            </pa-dropdown>
-          </div>
-        }
-      </div>
-    </div>
-  }
-
   @if (initialised) {
     @if (isConfigUnsupported) {
       @if (originalJsonConfig !== currentJsonConfig) {

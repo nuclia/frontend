@@ -67,7 +67,9 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       // Delay the value patch so the config selects are updated according to the kind
       this.configPatchTimer = setTimeout(() => {
         this.configPatchTimer = null;
-        this.form.patchValue(value);
+        // emitEvent: false — see search-box-form's config setter for rationale: loading a config into
+        // the form must not itself be treated as a user edit.
+        this.form.patchValue(value, { emitEvent: false });
         this.cdr.markForCheck();
       }, 500);
     } else {
