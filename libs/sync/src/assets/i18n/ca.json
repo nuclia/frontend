@@ -208,7 +208,6 @@
 	"sync.home-page.synchronize.add-sources.description": "Envieu automàticament contingut de fonts locals al vostre Knowledge Box",
 	"sync.home-page.synchronize.add-sources.disabled-source-tooltip": "Activa un servidor de sincronització",
 	"sync.home-page.synchronize.add-sources.title": "Afegeix fonts",
-	"sync.home-page.synchronize.description": "Pujar i sincronitzar contingut de diverses fonts.",
 	"sync.home-page.synchronize.setup-server.description": "Podeu utilitzar el servei Agentic RAG Cloud Sync o l'agent de sincronització independent Agentic RAG per sincronitzar fitxers o enllaços del vostre Knowledge Box.",
 	"sync.home-page.synchronize.setup-server.on-cloud.radio-help": "Autentiqueu-vos als vostres serveis d'emmagatzematge de fitxers de tercers i sincronitzeu-ne el contingut.",
 	"sync.home-page.synchronize.setup-server.on-cloud.radio-label": "Utilitzeu el servei Agentic RAG Cloud Sync",

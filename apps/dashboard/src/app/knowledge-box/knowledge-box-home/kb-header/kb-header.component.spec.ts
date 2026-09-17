@@ -4,7 +4,7 @@ import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { AppService } from '@flaps/common';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -55,9 +55,6 @@ describe('KbHeaderComponent', () => {
         MockProvider(AppService, {
           currentLocale: of('en'),
         }),
-        MockProvider(NavigationService, {
-          getKbUrl: (accountSlug: string, kbSlug: string) => `/at/${accountSlug}/${kbSlug}`,
-        }),
       ],
     }).compileComponents();
 
@@ -81,15 +78,9 @@ describe('KbHeaderComponent', () => {
     expect(trigger).toBeTruthy();
   });
 
-  it('should show the search and upload actions', () => {
-    const searchBtn = fixture.nativeElement.querySelector('pa-button[icon="search"]');
+  it('should show the upload action', () => {
     const uploadBtn = fixture.nativeElement.querySelector('pa-button[icon="upload"]');
-    expect(searchBtn).toBeTruthy();
     expect(uploadBtn).toBeTruthy();
-  });
-
-  it('should derive kbUrl from the current account and KB', () => {
-    expect(component.kbUrl()).toBe('/at/account-slug/kb-slug');
   });
 
   it('should render the shared more actions menu', () => {

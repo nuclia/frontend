@@ -60,6 +60,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
       ),
     ),
   );
+  inSync: Observable<boolean> = this.properKbId.pipe(
+    switchMap((kbUrl) =>
+      merge(
+        of(this.navigationService.inKbSync(this.standalone ? location.hash : location.pathname, kbUrl)),
+        this.router.events.pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map((event) => this.navigationService.inKbSync((event as NavigationEnd).url, kbUrl)),
+          takeUntil(this.unsubscribeAll),
+        ),
+      ),
+    ),
+  );
 
   simpleMode = this.navigationService.simpleMode;
   showSettings = false;

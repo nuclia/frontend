@@ -208,7 +208,6 @@
 	"sync.home-page.synchronize.add-sources.description": "Envíe automáticamente contenido de fuentes locales a su Knowledge Box",
 	"sync.home-page.synchronize.add-sources.disabled-source-tooltip": "Activar un servidor de sincronización",
 	"sync.home-page.synchronize.add-sources.title": "Agregar fuentes",
-	"sync.home-page.synchronize.description": "Sube y sincroniza contenido de varias fuentes.",
 	"sync.home-page.synchronize.setup-server.description": "Puede utilizar el servicio Agentic RAG Cloud Sync o el agente de sincronización independiente Agentic RAG para sincronizar archivos o enlaces en su Knowledge Box.",
 	"sync.home-page.synchronize.setup-server.on-cloud.radio-help": "Autentíquese en sus servicios de almacenamiento de archivos de terceros y sincronice su contenido.",
 	"sync.home-page.synchronize.setup-server.on-cloud.radio-label": "Utilice el servicio Agentic RAG Cloud Sync",

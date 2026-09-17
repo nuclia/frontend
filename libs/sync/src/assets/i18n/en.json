@@ -208,7 +208,6 @@
 	"sync.home-page.synchronize.add-sources.description": "Automatically push content from local sources to your Knowledge Box",
 	"sync.home-page.synchronize.add-sources.disabled-source-tooltip": "Activate a sync server",
 	"sync.home-page.synchronize.add-sources.title": "Add sources",
-	"sync.home-page.synchronize.description": "Upload and synchronize content from various sources.",
 	"sync.home-page.synchronize.setup-server.description": "You can use the Agentic RAG Cloud Sync service or the standalone Agentic RAG Sync Agent to synchronize files or links in your Knowledge Box.",
 	"sync.home-page.synchronize.setup-server.on-cloud.radio-help": "Authenticate to your 3rd-party file storage services and synchronize their content.",
 	"sync.home-page.synchronize.setup-server.on-cloud.radio-label": "Use the Agentic RAG Cloud Sync service",

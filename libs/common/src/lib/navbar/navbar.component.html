@@ -22,7 +22,7 @@
             <div class="group-items">
               <a
                 [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/sync/resources' : null"
-                routerLinkActive="active"
+                [class.active]="inSync | async"
                 class="nav-link"
                 data-cy="go-to-sync"
                 [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">

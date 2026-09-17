@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
@@ -33,7 +41,7 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class ResourceListComponent implements OnDestroy {
+export class ResourceListComponent implements OnDestroy, AfterViewInit {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
   @ViewChild(ResourcesTableComponent) resourcesTable?: ResourcesTableComponent;
 
@@ -47,8 +55,11 @@ export class ResourceListComponent implements OnDestroy {
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   // Hide the built-in refresh/upload toolbar when this list is embedded in the consolidated
   // Data page (`/sync/resources`), which already provides its own refresh/upload actions in its
-  // page header — only show it on the standalone `/resources` route, which has no page header of its own.
-  isNestedInDataPage = this.router.url.includes('/sync/resources');
+  // page header — only show it on the standalone `/resources` route, which has no page header of
+  // its own. Driven by route `data` (set on the `resources` route in sync.routes.ts and inherited
+  // via `paramsInheritanceStrategy: 'always'`) rather than URL string-matching, so it stays correct
+  // regardless of the actual path segment used.
+  isNestedInDataPage = !!this.route.snapshot.data['embedded'];
   query = this.resourceListService.query;
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
@@ -151,6 +162,14 @@ export class ResourceListComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  ngAfterViewInit() {
+    // `resourcesTable` (used by the column-selector/expand-labels toolbar in the template) is only
+    // populated once view children exist. This component is OnPush, so without an explicit
+    // markForCheck() here, that toolbar wouldn't reliably appear until some unrelated async pipe
+    // emission elsewhere in the template happened to trigger a later change-detection pass.
+    this.cdr.markForCheck();
   }
 
   onQueryChange(query: string) {
