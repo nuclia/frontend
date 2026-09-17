@@ -60,6 +60,7 @@ export class FeaturesService {
     contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
     retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
     modelManagement: this.featureFlag.isFeatureEnabled('model-management'),
+    nuaGuardsManagement: this.featureFlag.isFeatureEnabled('nua-guards-management'),
     routing: this.featureFlag.isFeatureEnabled('routing'),
     aragWithMemory: this.featureFlag.isFeatureEnabled('arag-with-memory'),
     sitefinityConnector: this.featureFlag.isFeatureEnabled('sitefinity-connector'),

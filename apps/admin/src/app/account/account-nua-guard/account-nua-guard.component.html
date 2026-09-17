@@ -1,0 +1,72 @@
+<h2 class="page-subtitle">{{ 'account.nua-guard.title' | translate }}</h2>
+<p class="page-description">{{ 'account.nua-guard.description' | translate }}</p>
+
+@if (policies(); as policies) {
+  @if (policies.length > 0) {
+    <div class="container">
+      <h3 class="title-s">{{ 'account.nua-guard.existing-policies' | translate }}</h3>
+      <pa-table
+        border
+        columns="2fr 3.5fr 110px 90px 1fr 140px">
+        <pa-table-header>
+          <pa-table-cell header>{{ 'generic.name' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'account.nua-guard.field.description' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'account.nua-guard.table.enabled' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'account.nua-guard.table.blocking' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'generic.zone' | translate }}</pa-table-cell>
+          <pa-table-cell-menu header>{{ 'generic.actions' | translate }}</pa-table-cell-menu>
+        </pa-table-header>
+        @for (policy of policies; track policy.id) {
+          <pa-table-row>
+            <pa-table-cell class="body-s">
+              <span paEllipsisTooltip>{{ policy.name }}</span>
+            </pa-table-cell>
+            <pa-table-cell class="body-s">
+              <span paEllipsisTooltip>{{ policy.description || '—' }}</span>
+            </pa-table-cell>
+            <pa-table-cell class="body-s">
+              <pa-toggle
+                [value]="policy.enabled"
+                [disabled]="limitReached()"
+                (valueChange)="toggleEnabled(policy, $event)"></pa-toggle>
+            </pa-table-cell>
+            <pa-table-cell class="body-s">
+              {{ (policy.blocking ? 'generic.yes' : 'generic.no') | translate }}
+            </pa-table-cell>
+            <pa-table-cell class="body-s">{{ policy.zone }}</pa-table-cell>
+            <pa-table-cell-menu>
+              <pa-button
+                (click)="editPolicy(policy)"
+                aspect="basic"
+                icon="edit"
+                size="small"
+                paTooltip="generic.edit">
+                {{ 'generic.edit' | translate }}
+              </pa-button>
+              <pa-button
+                (click)="deletePolicy(policy)"
+                aspect="basic"
+                icon="trash"
+                size="small"
+                kind="destructive"
+                paTooltip="generic.delete">
+                {{ 'generic.delete' | translate }}
+              </pa-button>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    </div>
+  }
+
+  @if (limitReached()) {
+    <p class="body-s limit-reached">{{ 'account.nua-guard.limit-reached' | translate }}</p>
+  }
+
+  <pa-button
+    kind="primary"
+    class="create-policy-button"
+    (click)="createPolicy()">
+    {{ 'account.nua-guard.create-policy' | translate }}
+  </pa-button>
+}
