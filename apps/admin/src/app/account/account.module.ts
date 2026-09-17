@@ -52,6 +52,8 @@ import { AccountManageComponent } from './account-manage/account-manage.componen
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
+import { AccountNuaGuardComponent } from './account-nua-guard/account-nua-guard.component';
+import { PolicyDialogComponent } from './account-nua-guard/policy-dialog/policy-dialog.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
 import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
 import { BillingModule } from './billing/billing.module';
@@ -122,6 +124,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'nua', pathMatch: 'full' },
       { path: 'nua', component: AccountNUAComponent },
       { path: 'nua/:id/activity', component: NuaActivityComponent },
+      { path: 'nua-guard', component: AccountNuaGuardComponent },
       { path: 'models', component: AccountModelsComponent },
     ],
   },
@@ -207,6 +210,8 @@ const routes: Routes = [
     AccountNUAComponent,
     AccountConfigurationComponent,
     ClientDialogComponent,
+    AccountNuaGuardComponent,
+    PolicyDialogComponent,
     AccountUsersComponent,
     NuaActivityComponent,
     SimpleAccountHomeComponent,
