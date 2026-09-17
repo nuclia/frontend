@@ -59,12 +59,17 @@
           </pa-radio>
 
           @if (syncAgentOnServer) {
-            <div class="inline-form">
-              @if (inactiveServer | async) {
-                <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
-              } @else {
-                <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
-              }
+            @if (inactiveServer | async) {
+              <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
+            } @else {
+              <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
+            }
+          }
+        </div>
+
+        @if (syncAgentOnServer) {
+          <div class="inline-form">
+            <div class="server-url-row">
               <pa-input
                 class="server-url"
                 formControlName="serverUrl">
@@ -76,8 +81,8 @@
                 {{ 'generic.save' | translate }}
               </pa-button>
             </div>
-          }
-        </div>
+          </div>
+        }
       </pa-radio-group>
     </form>
   </section>
