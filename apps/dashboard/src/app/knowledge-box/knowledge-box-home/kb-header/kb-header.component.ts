@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Counters } from '@nuclia/core';
-import { NavigationService, SDKService, STFPipesModule } from '@flaps/core';
+import { SDKService, STFPipesModule } from '@flaps/core';
 import { AppService, UploadDialogService, UploadType } from '@flaps/common';
-import { combineLatest, map } from 'rxjs';
+import { map } from 'rxjs';
 import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 
 /**
@@ -25,7 +24,6 @@ import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.compo
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
-    RouterModule,
     STFPipesModule,
     TranslateModule,
   ],
@@ -36,7 +34,6 @@ import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.compo
 export class KbHeaderComponent {
   private sdk = inject(SDKService);
   private appService = inject(AppService);
-  private navigationService = inject(NavigationService);
   private uploadService = inject(UploadDialogService);
 
   private currentKb = this.sdk.currentKb;
@@ -49,15 +46,6 @@ export class KbHeaderComponent {
     initialValue: null as Counters | null,
   });
   locale = toSignal(this.appService.currentLocale, { initialValue: 'en' });
-  kbUrl = toSignal(
-    combineLatest([this.sdk.currentAccount, this.currentKb]).pipe(
-      map(([account, kb]) => {
-        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-        return this.navigationService.getKbUrl(account.slug, kbSlug);
-      }),
-    ),
-    { initialValue: '' },
-  );
 
   upload(type: UploadType) {
     this.uploadService.upload(type);
