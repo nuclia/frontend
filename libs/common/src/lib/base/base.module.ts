@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { NavbarModule } from '../navbar';
 import { TopbarModule } from '../topbar';
-import { UploadBarComponent } from '../upload';
+import { ResourceHandlingBannerComponent, UploadBarComponent } from '../upload';
 import { BaseComponent } from './base.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
 
@@ -25,6 +25,7 @@ import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.co
     UploadBarComponent,
     BaseComponent,
     DashboardLayoutComponent,
+    ResourceHandlingBannerComponent,
   ],
 })
 export class BaseModule {}
