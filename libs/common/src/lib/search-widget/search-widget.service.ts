@@ -418,6 +418,14 @@ export class SearchWidgetService {
       );
   }
 
+  /**
+   * Deletes a widget deployment without its own confirmation dialog — used when the deletion has
+   * already been confirmed at a higher level (e.g. deleting the search configuration it's linked to).
+   */
+  deleteWidgetSilently(slug: string) {
+    return this._deleteWidget(slug);
+  }
+
   private _deleteWidget(slug: string) {
     return this.widgetList.pipe(
       take(1),

@@ -23,6 +23,13 @@
           {{ 'search.configuration.action.create-widget' | translate }}
         </nsi-button-mini>
       }
+      @if (!(inArag | async) && (canModifyConfig | async)) {
+        <nsi-button-mini
+          icon="list"
+          (click)="manageWidgets()">
+          {{ 'search.configuration.action.manage-widgets' | translate }}
+        </nsi-button-mini>
+      }
       <nsi-button-mini
         icon="code"
         [disabled]="!lastQuery"
@@ -191,6 +198,21 @@
       </div>
 
       <pa-accordion (toggleAccordion)="scrollOnTop()">
+        @if (!(inArag | async)) {
+          <pa-accordion-item
+            #widgetOptions
+            id="widget-options"
+            [itemTitle]="'search.widgets.form.widget-options.section-title' | translate"
+            [description]="'search.widgets.form.widget-options.section-description' | translate"
+            (expandedChange)="updateWidgetOptionsHeight()">
+            <pa-accordion-item-body>
+              <stf-widget-options-form
+                [config]="widgetOptionsConfig()"
+                (configChanged)="updateWidgetOptionsConfig($event)"
+                (heightChanged)="updateWidgetOptionsHeight()"></stf-widget-options-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
         @if (searchMode() === 'agentic') {
           <pa-accordion-item
             #agenticConfig

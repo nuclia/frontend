@@ -1,0 +1,84 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'search.widgets.manage-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-description>{{ 'search.widgets.manage-modal.description' | translate }}</pa-modal-description>
+
+  <pa-modal-content>
+    @if (emptyList | async) {
+      <nsi-info-card>{{ 'search.widgets.page-empty-message' | translate }}</nsi-info-card>
+    } @else {
+      <pa-table
+        border
+        columns="2fr 1fr 1fr 72px">
+        <pa-table-header>
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'search.widgets.table-columns.name' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'search.widgets.table-columns.model' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'search.widgets.table-columns.date' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'search.widgets.table-columns.actions' | translate }}</span>
+          </pa-table-cell>
+        </pa-table-header>
+
+        @for (widget of widgetList | async; track widget.slug) {
+          <pa-table-row>
+            <pa-table-cell>
+              <button
+                type="button"
+                class="table-link"
+                (click)="selectWidget(widget)">
+                {{ widget.name }}
+              </button>
+            </pa-table-cell>
+            <pa-table-cell>
+              @if (widget.generativeModel) {
+                <span class="body-s">
+                  {{ (modelNames | async)?.[widget.generativeModel] || widget.generativeModel }}
+                </span>
+              }
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s"><pa-datetime [datetime]="widget.creationDate"></pa-datetime></span>
+            </pa-table-cell>
+            <pa-table-cell-menu center>
+              <div>
+                <pa-button
+                  icon="more-vertical"
+                  aspect="basic"
+                  size="small"
+                  [paPopup]="itemMenu">
+                  {{ 'search.widgets.action.list-item-menu' | translate }}
+                </pa-button>
+
+                <pa-dropdown #itemMenu>
+                  <pa-option (selectOption)="rename(widget.slug, widget.name)">
+                    {{ 'search.widgets.action.rename' | translate }}
+                  </pa-option>
+                  <pa-option (selectOption)="duplicateAsNew(widget)">
+                    {{ 'search.widgets.action.duplicate' | translate }}
+                  </pa-option>
+                  <pa-option
+                    destructive
+                    (selectOption)="delete(widget.slug, widget.name)">
+                    {{ 'search.widgets.action.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
+              </div>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    }
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

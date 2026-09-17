@@ -1,0 +1,24 @@
+@use 'apps/dashboard/src/variables' as *;
+
+pa-modal-content {
+  min-width: 640px;
+}
+
+.table-link {
+  @include body-s();
+  background: none;
+  border: none;
+  color: $color-dark-stronger;
+  cursor: pointer;
+  font-weight: $font-weight-semi-bold;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+}
+
+pa-table {
+  .title-xxs,
+  pa-button ::ng-deep svg {
+    color: $color-neutral-regular;
+  }
+}

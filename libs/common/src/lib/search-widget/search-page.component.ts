@@ -47,6 +47,7 @@ export class SearchPageComponent implements OnDestroy {
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   searchConfig?: Widget.AnySearchConfiguration;
+  widgetOptions?: Widget.WidgetConfiguration;
 
   configPanelCollapsed = false;
 
@@ -88,10 +89,22 @@ export class SearchPageComponent implements OnDestroy {
     this.searchConfig = config;
     this.searchWidgetService.generateWidgetSnippet(
       this.searchConfig,
-      undefined,
+      this.widgetOptions,
       undefined,
       '.search-preview-container',
     );
+  }
+
+  updateWidgetOptions(widgetOptions: Widget.WidgetConfiguration) {
+    this.widgetOptions = widgetOptions;
+    if (this.searchConfig) {
+      this.searchWidgetService.generateWidgetSnippet(
+        this.searchConfig,
+        this.widgetOptions,
+        undefined,
+        '.search-preview-container',
+      );
+    }
   }
 
   startResizePanel(event: MouseEvent) {

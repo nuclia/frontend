@@ -49,6 +49,7 @@
       mainTitle="search.configuration.saved-config-title"
       [configurationContainer]="configurationContainerElement()"
       (configUpdate)="updateConfig($event)"
+      (widgetConfigUpdate)="updateWidgetOptions($event)"
       (createWidget)="createWidget()"></stf-search-configuration>
   </div>
 </div>

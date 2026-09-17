@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   EventEmitter,
   HostBinding,
@@ -19,7 +20,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -60,7 +61,13 @@ import {
 import { catchError, filter, forkJoin, map, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
-import { getAgenticChatOptions, getChatOptions, getFindOptions, isSameConfigurations } from '../search-widget.models';
+import {
+  DEFAULT_WIDGET_CONFIG,
+  getAgenticChatOptions,
+  getChatOptions,
+  getFindOptions,
+  isSameConfigurations,
+} from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
 import { AgenticConfigurationComponent } from './agentic-configuration';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
@@ -69,6 +76,8 @@ import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
+import { WidgetOptionsFormComponent } from './widget-options-form';
+import { ManageWidgetsModalComponent } from './manage-widgets-modal';
 
 const NUCLIA_SEMANTIC_MODELS = new Set(['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']);
 
@@ -107,6 +116,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     IsTypedConfigPipe,
     ExpandableTextareaComponent,
     AgenticConfigurationComponent,
+    WidgetOptionsFormComponent,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
@@ -120,6 +130,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   private searchWidgetService = inject(SearchWidgetService);
   private toaster = inject(SisToastService);
   private features = inject(FeaturesService);
+  private navigationService = inject(NavigationService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -130,8 +141,10 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   @Input() bottomSectionStyle = '';
 
   @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
+  @Output() widgetConfigUpdate = new EventEmitter<Widget.WidgetConfiguration>();
   @Output() createWidget = new EventEmitter<void>();
 
+  @ViewChild('widgetOptions', { read: AccordionItemComponent }) widgetOptionsItem?: AccordionItemComponent;
   @ViewChild('agenticConfig', { read: AccordionItemComponent }) agenticConfigItem?: AccordionItemComponent;
   @ViewChild(AgenticConfigurationComponent) agenticConfigComponent?: AgenticConfigurationComponent;
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
@@ -146,6 +159,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   isRagLabAuthorized = this.features.authorized.promptLab;
   isRoutingEnabled = this.features.unstable.routing;
   isAgenticSearchEnabled = this.features.unstable.agenticSearch;
+  inArag = this.navigationService.inArag();
   configurations: OptionType[] = [];
 
   selectedConfig = new FormControl<string>('');
@@ -181,6 +195,31 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   agenticSourcesValid = signal(true);
   agenticSourcesRequiredWarning = signal(false);
   pendingAgenticSource = signal<{ title: string; description: string } | undefined>(undefined);
+
+  /**
+   * The widget deployment (appearance settings + embed slug) already linked to the currently selected
+   * search configuration, if this configuration has ever been deployed as a widget. `undefined` means
+   * the selected configuration has not been deployed yet. A configuration is treated as 1:1 with its
+   * widget deployment from the UI's perspective, even though the underlying storage still allows a
+   * widget to reference any search config by id.
+   */
+  linkedWidget = signal<Widget.Widget | undefined>(undefined);
+
+  /**
+   * Appearance/deployment options shown in the "Widget options" accordion section. Seeded from the
+   * linked widget's saved appearance when one exists, otherwise defaults — so the section is always
+   * usable, even before the current configuration has ever been deployed as a widget.
+   */
+  widgetOptionsConfig = computed<Widget.WidgetConfiguration>(
+    () => this.linkedWidget()?.widgetConfig ?? DEFAULT_WIDGET_CONFIG,
+  );
+
+  /**
+   * Live, possibly-unsaved value of the "Widget options" form, kept in sync via `updateWidgetOptionsConfig`.
+   * Used on save/overwrite to decide whether to also persist widget deployment data alongside the search
+   * configuration (see `_persistWidgetDeployment`).
+   */
+  private currentWidgetOptions = signal<Widget.WidgetConfiguration>(DEFAULT_WIDGET_CONFIG);
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
@@ -289,10 +328,24 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
             .filter((c) => c.type === 'config' && (c as Widget.TypedSearchConfiguration).searchMode === 'agentic')
             .map((c) => c.id),
         );
+        this.refreshLinkedWidget(savedConfig.id);
         // config selection must be done in next check detection cycle for selection options to be there
         setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
       }),
     );
+  }
+
+  /**
+   * Looks up whether the given search configuration id already has a widget deployment (appearance
+   * settings + embed slug) attached, and updates `linkedWidget` accordingly. Called whenever the
+   * selected configuration changes, so the header actions (Get embed code, Widget options) can react
+   * to whether the current configuration has been deployed yet.
+   */
+  private refreshLinkedWidget(configId: string) {
+    this.searchWidgetService.widgetList.pipe(take(1), takeUntil(this.unsubscribeAll)).subscribe((widgets) => {
+      this.linkedWidget.set(widgets.find((widget) => widget.searchConfigId === configId));
+      this.cdr.markForCheck();
+    });
   }
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
@@ -361,6 +414,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         this.currentConfig = { ...this.savedConfig };
         this.isConfigModified = false;
         this._syncModeSignals(this.savedConfig);
+        this.refreshLinkedWidget(this.savedConfig.id);
         if (this.savedConfig.type === 'api') {
           this.isConfigUnsupported = true;
           this.originalJsonConfig = JSON.stringify(this.savedConfig.value.config, null, 2);
@@ -478,6 +532,27 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Opens the compact "Manage widgets" table (rename/duplicate/delete any deployed widget). Selecting
+   * a row loads that widget's search configuration into the panel, same as picking it from the
+   * "Saved configuration" selector above.
+   */
+  manageWidgets() {
+    this.modalService
+      .openModal(ManageWidgetsModalComponent)
+      .onClose.subscribe((configId?: string) => {
+        if (configId) {
+          this.selectedConfig.patchValue(configId);
+          this.selectConfig(configId);
+        } else if (this.savedConfig) {
+          // Nothing was selected to load, but the widget linked to the currently active configuration
+          // may have been renamed/duplicated/deleted from inside the modal — refresh it so the header
+          // actions (e.g. Get embed code) reflect the latest state.
+          this.refreshLinkedWidget(this.savedConfig.id);
+        }
+      });
+  }
+
   resetConfig() {
     if (this.savedConfig) {
       if (this.savedConfig.type === 'config') {
@@ -506,7 +581,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         .openModal(SaveConfigModalComponent)
         .onClose.pipe(
           filter((confirm) => !!confirm),
-          switchMap((configName) => this._saveConfig(configName)),
+          switchMap((configName) => this._saveConfig(configName, true)),
           filter((success) => !!success),
           switchMap(() => this.setConfigurations()),
         )
@@ -516,13 +591,14 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   overwriteConfig() {
     if (this.isConfigModified && this.currentConfig) {
-      this._saveConfig(this.currentConfig.id).subscribe();
+      this._saveConfig(this.currentConfig.id, false).subscribe();
     }
   }
 
   deleteConfig() {
     if (this.savedConfig && !this.savedConfig.id.startsWith('nuclia-')) {
       const config = this.savedConfig;
+      const linkedWidget = this.linkedWidget();
       this.modalService
         .openConfirm({
           title: this.translate.instant('search.configuration.delete-config-confirm.title', { configName: config.id }),
@@ -533,13 +609,18 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         .onClose.pipe(
           filter((confirm) => !!confirm),
           switchMap(() => this.searchWidgetService.deleteSearchConfig(config.id)),
+          // A deployed widget references this configuration by id — delete it too so it doesn't get
+          // orphaned (pointing to a search configuration that no longer exists).
+          switchMap(() =>
+            linkedWidget ? this.searchWidgetService.deleteWidgetSilently(linkedWidget.slug) : of(undefined),
+          ),
           switchMap(() => this.setConfigurations()),
         )
         .subscribe();
     }
   }
 
-  private _saveConfig(configName: string) {
+  private _saveConfig(configName: string, isNewConfig: boolean) {
     if (this.isConfigUnsupported && this.currentConfig?.type === 'api') {
       try {
         this.currentConfig.value = {
@@ -557,6 +638,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       switchMap((kb) =>
         this.currentConfig
           ? this.searchWidgetService.saveSearchConfig(kb.id, configName, this.currentConfig).pipe(
+              switchMap(() => this._persistWidgetDeployment(configName, isNewConfig)),
               map(() => {
                 if (this.isConfigUnsupported) {
                   this.updateWidget();
@@ -576,6 +658,32 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         return success;
       }),
     );
+  }
+
+  /**
+   * Persists the current "Widget options" form value alongside the search configuration being saved,
+   * when relevant:
+   * - Overwrite (same config id, already deployed): update the existing widget's appearance in place.
+   * - Save as new (new config id) where the configuration being duplicated was deployed: carry the
+   *   deployment forward onto the new configuration too, so "save as new" behaves like duplicating the
+   *   whole item (search config + widget appearance), not just the search settings.
+   * - No linked widget: this configuration has never been deployed — nothing to persist here. Deploying
+   *   for the first time happens via the "Get embed code" action instead.
+   */
+  private _persistWidgetDeployment(configName: string, isNewConfig: boolean): Observable<unknown> {
+    const linkedWidget = this.linkedWidget();
+    const widgetOptions = this.currentWidgetOptions();
+    if (!linkedWidget) {
+      return of(undefined);
+    }
+    if (isNewConfig) {
+      return this.searchWidgetService
+        .createWidget(configName, widgetOptions, configName)
+        .pipe(tap(() => this.refreshLinkedWidget(configName)));
+    }
+    return this.searchWidgetService
+      .updateWidget(linkedWidget.slug, widgetOptions, configName)
+      .pipe(tap(() => this.refreshLinkedWidget(configName)));
   }
 
   /**
@@ -650,6 +758,11 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
+  updateWidgetOptionsConfig(config: Widget.WidgetConfiguration) {
+    this.currentWidgetOptions.set(config);
+    this.widgetConfigUpdate.emit(config);
+  }
+
   updateRoutingConfig(config: Widget.RoutingConfig) {
     if (!this.savedConfig || this.currentConfig?.type !== 'config') {
       return;
@@ -670,6 +783,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   updateAgenticConfigHeight() {
     this.agenticConfigItem?.updateContentHeight();
   }
+  updateWidgetOptionsHeight() {
+    this.widgetOptionsItem?.updateContentHeight();
+  }
   updateSearchBoxHeight() {
     this.searchBoxItem?.updateContentHeight();
   }
@@ -684,6 +800,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   updateHeight() {
+    this.updateWidgetOptionsHeight();
     this.updateAgenticConfigHeight();
     this.updateSearchBoxHeight();
     this.updateGenerativeAnswerHeight();
