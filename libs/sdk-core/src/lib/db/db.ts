@@ -42,6 +42,8 @@ import {
   NUAClientEditPayload,
   NUAClientPayload,
   NUAClientResponse,
+  NuaGuardPolicy,
+  NuaGuardPolicyPayload,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -682,6 +684,129 @@ export class Db implements IDb {
   deleteNUAClient(accountId: string, internalId: string, zone: string): Observable<void>;
   deleteNUAClient(accountId?: string, internalId?: string, zone?: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${internalId}`, undefined, undefined, zone);
+  }
+
+  /**
+   * Get NUA guardrail policies for the given account.
+   * @param accountId
+   * @returns
+   */
+  getNuaGuardPolicies(accountId: string): Observable<NuaGuardPolicy[]> {
+    return this.nuclia.rest.getAccountZones(accountId).pipe(
+      switchMap((zones) =>
+        forkJoin(Object.values(zones).map((zoneSlug) => this.getNuaGuardPoliciesForZone(accountId, zoneSlug))),
+      ),
+      map((response) =>
+        response.reduce((allGuards, guards) => {
+          return allGuards.concat(guards);
+        }, [] as NuaGuardPolicy[]),
+      ),
+    );
+  }
+
+  /**
+   * Get NUA guardrail policies for the given account and zone.
+   * @param accountId
+   * @param zone
+   * @returns
+   */
+  getNuaGuardPoliciesForZone(accountId: string, zone: string): Observable<NuaGuardPolicy[]> {
+    return this.ensureZoneOriginReady(accountId, zone).pipe(
+      take(1),
+      switchMap(() =>
+        this.nuclia.rest.get<NuaGuardPolicy[]>(`/account/${accountId}/guardrail_policies`, undefined, undefined, zone),
+      ),
+      timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      catchError(() => of([] as NuaGuardPolicy[])),
+    );
+  }
+
+  /**
+   * Get the NUA guardrail policy matching the given guardrail ID on the given account and zone.
+   * @param guardId
+   * @param accountId
+   * @param zone
+   * @returns
+   */
+  getNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<NuaGuardPolicy | undefined> {
+    return this.ensureZoneOriginReady(accountId, zone).pipe(
+      take(1),
+      switchMap(() =>
+        this.nuclia.rest.get<NuaGuardPolicy>(
+          `/account/${accountId}/guardrail_policies/${guardId}`,
+          undefined,
+          undefined,
+          zone,
+        ),
+      ),
+      timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      catchError(() => of(undefined)),
+    );
+  }
+
+  /**
+   * Create a NUA guardrail policy on the given account and zone.
+   * @param accountId
+   * @param zone
+   * @param data
+   * @returns
+   */
+  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<void> {
+    if (!accountId || !data) {
+      const error = 'Account and data are required to create a NUA guardrail policy';
+      console.error(error);
+      return throwError(() => error);
+    }
+
+    return this.nuclia.rest.post(
+      `/account/${accountId}/guardrail_policies`,
+      data,
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
+   * Edit the NUA guardrail matching the given identifier and the given account and zone.
+   * @param guardId
+   * @param accountId
+   * @param zone
+   * @param data
+   * @returns
+   */
+  editNuaGuardPolicy(
+    guardId: string,
+    accountId: string,
+    zone: string,
+    data: Partial<NuaGuardPolicyPayload>,
+  ): Observable<void> {
+    if (!guardId || !accountId || !data) {
+      const error = 'Account, guardrail identifier and data are required to edit a NUA guardrail policy';
+      console.error(error);
+      return throwError(() => error);
+    }
+
+    return this.nuclia.rest.patch(
+      `/account/${accountId}/guardrail_policies/${guardId}`,
+      data,
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
+   * Delete a NUA guardrail policy from the given account and zone.
+   * @param guardId
+   * @param accountId
+   * @param zone
+   * @returns
+   */
+  deleteNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/guardrail_policies/${guardId}`, undefined, undefined, zone);
   }
 
   /**

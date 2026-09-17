@@ -25,6 +25,8 @@ import {
   NUAClientEditPayload,
   NUAClientPayload,
   NUAClientResponse,
+  NuaGuardPolicy,
+  NuaGuardPolicyPayload,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -255,6 +257,18 @@ export interface IDb {
     zone: string,
   ): Observable<void>;
   deleteModelConfiguration(modelId: string, accountId: string, zone: string): Observable<void>;
+
+  getNuaGuardPolicies(accountId: string): Observable<NuaGuardPolicy[]>;
+  getNuaGuardPoliciesForZone(accountId: string, zone: string): Observable<NuaGuardPolicy[]>;
+  getNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<NuaGuardPolicy | undefined>;
+  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<void>;
+  editNuaGuardPolicy(
+    guardId: string,
+    accountId: string,
+    zone: string,
+    data: Partial<NuaGuardPolicyPayload>,
+  ): Observable<void>;
+  deleteNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<void>;
 }
 
 export interface NucliaOptions {
