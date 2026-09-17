@@ -57,7 +57,7 @@
         <pa-dropdown #moreMenu>
           @if (!(inArag | async) && (canModifyConfig | async)) {
             <pa-option (selectOption)="manageWidgets()">
-              {{ 'search.configuration.action.manage-widgets' | translate }}
+              {{ 'search.configuration.action.manage-embeds' | translate }}
             </pa-option>
           }
           <pa-option
@@ -183,8 +183,8 @@
           <pa-accordion-item
             #widgetOptions
             id="widget-options"
-            [itemTitle]="'search.widgets.form.widget-options.section-title' | translate"
-            [description]="'search.widgets.form.widget-options.section-description' | translate"
+            [itemTitle]="'search.configuration.embed-appearance.section-title' | translate"
+            [description]="'search.configuration.embed-appearance.section-description' | translate"
             (expandedChange)="updateWidgetOptionsHeight()">
             <pa-accordion-item-body>
               <stf-widget-options-form

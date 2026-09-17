@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -28,13 +37,13 @@ export class WidgetOptionsFormComponent implements OnInit, OnDestroy {
 
   @Input() set config(value: Widget.WidgetConfiguration | undefined) {
     if (value) {
-      this.form.patchValue(value);
-      this.onWidgetModeChange(value.widgetMode);
-      this.onNavigationChange(value);
+      this.form.patchValue(value, { emitEvent: false });
+      this.onWidgetModeChange(value.widgetMode, false);
+      this.onNavigationChange(value, false);
       if (value.speech) {
-        this.enableSpeechSynthesis();
+        this.enableSpeechSynthesis(false);
       } else {
-        this.disableSpeechSynthesis();
+        this.disableSpeechSynthesis(false);
       }
     }
   }
@@ -138,35 +147,35 @@ export class WidgetOptionsFormComponent implements OnInit, OnDestroy {
     this.heightChanged.emit();
   }
 
-  onWidgetModeChange(value: string) {
+  onWidgetModeChange(value: string, emitEvent = true) {
     if (value === 'popup') {
-      this.form.controls.darkMode.setValue('light');
+      this.form.controls.darkMode.setValue('light', { emitEvent });
     }
     if (value !== 'chat' && value !== 'floating-chat') {
-      this.form.controls.persistChatHistory.setValue(false);
-      this.form.controls.persistChatHistory.disable();
+      this.form.controls.persistChatHistory.setValue(false, { emitEvent });
+      this.form.controls.persistChatHistory.disable({ emitEvent });
     } else {
-      this.form.controls.persistChatHistory.enable();
+      this.form.controls.persistChatHistory.enable({ emitEvent });
     }
     setTimeout(() => this.updateWidgetOptionsHeight());
   }
 
-  onNavigationChange(value: Partial<Widget.WidgetConfiguration>) {
+  onNavigationChange(value: Partial<Widget.WidgetConfiguration>, emitEvent = true) {
     const config = { ...this.form.getRawValue(), ...value };
     if (!config.navigateToLink && !config.navigateToFile && !config.navigateToOriginURL && !config.permalink) {
-      this.openNewTabControl.setValue(false);
-      this.openNewTabControl.disable();
+      this.openNewTabControl.setValue(false, { emitEvent });
+      this.openNewTabControl.disable({ emitEvent });
     } else {
-      this.openNewTabControl.enable();
+      this.openNewTabControl.enable({ emitEvent });
     }
   }
 
-  enableSpeechSynthesis() {
-    this.form.controls.speechSynthesis.enable();
+  enableSpeechSynthesis(emitEvent = true) {
+    this.form.controls.speechSynthesis.enable({ emitEvent });
   }
 
-  disableSpeechSynthesis() {
-    this.form.controls.speechSynthesis.setValue(false);
-    this.form.controls.speechSynthesis.disable();
+  disableSpeechSynthesis(emitEvent = true) {
+    this.form.controls.speechSynthesis.setValue(false, { emitEvent });
+    this.form.controls.speechSynthesis.disable({ emitEvent });
   }
 }

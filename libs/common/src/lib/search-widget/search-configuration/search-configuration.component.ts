@@ -318,7 +318,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       this.onlySupportedConfigs
         ? this.searchWidgetService.supportedSearchConfigurations.pipe(take(1))
         : this.searchWidgetService.searchConfigurations.pipe(take(1)),
-      this.initialWidgetSlug ? this.searchWidgetService.widgetList.pipe(take(1)) : of([]),
+      this.searchWidgetService.widgetList.pipe(take(1)),
     ]).pipe(
       tap(([kb, savedConfigs, widgets]) => {
         const standardConfigOption = new OptionModel({
@@ -369,7 +369,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
             .filter((c) => c.type === 'config' && (c as Widget.TypedSearchConfiguration).searchMode === 'agentic')
             .map((c) => c.id),
         );
-        this.refreshLinkedWidget(savedConfig.id);
+        this.applyLinkedWidget(widgets.find((widget) => widget.searchConfigId === savedConfig.id));
         // config selection must be done in next check detection cycle for selection options to be there
         setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
       }),
@@ -384,9 +384,18 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
    */
   private refreshLinkedWidget(configId: string) {
     this.searchWidgetService.widgetList.pipe(take(1), takeUntil(this.unsubscribeAll)).subscribe((widgets) => {
-      this.linkedWidget.set(widgets.find((widget) => widget.searchConfigId === configId));
+      this.applyLinkedWidget(widgets.find((widget) => widget.searchConfigId === configId));
       this.cdr.markForCheck();
     });
+  }
+
+  private applyLinkedWidget(widget: Widget.Widget | undefined) {
+    this.linkedWidget.set(widget);
+    const widgetOptions = widget?.widgetConfig ?? DEFAULT_WIDGET_CONFIG;
+    this.currentWidgetOptions.set(widgetOptions);
+    if (this.widgetOptionsFormComponent) {
+      this.widgetOptionsFormComponent.config = widgetOptions;
+    }
   }
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
@@ -439,32 +448,32 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   selectConfig(configId: string) {
-    forkJoin([this.searchWidgetService.searchConfigurations.pipe(take(1)), this.sdk.currentKb.pipe(take(1))])
+    forkJoin([
+      this.searchWidgetService.searchConfigurations.pipe(take(1)),
+      this.searchWidgetService.widgetList.pipe(take(1)),
+      this.sdk.currentKb.pipe(take(1)),
+    ])
       .pipe(
-        switchMap(([configs, kb]) => {
+        switchMap(([configs, widgets, kb]) => {
           // saveSelectedSearchConfig must run before getSelectedSearchConfig: the latter reads the "selected id"
           // back from localStorage rather than taking configId directly, so switching configs silently no-ops
           // if the save happens after the read (as it did when this was moved into the subscribe callback).
           this.searchWidgetService.saveSelectedSearchConfig(kb.id, configId);
           const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
-          return this._hydrateAgenticConfig(kb, savedConfig).pipe(map((hydrated) => ({ kb, savedConfig: hydrated })));
+          return this._hydrateAgenticConfig(kb, savedConfig).pipe(
+            map((hydrated) => ({
+              savedConfig: hydrated,
+              linkedWidget: widgets.find((widget) => widget.searchConfigId === hydrated.id),
+            })),
+          );
         }),
       )
-      .subscribe(({ savedConfig }) => {
+      .subscribe(({ savedConfig, linkedWidget }) => {
         this.savedConfig = savedConfig;
         this.currentConfig = { ...this.savedConfig };
+        this.applyLinkedWidget(linkedWidget);
         this.isConfigModified = false;
         this._syncModeSignals(this.savedConfig);
-        this.refreshLinkedWidget(this.savedConfig.id);
-        // Also resync the "Widget options" form/state to the newly-selected config's own appearance
-        // settings — otherwise `currentWidgetOptions` keeps holding whatever was last edited/left over
-        // from the previous config, which then never matches the new config's `widgetOptionsConfig()`
-        // and leaves the modified-state banner stuck on even after everything else correctly matches.
-        const newWidgetOptions = this.widgetOptionsConfig();
-        this.currentWidgetOptions.set(newWidgetOptions);
-        if (this.widgetOptionsFormComponent) {
-          this.widgetOptionsFormComponent.config = newWidgetOptions;
-        }
         if (this.savedConfig.type === 'api') {
           this.isConfigUnsupported = true;
           this.originalJsonConfig = JSON.stringify(this.savedConfig.value.config, null, 2);

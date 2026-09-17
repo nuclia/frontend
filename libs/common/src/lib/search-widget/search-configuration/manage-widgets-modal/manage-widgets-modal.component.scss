@@ -1,7 +1,19 @@
 @use 'apps/dashboard/src/variables' as *;
 
+pa-modal-title {
+  white-space: nowrap;
+}
+
+:host ::ng-deep pa-modal-dialog .pa-modal.pa-modal-dialog {
+  width: min(800px, calc(100vw - rhythm(6)));
+}
+
 pa-modal-content {
-  min-width: 640px;
+  width: 100%;
+}
+
+.no-wrap {
+  white-space: nowrap;
 }
 
 .table-link {

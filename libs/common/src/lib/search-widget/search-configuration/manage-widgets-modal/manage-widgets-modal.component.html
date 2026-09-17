@@ -1,26 +1,28 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{ 'search.widgets.manage-modal.title' | translate }}</pa-modal-title>
-  <pa-modal-description>{{ 'search.widgets.manage-modal.description' | translate }}</pa-modal-description>
+  <pa-modal-title>{{ 'search.configuration.manage-embeds-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-description>{{ 'search.configuration.manage-embeds-modal.description' | translate }}</pa-modal-description>
 
   <pa-modal-content>
     @if (emptyList | async) {
-      <nsi-info-card>{{ 'search.widgets.page-empty-message' | translate }}</nsi-info-card>
+      <nsi-info-card>{{ 'search.configuration.manage-embeds-modal.empty' | translate }}</nsi-info-card>
     } @else {
       <pa-table
         border
-        columns="2fr 1fr 1fr 72px">
+        columns="minmax(140px, 3fr) minmax(145px, 1.25fr) minmax(110px, 1.5fr) 64px">
         <pa-table-header>
           <pa-table-cell header>
-            <span class="title-xxs">{{ 'search.widgets.table-columns.name' | translate }}</span>
+            <span class="title-xxs no-wrap">
+              {{ 'search.configuration.manage-embeds-modal.name-column' | translate }}
+            </span>
           </pa-table-cell>
           <pa-table-cell header>
-            <span class="title-xxs">{{ 'search.widgets.table-columns.model' | translate }}</span>
+            <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.model' | translate }}</span>
           </pa-table-cell>
           <pa-table-cell header>
-            <span class="title-xxs">{{ 'search.widgets.table-columns.date' | translate }}</span>
+            <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.date' | translate }}</span>
           </pa-table-cell>
           <pa-table-cell header>
-            <span class="title-xxs">{{ 'search.widgets.table-columns.actions' | translate }}</span>
+            <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.actions' | translate }}</span>
           </pa-table-cell>
         </pa-table-header>
 
@@ -42,7 +44,7 @@
               }
             </pa-table-cell>
             <pa-table-cell>
-              <span class="body-s"><pa-datetime [datetime]="widget.creationDate"></pa-datetime></span>
+              <span class="body-s no-wrap"><pa-datetime [datetime]="widget.creationDate"></pa-datetime></span>
             </pa-table-cell>
             <pa-table-cell-menu center>
               <div>
