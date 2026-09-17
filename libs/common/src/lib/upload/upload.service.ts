@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, NotificationService, SDKService } from '@flaps/core';
+import { LabelsService, md5, NotificationService, SDKService, UploadEventService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -91,6 +91,7 @@ export class UploadService {
     private modal: SisModalService,
     private translate: TranslateService,
     private notificationsService: NotificationService,
+    private uploadEventService: UploadEventService,
   ) {
     this.notificationsService.hasNewResourceOperationNotifications
       .pipe(
@@ -512,6 +513,10 @@ export class UploadService {
     }
     if (conflicts) {
       this.toaster.error('upload.toast.conflicts');
+    }
+    if (success) {
+      this.uploadEventService.showOnboardingBanner();
+      this.uploadEventService.notifyProcessingStarted();
     }
     timer(1000)
       .pipe(switchMap(() => this.updateAfterUploads()))

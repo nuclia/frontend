@@ -16,11 +16,13 @@ section {
     display: flex;
     flex-direction: column;
     gap: rhythm(0.5);
+    max-width: calc(rhythm(80) + rhythm(8));
   }
 
   .source-groups {
     border: 1px solid $color-neutral-lighter;
     border-radius: rhythm(1);
+    max-width: calc(rhythm(80) + rhythm(8));
     padding: rhythm(3);
   }
 

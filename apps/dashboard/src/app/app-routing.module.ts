@@ -105,10 +105,6 @@ const routes: Routes = [
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.SimplePageModule),
               },
               {
-                path: 'upload',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.UploadModule),
-              },
-              {
                 path: 'resources',
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.ResourcesModule),
               },

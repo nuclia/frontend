@@ -9,7 +9,7 @@ import { PaSideNavModule } from '@guillotinaweb/pastanaga-angular';
 import { NotificationsPanelComponent } from '@flaps/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
-import { UploadBarComponent } from '../upload';
+import { UploadBarComponent, ResourceHandlingBannerComponent } from '../upload';
 
 @NgModule({
   declarations: [BaseComponent, DashboardLayoutComponent],
@@ -24,6 +24,7 @@ import { UploadBarComponent } from '../upload';
     InfoCardComponent,
     TranslateModule,
     UploadBarComponent,
+    ResourceHandlingBannerComponent,
   ],
 })
 export class BaseModule {}

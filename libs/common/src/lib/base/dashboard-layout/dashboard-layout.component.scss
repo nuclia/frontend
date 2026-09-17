@@ -50,6 +50,12 @@ $height-status-bar: rhythm(9);
         max-width: $size-viewport-xlarge-min;
         margin-left: auto;
         margin-right: auto;
+
+        .onboarding-banner {
+          display: block;
+          margin: rhythm(3) 0;
+          padding: 0 var(--app-layout-padding-right) 0 var(--app-layout-padding-left);
+        }
       }
     }
   }
