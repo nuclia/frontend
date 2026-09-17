@@ -7,10 +7,9 @@ import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FeaturesService } from '@flaps/core';
 import { BadgeComponent } from '@nuclia/sistema';
-import { UploadButtonComponent } from '@flaps/common';
 
 @Component({
-  imports: [CommonModule, BadgeComponent, PaTabsModule, RouterModule, TranslateModule, UploadButtonComponent],
+  imports: [CommonModule, BadgeComponent, PaTabsModule, RouterModule, TranslateModule],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
