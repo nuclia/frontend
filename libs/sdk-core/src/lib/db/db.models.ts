@@ -513,4 +513,5 @@ export interface NuaGuardPolicy {
   blocking: boolean;
 }
 
-export type NuaGuardPolicyPayload = Omit<NuaGuardPolicy, 'id'>;
+export type NuaGuardPolicyPayload = Omit<NuaGuardPolicy, 'id' | 'zone'>;
+export type NuaGuardPolicyResponse = Omit<NuaGuardPolicy, 'zone'>;

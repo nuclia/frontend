@@ -27,7 +27,7 @@
             <pa-table-cell class="body-s">
               <pa-toggle
                 [value]="policy.enabled"
-                [disabled]="limitReached()"
+                [disabled]="limitReached() || isSaving()[policy.id]"
                 (valueChange)="toggleEnabled(policy, $event)"></pa-toggle>
             </pa-table-cell>
             <pa-table-cell class="body-s">

@@ -261,13 +261,13 @@ export interface IDb {
   getNuaGuardPolicies(accountId: string): Observable<NuaGuardPolicy[]>;
   getNuaGuardPoliciesForZone(accountId: string, zone: string): Observable<NuaGuardPolicy[]>;
   getNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<NuaGuardPolicy | undefined>;
-  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<void>;
+  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<NuaGuardPolicy>;
   editNuaGuardPolicy(
     guardId: string,
     accountId: string,
     zone: string,
     data: Partial<NuaGuardPolicyPayload>,
-  ): Observable<void>;
+  ): Observable<NuaGuardPolicy>;
   deleteNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<void>;
 }
 

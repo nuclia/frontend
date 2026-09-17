@@ -44,6 +44,7 @@ import {
   NUAClientResponse,
   NuaGuardPolicy,
   NuaGuardPolicyPayload,
+  NuaGuardPolicyResponse,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -717,6 +718,7 @@ export class Db implements IDb {
         this.nuclia.rest.get<NuaGuardPolicy[]>(`/account/${accountId}/guardrail_policies`, undefined, undefined, zone),
       ),
       timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      map((policies) => policies.map((policy) => ({ ...policy, zone }))),
       catchError(() => of([] as NuaGuardPolicy[])),
     );
   }
@@ -751,21 +753,23 @@ export class Db implements IDb {
    * @param data
    * @returns
    */
-  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<void> {
+  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<NuaGuardPolicy> {
     if (!accountId || !data) {
       const error = 'Account and data are required to create a NUA guardrail policy';
       console.error(error);
       return throwError(() => error);
     }
 
-    return this.nuclia.rest.post(
-      `/account/${accountId}/guardrail_policies`,
-      data,
-      undefined,
-      undefined,
-      undefined,
-      zone,
-    );
+    return this.nuclia.rest
+      .post<NuaGuardPolicyResponse>(
+        `/account/${accountId}/guardrail_policies`,
+        data,
+        undefined,
+        undefined,
+        undefined,
+        zone,
+      )
+      .pipe(map((policy) => ({ ...policy, zone })));
   }
 
   /**
@@ -781,21 +785,23 @@ export class Db implements IDb {
     accountId: string,
     zone: string,
     data: Partial<NuaGuardPolicyPayload>,
-  ): Observable<void> {
+  ): Observable<NuaGuardPolicy> {
     if (!guardId || !accountId || !data) {
       const error = 'Account, guardrail identifier and data are required to edit a NUA guardrail policy';
       console.error(error);
       return throwError(() => error);
     }
 
-    return this.nuclia.rest.patch(
-      `/account/${accountId}/guardrail_policies/${guardId}`,
-      data,
-      undefined,
-      undefined,
-      undefined,
-      zone,
-    );
+    return this.nuclia.rest
+      .patch<NuaGuardPolicyResponse>(
+        `/account/${accountId}/guardrail_policies/${guardId}`,
+        data,
+        undefined,
+        undefined,
+        undefined,
+        zone,
+      )
+      .pipe(map((policy) => ({ ...policy, zone })));
   }
 
   /**
