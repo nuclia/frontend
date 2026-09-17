@@ -139,6 +139,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';
   @Input() bottomSectionStyle = '';
+  /**
+   * When set, the configuration linked to this widget slug is selected on initial load instead of the
+   * last-selected configuration — used so deep links to a widget's old `/widgets/:slug` admin URL (now
+   * redirected to `/search/:slug`) still land on the right configuration.
+   */
+  @Input() initialWidgetSlug?: string;
 
   @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
   @Output() widgetConfigUpdate = new EventEmitter<Widget.WidgetConfiguration>();
@@ -301,8 +307,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       this.onlySupportedConfigs
         ? this.searchWidgetService.supportedSearchConfigurations.pipe(take(1))
         : this.searchWidgetService.searchConfigurations.pipe(take(1)),
+      this.initialWidgetSlug ? this.searchWidgetService.widgetList.pipe(take(1)) : of([]),
     ]).pipe(
-      tap(([kb, savedConfigs]) => {
+      tap(([kb, savedConfigs, widgets]) => {
         const standardConfigOption = new OptionModel({
           id: 'nuclia-standard',
           value: 'nuclia-standard',
@@ -330,7 +337,20 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
           ),
         );
 
-        const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, savedConfigs);
+        // Deep-link support: a widget slug passed in (e.g. from the old /widgets/:slug admin URL,
+        // now redirected here) selects that widget's linked configuration instead of the last-selected
+        // one, if it can be resolved to a configuration that still exists.
+        const initialWidget = this.initialWidgetSlug
+          ? widgets.find((widget) => widget.slug === this.initialWidgetSlug)
+          : undefined;
+        const initialConfigFromWidget = initialWidget?.searchConfigId
+          ? savedConfigs.find((c) => c.id === initialWidget.searchConfigId)
+          : undefined;
+        const savedConfig =
+          initialConfigFromWidget || this.searchWidgetService.getSelectedSearchConfig(kb.id, savedConfigs);
+        if (initialConfigFromWidget) {
+          this.searchWidgetService.saveSelectedSearchConfig(kb.id, initialConfigFromWidget.id);
+        }
         this.savedConfig = savedConfig;
         this._syncModeSignals(savedConfig);
         this.agenticWidgetConfigNames.set(

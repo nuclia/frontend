@@ -117,6 +117,10 @@ const routes: Routes = [
                 component: SearchPageComponent,
               },
               {
+                path: 'search/:widgetSlug',
+                component: SearchPageComponent,
+              },
+              {
                 path: 'sync',
                 // eslint-disable-next-line @nx/enforce-module-boundaries
                 loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then((m) => m.SYNC_ROUTES),
@@ -157,8 +161,12 @@ const routes: Routes = [
               },
               {
                 path: 'widgets',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.WIDGETS_ROUTES),
-                canActivate: [knowledgeBoxOwnerGuard],
+                pathMatch: 'full',
+                redirectTo: 'search',
+              },
+              {
+                path: 'widgets/:slug',
+                redirectTo: 'search/:slug',
               },
               {
                 path: 'rag-lab',

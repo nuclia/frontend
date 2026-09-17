@@ -48,6 +48,8 @@ export class SearchPageComponent implements OnDestroy {
   widgetPreview = this.searchWidgetService.widgetPreview;
   searchConfig?: Widget.AnySearchConfiguration;
   widgetOptions?: Widget.WidgetConfiguration;
+  /** Set from the (redirected) old /widgets/:slug admin URL, if the current route carries one. */
+  initialWidgetSlug = this.route.snapshot.paramMap.get('widgetSlug') ?? undefined;
 
   configPanelCollapsed = false;
 

@@ -48,6 +48,7 @@
       displayWidgetButtonLine
       mainTitle="search.configuration.saved-config-title"
       [configurationContainer]="configurationContainerElement()"
+      [initialWidgetSlug]="initialWidgetSlug"
       (configUpdate)="updateConfig($event)"
       (widgetConfigUpdate)="updateWidgetOptions($event)"
       (createWidget)="createWidget()"
