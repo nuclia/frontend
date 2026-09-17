@@ -143,6 +143,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
   @Output() widgetConfigUpdate = new EventEmitter<Widget.WidgetConfiguration>();
   @Output() createWidget = new EventEmitter<void>();
+  @Output() getEmbedCode = new EventEmitter<string>();
 
   @ViewChild('widgetOptions', { read: AccordionItemComponent }) widgetOptionsItem?: AccordionItemComponent;
   @ViewChild('agenticConfig', { read: AccordionItemComponent }) agenticConfigItem?: AccordionItemComponent;
@@ -223,6 +224,15 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
+  }
+
+  /**
+   * "Get embed code" is only meaningful once there's a real, unmodified, saved configuration to deploy
+   * — the built-in Nuclia standard config can't be deployed directly since it isn't a real saved
+   * configuration id (it must be saved as new first).
+   */
+  get isEmbedCodeDisabled(): boolean {
+    return !this.savedConfig || this.savedConfig.type !== 'config' || this.isConfigModified || !!this.isNucliaConfig;
   }
 
   ngOnInit() {
@@ -533,24 +543,44 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * "Get embed code" — deploys the current saved configuration as a widget the first time it's
+   * clicked (persisting the current "Widget options" appearance settings), then emits the resulting
+   * widget slug so the host page (which owns the live preview / snippet generation) can open the
+   * embed dialog. Subsequent clicks just re-emit the already-linked widget's slug.
+   */
+  triggerGetEmbedCode() {
+    if (this.isEmbedCodeDisabled || !this.savedConfig) {
+      return;
+    }
+    const configId = this.savedConfig.id;
+    const linkedWidget = this.linkedWidget();
+    if (linkedWidget) {
+      this.getEmbedCode.emit(linkedWidget.slug);
+      return;
+    }
+    this.searchWidgetService.createWidget(configId, this.currentWidgetOptions(), configId).subscribe((widgetSlug) => {
+      this.refreshLinkedWidget(configId);
+      this.getEmbedCode.emit(widgetSlug);
+    });
+  }
+
+  /**
    * Opens the compact "Manage widgets" table (rename/duplicate/delete any deployed widget). Selecting
    * a row loads that widget's search configuration into the panel, same as picking it from the
    * "Saved configuration" selector above.
    */
   manageWidgets() {
-    this.modalService
-      .openModal(ManageWidgetsModalComponent)
-      .onClose.subscribe((configId?: string) => {
-        if (configId) {
-          this.selectedConfig.patchValue(configId);
-          this.selectConfig(configId);
-        } else if (this.savedConfig) {
-          // Nothing was selected to load, but the widget linked to the currently active configuration
-          // may have been renamed/duplicated/deleted from inside the modal — refresh it so the header
-          // actions (e.g. Get embed code) reflect the latest state.
-          this.refreshLinkedWidget(this.savedConfig.id);
-        }
-      });
+    this.modalService.openModal(ManageWidgetsModalComponent).onClose.subscribe((configId?: string) => {
+      if (configId) {
+        this.selectedConfig.patchValue(configId);
+        this.selectConfig(configId);
+      } else if (this.savedConfig) {
+        // Nothing was selected to load, but the widget linked to the currently active configuration
+        // may have been renamed/duplicated/deleted from inside the modal — refresh it so the header
+        // actions (e.g. Get embed code) reflect the latest state.
+        this.refreshLinkedWidget(this.savedConfig.id);
+      }
+    });
   }
 
   resetConfig() {

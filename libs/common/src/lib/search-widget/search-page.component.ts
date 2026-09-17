@@ -14,16 +14,16 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { ModalConfig, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { UploadEventService } from '@flaps/core';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { DEFAULT_WIDGET_CONFIG } from './search-widget.models';
 import { SearchWidgetService } from './search-widget.service';
-import { CreateWidgetDialogComponent } from './widgets';
+import { CreateWidgetDialogComponent, EmbedWidgetDialogComponent } from './widgets';
 
 @Component({
   selector: 'stf-search-page',
@@ -83,6 +83,29 @@ export class SearchPageComponent implements OnDestroy {
         )
         .subscribe();
     }
+  }
+
+  /**
+   * Called once the panel has ensured the current configuration is deployed as a widget (creating the
+   * deployment on first use). Regenerates the snippet with the real widget id (so it includes the
+   * widget_id-based synchronized snippet) and opens the embed dialog with the result.
+   */
+  openEmbedCode(widgetSlug: string) {
+    if (!this.searchConfig) {
+      return;
+    }
+    this.searchWidgetService.generateWidgetSnippet(
+      this.searchConfig,
+      this.widgetOptions,
+      widgetSlug,
+      '.search-preview-container',
+    );
+    this.searchWidgetService.widgetPreview.pipe(take(1)).subscribe(({ snippet, synchSnippet }) => {
+      this.modalService.openModal(
+        EmbedWidgetDialogComponent,
+        new ModalConfig({ data: { code: { snippet, synchSnippet } } }),
+      );
+    });
   }
 
   updateConfig(config: Widget.AnySearchConfiguration) {

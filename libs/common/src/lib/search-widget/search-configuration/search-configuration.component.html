@@ -37,6 +37,15 @@
         (click)="showLastRequest()">
         {{ 'search.configuration.action.get-code' | translate }}
       </nsi-button-mini>
+      @if (!(inArag | async) && (canModifyConfig | async)) {
+        <nsi-button-mini
+          icon="link"
+          [disabled]="isEmbedCodeDisabled"
+          [paTooltip]="isEmbedCodeDisabled ? 'search.configuration.action.get-embed-code-tooltip' : undefined"
+          (click)="triggerGetEmbedCode()">
+          {{ 'search.configuration.action.get-embed-code' | translate }}
+        </nsi-button-mini>
+      }
       @if (isRagLabAuthorized | async) {
         <nsi-button-mini
           icon="lab"
