@@ -70,7 +70,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private budgetBackup: AccountBudget | null = null;
   budgetForm = new FormGroup({
     custom_budget: new FormControl<'unlimited' | 'limit'>('limit', { nonNullable: true }),
-    budget_value: new FormControl<number | null>(0, { validators: [Validators.min(1)] }),
+    budget_value: new FormControl<number | null>(1, { validators: [Validators.min(1)] }),
     action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: true }),
   });
 
@@ -112,19 +112,28 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               }),
               take(1),
             ),
-            this.globalAccountService.getBudget(accountDetails.id).pipe(
-              catchError(() => {
-                this.toast.error('An error occurred when loading the budget');
-                return of(null);
-              }),
-              tap((budget) => {
-                if (budget) {
-                  this.budgetBackup = budget;
-                  this.patchBudget(budget);
-                  this.cdr.markForCheck();
+            this.canFullyEditAccount.pipe(
+              take(1),
+              switchMap((canFullyEditAccount) => {
+                if (canFullyEditAccount) {
+                  return this.globalAccountService.getBudget(accountDetails.id).pipe(
+                    catchError(() => {
+                      this.toast.error('An error occurred when loading the budget');
+                      return of(null);
+                    }),
+                    tap((budget) => {
+                      if (budget) {
+                        this.budgetBackup = budget;
+                        this.patchBudget(budget);
+                        this.cdr.markForCheck();
+                      }
+                    }),
+                    take(1),
+                  );
+                } else {
+                  return of(null);
                 }
               }),
-              take(1),
             ),
           ]),
         ),
