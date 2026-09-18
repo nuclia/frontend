@@ -4,6 +4,8 @@
   <div
     class="search-preview-container page-spacing"
     [class.panel-open]="!configPanelCollapsed"
+    [class.mode-page]="previewMode === 'page'"
+    [class.mode-chat]="previewMode === 'chat'"
     (transitionend)="onPreviewContainerTransitionEnd($event)">
     <header>
       <div class="page-title">

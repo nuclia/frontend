@@ -6,14 +6,25 @@
   display: flex;
 
   .search-preview-container {
+    --preview-content-width: #{rhythm(80)};
+
     display: flex;
     flex-direction: column;
-    gap: $spacing;
+    gap: rhythm(2);
     height: calc(100vh - var(--app-topbar-height));
     min-width: 0;
     overflow: hidden;
     width: 100%;
     transition: width $transition-slide;
+
+    &.mode-page {
+      --preview-content-width: #{rhythm(56)};
+    }
+
+    header {
+      align-self: center;
+      width: min(100%, var(--preview-content-width));
+    }
 
     .preview-stage {
       align-items: flex-start;
@@ -24,7 +35,7 @@
       justify-items: center;
       min-height: 0;
       overflow: hidden;
-      padding: rhythm(5);
+      padding: 0 rhythm(5) rhythm(5);
       position: relative;
 
       // A transformed ancestor is the containing block for the widget's fixed popup/FAB elements.
@@ -39,9 +50,10 @@
 
       &.mode-page {
         overflow-y: auto;
+        padding-top: rhythm(1.5);
 
         .preview-content {
-          width: min(100%, #{rhythm(56)});
+          width: min(100%, var(--preview-content-width));
         }
       }
 
@@ -53,7 +65,7 @@
         overflow-y: auto;
 
         .preview-content {
-          width: min(100%, #{rhythm(80)});
+          width: min(100%, var(--preview-content-width));
         }
       }
 
