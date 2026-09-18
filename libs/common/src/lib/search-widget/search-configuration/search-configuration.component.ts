@@ -255,13 +255,8 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     return !isSameWidgetConfiguration(this.currentWidgetOptions(), this.widgetOptionsConfig());
   }
 
-  /**
-   * "Get embed code" is only meaningful once there's a real, unmodified, saved configuration to deploy
-   * — the built-in Nuclia standard config can't be deployed directly since it isn't a real saved
-   * configuration id (it must be saved as new first).
-   */
   get isEmbedCodeDisabled(): boolean {
-    return !this.savedConfig || this.savedConfig.type !== 'config' || this.isConfigModified || !!this.isNucliaConfig;
+    return !this.savedConfig || this.savedConfig.type !== 'config' || (!this.isNucliaConfig && this.isConfigModified);
   }
 
   ngOnInit() {
@@ -581,10 +576,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       ...(currentConfig.generativeAnswer ?? DEFAULT_GENERATIVE_ANSWER_CONFIG),
       generateAnswer: mode === 'simple-rag',
     };
-    this.currentConfig = {
+    const nextConfig: Widget.TypedSearchConfiguration = {
       ...currentConfig,
       searchMode: mode,
-      // Clear the stale agentic config when leaving agentic mode, otherwise it lingers in the saved config.
       agentic:
         mode === 'agentic'
           ? { ...currentConfig.agentic, configId: currentConfig.agentic?.configId || currentConfig.id }
@@ -598,6 +592,10 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
           }
         : {}),
     };
+    if (mode !== 'agentic') {
+      delete nextConfig.agentic;
+    }
+    this.currentConfig = nextConfig;
     if (mode !== 'agentic') {
       this.useGenerativeAnswer = generativeAnswer.generateAnswer;
     }
@@ -628,6 +626,26 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
    */
   triggerGetEmbedCode() {
     if (this.isEmbedCodeDisabled || !this.savedConfig) {
+      return;
+    }
+    if (this.isNucliaConfig) {
+      this.modalService
+        .openModal(SaveConfigModalComponent)
+        .onClose.pipe(
+          filter((configName): configName is string => !!configName),
+          switchMap((configName) =>
+            this._saveConfig(configName, true).pipe(
+              filter((success) => !!success),
+              switchMap(() =>
+                this.searchWidgetService
+                  .createWidget(configName, this.currentWidgetOptions(), configName)
+                  .pipe(map((widgetSlug) => ({ widgetSlug }))),
+              ),
+            ),
+          ),
+          switchMap(({ widgetSlug }) => this.setConfigurations().pipe(map(() => widgetSlug))),
+        )
+        .subscribe((widgetSlug) => this.getEmbedCode.emit(widgetSlug));
       return;
     }
     const configId = this.savedConfig.id;
@@ -735,7 +753,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   private validateConfigBeforeSave(): boolean {
-    if (!this.isConfigModified) {
+    if (!this.isConfigModified && !this.isNucliaConfig) {
       return false;
     }
     if (this.searchMode() === 'agentic' && !this.agenticSourcesValid()) {

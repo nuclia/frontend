@@ -25,6 +25,8 @@ interface ConfigurationListItem {
   widget?: Widget.Widget;
   generativeModel?: string;
   creationDate?: string;
+  searchMode: 'agentic' | 'simple-rag' | 'search';
+  widgetMode?: Widget.WidgetConfiguration['widgetMode'];
   builtIn: boolean;
 }
 
@@ -78,6 +80,13 @@ export class ManageWidgetsModalComponent {
           generativeModel:
             config.type === 'config' ? config.generativeAnswer?.generativeModel || defaultModel : defaultModel,
           creationDate: widget?.creationDate,
+          searchMode:
+            config.type === 'config'
+              ? config.searchMode || (config.generativeAnswer?.generateAnswer ? 'simple-rag' : 'search')
+              : config.value.kind === 'ask'
+                ? 'simple-rag'
+                : 'search',
+          widgetMode: widget ? (widget.widgetConfig ?? DEFAULT_WIDGET_CONFIG).widgetMode : undefined,
           builtIn: config.id.startsWith('nuclia-'),
         };
       }),

@@ -50,17 +50,29 @@
       (mousedown)="startResizePanel($event)">
       <div class="border"></div>
     </div>
-    <pa-button
-      class="close-button"
-      icon="cross"
-      aspect="basic"
-      (click)="toggleConfigurationPanel()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
+    <div class="configuration-drawer-header">
+      <div class="configuration-drawer-title">{{ 'search.configuration.title' | translate }}</div>
+      <div class="configuration-drawer-actions">
+        @if (!(inArag | async) && (canModifyConfig | async)) {
+          <pa-button
+            kind="primary"
+            size="small"
+            (click)="viewAllConfigurations()">
+            {{ 'search.configuration.action.manage-embeds' | translate }}
+          </pa-button>
+        }
+        <pa-button
+          icon="cross"
+          aspect="basic"
+          size="small"
+          (click)="toggleConfigurationPanel()">
+          {{ 'generic.close' | translate }}
+        </pa-button>
+      </div>
+    </div>
 
     <stf-search-configuration
       displayWidgetButtonLine
-      mainTitle="search.configuration.title"
       [configurationContainer]="configurationContainerElement()"
       [initialWidgetSlug]="initialWidgetSlug"
       (configUpdate)="updateConfig($event)"

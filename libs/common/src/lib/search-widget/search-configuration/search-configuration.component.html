@@ -1,5 +1,7 @@
 <section class="configuration-header-section">
-  <div class="section-title">{{ mainTitle | translate }}</div>
+  @if (mainTitle) {
+    <div class="section-title">{{ mainTitle | translate }}</div>
+  }
   <div class="config-selection-container">
     <pa-select
       [formControl]="selectedConfig"
@@ -20,7 +22,7 @@
         <div>
           <nsi-button-mini
             icon="download"
-            [disabled]="!isConfigModified"
+            [disabled]="!isConfigModified && !isNucliaConfig"
             [paPopup]="isNucliaConfig ? null : saveMenu"
             (click)="isNucliaConfig ? saveConfig() : null">
             {{ 'search.configuration.action.save' | translate }}
@@ -48,11 +50,6 @@
           [paTooltip]="isEmbedCodeDisabled ? 'search.configuration.action.get-embed-code-tooltip' : undefined"
           (click)="triggerGetEmbedCode()">
           {{ 'search.configuration.action.get-embed-code' | translate }}
-        </nsi-button-mini>
-        <nsi-button-mini
-          icon="edit"
-          (click)="manageWidgets()">
-          {{ 'search.configuration.action.manage-embeds' | translate }}
         </nsi-button-mini>
       }
       <div>
@@ -116,7 +113,7 @@
           @if ((isAgenticSearchEnabled | async) || searchMode() === 'agentic') {
             <pa-radio value="agentic">
               <span class="search-mode-label">
-                <span class="title-m">{{ 'search.configuration.search-mode.agentic' | translate }}</span>
+                <span>{{ 'search.configuration.search-mode.agentic' | translate }}</span>
                 <pa-button
                   icon="info"
                   aspect="basic"
@@ -130,7 +127,7 @@
 
           <pa-radio value="simple-rag">
             <span class="search-mode-label">
-              <span class="title-m">{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
+              <span>{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
               <pa-button
                 icon="info"
                 aspect="basic"
@@ -142,7 +139,7 @@
 
           <pa-radio value="search">
             <span class="search-mode-label">
-              <span class="title-m">{{ 'search.configuration.search-mode.search' | translate }}</span>
+              <span>{{ 'search.configuration.search-mode.search' | translate }}</span>
               <pa-button
                 icon="info"
                 aspect="basic"

@@ -148,6 +148,7 @@ export function normalizeSearchConfigurationForEditor(
     return normalized;
   }
 
+  delete normalized.agentic;
   normalized.searchBox = {
     ...cloneDeep(DEFAULT_SEARCH_BOX_CONFIG),
     ...normalized.searchBox,

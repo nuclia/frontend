@@ -102,6 +102,21 @@ describe('search widget editor normalization', () => {
     expect(baseline.type === 'config' && baseline.generativeAnswer?.generateAnswer).toBe(false);
   });
 
+  it('removes stale agentic state after returning to a non-agentic mode', () => {
+    const saved = normalizeSearchConfigurationForEditor(standardConfig(), providers, 'supported');
+    const returnedToSimpleRag = normalizeSearchConfigurationForEditor(
+      {
+        ...saved,
+        agentic: undefined,
+      },
+      providers,
+      'supported',
+    );
+
+    expect(returnedToSimpleRag.type === 'config' && 'agentic' in returnedToSimpleRag).toBe(false);
+    expect(isSameConfigurations(returnedToSimpleRag, saved)).toBe(true);
+  });
+
   it('keeps a genuine user change dirty and clears it when reverted to the normalized baseline', () => {
     const baseline = normalizeSearchConfigurationForEditor(standardConfig(), providers, 'supported');
     const draft = cloneDeep(baseline);

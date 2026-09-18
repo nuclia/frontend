@@ -18,7 +18,7 @@
     } @else {
       <pa-table
         border
-        columns="minmax(140px, 3fr) minmax(145px, 1.25fr) minmax(110px, 1.5fr) 64px">
+        columns="minmax(180px, 2.5fr) minmax(140px, 1.25fr) minmax(120px, 1fr) minmax(150px, 1.35fr) minmax(110px, 1fr) 96px">
         <pa-table-header>
           <pa-table-cell header>
             <span class="title-xxs no-wrap">
@@ -27,6 +27,16 @@
           </pa-table-cell>
           <pa-table-cell header>
             <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.model' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">
+              {{ 'search.configuration.manage-embeds-modal.search-mode-column' | translate }}
+            </span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">
+              {{ 'search.configuration.manage-embeds-modal.experience-column' | translate }}
+            </span>
           </pa-table-cell>
           <pa-table-cell header>
             <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.date' | translate }}</span>
@@ -52,6 +62,21 @@
                   {{ (modelNames | async)?.[item.generativeModel] || item.generativeModel }}
                 </span>
               }
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                {{ 'search.configuration.search-mode.' + item.searchMode | translate }}
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                {{
+                  (item.widgetMode
+                    ? 'search.widgets.form.widget-options.style.' + item.widgetMode
+                    : 'search.configuration.manage-embeds-modal.not-embedded'
+                  ) | translate
+                }}
+              </span>
             </pa-table-cell>
             <pa-table-cell>
               @if (item.creationDate) {

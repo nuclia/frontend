@@ -18,7 +18,7 @@ import { ModalConfig, PaButtonModule, PaIconModule } from '@guillotinaweb/pastan
 import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { NavigationService, UploadEventService } from '@flaps/core';
+import { FeaturesService, NavigationService, UploadEventService } from '@flaps/core';
 import { take } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { SearchWidgetService } from './search-widget.service';
@@ -40,6 +40,7 @@ export class SearchPageComponent implements OnDestroy {
   private document = inject(DOCUMENT);
   private uploadEventService = inject(UploadEventService);
   private navigationService = inject(NavigationService);
+  private features = inject(FeaturesService);
 
   configurationContainerElement = viewChild<ElementRef>('configurationContainer');
   previewStageElement = viewChild<ElementRef<HTMLElement>>('previewStage');
@@ -47,6 +48,7 @@ export class SearchPageComponent implements OnDestroy {
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   inArag = this.navigationService.inArag();
+  canModifyConfig = this.features.isKbAdmin;
   searchConfig?: Widget.AnySearchConfiguration;
   widgetOptions?: Widget.WidgetConfiguration;
   /** Set from the (redirected) old /widgets/:slug admin URL, if the current route carries one. */
@@ -110,6 +112,10 @@ export class SearchPageComponent implements OnDestroy {
 
   toggleConfigurationPanel() {
     this.configPanelCollapsed = !this.configPanelCollapsed;
+  }
+
+  viewAllConfigurations() {
+    this.searchConfigurationComponent()?.manageWidgets();
   }
 
   onPreviewContainerTransitionEnd(event: TransitionEvent) {

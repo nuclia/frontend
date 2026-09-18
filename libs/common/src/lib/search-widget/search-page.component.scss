@@ -125,6 +125,9 @@
 
   .search-configuration-container {
     background-color: $color-light-stronger;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
     height: calc(100vh - var(--app-topbar-height));
     overflow-y: auto;
     padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom);
@@ -138,11 +141,24 @@
       transform: translateX(var(--panel-width));
     }
 
-    .close-button {
-      display: block;
-      position: absolute;
-      right: var(--app-layout-padding-right);
-      top: rhythm(2);
+    .configuration-drawer-header {
+      align-items: center;
+      display: flex;
+      flex: 0 0 auto;
+      gap: rhythm(2);
+      justify-content: space-between;
+    }
+
+    .configuration-drawer-title {
+      @include title-m();
+      color: $color-dark-stronger;
+    }
+
+    .configuration-drawer-actions {
+      align-items: center;
+      display: flex;
+      flex: 0 0 auto;
+      gap: rhythm(1);
     }
 
     /* Resizer area is 2px each side of the border to make it easily clickable */
