@@ -328,7 +328,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
         .subscribe((inArag) =>
           this.modalService.openModal(
             EmbedWidgetDialogComponent,
-            new ModalConfig({ data: { code: this.snippets, hideSync: inArag } }),
+            new ModalConfig({ dismissable: true, data: { code: this.snippets, hideSync: inArag } }),
           ),
         );
     }

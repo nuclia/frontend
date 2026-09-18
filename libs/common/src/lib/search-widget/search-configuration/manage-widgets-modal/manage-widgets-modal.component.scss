@@ -4,6 +4,12 @@ pa-modal-title {
   white-space: nowrap;
 }
 
+.dialog-title-with-button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
 :host ::ng-deep pa-modal-dialog .pa-modal.pa-modal-dialog {
   width: min(800px, calc(100vw - rhythm(6)));
 }

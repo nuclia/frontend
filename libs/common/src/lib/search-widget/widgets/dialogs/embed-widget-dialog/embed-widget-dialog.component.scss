@@ -1,5 +1,11 @@
 @use 'apps/dashboard/src/variables' as *;
 
+.dialog-title-with-button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
 pre {
   background-color: $color-neutral-lightest;
   border: 1px solid $color-neutral-lighter;

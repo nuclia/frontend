@@ -1,5 +1,15 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{ 'search.configuration.manage-embeds-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-title>
+    <div class="dialog-title-with-button">
+      {{ 'search.configuration.manage-embeds-modal.title' | translate }}
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        (click)="modal.close()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-title>
   <pa-modal-description>{{ 'search.configuration.manage-embeds-modal.description' | translate }}</pa-modal-description>
 
   <pa-modal-content>
@@ -76,11 +86,4 @@
       </pa-table>
     }
   </pa-modal-content>
-  <pa-modal-footer>
-    <pa-button
-      aspect="basic"
-      (click)="modal.close()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </pa-modal-footer>
 </pa-modal-dialog>

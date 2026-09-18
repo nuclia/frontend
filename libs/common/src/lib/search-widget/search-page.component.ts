@@ -90,7 +90,7 @@ export class SearchPageComponent implements OnDestroy {
     this.searchWidgetService.widgetPreview.pipe(take(1)).subscribe(({ snippet, synchSnippet }) => {
       this.modalService.openModal(
         EmbedWidgetDialogComponent,
-        new ModalConfig({ data: { code: { snippet, synchSnippet } } }),
+        new ModalConfig({ dismissable: true, data: { code: { snippet, synchSnippet } } }),
       );
       this.refreshPreview();
     });

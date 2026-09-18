@@ -647,7 +647,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
    */
   manageWidgets() {
     this.modalService
-      .openModal(ManageWidgetsModalComponent)
+      .openModal(ManageWidgetsModalComponent, new ModalConfig({ dismissable: true }))
       .onClose.subscribe((selection?: SearchConfigurationSelection) => {
         if (selection) {
           this.selectedConfig.patchValue(selection.configId, { emitEvent: false });
