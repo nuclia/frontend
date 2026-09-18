@@ -167,11 +167,11 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       if (this.generativeModel()) {
         const structredOutput = this.modelsWithJSONOutput().includes(this.generativeModel() || '');
         if (structredOutput) {
-          this.jsonOutputControl.enable();
+          this.jsonOutputControl.enable({ emitEvent: false });
           this.isJsonOutputDisabled.set(false);
         } else {
-          this.jsonOutputControl.patchValue(false);
-          this.jsonOutputControl.disable();
+          this.jsonOutputControl.patchValue(false, { emitEvent: false });
+          this.jsonOutputControl.disable({ emitEvent: false });
           this.isJsonOutputDisabled.set(true);
         }
       }

@@ -20,7 +20,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { cloneDeep, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -58,7 +58,7 @@ import {
   SisModalService,
   SisToastService,
 } from '@nuclia/sistema';
-import { catchError, filter, forkJoin, map, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
+import { catchError, EMPTY, filter, forkJoin, map, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import {
@@ -66,8 +66,12 @@ import {
   getAgenticChatOptions,
   getChatOptions,
   getFindOptions,
+  findLinkedWidget,
   isSameConfigurations,
   isSameWidgetConfiguration,
+  normalizeSearchConfigurationForEditor,
+  normalizeWidgetConfigurationForEditor,
+  SearchConfigurationSelection,
 } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
 import { AgenticConfigurationComponent } from './agentic-configuration';
@@ -134,6 +138,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   private navigationService = inject(NavigationService);
 
   private unsubscribeAll = new Subject<void>();
+  private configSelection = new Subject<SearchConfigurationSelection>();
 
   @Input({ transform: booleanAttribute }) displayWidgetButtonLine = false;
   @Input({ transform: booleanAttribute }) onlySupportedConfigs = false;
@@ -191,7 +196,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   initialised = false;
 
-  isConfigModified = false;
   isConfigUnsupported = false;
   canModifyConfig = this.features.isKbAdmin;
 
@@ -228,7 +232,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   private currentWidgetOptions = signal<Widget.WidgetConfiguration>(DEFAULT_WIDGET_CONFIG);
 
   get isNucliaConfig() {
-    return this.selectedConfig.value?.startsWith('nuclia-');
+    return this.savedConfig?.id.startsWith('nuclia-');
   }
 
   /**
@@ -236,11 +240,19 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
    * results/routing) or the "Widget options" (appearance/deployment) form has unsaved changes — Save
    * must be enabled for either, not just the former.
    */
-  private computeIsConfigModified(): boolean {
+  get isConfigModified(): boolean {
+    if (this.currentConfig?.type === 'api' && this.savedConfig?.type === 'api') {
+      const jsonModified = this.currentJsonConfig !== this.originalJsonConfig;
+      const requestKindModified = this.currentConfig.value.kind !== this.savedConfig.value.kind;
+      return jsonModified || requestKindModified || this.areWidgetOptionsModified();
+    }
     const searchConfigModified =
       !!this.currentConfig && !!this.savedConfig && !isSameConfigurations(this.currentConfig, this.savedConfig);
-    const widgetOptionsModified = !isSameWidgetConfiguration(this.currentWidgetOptions(), this.widgetOptionsConfig());
-    return searchConfigModified || widgetOptionsModified;
+    return searchConfigModified || this.areWidgetOptionsModified();
+  }
+
+  private areWidgetOptionsModified(): boolean {
+    return !isSameWidgetConfiguration(this.currentWidgetOptions(), this.widgetOptionsConfig());
   }
 
   /**
@@ -253,6 +265,20 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.configSelection
+      .pipe(
+        switchMap((selection) =>
+          this.loadSelectedConfiguration(selection).pipe(
+            catchError(() => {
+              this.toaster.error('search.configuration.loading-error');
+              return EMPTY;
+            }),
+          ),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(({ savedConfig, linkedWidget }) => this.applySelectedConfiguration(savedConfig, linkedWidget));
+
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -332,7 +358,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         if (savedConfigs.length > 0) {
           configurations.push(new OptionSeparator());
         }
-        this.configurations = configurations.concat(
+        const options = configurations.concat(
           savedConfigs.map(
             (item) =>
               new OptionModel({
@@ -362,16 +388,18 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         if (initialConfigFromWidget) {
           this.searchWidgetService.saveSelectedSearchConfig(kb.id, initialConfigFromWidget.id);
         }
-        this.savedConfig = savedConfig;
-        this._syncModeSignals(savedConfig);
+        // Set the control before publishing the options: pa-select reads its current control value
+        // when the options input changes, so this initializes the visible selection without firing
+        // the user-selection pipeline a second time.
+        this.selectedConfig.patchValue(savedConfig.id, { emitEvent: false });
+        this.configurations = options;
+        this.applySelectedConfiguration(savedConfig, initialWidget || findLinkedWidget(widgets, savedConfig.id));
         this.agenticWidgetConfigNames.set(
           savedConfigs
             .filter((c) => c.type === 'config' && (c as Widget.TypedSearchConfiguration).searchMode === 'agentic')
             .map((c) => c.id),
         );
-        this.applyLinkedWidget(widgets.find((widget) => widget.searchConfigId === savedConfig.id));
-        // config selection must be done in next check detection cycle for selection options to be there
-        setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
+        this.cdr.markForCheck();
       }),
     );
   }
@@ -390,12 +418,45 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   private applyLinkedWidget(widget: Widget.Widget | undefined) {
-    this.linkedWidget.set(widget);
-    const widgetOptions = widget?.widgetConfig ?? DEFAULT_WIDGET_CONFIG;
-    this.currentWidgetOptions.set(widgetOptions);
+    const normalizedWidget = widget
+      ? {
+          ...cloneDeep(widget),
+          widgetConfig: normalizeWidgetConfigurationForEditor(widget.widgetConfig ?? DEFAULT_WIDGET_CONFIG),
+        }
+      : undefined;
+    this.linkedWidget.set(normalizedWidget);
+    const widgetOptions =
+      normalizedWidget?.widgetConfig ?? normalizeWidgetConfigurationForEditor(DEFAULT_WIDGET_CONFIG);
+    this.currentWidgetOptions.set(cloneDeep(widgetOptions));
+    this.widgetConfigUpdate.emit(cloneDeep(widgetOptions));
     if (this.widgetOptionsFormComponent) {
       this.widgetOptionsFormComponent.config = widgetOptions;
     }
+  }
+
+  private applySelectedConfiguration(config: Widget.AnySearchConfiguration, linkedWidget: Widget.Widget | undefined) {
+    const normalizedConfig = normalizeSearchConfigurationForEditor(
+      config,
+      this.generativeProviders,
+      this.generativeModelFromSettings,
+    );
+    this.savedConfig = cloneDeep(normalizedConfig);
+    this.currentConfig = cloneDeep(normalizedConfig);
+    this.applyLinkedWidget(linkedWidget);
+    this._syncModeSignals(normalizedConfig);
+    if (normalizedConfig.type === 'api') {
+      this.isConfigUnsupported = true;
+      this.originalJsonConfig = JSON.stringify(normalizedConfig.value.config, null, 2);
+      this.currentJsonConfig = this.originalJsonConfig;
+      this.useGenerativeAnswer = normalizedConfig.value.kind === 'ask';
+    } else {
+      this.isConfigUnsupported = false;
+      this.originalJsonConfig = '';
+      this.currentJsonConfig = '';
+      this.useGenerativeAnswer = !!normalizedConfig.generativeAnswer?.generateAnswer;
+    }
+    this.updateWidget();
+    this.cdr.markForCheck();
   }
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
@@ -448,44 +509,29 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   selectConfig(configId: string) {
-    forkJoin([
-      this.searchWidgetService.searchConfigurations.pipe(take(1)),
+    this.configSelection.next({ configId });
+  }
+
+  private loadSelectedConfiguration(selection: SearchConfigurationSelection) {
+    return forkJoin([
+      this.onlySupportedConfigs
+        ? this.searchWidgetService.supportedSearchConfigurations.pipe(take(1))
+        : this.searchWidgetService.searchConfigurations.pipe(take(1)),
       this.searchWidgetService.widgetList.pipe(take(1)),
       this.sdk.currentKb.pipe(take(1)),
-    ])
-      .pipe(
-        switchMap(([configs, widgets, kb]) => {
-          // saveSelectedSearchConfig must run before getSelectedSearchConfig: the latter reads the "selected id"
-          // back from localStorage rather than taking configId directly, so switching configs silently no-ops
-          // if the save happens after the read (as it did when this was moved into the subscribe callback).
-          this.searchWidgetService.saveSelectedSearchConfig(kb.id, configId);
-          const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
-          return this._hydrateAgenticConfig(kb, savedConfig).pipe(
-            map((hydrated) => ({
-              savedConfig: hydrated,
-              linkedWidget: widgets.find((widget) => widget.searchConfigId === hydrated.id),
-            })),
-          );
-        }),
-      )
-      .subscribe(({ savedConfig, linkedWidget }) => {
-        this.savedConfig = savedConfig;
-        this.currentConfig = { ...this.savedConfig };
-        this.applyLinkedWidget(linkedWidget);
-        this.isConfigModified = false;
-        this._syncModeSignals(this.savedConfig);
-        if (this.savedConfig.type === 'api') {
-          this.isConfigUnsupported = true;
-          this.originalJsonConfig = JSON.stringify(this.savedConfig.value.config, null, 2);
-          this.useGenerativeAnswer = this.savedConfig.value.kind === 'ask';
-        } else {
-          this.isConfigUnsupported = false;
-          this.originalJsonConfig = '';
-        }
-        this.currentJsonConfig = this.originalJsonConfig;
-        this.updateWidget();
-        this.cdr.markForCheck();
-      });
+    ]).pipe(
+      switchMap(([configs, widgets, kb]) => {
+        // getSelectedSearchConfig reads the selected id from localStorage, so persist the requested id first.
+        this.searchWidgetService.saveSelectedSearchConfig(kb.id, selection.configId);
+        const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
+        return this._hydrateAgenticConfig(kb, savedConfig).pipe(
+          map((hydrated) => ({
+            savedConfig: hydrated,
+            linkedWidget: findLinkedWidget(widgets, hydrated.id, selection.widgetSlug),
+          })),
+        );
+      }),
+    );
   }
 
   private _hydrateAgenticConfig(
@@ -523,6 +569,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   updateSearchMode(mode: 'agentic' | 'simple-rag' | 'search') {
     if (!this.savedConfig || this.currentConfig?.type !== 'config') return;
+    // pa-radio-group emits valueChange when its bound value is updated programmatically. If the
+    // loaded draft already has this mode, this is hydration rather than a user change.
+    if (this.currentConfig.searchMode === mode) return;
     this.searchMode.set(mode);
     const currentConfig = this.currentConfig;
     // Request kind is purely a function of mode: 'search' is always 'find', 'simple-rag' always 'ask'
@@ -550,7 +599,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     if (mode !== 'agentic') {
       this.useGenerativeAnswer = generativeAnswer.generateAnswer;
     }
-    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
 
@@ -566,7 +614,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       // doesn't wipe out the other agentic fields already on currentConfig.
       ...(partial.agentic ? { agentic: { ...originalAgentic, ...partial.agentic } } : {}),
     };
-    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
     this.updateAgenticConfigHeight();
   }
@@ -599,17 +646,19 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
    * "Saved configuration" selector above.
    */
   manageWidgets() {
-    this.modalService.openModal(ManageWidgetsModalComponent).onClose.subscribe((configId?: string) => {
-      if (configId) {
-        this.selectedConfig.patchValue(configId);
-        this.selectConfig(configId);
-      } else if (this.savedConfig) {
-        // Nothing was selected to load, but the widget linked to the currently active configuration
-        // may have been renamed/duplicated/deleted from inside the modal — refresh it so the header
-        // actions (e.g. Get embed code) reflect the latest state.
-        this.refreshLinkedWidget(this.savedConfig.id);
-      }
-    });
+    this.modalService
+      .openModal(ManageWidgetsModalComponent)
+      .onClose.subscribe((selection?: SearchConfigurationSelection) => {
+        if (selection) {
+          this.selectedConfig.patchValue(selection.configId, { emitEvent: false });
+          this.configSelection.next(selection);
+        } else if (this.savedConfig) {
+          // Nothing was selected to load, but the widget linked to the currently active configuration
+          // may have been renamed/duplicated/deleted from inside the modal — refresh it so the header
+          // actions (e.g. Get embed code) reflect the latest state.
+          this.refreshLinkedWidget(this.savedConfig.id);
+        }
+      });
   }
 
   resetConfig() {
@@ -639,11 +688,11 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       // reset above doesn't touch it, and since widgetOptionsConfig() is a computed signal that only
       // changes when linkedWidget() changes, the form input setter wouldn't otherwise re-fire.
       const savedWidgetOptions = this.widgetOptionsConfig();
-      this.currentWidgetOptions.set(savedWidgetOptions);
+      this.currentWidgetOptions.set(cloneDeep(savedWidgetOptions));
+      this.widgetConfigUpdate.emit(cloneDeep(savedWidgetOptions));
       if (this.widgetOptionsFormComponent) {
         this.widgetOptionsFormComponent.config = savedWidgetOptions;
       }
-      this.isConfigModified = false;
     }
   }
 
@@ -743,9 +792,8 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
                 if (this.isConfigUnsupported) {
                   this.updateWidget();
                 }
-                this.isConfigModified = false;
                 this.originalJsonConfig =
-                  this.currentConfig?.type === 'api' ? JSON.stringify(this.currentConfig.value, null, 2) : '';
+                  this.currentConfig?.type === 'api' ? JSON.stringify(this.currentConfig.value.config, null, 2) : '';
                 return true;
               }),
             )
@@ -836,7 +884,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, searchBox: config };
-    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
   updateGenerativeAnswerConfig(config: Widget.GenerativeAnswerConfig) {
@@ -844,8 +891,11 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       return;
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
-    this.currentConfig = { ...currentConfig, generativeAnswer: config };
-    this.isConfigModified = this.computeIsConfigModified();
+    this.currentConfig = normalizeSearchConfigurationForEditor(
+      { ...currentConfig, generativeAnswer: config },
+      this.generativeProviders,
+      this.generativeModelFromSettings,
+    );
     this.useGenerativeAnswer = config.generateAnswer;
     this.updateWidget();
   }
@@ -855,12 +905,10 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, resultDisplay: config };
-    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
   updateWidgetOptionsConfig(config: Widget.WidgetConfiguration) {
     this.currentWidgetOptions.set(config);
-    this.isConfigModified = this.computeIsConfigModified();
     this.widgetConfigUpdate.emit(config);
   }
 
@@ -876,7 +924,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         }
       : config;
     this.currentConfig = { ...currentConfig, routing: cleanConfig };
-    this.isConfigModified = this.computeIsConfigModified();
     this.updateWidget();
   }
 
@@ -930,7 +977,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   updateJsonConfig(jsonConfig: string) {
     this.currentJsonConfig = jsonConfig;
-    this.isConfigModified = this.currentConfig !== this.originalJsonConfig;
   }
 
   switchToJsonMode() {
@@ -979,7 +1025,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     if (this.currentConfig?.type === 'api') {
       this.currentConfig.value.kind = useGenerativeAnswer ? 'ask' : 'find';
     }
-    this.isConfigModified = true;
     this.cdr.markForCheck();
   }
 }

@@ -41,6 +41,7 @@ export class SearchPageComponent implements OnDestroy {
   private uploadEventService = inject(UploadEventService);
 
   configurationContainerElement = viewChild<ElementRef>('configurationContainer');
+  previewStageElement = viewChild<ElementRef<HTMLElement>>('previewStage');
   searchConfigurationComponent = viewChild(SearchConfigurationComponent);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
@@ -55,6 +56,14 @@ export class SearchPageComponent implements OnDestroy {
   panelTop = signal(0);
   panelWidth = signal(480);
   cssVariables = computed(() => `--panel-width:${this.panelWidth()}px; --panel-top:${this.panelTop()}px`);
+
+  get previewMode(): Widget.WidgetConfiguration['widgetMode'] {
+    return this.widgetOptions?.widgetMode ?? 'page';
+  }
+
+  get isPreviewDarkMode(): boolean {
+    return this.widgetOptions?.darkMode === 'dark';
+  }
 
   constructor() {
     this.searchWidgetService.searchTriggered.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -77,40 +86,70 @@ export class SearchPageComponent implements OnDestroy {
     if (!this.searchConfig) {
       return;
     }
-    this.searchWidgetService.generateWidgetSnippet(
-      this.searchConfig,
-      this.widgetOptions,
-      widgetSlug,
-      '.search-preview-container',
-    );
+    this.searchWidgetService.generateWidgetSnippet(this.searchConfig, this.widgetOptions, widgetSlug, '.preview-stage');
     this.searchWidgetService.widgetPreview.pipe(take(1)).subscribe(({ snippet, synchSnippet }) => {
       this.modalService.openModal(
         EmbedWidgetDialogComponent,
         new ModalConfig({ data: { code: { snippet, synchSnippet } } }),
       );
+      this.refreshPreview();
     });
   }
 
   updateConfig(config: Widget.AnySearchConfiguration) {
     this.searchConfig = config;
-    this.searchWidgetService.generateWidgetSnippet(
-      this.searchConfig,
-      this.widgetOptions,
-      undefined,
-      '.search-preview-container',
-    );
+    this.refreshPreview();
   }
 
   updateWidgetOptions(widgetOptions: Widget.WidgetConfiguration) {
     this.widgetOptions = widgetOptions;
-    if (this.searchConfig) {
-      this.searchWidgetService.generateWidgetSnippet(
-        this.searchConfig,
-        this.widgetOptions,
-        undefined,
-        '.search-preview-container',
-      );
+    this.refreshPreview();
+  }
+
+  toggleConfigurationPanel() {
+    this.configPanelCollapsed = !this.configPanelCollapsed;
+  }
+
+  onPreviewContainerTransitionEnd(event: TransitionEvent) {
+    if (event.propertyName === 'width') {
+      this.refreshPreview();
     }
+  }
+
+  private refreshPreview() {
+    if (!this.searchConfig) {
+      return;
+    }
+    this.searchWidgetService.generateWidgetSnippet(
+      this.searchConfig,
+      this.getPreviewWidgetOptions(),
+      undefined,
+      '.preview-stage',
+    );
+  }
+
+  private getPreviewWidgetOptions(): Widget.WidgetConfiguration | undefined {
+    if (!this.widgetOptions || this.widgetOptions.widgetMode !== 'floating-chat') {
+      return this.widgetOptions;
+    }
+
+    const previewStage = this.previewStageElement()?.nativeElement;
+    if (!previewStage) {
+      return this.widgetOptions;
+    }
+
+    const previewInset = 48;
+    return {
+      ...this.widgetOptions,
+      panelWidth: Math.min(
+        this.widgetOptions.panelWidth ?? 400,
+        Math.max(previewStage.clientWidth - previewInset, 280),
+      ),
+      panelHeight: Math.min(
+        this.widgetOptions.panelHeight ?? 600,
+        Math.max(previewStage.clientHeight - previewInset, 320),
+      ),
+    };
   }
 
   startResizePanel(event: MouseEvent) {
@@ -126,6 +165,7 @@ export class SearchPageComponent implements OnDestroy {
       this.document.removeEventListener('mousemove', duringResize);
       this.document.removeEventListener('mouseup', finishResize);
       this.searchConfigurationComponent()?.updateHeight();
+      this.document.defaultView?.requestAnimationFrame(() => this.refreshPreview());
     };
     this.document.addEventListener('mousemove', duringResize);
     this.document.addEventListener('mouseup', finishResize);

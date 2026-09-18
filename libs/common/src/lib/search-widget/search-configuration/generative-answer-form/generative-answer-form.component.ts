@@ -46,13 +46,23 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
 
   @Input() set config(value: Widget.GenerativeAnswerConfig | undefined) {
     if (value) {
-      if (value.ragStrategies?.graph) {
-        value.ragStrategies.graph.exclude_processor_relations =
-          value.ragStrategies.graph.exclude_processor_relations || !!value.ragStrategies.graph.agentic_graph_only;
-      }
+      const graph = value.ragStrategies?.graph
+        ? {
+            ...value.ragStrategies.graph,
+            exclude_processor_relations:
+              value.ragStrategies.graph.exclude_processor_relations || !!value.ragStrategies.graph.agentic_graph_only,
+          }
+        : undefined;
       // emitEvent: false — see search-box-form's config setter for rationale: loading a config into
       // the form must not itself be treated as a user edit.
-      this.form.patchValue({ ...value, generateAnswer: true }, { emitEvent: false });
+      this.form.patchValue(
+        {
+          ...value,
+          generateAnswer: true,
+          ragStrategies: value.ragStrategies ? { ...value.ragStrategies, ...(graph ? { graph } : {}) } : undefined,
+        },
+        { emitEvent: false },
+      );
     }
   }
   @Input({ required: true }) generativeProviders: GenerativeProviders = {};

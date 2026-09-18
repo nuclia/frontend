@@ -87,9 +87,9 @@ export class ManageWidgetsModalComponent {
     shareReplay(1),
   );
 
-  /** Closes the modal, returning the widget's linked search configuration id so the panel can load it. */
+  /** Returns both identities so the panel loads this exact embed, not another embed sharing the same config. */
   selectWidget(widget: Widget.Widget) {
-    this.modal.close(widget.searchConfigId);
+    this.modal.close({ configId: widget.searchConfigId, widgetSlug: widget.slug });
   }
 
   rename(slug: string, name: string) {

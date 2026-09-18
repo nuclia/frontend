@@ -3,6 +3,10 @@ import {
   Ask,
   BaseSearchOptions,
   ChatOptions,
+  DEFAULT_RESULT_DISPLAY_CONFIG,
+  DEFAULT_ROUTING_CONFIG,
+  DEFAULT_SEARCH_BOX_CONFIG,
+  GenerativeProviders,
   getJsonSchemaValue,
   getPreselectedFilterValue,
   getRagStrategies,
@@ -28,6 +32,11 @@ export interface SearchAndWidgets {
   searchConfigurations?: Widget.SearchConfiguration[];
   widgets?: Widget.Widget[];
   ragLabQuestions?: string[];
+}
+
+export interface SearchConfigurationSelection {
+  configId: string;
+  widgetSlug?: string;
 }
 
 export const DEFAULT_WIDGET_CONFIG: Widget.WidgetConfiguration = {
@@ -85,6 +94,132 @@ export function isSameWidgetConfiguration(
   configB: Widget.WidgetConfiguration,
 ): boolean {
   return deepEqual(configA, configB);
+}
+
+export function findLinkedWidget(
+  widgets: Widget.Widget[],
+  configId: string,
+  widgetSlug?: string,
+): Widget.Widget | undefined {
+  if (widgetSlug) {
+    return widgets.find((widget) => widget.slug === widgetSlug && widget.searchConfigId === configId);
+  }
+  return widgets.find((widget) => widget.searchConfigId === configId);
+}
+
+export function normalizeSearchConfigurationForEditor(
+  config: Widget.AnySearchConfiguration,
+  generativeProviders: GenerativeProviders,
+  defaultGenerativeModel: string,
+): Widget.AnySearchConfiguration {
+  const normalized = cloneDeep(config);
+  if (normalized.type !== 'config') {
+    return normalized;
+  }
+  normalized.searchMode =
+    normalized.searchMode || (normalized.generativeAnswer?.generateAnswer ? 'simple-rag' : 'search');
+  if (normalized.searchMode === 'agentic') {
+    const agenticConfig = normalized.agentic?.config;
+    if (agenticConfig) {
+      normalized.agentic = {
+        ...normalized.agentic,
+        config: {
+          ...agenticConfig,
+          smart_agent: {
+            ...agenticConfig.smart_agent,
+            mode: agenticConfig.smart_agent?.mode ?? 'reactive',
+            sources: agenticConfig.smart_agent?.sources ?? [],
+            history: true,
+          },
+          rephrase: {
+            ...agenticConfig.rephrase,
+            prompt: agenticConfig.rephrase?.prompt || undefined,
+            history: true,
+          },
+          summarize: {
+            ...agenticConfig.summarize,
+            system_prompt: agenticConfig.summarize?.system_prompt || undefined,
+            conversational: true,
+            history: true,
+          },
+        },
+      };
+    }
+    return normalized;
+  }
+
+  normalized.searchBox = {
+    ...cloneDeep(DEFAULT_SEARCH_BOX_CONFIG),
+    ...normalized.searchBox,
+    filters: {
+      ...cloneDeep(DEFAULT_SEARCH_BOX_CONFIG.filters),
+      ...normalized.searchBox?.filters,
+    },
+    initialFilters: normalized.searchBox?.initialFilters ?? '',
+  };
+  normalized.generativeAnswer = {
+    ...cloneDeep(DEFAULT_GENERATIVE_ANSWER_CONFIG),
+    ...normalized.generativeAnswer,
+    generateAnswer: normalized.searchMode === 'simple-rag',
+    ragStrategies: {
+      ...cloneDeep(DEFAULT_GENERATIVE_ANSWER_CONFIG.ragStrategies),
+      ...normalized.generativeAnswer?.ragStrategies,
+    },
+  };
+  normalized.resultDisplay = {
+    ...cloneDeep(DEFAULT_RESULT_DISPLAY_CONFIG),
+    ...normalized.resultDisplay,
+  };
+  normalized.routing = {
+    ...cloneDeep(DEFAULT_ROUTING_CONFIG),
+    ...normalized.routing,
+  };
+
+  const generativeModel = normalized.generativeAnswer.generativeModel || defaultGenerativeModel;
+  const supportsStructuredOutput =
+    !generativeModel ||
+    Object.values(generativeProviders).some(
+      (provider) => !!provider.models[generativeModel]?.features.structured_output,
+    );
+  if (!supportsStructuredOutput) {
+    normalized.resultDisplay.jsonOutput = false;
+  }
+  if (normalized.resultDisplay.jsonOutput || !normalized.generativeAnswer.generateAnswer) {
+    normalized.resultDisplay.showResultType = 'all-resources';
+  }
+
+  const graphStrategy = normalized.generativeAnswer.ragStrategies?.graph;
+  if (graphStrategy) {
+    graphStrategy.exclude_processor_relations =
+      graphStrategy.exclude_processor_relations || !!graphStrategy.agentic_graph_only;
+  }
+
+  return normalized;
+}
+
+export function normalizeWidgetConfigurationForEditor(config: Widget.WidgetConfiguration): Widget.WidgetConfiguration {
+  const normalized = {
+    ...cloneDeep(DEFAULT_WIDGET_CONFIG),
+    ...cloneDeep(config),
+  };
+  if (normalized.widgetMode === 'popup') {
+    normalized.darkMode = 'light';
+  }
+  if (normalized.widgetMode !== 'chat' && normalized.widgetMode !== 'floating-chat') {
+    normalized.persistChatHistory = false;
+  }
+  if (
+    !normalized.navigateToLink &&
+    !normalized.navigateToFile &&
+    !normalized.navigateToOriginURL &&
+    !normalized.permalink
+  ) {
+    normalized.openNewTab = false;
+  }
+  if (!normalized.speech) {
+    normalized.speechSynthesis = false;
+  }
+  return normalized;
 }
 
 function getBaseSearchOptions(searchConfig: { searchBox: Widget.SearchBoxConfig }): BaseSearchOptions {

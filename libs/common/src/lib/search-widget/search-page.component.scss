@@ -10,14 +10,83 @@
     flex-direction: column;
     gap: $spacing;
     height: calc(100vh - var(--app-topbar-height));
-    overflow-y: auto;
+    min-width: 0;
+    overflow: hidden;
     width: 100%;
     transition: width $transition-slide;
+
+    .preview-stage {
+      align-items: flex-start;
+      background-color: $color-light-stronger;
+      display: grid;
+      flex: 1;
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      min-height: 0;
+      overflow: hidden;
+      padding: rhythm(5);
+      position: relative;
+
+      // A transformed ancestor is the containing block for the widget's fixed popup/FAB elements.
+      // This keeps every preview mode inside the stage instead of underneath the config panel.
+      transform: translateZ(0);
+
+      &.dark-mode {
+        --custom-container-background-color: #{$color-dark-stronger};
+
+        background-color: $color-dark-stronger;
+      }
+
+      &.mode-page {
+        overflow-y: auto;
+
+        .preview-content {
+          width: min(100%, #{rhythm(56)});
+        }
+      }
+
+      &.mode-chat {
+        --custom-height-container: min(#{rhythm(70)}, calc(100vh - var(--app-topbar-height) - #{rhythm(18)}));
+        --custom-margin-side-input-container: auto;
+        --custom-width-input-container: 100%;
+
+        overflow-y: auto;
+
+        .preview-content {
+          width: min(100%, #{rhythm(80)});
+        }
+      }
+
+      &.mode-popup {
+        align-items: center;
+
+        .preview-content {
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      &.mode-floating-chat {
+        .preview-content {
+          height: 100%;
+          max-width: none;
+        }
+      }
+    }
 
     .preview-content {
       display: flex;
       flex-direction: column;
       gap: $spacing;
+      min-width: 0;
+      width: 100%;
+
+      nuclia-chat,
+      nuclia-search-bar,
+      nuclia-search-results {
+        display: block;
+        width: 100%;
+      }
     }
 
     &.panel-open {

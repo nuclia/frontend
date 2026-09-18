@@ -3,26 +3,36 @@
   [style]="cssVariables()">
   <div
     class="search-preview-container page-spacing"
-    [class.panel-open]="!configPanelCollapsed">
+    [class.panel-open]="!configPanelCollapsed"
+    (transitionend)="onPreviewContainerTransitionEnd($event)">
     <header>
       <div class="page-title">
         {{ 'search.title' | translate }}
       </div>
       <div class="page-description">{{ 'search.description' | translate }}</div>
     </header>
-    @if (widgetPreview | async; as widgetPreview) {
-      <div
-        id="preview"
-        class="preview-content"
-        [innerHtml]="widgetPreview.preview"></div>
-    }
+    <div
+      #previewStage
+      class="preview-stage"
+      [class.dark-mode]="isPreviewDarkMode"
+      [class.mode-page]="previewMode === 'page'"
+      [class.mode-chat]="previewMode === 'chat'"
+      [class.mode-popup]="previewMode === 'popup'"
+      [class.mode-floating-chat]="previewMode === 'floating-chat'">
+      @if (widgetPreview | async; as widgetPreview) {
+        <div
+          id="preview"
+          class="preview-content"
+          [innerHtml]="widgetPreview.preview"></div>
+      }
+    </div>
   </div>
 
   <pa-button
     class="toggle-panel-button"
     icon="chevrons-left"
     [class.visible]="configPanelCollapsed"
-    (click)="configPanelCollapsed = !configPanelCollapsed">
+    (click)="toggleConfigurationPanel()">
     {{ 'search.configuration.action.open-panel' | translate }}
   </pa-button>
 
@@ -40,7 +50,7 @@
       class="close-button"
       icon="cross"
       aspect="basic"
-      (click)="configPanelCollapsed = !configPanelCollapsed">
+      (click)="toggleConfigurationPanel()">
       {{ 'generic.close' | translate }}
     </pa-button>
 
