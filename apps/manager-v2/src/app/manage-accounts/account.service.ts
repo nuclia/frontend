@@ -61,15 +61,9 @@ export class AccountService {
         this.store.setAccountDetails(accountDetails);
         this.store.setBlockedFeatures(account.blocked_features);
         return forkJoin([
-          this.regionalService.getKbList(account.slug),
-          this.regionalService.getProjects(account.id),
-        ]).pipe(
-          map(([kbList, projects]) => {
-            this.store.setKbList(kbList);
-            this.store.setProjectList(projects);
-            return accountDetails;
-          }),
-        );
+          this.regionalService.getKbList(account.slug).pipe(map((kbList) => this.store.setKbList(kbList))),
+          this.regionalService.getProjects(account.id).pipe(map((projects) => this.store.setProjectList(projects))),
+        ]).pipe(map(() => accountDetails));
       }),
     );
   }
