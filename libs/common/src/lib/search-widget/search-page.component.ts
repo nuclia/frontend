@@ -18,7 +18,7 @@ import { ModalConfig, PaButtonModule, PaIconModule } from '@guillotinaweb/pastan
 import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { UploadEventService } from '@flaps/core';
+import { NavigationService, UploadEventService } from '@flaps/core';
 import { take } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { SearchWidgetService } from './search-widget.service';
@@ -39,12 +39,14 @@ export class SearchPageComponent implements OnDestroy {
   private modalService = inject(SisModalService);
   private document = inject(DOCUMENT);
   private uploadEventService = inject(UploadEventService);
+  private navigationService = inject(NavigationService);
 
   configurationContainerElement = viewChild<ElementRef>('configurationContainer');
   previewStageElement = viewChild<ElementRef<HTMLElement>>('previewStage');
   searchConfigurationComponent = viewChild(SearchConfigurationComponent);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
+  inArag = this.navigationService.inArag();
   searchConfig?: Widget.AnySearchConfiguration;
   widgetOptions?: Widget.WidgetConfiguration;
   /** Set from the (redirected) old /widgets/:slug admin URL, if the current route carries one. */

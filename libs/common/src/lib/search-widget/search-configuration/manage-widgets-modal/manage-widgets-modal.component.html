@@ -36,28 +36,30 @@
           </pa-table-cell>
         </pa-table-header>
 
-        @for (widget of widgetList | async; track widget.slug) {
+        @for (item of configurationList | async; track item.config.id) {
           <pa-table-row>
             <pa-table-cell>
               <button
                 type="button"
                 class="table-link"
-                (click)="selectWidget(widget)">
-                {{ widget.name }}
+                (click)="selectConfiguration(item)">
+                {{ item.config.id }}
               </button>
             </pa-table-cell>
             <pa-table-cell>
-              @if (widget.generativeModel) {
+              @if (item.generativeModel) {
                 <span class="body-s">
-                  {{ (modelNames | async)?.[widget.generativeModel] || widget.generativeModel }}
+                  {{ (modelNames | async)?.[item.generativeModel] || item.generativeModel }}
                 </span>
               }
             </pa-table-cell>
             <pa-table-cell>
-              <span class="body-s no-wrap"><pa-datetime [datetime]="widget.creationDate"></pa-datetime></span>
+              @if (item.creationDate) {
+                <span class="body-s no-wrap"><pa-datetime [datetime]="item.creationDate"></pa-datetime></span>
+              }
             </pa-table-cell>
             <pa-table-cell-menu center>
-              <div>
+              @if (!item.builtIn) {
                 <pa-button
                   icon="more-vertical"
                   aspect="basic"
@@ -67,19 +69,19 @@
                 </pa-button>
 
                 <pa-dropdown #itemMenu>
-                  <pa-option (selectOption)="rename(widget.slug, widget.name)">
+                  <pa-option (selectOption)="rename(item)">
                     {{ 'search.widgets.action.rename' | translate }}
                   </pa-option>
-                  <pa-option (selectOption)="duplicateAsNew(widget)">
+                  <pa-option (selectOption)="duplicateAsNew(item)">
                     {{ 'search.widgets.action.duplicate' | translate }}
                   </pa-option>
                   <pa-option
                     destructive
-                    (selectOption)="delete(widget.slug, widget.name)">
+                    (selectOption)="delete(item)">
                     {{ 'search.widgets.action.delete' | translate }}
                   </pa-option>
                 </pa-dropdown>
-              </div>
+              }
             </pa-table-cell-menu>
           </pa-table-row>
         }

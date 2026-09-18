@@ -442,6 +442,8 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     );
     this.savedConfig = cloneDeep(normalizedConfig);
     this.currentConfig = cloneDeep(normalizedConfig);
+    this.selectedConfig.patchValue(normalizedConfig.id, { emitEvent: false });
+    this.configurations = [...this.configurations];
     this.applyLinkedWidget(linkedWidget);
     this._syncModeSignals(normalizedConfig);
     if (normalizedConfig.type === 'api') {
@@ -653,10 +655,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
           this.selectedConfig.patchValue(selection.configId, { emitEvent: false });
           this.configSelection.next(selection);
         } else if (this.savedConfig) {
-          // Nothing was selected to load, but the widget linked to the currently active configuration
-          // may have been renamed/duplicated/deleted from inside the modal — refresh it so the header
-          // actions (e.g. Get embed code) reflect the latest state.
-          this.refreshLinkedWidget(this.savedConfig.id);
+          // Modal actions can add, rename, duplicate, or delete whole configuration/embed items.
+          // Refresh the same source used by the selector so both surfaces remain identical.
+          this.setConfigurations().subscribe();
         }
       });
   }

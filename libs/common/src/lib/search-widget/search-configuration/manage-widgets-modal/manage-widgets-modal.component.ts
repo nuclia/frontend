@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  ModalConfig,
   ModalRef,
   PaButtonModule,
   PaDateTimeModule,
@@ -11,13 +12,20 @@ import {
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { combineLatest, map, Observable, shareReplay, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../../search-widget.service';
-import { Widget } from '@nuclia/core';
+import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { RenameWidgetDialogComponent, DuplicateWidgetDialogComponent } from '../../widgets/dialogs';
+import { DEFAULT_WIDGET_CONFIG } from '../../search-widget.models';
 
-interface WidgetWithModel extends Widget.Widget {
+interface ConfigurationListItem {
+  config: Widget.AnySearchConfiguration;
+  widget?: Widget.Widget;
   generativeModel?: string;
+  creationDate?: string;
+  builtIn: boolean;
 }
 
 /**
@@ -46,6 +54,7 @@ interface WidgetWithModel extends Widget.Widget {
 export class ManageWidgetsModalComponent {
   private sdk = inject(SDKService);
   private searchWidgetService = inject(SearchWidgetService);
+  private modalService = inject(SisModalService);
 
   modal = inject(ModalRef);
 
@@ -55,22 +64,27 @@ export class ManageWidgetsModalComponent {
     shareReplay(1),
   );
 
-  widgetList: Observable<WidgetWithModel[]> = combineLatest([
+  configurationList: Observable<ConfigurationListItem[]> = combineLatest([
     this.searchWidgetService.widgetList,
-    this.searchWidgetService.supportedSearchConfigurations,
+    this.searchWidgetService.searchConfigurations,
     this.defaultModel,
   ]).pipe(
     map(([widgets, searchConfigs, defaultModel]) =>
-      widgets.map((widget) => ({
-        ...widget,
-        generativeModel:
-          searchConfigs.find((config) => config.id === widget.searchConfigId)?.generativeAnswer?.generativeModel ||
-          defaultModel,
-      })),
+      [{ ...NUCLIA_STANDARD_SEARCH_CONFIG }, ...searchConfigs].map((config) => {
+        const widget = widgets.find((candidate) => candidate.searchConfigId === config.id);
+        return {
+          config,
+          widget,
+          generativeModel:
+            config.type === 'config' ? config.generativeAnswer?.generativeModel || defaultModel : defaultModel,
+          creationDate: widget?.creationDate,
+          builtIn: config.id.startsWith('nuclia-'),
+        };
+      }),
     ),
   );
 
-  emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
+  emptyList: Observable<boolean> = this.configurationList.pipe(map((list) => list.length === 0));
 
   modelNames = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getLearningSchema()),
@@ -88,19 +102,66 @@ export class ManageWidgetsModalComponent {
   );
 
   /** Returns both identities so the panel loads this exact embed, not another embed sharing the same config. */
-  selectWidget(widget: Widget.Widget) {
-    this.modal.close({ configId: widget.searchConfigId, widgetSlug: widget.slug });
+  selectConfiguration(item: ConfigurationListItem) {
+    this.modal.close({ configId: item.config.id, widgetSlug: item.widget?.slug });
   }
 
-  rename(slug: string, name: string) {
-    this.searchWidgetService.renameWidget(slug, name).subscribe();
+  rename(item: ConfigurationListItem) {
+    this.modalService
+      .openModal(
+        RenameWidgetDialogComponent,
+        new ModalConfig({ data: { name: item.config.id, entity: 'configuration' } }),
+      )
+      .onClose.pipe(
+        filter((name): name is string => !!name && name !== item.config.id),
+        switchMap((name) => this.copyConfiguration(item, name)),
+        switchMap(() => this.deleteConfiguration(item)),
+      )
+      .subscribe();
   }
 
-  duplicateAsNew(widget: Widget.Widget) {
-    this.searchWidgetService.duplicateWidget(widget).subscribe();
+  duplicateAsNew(item: ConfigurationListItem) {
+    this.modalService
+      .openModal(
+        DuplicateWidgetDialogComponent,
+        new ModalConfig({ data: { name: item.config.id, entity: 'configuration' } }),
+      )
+      .onClose.pipe(
+        filter((name): name is string => !!name),
+        switchMap((name) => this.copyConfiguration(item, name)),
+      )
+      .subscribe();
   }
 
-  delete(slug: string, name: string) {
-    this.searchWidgetService.deleteWidget(slug, name).subscribe();
+  delete(item: ConfigurationListItem) {
+    this.searchWidgetService
+      .confirmDeleteSearchConfiguration(item.config.id)
+      .pipe(
+        filter((confirmed) => confirmed),
+        switchMap(() => this.deleteConfiguration(item)),
+      )
+      .subscribe();
+  }
+
+  private copyConfiguration(item: ConfigurationListItem, name: string) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => this.searchWidgetService.saveSearchConfig(kb.id, name, item.config, false)),
+      switchMap(() =>
+        item.widget
+          ? this.searchWidgetService.createWidget(name, item.widget.widgetConfig ?? DEFAULT_WIDGET_CONFIG, name)
+          : of(undefined),
+      ),
+    );
+  }
+
+  private deleteConfiguration(item: ConfigurationListItem) {
+    return this.searchWidgetService
+      .deleteSearchConfig(item.config.id)
+      .pipe(
+        switchMap(() =>
+          item.widget ? this.searchWidgetService.deleteWidgetSilently(item.widget.slug) : of(undefined),
+        ),
+      );
   }
 }
