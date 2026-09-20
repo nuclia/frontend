@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, provideAppInitializer } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -33,6 +33,7 @@ import { KnowledgeBoxModule } from './knowledge-box';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
+import { checkExternalConnection } from './app.init';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -85,6 +86,7 @@ const appModules = [
     PaToastModule,
   ],
   providers: [
+    provideAppInitializer(checkExternalConnection),
     {
       provide: SPRITE_CACHE_VERSION,
       useFactory: (config: BackendConfigurationService) => config.getVersion(),

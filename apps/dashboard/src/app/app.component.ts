@@ -61,7 +61,6 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.pendo.init();
-    this.redirectToSyncCreation();
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
@@ -120,23 +119,6 @@ export class AppComponent implements OnInit, OnDestroy {
           access_token,
           refresh_token: querystring.get('refresh_token') || '',
         });
-      }
-    }
-  }
-
-  private redirectToSyncCreation() {
-    const params = location.search;
-    if (params.includes('external_connection_id')) {
-      const querystring = new URLSearchParams(params.split('?')[1]);
-      const external_connection_id = querystring.get('external_connection_id');
-      const redirect = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}')['redirect'];
-      if (external_connection_id && redirect) {
-        location.href = `${redirect}/${external_connection_id}`;
-      } else {
-        // DEV PURPOSE
-        // when working on localhost, the oauth flow redirect to stage, we need to know external_connection_id
-        // so we can pass it manuallly to localhost
-        console.info('external_connection_id', external_connection_id);
       }
     }
   }
