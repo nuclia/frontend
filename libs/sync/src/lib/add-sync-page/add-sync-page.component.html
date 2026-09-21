@@ -43,6 +43,7 @@
         @if (externalConnection) {
           <nsy-cloud-folder
             [externalConnection]="externalConnection"
+            [connectorId]="connectorId | async"
             (selection)="selectFolder($event)"></nsy-cloud-folder>
         }
         @if (externalConnection) {

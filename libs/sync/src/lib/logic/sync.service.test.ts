@@ -60,4 +60,23 @@ describe('SyncService', () => {
     expect(req2.request.method).toBe('GET');
     req2.flush(null);
   });
+
+  describe('getConnectorIdForProvider', () => {
+    it('should resolve to the onedrive-me connector when drive_type is "personal"', () => {
+      expect(service.getConnectorIdForProvider('azure_oauth', 'personal')).toBe('onedrive-me');
+    });
+
+    it('should resolve to the onedrive-me connector when drive_type is "business"', () => {
+      expect(service.getConnectorIdForProvider('azure_oauth', 'business')).toBe('onedrive-me');
+    });
+
+    it('should resolve azure_oauth without a drive_type, or with "documentLibrary", to sharepoint', () => {
+      expect(service.getConnectorIdForProvider('azure_oauth')).toBe('sharepoint');
+      expect(service.getConnectorIdForProvider('azure_oauth', 'documentLibrary')).toBe('sharepoint');
+    });
+
+    it('should resolve azure_certificate_credentials to sharepoint regardless of drive_type', () => {
+      expect(service.getConnectorIdForProvider('azure_certificate_credentials', 'personal')).toBe('sharepoint');
+    });
+  });
 });
