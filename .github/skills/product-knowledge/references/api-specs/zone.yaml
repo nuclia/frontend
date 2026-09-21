@@ -5,7 +5,7 @@ info:
   version: v1
 openapi: 3.1.0
 servers:
-- url: https://{region-x}.stashify.cloud
+- url: https://{region-x}.dp.stashify.cloud
   description: Development server
 tags:
 - description: Operations for creating, reading, updating, and deleting Knowledge
@@ -50,6 +50,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/internal/token-metadata: {}
   /api/v1/account/{account_id}/backup/{backup_id}:
     delete:
       tags:
@@ -961,6 +962,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - NUA Keys
+      summary: Update Nua Client By Id
+      description: Updates an existing Nuclia Understanding API client
+      operationId: update_nua_client_by_id_api_v1_account__account_id__nua_client__client_id__patch
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: client_id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Client Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NUAClientUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NUAClientMetadata'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/account/{account_id}/nua_client/{client_id}/key:
     put:
       tags:
@@ -1163,7 +1204,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-06-02T09:37:14.935132'
+          default: '2026-08-27T13:51:28.609922'
           title: To
       responses:
         '200':
@@ -1249,7 +1290,7 @@ paths:
           description: Returns data in NDJSON format
           content:
             application/x-ndjson:
-              example: '{"question":null,"id":0,"date":null,"user_id":null,"user_type":null,"client_type":null,"total_duration":null,"audit_metadata":null,"resource_id":null,"nuclia_tokens":null,"token_details":null,"rephrased_question":null,"answer":null,"learning_id":null,"retrieved_context":null,"chat_history":null,"feedback_good":null,"feedback_comment":null,"feedback_good_all":null,"feedback_good_any":null,"feedback":null,"model":null,"rag_strategies_names":null,"rag_strategies":null,"status":null,"generative_answer_first_chunk_time":null,"generative_reasoning_first_chunk_time":null,"generative_answer_time":null,"remi_scores":null,"user_request":null,"reasoning":null,"resources_count":null,"filter":null,"retrieval_rephrased_question":null,"vectorset":null,"security":null,"min_score_bm25":null,"min_score_semantic":null,"result_per_page":null,"retrieval_time":null}
+              example: '{"id":0,"date":null,"user_id":null,"user_type":null,"client_type":null,"total_duration":null,"audit_metadata":null,"resource_id":null,"nuclia_tokens":null,"token_details":null,"question":null,"rephrased_question":null,"answer":null,"learning_id":null,"retrieved_context":null,"chat_history":null,"feedback_good":null,"feedback_comment":null,"feedback_good_all":null,"feedback_good_any":null,"feedback":null,"model":null,"rag_strategies_names":null,"rag_strategies":null,"status":null,"generative_answer_first_chunk_time":null,"generative_reasoning_first_chunk_time":null,"generative_answer_time":null,"remi_scores":null,"user_request":null,"reasoning":null,"resources_count":null,"filter":null,"retrieval_rephrased_question":null,"vectorset":null,"security":null,"min_score_bm25":null,"min_score_semantic":null,"result_per_page":null,"retrieval_time":null}
 
                 '
         '422':
@@ -1467,9 +1508,21 @@ paths:
           anyOf:
           - type: string
           - type: 'null'
-          description: Folder path to list within the drive.
+          description: Folder path to list within the drive. Cannot be combined with
+            folder_id.
           title: Path
-        description: Folder path to list within the drive.
+        description: Folder path to list within the drive. Cannot be combined with
+          folder_id.
+      - name: folder_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Folder ID to list contents of. Cannot be combined with path.
+          title: Folder Id
+        description: Folder ID to list contents of. Cannot be combined with path.
       - name: page_token
         in: query
         required: false
@@ -1498,14 +1551,18 @@ paths:
       tags:
       - External Connections
       summary: Resolve Site
-      description: "Resolve a SharePoint site URL to its site ID.\n\nGiven a full\
-        \ SharePoint site URL, this endpoint returns the site ID,\nname, and web URL.\
-        \ The returned site ID can then be used with the\n`/browse` endpoint to list\
-        \ drives for that site.\n\nThis endpoint works with the **Sites.Selected**\
-        \ permission scope,\nas long as the specific site has been granted access\
-        \ to the application.\n\n**Usage flow:**\n1. Call this endpoint with a site\
-        \ URL \u2192 get `site_id`\n2. Call `/browse?site_id={site_id}` \u2192 get\
-        \ drives\n3. Call `/browse?drive_id={drive_id}` \u2192 get folders"
+      description: "Resolve a SharePoint site URL to its site ID, or return the OneDrive\
+        \ site.\n\nGiven a full SharePoint site URL, this endpoint returns the site\
+        \ ID,\nname, and web URL. The returned site ID can then be used with the\n\
+        `/browse` endpoint to list drives for that site.\n\nThis endpoint works with\
+        \ the **Sites.Selected** permission scope,\nas long as the specific site has\
+        \ been granted access to the application.\n\nFor **azure_oauth** connections,\
+        \ you can also pass ``me`` or ``onedrive``\n(case-insensitive) as ``site_url``\
+        \ to get a fixed site with ``id=\"me\"``\nrepresenting the user's personal\
+        \ OneDrive. This shortcut is not available\nfor certificate-based connections.\n\
+        \n**Usage flow:**\n1. Call this endpoint with a site URL \u2192 get `site_id`\n\
+        2. Call `/browse?site_id={site_id}` \u2192 get drives\n3. Call `/browse?drive_id={drive_id}`\
+        \ \u2192 get folders"
       operationId: resolve_site_api_v1_kb__kb_id__external_connection__connection_id__resolve_site_get
       parameters:
       - name: kb_id
@@ -1527,9 +1584,15 @@ paths:
         required: true
         schema:
           type: string
-          description: 'Full SharePoint site URL to resolve. Example: https://contoso.sharepoint.com/sites/TeamSite'
+          description: 'Full SharePoint site URL to resolve, or ''me''/''onedrive''
+            for personal OneDrive. Examples: https://contoso.sharepoint.com/sites/TeamSite,
+            me, onedrive. Passing ''me'' or ''onedrive'' is only supported for azure_oauth
+            connections.'
           title: Site Url
-        description: 'Full SharePoint site URL to resolve. Example: https://contoso.sharepoint.com/sites/TeamSite'
+        description: 'Full SharePoint site URL to resolve, or ''me''/''onedrive''
+          for personal OneDrive. Examples: https://contoso.sharepoint.com/sites/TeamSite,
+          me, onedrive. Passing ''me'' or ''onedrive'' is only supported for azure_oauth
+          connections.'
       responses:
         '200':
           description: Successful Response
@@ -2253,7 +2316,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-06-02T09:37:14.941274'
+          default: '2026-08-27T13:51:28.615043'
           title: To
       responses:
         '200':
@@ -2331,14 +2394,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
   cloud_storage_sync:
-    commit: 9884f25ddd0cdc6244933cd2a5fd85d346ace174
-    last_updated: '2026-06-03T17:01:08.856629+00:00'
+    commit: ba1fdde791099614482d40f5eba1e8438ad116aa
+    last_updated: '2026-08-21T15:20:36.049961+00:00'
   idp_regional:
-    commit: 138a85e17c7f0b6f677bfdc902721465dd49870b
-    last_updated: '2026-06-04T09:25:07.038158'
+    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
+    last_updated: '2026-08-27T13:55:22.507745'
   events:
-    commit: 17f0667eba28a062be4df73d65fe3d40943f8f93
-    last_updated: '2026-06-02T09:37:15.223219'
+    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
+    last_updated: '2026-08-27T13:51:28.846282'
 components:
   schemas:
     AWSS3AssumeRoleCredentials:
@@ -2924,8 +2987,15 @@ components:
           type: string
           title: Name
         sync_root_path:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Sync Root Path
+        folder_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Folder Id
         external_connection_id:
           type: string
           format: uuid
@@ -2959,7 +3029,6 @@ components:
       type: object
       required:
       - name
-      - sync_root_path
       - external_connection_id
       title: SyncConfigInput
     SyncConfigOutput:
@@ -3154,6 +3223,11 @@ components:
         type:
           type: string
           title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
       - loc
@@ -3764,10 +3838,14 @@ components:
         client_id:
           type: string
           title: Client Id
+        internal_id:
+          type: string
+          title: Internal Id
       type: object
       required:
       - token
       - client_id
+      - internal_id
       title: NUAClient
     NUAClientKeyCreation:
       properties:
@@ -3798,6 +3876,12 @@ components:
           type: boolean
           title: Allow Kb Management
           default: false
+        tokens_limit:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Tokens Limit
       type: object
       required:
       - contact
@@ -3829,6 +3913,9 @@ components:
           type: string
           pattern: ^[a-z0-9_-]+$
           title: Client Id
+        internal_id:
+          type: string
+          title: Internal Id
         account_id:
           type: string
           title: Account Id
@@ -3836,6 +3923,12 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ProcessingWebhook'
           - type: 'null'
+        tokens_limit:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Tokens Limit
       type: object
       required:
       - title
@@ -3843,8 +3936,29 @@ components:
       - created
       - partitions
       - client_id
+      - internal_id
       - account_id
       title: NUAClientMetadata
+    NUAClientUpdate:
+      properties:
+        tokens_limit:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Tokens Limit
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        contact:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contact
+      type: object
+      title: NUAClientUpdate
     NUAClientsMetadata:
       properties:
         clients:
@@ -3856,6 +3970,25 @@ components:
       required:
       - clients
       title: NUAClientsMetadata
+    NUATokenMetadataUpdate:
+      properties:
+        nua_internal_id:
+          type: string
+          title: Nua Internal Id
+        issuer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Issuer
+        seen_at:
+          type: string
+          format: date-time
+          title: Seen At
+      type: object
+      required:
+      - nua_internal_id
+      - seen_at
+      title: NUATokenMetadataUpdate
     PermissionsResponse:
       properties:
         permissions:
@@ -3882,6 +4015,41 @@ components:
       required:
       - uri
       title: ProcessingWebhook
+    RegionalTokenMetadataPayload:
+      properties:
+        sa_updates:
+          items:
+            $ref: '#/components/schemas/SATokenMetadataUpdate'
+          type: array
+          title: Sa Updates
+          default: []
+        nua_updates:
+          items:
+            $ref: '#/components/schemas/NUATokenMetadataUpdate'
+          type: array
+          title: Nua Updates
+          default: []
+      type: object
+      title: RegionalTokenMetadataPayload
+    SATokenMetadataUpdate:
+      properties:
+        sa_key_id:
+          type: string
+          title: Sa Key Id
+        issuer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Issuer
+        seen_at:
+          type: string
+          format: date-time
+          title: Seen At
+      type: object
+      required:
+      - sa_key_id
+      - seen_at
+      title: SATokenMetadataUpdate
     ServiceAccount:
       properties:
         id:
@@ -4028,7 +4196,6 @@ components:
           - items:
               type: string
               enum:
-              - question
               - id
               - date
               - user_id
@@ -4039,6 +4206,7 @@ components:
               - resource_id
               - nuclia_tokens
               - token_details
+              - question
               - rephrased_question
               - answer
               - learning_id
@@ -4074,13 +4242,13 @@ components:
             const: all
           title: Show
           default:
-          - rephrased_question
-          - date
-          - rag_strategies_names
-          - answer
-          - id
-          - resources_count
           - question
+          - rephrased_question
+          - resources_count
+          - rag_strategies_names
+          - id
+          - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersAsk'
       additionalProperties: false
@@ -4103,7 +4271,6 @@ components:
           - items:
               type: string
               enum:
-              - question
               - id
               - date
               - user_id
@@ -4114,6 +4281,7 @@ components:
               - resource_id
               - nuclia_tokens
               - token_details
+              - question
               - rephrased_question
               - answer
               - learning_id
@@ -4140,12 +4308,12 @@ components:
             const: all
           title: Show
           default:
-          - rephrased_question
-          - rag_strategies_names
-          - date
-          - id
           - question
+          - rephrased_question
+          - id
+          - rag_strategies_names
           - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersChat'
       additionalProperties: false
@@ -4208,7 +4376,6 @@ components:
           - items:
               type: string
               enum:
-              - question
               - id
               - date
               - user_id
@@ -4219,6 +4386,7 @@ components:
               - resource_id
               - nuclia_tokens
               - token_details
+              - question
               - resources_count
               - filter
               - retrieval_rephrased_question
@@ -4235,9 +4403,9 @@ components:
           title: Show
           default:
           - id
-          - resources_count
           - question
           - date
+          - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersSearch'
       additionalProperties: false
@@ -4354,6 +4522,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isnotin
         like:
           anyOf:
           - type: string
@@ -4417,7 +4599,6 @@ components:
           - items:
               type: string
               enum:
-              - question
               - id
               - date
               - user_id
@@ -4428,6 +4609,7 @@ components:
               - resource_id
               - nuclia_tokens
               - token_details
+              - question
               - rephrased_question
               - answer
               - learning_id
@@ -4463,13 +4645,13 @@ components:
             const: all
           title: Show
           default:
-          - rephrased_question
-          - date
-          - rag_strategies_names
-          - answer
-          - id
-          - resources_count
           - question
+          - rephrased_question
+          - resources_count
+          - rag_strategies_names
+          - id
+          - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersAsk'
         email_address:
@@ -4498,7 +4680,6 @@ components:
           - items:
               type: string
               enum:
-              - question
               - id
               - date
               - user_id
@@ -4509,6 +4690,7 @@ components:
               - resource_id
               - nuclia_tokens
               - token_details
+              - question
               - rephrased_question
               - answer
               - learning_id
@@ -4535,12 +4717,12 @@ components:
             const: all
           title: Show
           default:
-          - rephrased_question
-          - rag_strategies_names
-          - date
-          - id
           - question
+          - rephrased_question
+          - id
+          - rag_strategies_names
           - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersChat'
         email_address:
@@ -4615,7 +4797,6 @@ components:
           - items:
               type: string
               enum:
-              - question
               - id
               - date
               - user_id
@@ -4626,6 +4807,7 @@ components:
               - resource_id
               - nuclia_tokens
               - token_details
+              - question
               - resources_count
               - filter
               - retrieval_rephrased_question
@@ -4642,9 +4824,9 @@ components:
           title: Show
           default:
           - id
-          - resources_count
           - question
           - date
+          - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersSearch'
         email_address:
@@ -4767,6 +4949,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClientType'
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClientType'
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[ClientType]
@@ -4801,6 +4997,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UserType'
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UserType'
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[UserType]
@@ -4841,6 +5051,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: boolean
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: boolean
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[bool]
@@ -4887,6 +5111,22 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+              format: date-time
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+              format: date-time
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[datetime]
@@ -4927,6 +5167,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[float]
@@ -4967,6 +5221,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[int]
@@ -5007,6 +5275,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isnotin
       additionalProperties: false
       type: object
       title: GenericFilter[str]
@@ -5032,10 +5314,6 @@ components:
       title: Pagination
     QueryFiltersAsk:
       properties:
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
         id:
           anyOf:
           - $ref: '#/components/schemas/GenericFilter_int_'
@@ -5070,6 +5348,10 @@ components:
         nuclia_tokens:
           anyOf:
           - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
           - type: 'null'
         rephrased_question:
           anyOf:
@@ -5181,10 +5463,6 @@ components:
       title: QueryFiltersAsk
     QueryFiltersChat:
       properties:
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
         id:
           anyOf:
           - $ref: '#/components/schemas/GenericFilter_int_'
@@ -5219,6 +5497,10 @@ components:
         nuclia_tokens:
           anyOf:
           - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
           - type: 'null'
         rephrased_question:
           anyOf:
@@ -5338,10 +5620,6 @@ components:
       title: QueryFiltersCommon
     QueryFiltersSearch:
       properties:
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
         id:
           anyOf:
           - $ref: '#/components/schemas/GenericFilter_int_'
@@ -5376,6 +5654,10 @@ components:
         nuclia_tokens:
           anyOf:
           - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
           - type: 'null'
         resources_count:
           anyOf:
@@ -5639,6 +5921,20 @@ components:
           - type: boolean
           - type: 'null'
           title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isnotin
         like:
           anyOf:
           - type: string

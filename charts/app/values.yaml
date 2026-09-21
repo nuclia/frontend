@@ -22,6 +22,7 @@ service:
 app_name: app
 no_stripe: false
 google_analytics: XXX
+pendo_key: XXX
 api_origin: XXX
 cdn: XXX
 brand_name: XXX

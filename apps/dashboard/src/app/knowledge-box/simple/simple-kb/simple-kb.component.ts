@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, computed, Component, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { map, take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
+import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
 import { DroppedFile, FeaturesService, SDKService, SizePipe } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { SimpleKBService } from './simple-kb.service';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
-import { getCoworkTrialState } from '../simple.utils';
 
 @Component({
   standalone: false,
@@ -32,7 +31,6 @@ export class SimpleKBComponent implements OnDestroy {
   maxFiles = this.simpleKBService.maxFiles;
   logs = new Subject<any>();
 
-  uploadInProgress = toSignal(this.simpleKBService.uploadInProgress, { initialValue: false });
   counter = toSignal(this.simpleKBService.resourceCounter);
   step = signal<number>(-1);
   fileOver = signal(false);
@@ -41,13 +39,6 @@ export class SimpleKBComponent implements OnDestroy {
 
   view = signal<'resources' | 'history' | 'search'>('resources');
   currentConversation?: string;
-
-  private trialState = toSignal(this.sdk.currentAccount.pipe(map(getCoworkTrialState)), {
-    initialValue: { isCoworkTrial: false, isTrialExpired: false, isAtEquator: false, daysLeft: 0 },
-  });
-
-  isCoworkTrial = computed(() => this.trialState().isCoworkTrial);
-  isAtEquator = computed(() => this.trialState().isAtEquator);
 
   constructor() {
     this.simpleKBService.resources.pipe(take(1)).subscribe((resources) => {
@@ -134,17 +125,15 @@ export class SimpleKBComponent implements OnDestroy {
 
   onFilesSelected(files: File[] | FileList | DroppedFile[]) {
     const fileTypes = getFilesGroupedByType(files);
-    const allowedMediaFiles = fileTypes.mediaFiles.filter((file) => {
-      const type = file.type?.split('/')[0];
-      return type !== 'audio' && type !== 'video';
-    });
-    if (allowedMediaFiles.length < fileTypes.mediaFiles.length) {
-      this.toaster.warning(this.translate.instant('simple.no-video-audio'));
+    const mediaFilesNotSupported = this.maxMediaFileSize === 1;
+    if (mediaFilesNotSupported) {
+      fileTypes.mediaFiles = [];
+      this.toaster.warning(this.translate.instant('simple.no-media-files'));
     }
     const filesWithinLimits = fileTypes.nonMediaFiles.filter(
       (file) => this.maxFileSize === -1 || file.size <= this.maxFileSize,
     );
-    const mediaFilesWithinLimits = allowedMediaFiles.filter(
+    const mediaFilesWithinLimits = fileTypes.mediaFiles.filter(
       (file) => this.maxMediaFileSize === -1 || file.size <= this.maxMediaFileSize,
     );
     if (filesWithinLimits.length < fileTypes.nonMediaFiles.length) {
@@ -152,7 +141,7 @@ export class SimpleKBComponent implements OnDestroy {
         this.translate.instant('simple.file-size-limit', { size: this.sizePipe.transform(this.maxFileSize) }),
       );
     }
-    if (mediaFilesWithinLimits.length < allowedMediaFiles.length) {
+    if (mediaFilesWithinLimits.length < fileTypes.mediaFiles.length) {
       this.toaster.warning(
         this.translate.instant('simple.media-file-size-limit', {
           size: this.sizePipe.transform(this.maxMediaFileSize),

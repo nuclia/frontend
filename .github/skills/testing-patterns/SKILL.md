@@ -2,7 +2,7 @@
 name: testing-patterns
 description: >
   Testing patterns for the Nuclia frontend monorepo — covering Jest + jest-preset-angular for
-  Angular apps/libs and Vitest for search-widget (Svelte 5) and rao-widget (React 19). Use this
+  Angular apps/libs and Vitest for search-widget (Svelte 5). Use this
   skill whenever you are writing or modifying a spec file, debugging a failing test, setting up a
   new TestBed configuration, mocking Angular services, working with OnPush components in tests,
   or using Vitest with Svelte/React. Do not wait to be asked about "testing patterns" specifically —
@@ -31,7 +31,6 @@ Two separate test stacks live in this repo. Match the stack to the project:
 | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- | ----------------------------------------------- |
 | Angular apps & libs (`dashboard`, `rao`, `manager-v2`, `nucliadb-admin`, `core`, `common`, `sistema`, `user`, `sync`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
 | `libs/search-widget` (Svelte 5)                                                                                                            | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
-| `libs/rao-widget` (React 19)                                                                                                               | **Vitest 4**                        | `libs/rao-widget/vite.config.ts`                |
 
 Run with `nx test <project-name>` in all cases.
 
@@ -246,7 +245,7 @@ For components that use `TranslateModule`, use either:
 
 ---
 
-## Vitest Testing (search-widget / rao-widget)
+## Vitest Testing (search-widget)
 
 ### Environment & globals
 
@@ -307,22 +306,6 @@ describe('Button', () => {
 
 ---
 
-### React component tests (rao-widget)
-
-Use React Testing Library (`@testing-library/react`) when tests exist. The `rao-widget` currently has no spec files — if you add them, follow this pattern:
-
-```ts
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
-
-describe('MyWidget', () => {
-  it('shows content', () => {
-    render(<MyWidget label="Hello" />);
-    expect(screen.getByText('Hello')).toBeInTheDocument();
-  });
-});
-```
 
 ---
 

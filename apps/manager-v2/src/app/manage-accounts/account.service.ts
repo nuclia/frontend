@@ -18,6 +18,7 @@ import {
   KbCounters,
   KbDetails,
   KbSummary,
+  ProjectDetails,
 } from './account-ui.models';
 import { AccountUserType, KbRoles } from './global-account.models';
 import { GlobalAccountService } from './global-account.service';
@@ -33,7 +34,7 @@ export class AccountService {
   private regionalService = inject(RegionalAccountService);
   private store = inject(ManagerStore);
 
-  private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay());
+  private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay(1));
 
   getDefaultLimits(accountType: AccountTypes): Observable<AccountTypeDefaults> {
     return this._accountTypes.pipe(map((accountTypes) => accountTypes[accountType]));
@@ -59,12 +60,10 @@ export class AccountService {
         const accountDetails = this.regionalService.mapAccountToDetails(account);
         this.store.setAccountDetails(accountDetails);
         this.store.setBlockedFeatures(account.blocked_features);
-        return this.regionalService.getKbList(account.slug).pipe(
-          map((kbList) => {
-            this.store.setKbList(kbList);
-            return accountDetails;
-          }),
-        );
+        return forkJoin([
+          this.regionalService.getKbList(account.slug).pipe(map((kbList) => this.store.setKbList(kbList))),
+          this.regionalService.getProjects(account.id).pipe(map((projects) => this.store.setProjectList(projects))),
+        ]).pipe(map(() => accountDetails));
       }),
     );
   }
@@ -124,7 +123,10 @@ export class AccountService {
   /**
    * Update KB slug and/or title and/or prewarm_enabled and update the store accordingly
    */
-  updateKb(kbSummary: KbSummary, data: { slug?: string; title?: string; prewarm_enabled?: boolean }): Observable<KbDetails> {
+  updateKb(
+    kbSummary: KbSummary,
+    data: { slug?: string; title?: string; prewarm_enabled?: boolean },
+  ): Observable<KbDetails> {
     return this.regionalService.updateKb(kbSummary, data).pipe(
       tap(() => console.log(`update kb done`)),
       switchMap(() =>
@@ -209,6 +211,35 @@ export class AccountService {
    */
   deleteAccount(accountId: string): Observable<void> {
     return this.globalService.deleteAccount(accountId);
+  }
+
+  /**
+   * Load project details
+   */
+  loadProject(accountId: string, projectId: string, zoneId: string): Observable<ProjectDetails> {
+    return this.regionalService.getProject(accountId, projectId, zoneId).pipe(
+      tap((project) => {
+        this.store.setProjectDetails(project);
+      }),
+    );
+  }
+
+  /**
+   * Update project and update the store accordingly
+   */
+  updateProject(
+    accountId: string,
+    projectId: string,
+    zoneId: string,
+    data: { name: string; description?: string },
+  ): Observable<ProjectDetails> {
+    return this.regionalService.updateProject(accountId, projectId, zoneId, data).pipe(
+      switchMap(() =>
+        // load Account Details to update the kb list on the navigation panel
+        forkJoin([this.loadAccountDetails(accountId), this.loadProject(accountId, projectId, zoneId)]),
+      ),
+      map(([, projectDetails]) => projectDetails),
+    );
   }
 
   /**

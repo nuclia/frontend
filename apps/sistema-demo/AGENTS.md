@@ -24,14 +24,14 @@ apps/sistema-demo/src/
     ├── sistema-pages/          # All nsi-* component demo pages
     │   ├── pastanaga-pages-override/  # Overrides for Pastanaga component demos
     │   └── index.ts
-    └── vendors/                # Pastanaga demo pages included directly
+    └── welcome-page/           # Root route ('') component, shown before picking a demo
 ```
 
 ---
 
 ## Routing
 
-Routes are auto-derived from the `menu` array in `app.component.ts` — **no `app-routing.module.ts` edits needed when adding new demos**.
+Routes are auto-derived from the `menu` array in `app.component.ts` — **no `app-routing.module.ts` edits needed when adding new demos**. `app-routing.module.ts` walks `menu` and pushes one route per page, plus a root `''` route to `WelcomePageComponent` (`welcome-page/`) shown before a demo is picked.
 
 Top-level route groups (as of current `menu` array):
 
@@ -39,6 +39,7 @@ Top-level route groups (as of current `menu` array):
 - **Nuclia Sistema** — all `nsi-*` component demos (action-card, badge, info-card, back-button, button-mini, dropdown-button, expandable-textarea, folder-tree, label, password-input, country-select, search-input, skeleton, segmented-buttons, spinner, sticky-footer, two-columns-config-item)
 - **Pastanaga components** — all `pa-*` component demos with Sistema overrides (confirmation-dialog, modal, toast, etc.)
 - **Pastanaga Form elements** — form control demos
+- **Pastanaga Tables** — table, table-row, table-cell, table-lead-cell-multi-line, table-sortable-header, table-sortable-header-cell
 
 ---
 

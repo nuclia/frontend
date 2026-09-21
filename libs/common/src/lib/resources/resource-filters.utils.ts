@@ -11,6 +11,7 @@ import mime from 'mime';
 
 export interface Filters {
   classification: OptionModel[];
+  labelsets: OptionModel[];
   mainTypes: OptionModel[];
   languages?: OptionModel[];
   creation: {
@@ -39,11 +40,16 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   // Group facets by types
   const facetGroups: {
     classification: { key: string; count: number }[];
+    labelsets: { key: string; count: number }[];
     mainTypes: { key: string; count: number }[];
     languages: { key: string; count: number }[];
   } = Object.entries(allFacets).reduce(
     (groups, [facetId, values]) => {
       if (facetId.startsWith('/classification.labels/')) {
+        groups.labelsets.push({
+          key: facetId,
+          count: Object.entries(values).reduce((acc, [, count]) => acc + count, 0),
+        });
         Object.entries(values).forEach(([key, count]) => {
           groups.classification.push({ key, count });
         });
@@ -60,6 +66,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     },
     {
       classification: [] as { key: string; count: number }[],
+      labelsets: [] as { key: string; count: number }[],
       mainTypes: [] as { key: string; count: number }[],
       languages: [] as { key: string; count: number }[],
     },
@@ -68,6 +75,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   // Create corresponding filter options
   const filters: Filters = {
     classification: [],
+    labelsets: [],
     mainTypes: [],
     languages: [],
     creation: {},
@@ -78,6 +86,12 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
       filters.classification.push(getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key)));
     });
     filters.classification.sort((a, b) => a.label.localeCompare(b.label));
+  }
+  if (facetGroups.labelsets.length > 0) {
+    facetGroups.labelsets.forEach((facet) => {
+      const label = facet.key.split('/').at(-1) || '';
+      filters.labelsets.push(getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key)));
+    });
   }
   if (facetGroups.mainTypes.length > 0) {
     facetGroups.mainTypes.forEach((facet) => {

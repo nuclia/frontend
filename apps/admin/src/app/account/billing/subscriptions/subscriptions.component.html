@@ -1,0 +1,233 @@
+@if ((isSubscribedToAws | async) === true) {
+  <app-aws-subscription></app-aws-subscription>
+} @else if ((isManuallySubscribed | async) === true) {
+  <app-manual-subscription></app-manual-subscription>
+} @else {
+  <div class="header">
+    @if (canSelectCurrency) {
+      <div>
+        <button
+          class="currency title-xs"
+          [class.selected]="(currency | async) === 'USD'"
+          (click)="setCurrency('USD')">
+          USD
+        </button>
+        <button
+          class="currency title-xs"
+          [class.selected]="(currency | async) === 'EUR'"
+          (click)="setCurrency('EUR')">
+          EUR
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (currency | async; as currency) {
+    @if (accountTypesDefaults | async; as defaults) {
+      <table
+        class="subscriptions"
+        [class]="accountType | async">
+        <tr>
+          <th></th>
+          @if (showCowork | async) {
+            <th class="plan">
+              <div class="plan-name">Context Box</div>
+              @if ((prices | async)?.['cowork']; as cowork) {
+                <div class="price">
+                  <span>{{ $safeNavigationMigration(cowork?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span class="unit">/{{ 'billing.month' | translate }}</span>
+                </div>
+              }
+              @if (!!(isTrial | async)) {
+                <pa-button
+                  kind="primary"
+                  (click)="goToPaymentDetails('cowork')">
+                  {{ 'billing.upgrade' | translate }}
+                </pa-button>
+              } @else if ((accountType | async) === 'cowork') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
+              }
+            </th>
+          } @else {
+            <th class="plan">
+              <div class="plan-name">Starter</div>
+              @if ((prices | async)?.['v3starter']; as starter) {
+                <div class="price">
+                  <span>{{ $safeNavigationMigration(starter?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span class="unit">/{{ 'billing.month' | translate }}</span>
+                </div>
+              }
+              @if (!!(isTrial | async)) {
+                <pa-button
+                  kind="primary"
+                  (click)="goToPaymentDetails('v3starter')">
+                  {{ 'billing.upgrade' | translate }}
+                </pa-button>
+              } @else if ((accountType | async) === 'v3starter') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
+              }
+            </th>
+            <th class="plan">
+              <div class="plan-name">Pro</div>
+              @if ((prices | async)?.['v3pro']; as pro) {
+                <div class="price">
+                  <span>{{ $safeNavigationMigration(pro?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span class="unit">/{{ 'billing.month' | translate }}</span>
+                </div>
+              }
+              @if (!!(isTrial | async)) {
+                <pa-button
+                  kind="primary"
+                  (click)="goToPaymentDetails('v3pro')">
+                  {{ 'billing.upgrade' | translate }}
+                </pa-button>
+              } @else if ((accountType | async) === 'v3pro') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
+              }
+            </th>
+            <th class="plan">
+              <div class="plan-name">Enterprise</div>
+              <div class="price">
+                <span class="unit">-</span>
+              </div>
+              @if ((accountType | async) === 'v3enterprise') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
+              }
+            </th>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'billing.max-file-size' | translate }}</td>
+          @for (tier of tiers | async; track tier) {
+            <td>
+              @if (defaults[tier].upload_limit_max_non_media_file_size; as max) {
+                {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+              }
+            </td>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'account.knowledgeboxes' | translate }}</td>
+          @for (tier of tiers | async; track tier) {
+            <td>{{ defaults[tier].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults[tier].max_kbs }}</td>
+          }
+        </tr>
+        <tr>
+          <td>
+            <div>{{ 'billing.usage.consumption' | translate }}*</div>
+            <div class="unit">{{ 'billing.cost-per-token' | translate }}</div>
+          </td>
+          @for (tier of tiers | async; track tier) {
+            @if ((prices | async)?.[tier]?.usage?.['nuclia-tokens']?.price; as price) {
+              <td>{{ price | currency: currency : 'symbol' : '1.2-6' }}</td>
+            }
+          }
+        </tr>
+        <tr>
+          <td>{{ 'billing.preprocessing' | translate }}</td>
+          @if (showCowork | async) {
+            <td>Cloud</td>
+          } @else {
+            <td>Cloud</td>
+            <td>Cloud</td>
+            <td>Cloud / Hybrid</td>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'billing.support' | translate }}</td>
+          @if (showCowork | async) {
+            <td>Community Support</td>
+          } @else {
+            <td>Community Support</td>
+            <td>Community Support + ZenDesk</td>
+            <td>Private Slack Channel + Zendesk</td>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'billing.da-agents' | translate }}</td>
+          @if (showCowork | async) {
+            <td>-</td>
+          } @else {
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'billing.audit-log' | translate }}</td>
+          @if (showCowork | async) {
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+          } @else {
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+          }
+        </tr>
+        <ng-template #subscribed>
+          <div class="subscribed">
+            <pa-icon
+              name="circle-check"
+              size="small"></pa-icon>
+            <span class="title-s">{{ 'billing.current-plan' | translate }}</span>
+          </div>
+        </ng-template>
+      </table>
+      <div class="notes">
+        <div>* {{ 'billing.token-help' | translate }}</div>
+        <div>{{ 'billing.prices_vat' | translate }}</div>
+      </div>
+    }
+  }
+}

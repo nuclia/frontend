@@ -22,7 +22,9 @@ import {
   ModelConfigurationCreation,
   ModelConfigurationItem,
   NUAClient,
+  NUAClientEditPayload,
   NUAClientPayload,
+  NUAClientResponse,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -117,6 +119,7 @@ export interface IRest {
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response>;
   getZones(): Observable<{ [key: string]: string }>;
   getZoneSlug(zoneId: string): Observable<string>;
+  getAccountZones(accountIdOrSlug: string): Observable<{ [key: string]: string }>;
   getZoneOrigin(slug: string): string | null | undefined;
   setZoneOrigins(origins: { [slug: string]: string | null }): void;
   getFullUrl(path: string): string;
@@ -201,21 +204,20 @@ export interface IDb {
     to?: string,
     knowledgeBox?: string,
     aggregation?: UsageAggregation,
+    nuaKeyId?: string,
   ): Observable<UsagePoint[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
   pull(): Observable<ProcessingPullResponse>;
   getNUAClients(accountId: string): Observable<NUAClient[]>;
+  getNUAClientsForZone(accountId: string, zoneSlug: string): Observable<NUAClient[]>;
   getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient>;
-  createNUAClient(accountId: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
-  createNUAClient(
-    accountId: string,
-    data: NUAClientPayload,
-    zone: string,
-  ): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(accountId: string, client_id: string): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
-  deleteNUAClient(accountId: string, client_id: string): Observable<void>;
-  deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
+  createNUAClient(accountId: string, data: NUAClientPayload): Observable<NUAClientResponse>;
+  createNUAClient(accountId: string, data: NUAClientPayload, zone: string): Observable<NUAClientResponse>;
+  editNUAClient(accountId: string, internalId: string, data: NUAClientEditPayload, zone: string): Observable<NUAClient>;
+  renewNUAClient(accountId: string, internalId: string): Observable<NUAClientResponse>;
+  renewNUAClient(accountId: string, internalId: string, zone: string): Observable<NUAClientResponse>;
+  deleteNUAClient(accountId: string, internalId: string): Observable<void>;
+  deleteNUAClient(accountId: string, internalId: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex?: number): Observable<EventList>;
   getLearningSchema(): Observable<LearningConfigurations>;

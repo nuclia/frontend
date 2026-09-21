@@ -1,0 +1,12 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.nua-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  padding: rhythm(1) 0 rhythm(2);
+}
+
+.zone h4 {
+  margin-bottom: rhythm(0.25);
+}

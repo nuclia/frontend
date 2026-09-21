@@ -90,6 +90,10 @@ export class SubformFieldComponent implements OnInit {
       // Find the first non-null object reference
       const objRef = property.anyOf.find((t: any) => t.$ref);
       if (objRef) {
+        const ref = this.resolveRef(objRef.$ref);
+        if (ref.enum) {
+          return ref;
+        }
         console.error('Cannot handle 2-depth nesting');
         return property;
       }
@@ -111,5 +115,19 @@ export class SubformFieldComponent implements OnInit {
   onSubformReady(subform: FormGroup) {
     // The subform is ready, we can perform any additional setup if needed
     console.log('Subform ready for control:', this.controlName, subform);
+  }
+
+  // Resolve $ref references to their actual schema definitions
+  private resolveRef(ref: string): any {
+    // Handle #/$defs/SomeName references
+    if (ref.startsWith('#/$defs/')) {
+      const defName = ref.replace('#/$defs/', '');
+
+      // First try the current schema
+      if (this.property?.['$defs']?.[defName]) {
+        return this.property['$defs'][defName];
+      }
+    }
+    return {};
   }
 }

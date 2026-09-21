@@ -2,9 +2,10 @@
   interface Props {
     small?: boolean;
     label?: string;
+    sublabel?: string;
   }
 
-  let { small = false, label = '' }: Props = $props();
+  let { small = false, label = '', sublabel = '' }: Props = $props();
 </script>
 
 <div class="sr-only">Loading</div>
@@ -12,7 +13,10 @@
   class="sw-loading-dots"
   class:small>
   {#if label}
-    <div>{label}</div>
+    <div class="label">{label}</div>
+  {/if}
+  {#if sublabel}
+    <div class="sublabel">{sublabel}</div>
   {/if}
   <div class="loading-dots">
     <div class="bounce1"></div>

@@ -8,7 +8,9 @@ import { Account } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { take, map, filter, switchMap, combineLatest, from } from 'rxjs';
 
-const AUTHORIZED_REDIRECTS = new Set(['http://localhost:4200']);
+// Security boundary: fixed allowlist of local origins allowed to receive a live token here.
+// Keep it a literal list — never derive it from the request — to avoid an open redirect.
+const AUTHORIZED_REDIRECTS = new Set(['http://localhost:4200', 'http://localhost:4300']);
 const AUTHORIZED_REDIRECTS_REGEX = [/^chrome-extension:\/\/[a-z]+\/options\/options\.html$/];
 
 @Component({

@@ -4,7 +4,7 @@ export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | '
 
 type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 export interface RankedParagraph extends Search.FindParagraph {
-  rank?: number;
+  ranks?: number[];
 }
 export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }> & { ranks?: number[] };
 
@@ -82,6 +82,8 @@ export interface WidgetOptions {
   not_enough_data_message?: string;
   metadata?: string;
   security_groups?: string[];
+  agentic_config_id?: string;
+  agentic_transport?: 'http' | 'websocket';
 }
 
 export interface WidgetAction {

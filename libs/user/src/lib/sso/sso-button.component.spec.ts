@@ -6,6 +6,7 @@ import { SsoService } from '@flaps/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 describe('SsoButtonComponent', () => {
   let component: SsoButtonComponent;
@@ -16,7 +17,7 @@ describe('SsoButtonComponent', () => {
       imports: [MockModule(PaIconModule), MockModule(TranslateModule)],
       declarations: [SsoButtonComponent],
       providers: [
-        MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => `sso/login/${provider}`) }),
+        MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => of(`sso/login/${provider}`)) }),
         MockProvider(WINDOW, { location: { href: '' } } as Window),
         MockProvider(TranslateService, {
           instant: jest.fn((key) => `translate--${key}`),

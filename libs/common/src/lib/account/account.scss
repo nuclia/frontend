@@ -1,0 +1,10 @@
+@use 'apps/dashboard/src/variables' as *;
+
+// Section-level heading for account tab panels.
+// Smaller than the layout's h1.page-title (display-s) — these headings
+// live inside tabs, not at the top of a standalone page.
+.page-subtitle {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  margin-bottom: rhythm(1);
+}

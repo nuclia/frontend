@@ -17,7 +17,7 @@
 }
 
 .navbar-scroll-container {
-  background: $color-primary-lighter;
+  background: transparent;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -26,11 +26,38 @@
   overflow-x: hidden;
   .navbar-content {
     flex: 1 1 auto;
+    padding-bottom: rhythm(7);
     width: 100%;
   }
   .navbar-footer {
+    background-color: $color-light-stronger;
+    border-top: 1px solid $color-neutral-lighter;
+    bottom: 0;
     flex: 0 0 auto;
+    position: sticky;
     width: 100%;
+    z-index: 1;
+
+    .footer-items {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      justify-content: center;
+      min-height: rhythm(7);
+      padding: rhythm(1) rhythm(1.5);
+    }
+
+    .stage-icon {
+      height: rhythm(2);
+      width: rhythm(2);
+    }
+
+    .version-label {
+      color: $color-neutral-regular;
+      font-size: font-size(xs);
+      font-weight: $font-weight-thin;
+      line-height: 1;
+    }
   }
 
   .nav-group {
@@ -62,10 +89,13 @@
           background-color: $color-neutral-lightest;
         }
         &.active {
-          background-color: $color-light-stronger;
+          background-color: $color-primary-lightest;
+          border-left: 3px solid $color-primary-regular;
+          padding-left: calc(#{rhythm(1.5)} - 3px);
+          color: $color-primary-regular;
         }
         &:not(.active).sub-item {
-          background-color: $color-primary-lightest;
+          background-color: transparent;
 
           &:not(.disabled):not(.unauthorized):hover {
             background-color: $color-neutral-lightest;

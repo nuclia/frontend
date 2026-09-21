@@ -16,6 +16,13 @@
 
     .title-and-description {
       overflow-wrap: anywhere;
+
+      .title-row {
+        align-items: center;
+        display: flex;
+        gap: rhythm(1);
+      }
+
       a {
         color: inherit;
         font-weight: inherit;

@@ -84,8 +84,8 @@ export interface EditableParams {
 export function suggestedParamsToSearchConfig(
   params: EditableParams,
   configId: string,
-): Widget.TypedSearchConfiguration {
-  const config = cloneDeep(NUCLIA_STANDARD_SEARCH_CONFIG) as Widget.TypedSearchConfiguration;
+): Widget.StandardTypedSearchConfiguration {
+  const config = cloneDeep(NUCLIA_STANDARD_SEARCH_CONFIG) as Widget.StandardTypedSearchConfiguration;
   config.id = configId;
 
   if (params.topK !== null) {

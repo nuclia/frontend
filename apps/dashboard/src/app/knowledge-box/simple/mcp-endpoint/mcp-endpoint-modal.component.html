@@ -21,11 +21,22 @@
       </pa-button>
     </div>
     <div class="how-to">
+      {{ 'simple.mcp.api-key-hint-text' | translate }}
+      <a
+        role="button"
+        tabindex="0"
+        (click)="goToApiKeys()"
+        (keydown.enter)="goToApiKeys()">
+        {{ 'simple.mcp.api-key-hint-link' | translate }}
+      </a>
+    </div>
+    <div class="how-to">
+      {{ 'simple.mcp.how-to-text' | translate }}
       <a
         href="https://medium.com/nuclia/connecting-your-contentbox-5045f56f7ade"
         target="_blank"
         rel="noopener noreferrer">
-        {{ 'simple.mcp.how-to' | translate }}
+        {{ 'simple.mcp.how-to-link' | translate }}
         <span class="sr-only">({{ 'generic.opens-in-new-tab' | translate }})</span>
       </a>
     </div>

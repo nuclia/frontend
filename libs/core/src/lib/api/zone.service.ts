@@ -96,4 +96,9 @@ export class ZoneService {
       }),
     );
   }
+
+  /** Returns the MCP server endpoint URL for a KB, built from its zone's base API URL. */
+  buildMcpEndpointUrl(kb: { zone: string; path: string }, backend: string): Observable<string> {
+    return this.buildZoneUrl(kb.zone, backend, 'dp').pipe(map((baseUrl) => `${baseUrl}/v1${kb.path}/mcp`));
+  }
 }

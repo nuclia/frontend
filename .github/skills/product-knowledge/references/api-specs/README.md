@@ -11,7 +11,7 @@ Version metadata is tracked in: `.github/skills/product-knowledge/meta.json`
 
 ### 1. `global.yaml` — Account REST API
 
-**Base URL:** `https://api.rag.progress.cloud/api/v1/`
+**Base URL:** `https://accounts.progress.cloud/api/v1/`
 **Auth:** Personal Access Token (PAT) or account-level token
 **Purpose:** Global account management — not per-zone or per-KB. Used primarily by `manager-v2`.
 
@@ -38,7 +38,7 @@ Version metadata is tracked in: `.github/skills/product-knowledge/meta.json`
 
 ### 2. `nua.yaml` — Nuclia Understanding API
 
-**Base URL:** `https://[zone-id].rag.progress.cloud/` (paths start with `/kb/`, `/account/`, `/agent/`, `/predict/`)
+**Base URL:** `https://[zone-id].dp.progress.cloud/` (paths start with `/kb/`, `/account/`, `/agent/`, `/predict/`)
 **Auth:** NUA API key (`Authorization: Bearer <NUA-KEY>`)
 **Purpose:** ML/AI processing, knowledge box operations at the processing layer, and Retrieval Agent management.
 
@@ -88,7 +88,7 @@ Version metadata is tracked in: `.github/skills/product-knowledge/meta.json`
 
 ### 3. `nucliadb.yaml` — NucliaDB REST API
 
-**Base URL:** `https://[zone-id].rag.progress.cloud/` (paths start with `/kb/`)
+**Base URL:** `https://[zone-id].dp.progress.cloud/` (paths start with `/kb/`)
 **Auth:** Service account key or user token (`X-NUCLIA-SERVICEACCOUNT`)
 **Purpose:** Low-level NucliaDB operations — direct resource and field management, search. Used by `nucliadb-admin` and `@nuclia/core` SDK.
 
@@ -148,7 +148,7 @@ Version metadata is tracked in: `.github/skills/product-knowledge/meta.json`
 
 ### 4. `zone.yaml` — Knowledge Box & Zone REST API
 
-**Base URL:** `https://[zone-id].rag.progress.cloud/api/v1/`
+**Base URL:** `https://[zone-id].dp.progress.cloud/api/v1/`
 **Auth:** Account token or API key
 **Purpose:** Zone-level KB management: creating KBs, assigning users, API keys, sync, backups, activity logs, REMi analytics. Used by `dashboard`.
 

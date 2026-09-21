@@ -68,22 +68,6 @@
     },
     "@schematics/angular:resolver": {
       "typeSeparator": "."
-    },
-    "@nx/react": {
-      "library": {
-        "style": "css",
-        "linter": "eslint",
-        "unitTestRunner": "vitest"
-      },
-      "application": {
-        "babel": true,
-        "style": "css",
-        "linter": "eslint",
-        "bundler": "vite"
-      },
-      "component": {
-        "style": "css"
-      }
     }
   },
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
@@ -111,7 +95,7 @@
       }
     },
     "@nx/eslint:lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc"],
+      "inputs": ["default", "^default", "{workspaceRoot}/.eslintrc", "{workspaceRoot}/tools/eslint-rules/**/*"],
       "cache": true
     }
   },
@@ -134,17 +118,6 @@
   },
   "parallel": 1,
   "plugins": [
-    {
-      "plugin": "@nx/react/router-plugin",
-      "options": {
-        "buildTargetName": "build",
-        "devTargetName": "dev",
-        "startTargetName": "start",
-        "watchDepsTargetName": "watch-deps",
-        "buildDepsTargetName": "build-deps",
-        "typecheckTargetName": "typecheck"
-      }
-    },
     {
       "plugin": "@nx/vite/plugin",
       "options": {
@@ -169,7 +142,14 @@
       "options": {
         "testTargetName": "vite:test"
       }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
     }
   ],
-  "analytics": false
+  "analytics": false,
+  "neverConnectToCloud": true
 }

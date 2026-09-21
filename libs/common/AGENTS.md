@@ -1,6 +1,6 @@
 # `@flaps/common` — Agent Guide
 
-Nx project: `common`. Largest shared library — feature modules, pages, services, guards, pipes, and charts shared between `apps/dashboard` and `apps/rao`. Not independently buildable; compiled as part of each consuming app.
+Nx project: `common`. Largest shared library — feature modules, pages, services, guards, pipes, and charts shared between `apps/dashboard` and `apps/rao`, plus a growing subset consumed by `apps/admin` (`base/`, `guards/`, `select-account-kb/`, `topbar/`, `navbar/`, `aws-onboarding/`, and the handful of `account/` pieces that didn't move — see below). Not independently buildable; compiled as part of each consuming app.
 
 ```typescript
 import { ... } from '@flaps/common'; // → libs/common/src/index.ts
@@ -17,9 +17,12 @@ nx test common       # Jest unit tests (no build/lint targets)
 All feature code lives under `libs/common/src/lib/`. Major areas:
 
 ```
-account/           ← Account management, billing, NUA clients, AI model config
+account/           ← Account-management pieces still used from dashboard/rao (see Gotchas):
+                      MetricsService, AccountStatusComponent, BudgetComponent (usage budget), AssumeRoleModalComponent
+                      (AWS Bedrock), AccountDeleteComponent + otp-input (account deletion flow)
 ai-models/         ← KB-level AI/LLM model configuration (extraction, generation, semantic, summarization)
 base/              ← Root shell: BaseComponent (auth + notification polling), DashboardLayoutComponent
+chat-advice/       ← AI chat assistant prototype (ChatAdviceService, ChatAdviceBubbleComponent)
 charts/            ← Reusable chart components (bar, line, range) using base-chart directive
 entities/          ← NER entity group management
 guards/            ← All route guards (functional, not class-based)
@@ -27,8 +30,13 @@ metrics/           ← Activity logs & REMI quality analytics (dashboard-only, 5
   activity/        ← "Detailed logs" — ActivityModule (lazy inside MetricsModule at /metrics/detailed)
   rag-advice/      ← AI-generated advice on how to improve RAG scores (RagAdviceService + RagAdviceComponent)
   remi-score-badge/← Coloured badge for REMI score display (RemiScoreBadgeComponent)
+onboarding/        ← Post-signup onboarding flow: account/KB creation steps, embeddings-model form, EULA modal
+profile/           ← User profile page (ProfileComponent) — name/language/password preferences
 rag-lab/           ← RAG Lab: generative queries across model configs for comparison
 resources/         ← Resource CRUD, editor, list with pending/processed/error tabs
+  memory/          ← `MemoryComponent` (route `resource/:id/memory`) — reads the synthetic 'memory' field
+                      (FIELD_TYPE) to show conversation sessions/facts/entries; `MemoryService` is
+                      component-provided (not root) and batches session loads (`MEMORY_LOAD_CONCURRENCY = 6`)
 retrieval-agent/   ← ARAG: visual workflow canvas, workflows list, drivers, sessions, activity log
 search-widget/     ← Search widget builder & deployment config
 services/          ← AppService (locale), StandaloneService (NucliaDB standalone mode)
@@ -50,27 +58,28 @@ Other small areas: `aws-onboarding/`, `directives/`, `features/`, `hint/`, `kb-c
 
 All functional guards in `libs/common/src/lib/guards/`:
 
-| Guard                      | Enforces                                                                                             |
-| -------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `rootGuard`                | Redirects unauthenticated users to login                                                             |
-| `setAccountGuard`          | Loads account from URL param via `SDKService.setCurrentAccount()`                                    |
-| `setKbGuard`               | Loads KB from URL param via `SDKService.setCurrentKb()`                                              |
-| `setAgentGuard`            | Loads ARAG from URL param via `SDKService.setCurrentRetrievalAgent()`                                |
-| `setLocalKbGuard`          | Like `setKbGuard` but for NucliaDB standalone mode                                                   |
-| `simpleModeGuard`          | `CanActivateFn` — when `NavigationService.simpleMode` is true, redirects KB home (`/`) to `./simple` |
-| `selectAccountGuard`       | Redirects if account already selected                                                                |
-| `selectKbGuard`            | Redirects if KB already selected                                                                     |
-| `accountOwnerGuard`        | Account-owner role required                                                                          |
-| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) role required                                                                      |
-| `aragOwnerGuard`           | ARAG owner role required                                                                             |
-| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                    |
-| `AuthInterceptor`          | HTTP interceptor — injects `Authorization` header from JWT                                           |
+| Guard                      | Enforces                                                                                                                                                                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `rootGuard`                | Redirects unauthenticated users to login                                                                                                                                                                                                   |
+| `setAccountGuard`          | Loads account from URL param via `SDKService.setCurrentAccount()`                                                                                                                                                                          |
+| `setKbGuard`               | Loads KB from URL param via `SDKService.setCurrentKb()`                                                                                                                                                                                    |
+| `setAgentGuard`            | Loads ARAG from URL param via `SDKService.setCurrentRetrievalAgent()`                                                                                                                                                                      |
+| `setLocalKbGuard`          | Like `setKbGuard` but for NucliaDB standalone mode                                                                                                                                                                                         |
+| `simpleModeGuard`          | `CanActivateFn` — when `NavigationService.simpleMode` is true, redirects KB home (`/`) to `./simple`                                                                                                                                       |
+| `selectAccountGuard`       | Redirects if account already selected                                                                                                                                                                                                      |
+| `selectKbGuard`            | Redirects if KB already selected; if the account is manager-only (`can_manage_account`), redirects to the account-manage URL (now on `apps/admin`, via `NavigationService.getAccountManageUrl()`) instead of the old in-app `/at/:account` |
+| `selectAccountManageGuard` | `admin`-only: trivial redirect from `/select/:account` straight to the account-manage URL — no KB/ARAG picker to show                                                                                                                      |
+| `redirectToAdminGuard`     | Used by `dashboard`/`rao` on `/at/:account/manage/**`: builds the equivalent URL on `admin`'s origin and redirects (same- or cross-origin) via `NavigationService.resolveGuardRedirect()`                                                  |
+| `accountOwnerGuard`        | Account-owner role required                                                                                                                                                                                                                |
+| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) role required                                                                                                                                                                                                            |
+| `aragOwnerGuard`           | ARAG owner role required                                                                                                                                                                                                                   |
+| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                                                                                                                                                          |
 
 ---
 
-## dashboard vs rao
+## dashboard vs rao vs admin
 
-`rao` is a stripped-down `dashboard`. Metrics, RAG Lab, and search widget builder are **dashboard-only**. ARAG and KB management are shared.
+`rao` is a stripped-down `dashboard`. Metrics, RAG Lab, and search widget builder are **dashboard-only**. ARAG and KB management are shared. Account management (billing, users, API keys, account deletion) is **not** shared between `dashboard`/`rao` — it lives in the standalone `apps/admin` app; `dashboard`/`rao` only hold `redirectToAdminGuard` and a handful of components `admin` still imports from here (see `account/` above).
 
 ---
 
@@ -88,7 +97,7 @@ Exports `signal()` and `computed()` at module level (not inside a class) for sid
 
 ### Deep imports for lazy loading
 
-Apps import modules directly from `libs/common/src/lib/...` in `loadChildren` callbacks (e.g., `MetricsModule`, `AccountModule`). This breaks module boundary rules and is suppressed with `eslint-disable @nx/enforce-module-boundaries`. Intentional for code splitting.
+Apps import modules directly from `libs/common/src/lib/...` in `loadChildren` callbacks (e.g., `MetricsModule`). This breaks module boundary rules and is suppressed with `eslint-disable @nx/enforce-module-boundaries`. Intentional for code splitting.
 
 ### `@nuclia/core` vs `@flaps/core`
 

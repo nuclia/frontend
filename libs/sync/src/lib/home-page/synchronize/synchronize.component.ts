@@ -1,0 +1,197 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FeaturesService, SDKService, ZoneService } from '@flaps/core';
+import {
+  HeaderCell,
+  PaButtonModule,
+  PaDateTimeModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  BadgeComponent,
+  DropdownButtonComponent,
+  InfoCardComponent,
+  SisModalService,
+  SisToastService,
+} from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../../logic';
+import { ConnectorComponent } from '../connector';
+
+@Component({
+  selector: 'nsy-synchronize',
+  imports: [
+    CommonModule,
+    BadgeComponent,
+    ConnectorComponent,
+    DropdownButtonComponent,
+    PaButtonModule,
+    PaDropdownModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    PaTooltipModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    PaTableModule,
+    RouterLink,
+    PaIconModule,
+    PaDateTimeModule,
+    PaTogglesModule,
+    InfoCardComponent,
+    PaDropdownModule,
+    PaPopupModule,
+  ],
+  templateUrl: './synchronize.component.html',
+  styleUrls: ['./synchronize.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SynchronizeComponent implements OnInit, OnDestroy {
+  private router = inject(Router);
+  private currentRoute = inject(ActivatedRoute);
+  private syncService = inject(SyncService);
+  private sdk = inject(SDKService);
+  private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
+  private features = inject(FeaturesService);
+  private zoneService = inject(ZoneService);
+
+  private unsubscribeAll = new Subject<void>();
+
+  // TODO: download dropdown is placed in the layout but will be implemented in https://app.shortcut.com/flaps/story/9739/setup-sync-agent-download-dropdown
+  downloadSyncAgentFeature = false;
+
+  hasCloudSync = this.features.unstable.cloudSyncService;
+  useCloudSync = this.syncService.useCloudSync;
+  inactiveServer = this.syncService.isServerDown;
+  syncAgentForm = new FormGroup({
+    type: new FormControl<SyncServerType>('desktop', { nonNullable: true }),
+    serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+  });
+  connectors = this.syncService.connectors;
+  currentZone = forkJoin([this.zoneService.getZones().pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).pipe(
+    map(([zones, kb]) => zones.find((zone) => zone.slug === kb.zone)),
+  );
+
+  private _connectorList: Observable<ConnectorDefinition[]> = forkJoin([
+    this.syncService.connectorsObs.pipe(take(1)),
+    this.features.unstable.cloudSyncSharepoint.pipe(take(1)),
+    this.currentZone,
+  ]).pipe(
+    map(([sources, hasSharepoint, zone]) =>
+      sources
+        .filter((conn) => {
+          const hidden =
+            (conn.id === 'sharepoint' && !hasSharepoint) || (conn.id === 's3' && zone?.cloud_provider !== 'AWS');
+          return !hidden;
+        })
+        .sort((a, b) => a.title.localeCompare(b.title)),
+    ),
+  );
+  connectorList: Observable<ConnectorDefinition[]> = this._connectorList.pipe(
+    map((connectors) => connectors.filter((connector) => !connector.cloud)),
+  );
+  cloudConnectorList: Observable<ConnectorDefinition[]> = this._connectorList.pipe(
+    map((connectors) => connectors.filter((connector) => connector.cloud)),
+  );
+  serverUrlBackup = '';
+
+  syncs: Observable<SyncBasicData[]> = combineLatest([
+    this.syncService.cacheUpdated,
+    this.syncService.useCloudSync,
+  ]).pipe(
+    switchMap(([, useCloud]) => this.sdk.currentKb.pipe(map((kb) => ({ kb, useCloud })))),
+    switchMap(({ kb, useCloud }) => this.syncService.getSyncsForKB(kb.id, useCloud)),
+  );
+  syncTableHeader: HeaderCell[] = [
+    new HeaderCell({ id: 'name', label: 'sync.home-page.synchronize.sync-list.table-columns.name' }),
+    new HeaderCell({ id: 'connector', label: 'sync.home-page.synchronize.sync-list.table-columns.connector' }),
+    new HeaderCell({ id: 'resources', label: 'sync.home-page.synchronize.sync-list.table-columns.resources' }),
+    new HeaderCell({ id: 'sync', label: 'sync.home-page.synchronize.sync-list.table-columns.sync' }),
+    /* FIXME with https://app.shortcut.com/flaps/story/9875/resource-uploaded-and-activity-log-details-in-sync-agent
+    new HeaderCell({
+      id: 'creation-date',
+      label: 'sync.home-page.synchronize.sync-list.table-columns.creation-date',
+      sortable: true,
+    }), */
+    new HeaderCell({ id: 'latest-sync', label: 'sync.home-page.synchronize.sync-list.table-columns.latest-sync', sortable: true }),
+    new HeaderCell({ id: 'actions', label: 'sync.home-page.synchronize.sync-list.table-columns.actions' }),
+  ];
+
+  get syncAgentOnServer() {
+    return this.syncAgentForm.controls.type.value === 'server';
+  }
+  get syncAgentOnDesktop() {
+    return this.syncAgentForm.controls.type.value === 'desktop';
+  }
+  get syncAgentTypeControl() {
+    return this.syncAgentForm.controls.type;
+  }
+  get syncServerUrl() {
+    return this.syncAgentForm.controls.serverUrl.value;
+  }
+
+  get serverUrlChanged() {
+    return this.serverUrlBackup !== this.syncServerUrl;
+  }
+
+  ngOnInit() {
+    this.syncService.syncServer.pipe(take(1)).subscribe((syncServer) => {
+      this.syncAgentForm.patchValue(syncServer);
+      this.serverUrlBackup = syncServer.serverUrl;
+    });
+
+    this.syncAgentTypeControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveSyncServer());
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  saveSyncServer() {
+    this.syncService.updateUseCloudSync(this.syncAgentTypeControl.value === 'cloud');
+    if (this.syncAgentForm.valid) {
+      const syncAgentConfig = this.syncAgentForm.getRawValue();
+      const serverUrl = syncAgentConfig.type === 'server' ? syncAgentConfig.serverUrl : LOCAL_SYNC_SERVER;
+      this.syncService.setSyncServer(serverUrl, syncAgentConfig.type);
+    }
+  }
+
+  onSelectConnector(connector: ConnectorDefinition) {
+    this.router.navigate(['./add', connector.id], { relativeTo: this.currentRoute });
+  }
+
+  deleteSync(sync: SyncBasicData) {
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('sync.confirm.deletion.title', { title: sync.title }),
+        description: 'sync.confirm.deletion.description',
+        isDestructive: true,
+        confirmLabel: 'generic.delete',
+      })
+      .onClose.pipe(
+        filter((confirmed) => !!confirmed),
+        switchMap(() => this.syncService.deleteSync(sync.id)),
+      )
+      .subscribe({
+        error: () => this.toaster.error('sync.details.toast.deletion-failed'),
+      });
+  }
+
+  toggleSync(id: string, active: boolean) {
+    this.syncService.updateSync(id, { disabled: !active }).subscribe({
+      error: () =>
+        this.toaster.error(active ? 'sync.details.toast.activating-failed' : 'sync.details.toast.disabling-failed'),
+    });
+  }
+}

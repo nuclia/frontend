@@ -125,6 +125,13 @@
           {{ 'stash.users.send_invites' | translate: { count: users.counts().ready } }}
         </pa-button>
       </div>
+      @if (users.showAccessWarning()) {
+        <nsi-info-card
+          type="warning"
+          class="warning">
+          {{ 'stash.users.access-warning' | translate }}
+        </nsi-info-card>
+      }
     </form>
   </div>
 }

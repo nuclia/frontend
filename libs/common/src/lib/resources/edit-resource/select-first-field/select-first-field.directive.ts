@@ -2,7 +2,7 @@ import { Directive, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EditResourceService } from '../edit-resource.service';
 import { combineLatest, filter, map, Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
-import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
+import { FIELD_TYPE, FieldId, IFieldData, Resource, ResourceField } from '@nuclia/core';
 import { takeUntil } from 'rxjs/operators';
 import { ResourceNavigationService } from '../resource-navigation.service';
 
@@ -21,6 +21,10 @@ export class SelectFirstFieldDirective implements OnDestroy {
   protected resource: Observable<Resource> = this.editResource.resource.pipe(
     filter((resource) => !!resource),
     map((resource) => resource as Resource),
+  );
+  protected fieldData: Observable<IFieldData> = this.editResource.fieldExtractedData.pipe(
+    filter((field) => !!field),
+    map((field) => field as IFieldData),
   );
   protected fieldId: Observable<FieldId> = this.route.params.pipe(
     filter((params) => !!params['fieldType'] && !!params['fieldId']),

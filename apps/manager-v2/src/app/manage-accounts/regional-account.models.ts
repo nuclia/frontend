@@ -74,3 +74,17 @@ export interface ZoneModels {
 export interface AccountLabels {
   progress_account: boolean;
 }
+
+export interface Project {
+  account_id: string;
+  project_id: string;
+  name: string;
+  description?: string;
+  created_datetime: string;
+  updated_datetime: string;
+}
+
+export interface Projects {
+  data: Project[];
+  total: number;
+}

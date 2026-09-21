@@ -9,10 +9,12 @@ when those files are touched. Also serves as a catalogue of what "wrong" looks l
 
 These locations use `shareReplay()` (no buffer) which causes a memory leak:
 
-- `apps/manager-v2/src/app/manage-accounts/account.service.ts`
 - `libs/common/src/lib/account/billing/history/history.component.ts`
 
 When editing these files, replace `shareReplay()` with `shareReplay(1)`.
+
+> `apps/manager-v2/src/app/manage-accounts/account.service.ts` was fixed to `shareReplay(1)` in
+> commit `7defdb7dd` (#3000) — no longer a known instance.
 
 ---
 

@@ -1,0 +1,48 @@
+<div class="nua-activity page-spacing">
+  <header class="nua-activity-title">
+    <div class="title-and-back">
+      <pa-button
+        icon="arrow-left"
+        aspect="basic"
+        routerLink="../..">
+        {{ 'generic.back' | translate }}
+      </pa-button>
+      <h1>{{ 'account.nua_key_activity_title' | translate: { key: $safeNavigationMigration((client | async)?.title) } }}</h1>
+    </div>
+
+    <small>{{ 'account.nua_key_activity_subtitle' | translate }}</small>
+  </header>
+
+  <div class="activity-container">
+    <pa-table
+      border
+      columns="40% 1fr 1fr">
+      <pa-table-header>
+        <pa-table-cell header>{{ 'activity.resource' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'activity.timestamp' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'activity.actor' | translate }}</pa-table-cell>
+      </pa-table-header>
+      @for (activity of activityLogs | async; track activity) {
+        <pa-table-row>
+          <pa-table-cell>{{ activity.resourceId | async }}</pa-table-cell>
+          <pa-table-cell>
+            <pa-datetime [datetime]="activity.timestamp"></pa-datetime>
+          </pa-table-cell>
+          <pa-table-cell>
+            {{ activity.userId | async }}
+          </pa-table-cell>
+        </pa-table-row>
+      }
+    </pa-table>
+
+    <div class="load-more">
+      @if ((hasMore | async) === true) {
+        <pa-button
+          kind="inverted"
+          (click)="loadMoreActivity()">
+          {{ 'activity.load-more' | translate }}
+        </pa-button>
+      }
+    </div>
+  </div>
+</div>

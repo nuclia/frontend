@@ -18,7 +18,7 @@ import {
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { AccountListComponent } from './account-list/account-list.component';
 import { ConfigurationComponent } from './account-details/configuration/configuration.component';
-import { KnowledgeBoxesComponent } from './account-details/knowledge-boxes/knowledge-boxes.component';
+import { ContainersComponent } from './account-details/containers/containers.component';
 import { LimitsComponent } from './account-details/limits/limits.component';
 import { UsersComponent } from './account-details/users/users.component';
 import { KbDetailsComponent } from './account-details/kb-details/kb-details.component';
@@ -36,6 +36,8 @@ import { AddAccountComponent } from './add-account/add-account.component';
 import { ModelsComponent } from './account-details/models/models.component';
 import { ModelDetailsComponent } from './account-details/models/model-details/model-details.component';
 import { AddModelComponent } from './account-details/models/add-model/add-model.component';
+import { ProjectDetailsComponent } from './account-details/projects/project-details.component';
+import { ProjectListComponent } from './account-details/projects/project-list.component';
 
 const ROUTES: Routes = [
   {
@@ -65,11 +67,25 @@ const ROUTES: Routes = [
           },
           {
             path: 'kbs',
-            component: KnowledgeBoxesComponent,
+            component: ContainersComponent,
+            data: { mode: 'kb' },
+          },
+          {
+            path: 'agents',
+            component: ContainersComponent,
+            data: { mode: 'agent' },
           },
           {
             path: 'zone/:zoneId/kb/:kbId',
             component: KbDetailsComponent,
+          },
+          {
+            path: 'projects',
+            component: ProjectListComponent,
+          },
+          {
+            path: 'zone/:zoneId/project/:projectId',
+            component: ProjectDetailsComponent,
           },
           {
             path: 'limits',
@@ -143,8 +159,10 @@ const ROUTES: Routes = [
     ConfigurationComponent,
     LimitsComponent,
     UsersComponent,
-    KnowledgeBoxesComponent,
+    ContainersComponent,
     KbDetailsComponent,
+    ProjectDetailsComponent,
+    ProjectListComponent,
     BlockedFeaturesComponent,
     FormFooterComponent,
     FeatureNamePipe,

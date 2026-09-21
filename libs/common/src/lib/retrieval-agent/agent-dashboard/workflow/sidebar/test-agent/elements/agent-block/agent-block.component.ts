@@ -76,7 +76,19 @@ export class AgentBlockComponent {
   });
   description = computed(() => {
     const answer = this.answer();
-    if (answer) {
+
+    const emptyDescriptionModules = [
+      'cypher',
+      'external',
+      'generate',
+      'historical',
+      'mcp',
+      'postprocess_alinia',
+      'preprocess_alinia',
+      'restricted',
+    ];
+
+    if (answer && !emptyDescriptionModules.includes(answer.module)) {
       return `retrieval-agents.workflow.sidebar.test.description.${this.getNodeKey(answer.module)}`;
     } else {
       return '';

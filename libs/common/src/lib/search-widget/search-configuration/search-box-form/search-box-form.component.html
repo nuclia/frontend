@@ -108,7 +108,7 @@
           <div class="config-form-help">
             {{ 'search.configuration.search-box.label-filter-counts.toggle-description' | translate }}
           </div>
-        </div>        
+        </div>
       }
 
       <div class="config-form-field">
@@ -124,6 +124,13 @@
             help="search.configuration.search-box.filter-logic.or-logic">
             OR
           </pa-radio>
+          @if (andOrLogicAvailable | async) {
+            <pa-radio
+              value="and-or"
+              help="search.configuration.search-box.filter-logic.and-or-logic">
+              AND+OR
+            </pa-radio>
+          }
         </pa-radio-group>
         @if (createdFilterEnabled && orLogicEnabled) {
           <nsi-info-card>{{ 'search.configuration.search-box.filter-logic.warning' | translate }}</nsi-info-card>

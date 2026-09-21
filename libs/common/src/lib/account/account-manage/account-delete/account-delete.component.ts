@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { AccountVerificationService, NavigationService, SDKService, UserService } from '@flaps/core';
-import { map, shareReplay, switchMap, take } from 'rxjs';
+import { map, shareReplay, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { OtpInputComponent } from './otp-input/otp-input.component';
@@ -105,16 +105,21 @@ export class AccountDeleteComponent implements OnInit {
     this.loading.set(true);
     const keepUser = this.keepUser() === 'yes';
     const otpCode = this.otpCode();
+    let accountDeleted = false;
+
     this.account
       .pipe(
         take(1),
         switchMap((account) => this.sdk.nuclia.db.deleteAccount(account.slug, otpCode)),
+        tap(() => {
+          accountDeleted = true;
+          this.sdk.cleanAccount();
+        }),
         switchMap(() => (keepUser ? this.user.updateWelcome() : this.sdk.nuclia.auth.deleteAuthenticatedUser())),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
-          this.sdk.cleanAccount();
           if (keepUser) {
             this.toaster.success('account.delete.success');
             this.router.navigate([this.navigation.getAccountSelectUrl()]);
@@ -123,9 +128,18 @@ export class AccountDeleteComponent implements OnInit {
           }
           this.modal.close();
         },
-        error: () => {
-          this.toaster.error('account.delete.error');
-          this.loading.set(false);
+        error: (error) => {
+          if (!keepUser && error?.status === 409) {
+            this.toaster.error('account.delete.user_sole_owner_error');
+          } else {
+            this.toaster.error('account.delete.error');
+          }
+          if (accountDeleted) {
+            this.router.navigate([this.navigation.getAccountSelectUrl()]);
+            this.modal.close();
+          } else {
+            this.loading.set(false);
+          }
         },
       });
   }

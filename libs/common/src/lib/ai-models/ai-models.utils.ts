@@ -7,9 +7,7 @@ export function removeDeprecatedModels(learningSchema: LearningConfigurations) {
     ...learningSchema,
     generative_model: {
       ...learningSchema['generative_model'],
-      options: learningSchema['generative_model'].options?.filter(
-        (option) => !DEPRECATED_MODELS.has(option.value),
-      ),
+      options: learningSchema['generative_model'].options?.filter((option) => !DEPRECATED_MODELS.has(option.value)),
     },
     summary_model: {
       ...learningSchema['summary_model'],
@@ -30,6 +28,17 @@ export const keyProviders: { [key: string]: string } = {
   chatgpt4: 'ChatGPT 4',
   hf_llm: 'Hugging Face',
 };
+
+// Matches Gemini Priority (Pay-Go) model ids, e.g. "gemini-2.5-pro-priority".
+const GEMINI_PRIORITY_MODEL_REGEXP = /^gemini-.+-priority$/;
+
+export function isGeminiPriorityModel(modelId?: string): boolean {
+  return !!modelId && GEMINI_PRIORITY_MODEL_REGEXP.test(modelId);
+}
+
+export function stripGeminiPrioritySuffix(modelId?: string): string | undefined {
+  return isGeminiPriorityModel(modelId) ? modelId?.slice(0, -'-priority'.length) : modelId;
+}
 
 export function convertEnumProperties(config: any, rootSchema: LearningConfigurationSchema, schema = rootSchema) {
   return Object.entries(config).reduce((acc, [key, prop]) => {

@@ -1,25 +1,37 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { SsoLoginResponse } from '../models';
+import { OAuthService } from '../auth/oauth.service';
 import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SsoService {
-  constructor(private sdk: SDKService) {}
+  constructor(
+    private sdk: SDKService,
+    private oAuthService: OAuthService,
+  ) {}
 
-  getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
+  getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): Observable<string> {
+    const loginChallenge = new URLSearchParams(window.location.search).get('login_challenge');
+
+    if (!loginChallenge) return of(this.buildSsoUrl(provider, this.oAuthService.getCameFrom()));
+
+    // The login_challenge is still fresh here (we're only starting the SSO hop), so
+    // introspecting it via the backend is the one reliable source of came_from —
+    // no dependency on localStorage state or a hardcoded default app.
+    return this.oAuthService.getLoginData(loginChallenge, null).pipe(
+      map((data) => this.buildSsoUrl(provider, data.came_from || this.oAuthService.getCameFrom(), loginChallenge)),
+      catchError(() => of(this.buildSsoUrl(provider, this.oAuthService.getCameFrom(), loginChallenge))),
+    );
+  }
+
+  private buildSsoUrl(provider: 'google' | 'github' | 'microsoft', cameFrom: string, loginChallenge?: string): string {
     const params = new URLSearchParams();
-    params.set('came_from', window.location.origin);
-
-    // Include login_challenge if present in current URL (for OAuth flows from other apps)
-    const currentParams = new URLSearchParams(window.location.search);
-    const loginChallenge = currentParams.get('login_challenge');
-    if (loginChallenge) {
-      params.set('login_challenge', loginChallenge);
-    }
-
+    params.set('came_from', cameFrom);
+    if (loginChallenge) params.set('login_challenge', loginChallenge);
     return `${this.sdk.nuclia.auth.getAuthUrl()}/${provider}/authorize?${params.toString()}`;
   }
 

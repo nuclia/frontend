@@ -20,6 +20,11 @@
   text-align: center;
 }
 
+.login_alert--positive {
+  background-color: $color-tertiary-lightest;
+  color: $color-tertiary-stronger;
+}
+
 .login_form_error {
   align-items: center;
   display: flex;

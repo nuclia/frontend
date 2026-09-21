@@ -1,10 +1,12 @@
+import { DOCUMENT } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router, RouterModule } from '@angular/router';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { isCameFromLegit } from '../login-error.util';
 import { CallbackComponent } from './callback.component';
-import { TranslateService } from '@ngx-translate/core';
 
 describe('CallbackComponent', () => {
   let component: CallbackComponent;
@@ -20,11 +22,14 @@ describe('CallbackComponent', () => {
       auth: {
         authenticate: jest.Mock;
         processAuthorizationResponse: jest.Mock;
+        redirectToOAuth: jest.Mock;
       };
     };
   };
   let toaster: { error: jest.Mock };
   let translate: { instant: jest.Mock };
+  let mockLocation: { href: string };
+  let documentMock: Document;
 
   let snapshotQueryParams: Record<string, any>;
   let snapshotData: Record<string, any>;
@@ -42,6 +47,7 @@ describe('CallbackComponent', () => {
         { provide: SDKService, useValue: sdk },
         { provide: SisToastService, useValue: toaster },
         { provide: TranslateService, useValue: translate },
+        { provide: DOCUMENT, useValue: documentMock },
       ],
     }).compileComponents();
 
@@ -83,11 +89,25 @@ describe('CallbackComponent', () => {
         auth: {
           authenticate: jest.fn(),
           processAuthorizationResponse: jest.fn(() => of({ success: true, state: {} })),
+          redirectToOAuth: jest.fn(),
         },
       },
     };
     toaster = { error: jest.fn() };
     translate = { instant: jest.fn((key) => key) };
+    mockLocation = { href: '' };
+    // Proxy the real document so TestBed can still render the component (it needs the real
+    // querySelectorAll/createElement etc.), while `location` is stubbed to avoid jsdom's
+    // "not implemented: navigation" console noise when the component assigns `location.href`.
+    documentMock = new Proxy(document, {
+      get(target, prop) {
+        if (prop === 'location') {
+          return mockLocation;
+        }
+        const value = Reflect.get(target, prop, target);
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
     jest.clearAllMocks();
   });
 
@@ -155,8 +175,8 @@ describe('CallbackComponent', () => {
 
     component.ngOnInit();
 
-    expect(toaster.error).toHaveBeenCalledWith('login.error.oops');
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup']);
+    expect(toaster.error).toHaveBeenCalledWith('login.error.device_mismatch');
+    expect(sdk.nuclia.auth.redirectToOAuth).toHaveBeenCalledWith({ message: 'login.error.device_mismatch' });
   });
 
   it('should handle processAuthorizationResponse error', async () => {
@@ -166,8 +186,8 @@ describe('CallbackComponent', () => {
 
     component.ngOnInit();
 
-    expect(toaster.error).toHaveBeenCalledWith('login.error.oops');
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup']);
+    expect(toaster.error).toHaveBeenCalledWith('login.error.device_mismatch');
+    expect(sdk.nuclia.auth.redirectToOAuth).toHaveBeenCalledWith({ message: 'login.error.device_mismatch' });
   });
 
   it('should navigate to signup when callback params are unsupported', async () => {
@@ -188,14 +208,25 @@ describe('CallbackComponent', () => {
     expect(authenticateSpy).toHaveBeenCalledWith({ access_token: 'url-access', refresh_token: 'url-refresh' });
   });
 
-  it('should redirect to consent url in handleSAMLCallback', async () => {
-    snapshotQueryParams = { consent_url: 'https://oauth.here/consent' };
+  it('should redirect to consent url in handleSAMLCallback when it is same-domain', async () => {
+    snapshotQueryParams = { consent_url: 'https://oauth.progress.cloud/consent' };
     await createComponent();
 
     component.handleSAMLCallback();
 
     expect(samlService.getToken).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
+    expect(mockLocation.href).toBe('https://oauth.progress.cloud/consent');
+  });
+
+  it('should reject an off-domain consent_url in handleSAMLCallback', async () => {
+    snapshotQueryParams = { consent_url: 'https://evil.example.com/consent' };
+    await createComponent();
+
+    component.handleSAMLCallback();
+
+    expect(samlService.getToken).not.toHaveBeenCalled();
+    expect(mockLocation.href).toBe('/');
   });
 
   it('should exchange saml token and authenticate in handleSAMLCallback', async () => {
@@ -262,20 +293,19 @@ describe('CallbackComponent', () => {
     });
   });
 
-  it('should map sso login error status 412 to no_personal_email', async () => {
+  it('should map sso login error status 412 to no_personal_email inline', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ status: 412 })));
     await createComponent();
 
     component.ssoLogin();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup'], {
-      relativeTo: route,
-      queryParams: { error: 'no_personal_email' },
-    });
+    expect(translate.instant).toHaveBeenCalledWith('login.error.no_personal_email', { provider: undefined });
+    expect(component.message).toBe('login.error.no_personal_email');
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should map invalid state error to invalid_configuration and show toast', async () => {
+  it('should map invalid state error to a toast and inline oops message', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ message: 'Invalid state' })));
     await createComponent();
@@ -285,33 +315,44 @@ describe('CallbackComponent', () => {
     expect(toaster.error).toHaveBeenCalledWith(
       'Authentication configuration error. Please contact support if this persists.',
     );
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup'], {
-      relativeTo: route,
-      queryParams: { error: 'invalid_configuration' },
-    });
+    expect(component.message).toBe('login.error.oops');
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should map unknown sso login errors to oops', async () => {
+  it('should map unknown sso login errors to an inline oops message', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ status: 500 })));
     await createComponent();
 
     component.ssoLogin();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup'], {
-      relativeTo: route,
-      queryParams: { error: 'oops' },
-    });
+    expect(component.message).toBe('login.error.oops');
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should display a message in ssoLogin when detail is user_not_registered', async () => {
+  it('should display a message in ssoLogin when error_code is user_not_registered', async () => {
+    snapshotQueryParams = { code: 'code-1', state: 'state-1' };
+    ssoService.login.mockReturnValue(
+      throwError(() => ({
+        status: 403,
+        body: { error_code: 'user_not_registered', detail: 'No account is registered with this email.' },
+      })),
+    );
+    await createComponent();
+
+    component.ssoLogin();
+
+    expect(component.message).toBe('login.error.user_not_registered');
+  });
+
+  it('should fall back to the legacy detail string when error_code is absent', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ status: 403, body: { detail: 'user_not_registered' } })));
     await createComponent();
 
     component.ssoLogin();
 
-    expect(component.message).not.toBeUndefined();
+    expect(component.message).toBe('login.error.user_not_registered');
   });
 
   it('should do nothing in ssoLogin when code or state are missing', async () => {
@@ -335,7 +376,7 @@ describe('CallbackComponent', () => {
   it('should validate came_from domains correctly', async () => {
     await createComponent();
 
-    expect((component as any).isCameFromLegit('https://app.progress.cloud/path')).toBe(true);
-    expect((component as any).isCameFromLegit('https://evil.example.com/path')).toBe(false);
+    expect(isCameFromLegit('https://app.progress.cloud/path', config.getAPIOrigin())).toBe(true);
+    expect(isCameFromLegit('https://evil.example.com/path', config.getAPIOrigin())).toBe(false);
   });
 });

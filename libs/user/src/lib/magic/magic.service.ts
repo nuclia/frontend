@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, SDKService } from '@flaps/core';
+import { AuthService, OAuthService, SDKService } from '@flaps/core';
 import { MagicAction } from '@nuclia/core';
 import { catchError, map, of, tap } from 'rxjs';
 
@@ -9,17 +9,22 @@ import { catchError, map, of, tap } from 'rxjs';
 })
 export class MagicService {
   cameFrom = '';
+  readyToLogin = false;
 
   constructor(
     private authService: AuthService,
     private sdk: SDKService,
     private router: Router,
+    private oAuthService: OAuthService,
   ) {}
 
   execute(action: MagicAction) {
     this.authService.setNextUrl(null);
     this.sdk.cleanAccount();
     this.cameFrom = action.came_from || '';
+    if (action.came_from) {
+      this.oAuthService.setCameFrom(action.came_from);
+    }
 
     if (action.action === 'join_regional_kb') {
       // Action to join a kb has a different flow
@@ -48,7 +53,7 @@ export class MagicService {
         break;
       case 'goaccount':
         if (action.needs_initial_setpassword === false && this.cameFrom) {
-          location.href = `${this.cameFrom}/select`;
+          this.goToCameFromWithMessage('/select', 'login.invite_accepted_please_login');
         } else {
           this.router.navigate(['/setup/invite'], {
             queryParams: { account: action.account },
@@ -56,10 +61,13 @@ export class MagicService {
         }
         break;
       case 'redict_to_kb':
-        // needs_initial_setpassword property is not avaiable, so we don't know if it's a new user or not
-        this.router.navigate(['/setup/invite'], {
-          queryParams: { account: action.account, kb: action.kb },
-        });
+        if (action.needs_initial_setpassword === false && this.cameFrom) {
+          this.goToCameFromWithMessage('/select', 'login.invite_accepted_please_login');
+        } else {
+          this.router.navigate(['/setup/invite'], {
+            queryParams: { account: action.account, kb: action.kb },
+          });
+        }
         break;
       case 'goselectaccount':
         this.router.navigate(['/select']);
@@ -77,7 +85,19 @@ export class MagicService {
           throw new Error('No consent_url');
         }
         break;
+      case 'account_ready_please_login':
+        // login_challenge expired after verification, but the account/password are already set.
+        this.readyToLogin = true;
+        break;
     }
+  }
+
+  private goToCameFromWithMessage(path: string, message: string) {
+    // The invited user has no session yet, so cameFrom's own auth guard will bounce them into
+    // login; forward `message` so it survives that redirect and shows up on the login screen.
+    const url = new URL(`${this.cameFrom}${path}`);
+    url.searchParams.set('message', message);
+    location.href = url.toString();
   }
 
   joinKb(action: MagicAction) {
@@ -89,7 +109,8 @@ export class MagicService {
   validateToken(token: string, zone?: string) {
     return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
-        throw Object.assign(new Error('Token validation error'), { tokenError: error });
+        // error is `{ status, body }`, with body already parsed by the SDK's fetch() helper.
+        throw Object.assign(new Error('Token validation error'), { tokenError: error?.body || {} });
       }),
     );
   }

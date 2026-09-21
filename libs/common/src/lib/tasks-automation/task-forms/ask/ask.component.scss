@@ -9,3 +9,9 @@
   flex-direction: column;
   gap: rhythm(1);
 }
+
+::ng-deep pa-radio.beta-option .pa-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+}

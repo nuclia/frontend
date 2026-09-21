@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
+import { NgModule, provideAppInitializer } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpBackend, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -14,7 +14,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
 import {
-  AccountModule,
   BaseModule,
   ChatAdviceBubbleComponent,
   EntitiesModule,
@@ -34,6 +33,7 @@ import { KnowledgeBoxModule } from './knowledge-box';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
+import { checkExternalConnection } from './app.init';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -55,7 +55,6 @@ const appModules = [
   AppRoutingModule,
   FarewellModule,
   SelectAccountKbModule,
-  AccountModule,
   KnowledgeBoxModule,
   EntitiesModule,
   LabelSetsModule,
@@ -87,6 +86,7 @@ const appModules = [
     PaToastModule,
   ],
   providers: [
+    provideAppInitializer(checkExternalConnection),
     {
       provide: SPRITE_CACHE_VERSION,
       useFactory: (config: BackendConfigurationService) => config.getVersion(),
@@ -94,7 +94,7 @@ const appModules = [
     },
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
   ],
 })
 export class AppModule {}

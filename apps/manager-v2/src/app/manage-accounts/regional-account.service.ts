@@ -5,8 +5,8 @@ import { KBRoles, Nuclia } from '@nuclia/core';
 import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ZoneSummary } from '../manage-zones/zone.models';
 import { ZoneService } from '../manage-zones/zone.service';
-import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
-import { Account, AccountModelPayload, Kb, ZoneModels } from './regional-account.models';
+import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary, ProjectDetails } from './account-ui.models';
+import { Account, AccountModelPayload, Kb, Project, Projects, ZoneModels } from './regional-account.models';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -297,6 +297,59 @@ export class RegionalAccountService {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  getProjects(accountId: string): Observable<ProjectDetails[]> {
+    return this.zoneService.getZoneDict().pipe(
+      take(1),
+      switchMap((zones) =>
+        forkJoin(
+          Object.values(zones).map((zone) =>
+            this.sdk.nuclia.rest
+              .get<Projects>(`/dataplatform/${accountId}/projects`, undefined, undefined, zone.slug)
+              .pipe(
+                map((projects) => projects.data.map((project) => ({ ...project, zone }))),
+                catchError(() => of([])),
+              ),
+          ),
+        ),
+      ),
+      map((projects) => projects.flat()),
+    );
+  }
+
+  getProject(accountId: string, projectId: string, zoneId: string): Observable<ProjectDetails> {
+    return this.zoneService.getZoneDict().pipe(
+      take(1),
+      switchMap((zones) =>
+        this.sdk.nuclia.rest
+          .get<Project>(`/dataplatform/${accountId}/projects/${projectId}`, undefined, undefined, zones[zoneId].slug)
+          .pipe(map((project) => ({ ...project, zone: zones[zoneId] }))),
+      ),
+    );
+  }
+
+  updateProject(
+    accountId: string,
+    projectId: string,
+    zoneId: string,
+    data: { name: string; description?: string },
+  ): Observable<ProjectDetails> {
+    return this.zoneService.getZoneDict().pipe(
+      take(1),
+      switchMap((zones) =>
+        this.sdk.nuclia.rest
+          .put<Project>(
+            `/dataplatform/${accountId}/projects/${projectId}`,
+            data,
+            undefined,
+            undefined,
+            true,
+            zones[zoneId].slug,
+          )
+          .pipe(map((project) => ({ ...project, zone: zones[zoneId] }))),
       ),
     );
   }

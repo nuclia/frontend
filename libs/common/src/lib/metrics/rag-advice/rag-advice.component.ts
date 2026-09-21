@@ -23,6 +23,7 @@ import {
   suggestedParamsToSearchConfig,
 } from './rag-advice.service';
 import { SDKService } from '@flaps/core';
+import { isGeminiPriorityModel } from '../../ai-models';
 import {
   LearningConfigurationOption,
   RAGStrategy,
@@ -182,7 +183,7 @@ export class RagAdviceModalComponent {
           // Deduplicate by value (API can return the same model multiple times)
           const seen = new Set<string>();
           return options.filter((o) => {
-            if (seen.has(o.value)) return false;
+            if (seen.has(o.value) || isGeminiPriorityModel(o.value)) return false;
             seen.add(o.value);
             return true;
           });

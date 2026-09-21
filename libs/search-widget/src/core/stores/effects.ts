@@ -4,6 +4,7 @@ import type {
   ChatOptions,
   FieldFullId,
   FilterExpression,
+  HistoryEntry,
   IErrorResponse,
   LabelSets,
   Search,
@@ -31,6 +32,8 @@ import {
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import {
   find,
+  getAgenticAnswer,
+  getAgenticAnswerHttp,
   getAnswer,
   getAnswerWithoutRAG,
   getEntities,
@@ -115,6 +118,8 @@ import {
   viewerState,
 } from './viewer.store';
 import {
+  agenticConfigId,
+  agenticTransport,
   disableRAG,
   debug,
   hasQueryImage,
@@ -124,6 +129,7 @@ import {
   isSpeechSynthesisEnabled,
   widgetImageRagStrategies,
   widgetRagStrategies,
+  andOrFilterLogic,
 } from './widget.store';
 import { loadPaths } from './paths.store';
 
@@ -246,21 +252,35 @@ export function initAnswer(dispatch?: (event: string, details: { query: string }
             widgetImageRagStrategies.pipe(take(1)),
             isDefaultCitationsEnabled.pipe(take(1)),
             isLLMCitationsEnabled.pipe(take(1)),
+            agenticConfigId.pipe(take(1)),
+            agenticTransport.pipe(take(1)),
           ]).pipe(
-            switchMap(([ragStrategies, ragImageStrategies, isDefaultCitationsEnabled, isLLMCitationsEnabled]) => {
-              const chatOptions: ChatOptions = {};
-              if (ragStrategies.length > 0) {
-                chatOptions.rag_strategies = ragStrategies;
-                chatOptions.rag_images_strategies = ragImageStrategies;
-              }
-              if (isLLMCitationsEnabled) {
-                chatOptions.citations = 'llm_footnotes';
-              } else if (isDefaultCitationsEnabled) {
-                chatOptions.citations = true;
-              }
-              dispatch?.('chat', { query: question });
-              return askQuestion(question, reset, chatOptions);
-            }),
+            switchMap(
+              ([
+                ragStrategies,
+                ragImageStrategies,
+                isDefaultCitationsEnabled,
+                isLLMCitationsEnabled,
+                configId,
+                transport,
+              ]) => {
+                dispatch?.('chat', { query: question });
+                if (configId) {
+                  return askQuestion(question, reset, {}, configId, transport);
+                }
+                const chatOptions: ChatOptions = {};
+                if (ragStrategies.length > 0) {
+                  chatOptions.rag_strategies = ragStrategies;
+                  chatOptions.rag_images_strategies = ragImageStrategies;
+                }
+                if (isLLMCitationsEnabled) {
+                  chatOptions.citations = 'llm_footnotes';
+                } else if (isDefaultCitationsEnabled) {
+                  chatOptions.citations = true;
+                }
+                return askQuestion(question, reset, chatOptions);
+              },
+            ),
           ),
         ),
       )
@@ -517,6 +537,7 @@ interface RagAnswerOpts {
   filterExpression: boolean;
   filters: ChatOptions['filters'];
   combinedFilterExpr: ChatOptions['filter_expression'];
+  andOrFilterLogic: boolean;
   rangeCreation: { start?: string; end?: string } | undefined;
   _images: string[];
   _hasQueryImage: boolean;
@@ -535,6 +556,7 @@ function buildRagAnswerObservable(
     filterExpression,
     filters,
     combinedFilterExpr,
+    andOrFilterLogic,
     rangeCreation,
     _images,
     _hasQueryImage,
@@ -544,13 +566,14 @@ function buildRagAnswerObservable(
   if (disableRAG) {
     return getAnswerWithoutRAG(question, entries, chatOptions);
   }
+  const useFilterExpression = filterExpression || andOrFilterLogic;
   return getAnswer(question, entries, {
     ...chatOptions,
     search_configuration,
-    filters: filterExpression ? undefined : filters,
-    filter_expression: filterExpression ? combinedFilterExpr : undefined,
-    range_creation_start: filterExpression ? undefined : rangeCreation?.start,
-    range_creation_end: filterExpression ? undefined : rangeCreation?.end,
+    filters: useFilterExpression ? undefined : filters,
+    filter_expression: useFilterExpression ? combinedFilterExpr : undefined,
+    range_creation_start: useFilterExpression ? undefined : rangeCreation?.start,
+    range_creation_end: useFilterExpression ? undefined : rangeCreation?.end,
     extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
     query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
     reasoning: reasoning as ChatOptions['reasoning'],
@@ -567,9 +590,90 @@ export function askQuestion(
   question: string,
   reset: boolean,
   options: BaseSearchOptions = {},
+  configId?: string,
+  transport: 'http' | 'websocket' = 'http',
 ): Observable<Ask.Answer | IErrorResponse> {
   let hasError = false;
   let isDebugMode = false;
+
+  if (configId && transport === 'websocket') {
+    return of({ question, reset }).pipe(
+      tap((data) => {
+        currentQuestion.set(data);
+        pendingResults.set(true);
+      }),
+      switchMap(() =>
+        chat.pipe(
+          take(1),
+          map((entries) =>
+            entries
+              .filter((e) => !e.answer.incomplete && !e.answer.inError)
+              .map((e): HistoryEntry => ({ question: e.question, answer: e.answer.text })),
+          ),
+          switchMap((chatHistory) => getAgenticAnswer(question, configId, false, chatHistory)),
+        ),
+      ),
+      tap((result) => {
+        if (result.type === 'error') {
+          if (!hasError) {
+            hasError = true;
+            const answer = currentAnswer.getValue();
+            appendChatEntry.set({
+              question,
+              answer: { ...answer, text: answer.text, incomplete: false, inError: true, error: result.detail },
+            });
+            chatError.set(result);
+            pendingResults.set(false);
+          }
+        } else if (result.incomplete) {
+          currentAnswer.set(result);
+        } else {
+          appendChatEntry.set({ question, answer: result });
+          pendingResults.set(false);
+        }
+      }),
+    );
+  }
+
+  if (configId && transport !== 'websocket') {
+    return of({ question, reset }).pipe(
+      tap((data) => {
+        currentQuestion.set(data);
+        pendingResults.set(true);
+      }),
+      switchMap(() =>
+        chat.pipe(
+          take(1),
+          map((entries) =>
+            entries
+              .filter((e) => !e.answer.incomplete && !e.answer.inError)
+              .map((e): HistoryEntry => ({ question: e.question, answer: e.answer.text })),
+          ),
+          switchMap((chatHistory) => getAgenticAnswerHttp(question, configId, chatHistory)),
+        ),
+      ),
+      tap((result) => {
+        if (result.type === 'error') {
+          if (!hasError) {
+            hasError = true;
+            const answer = currentAnswer.getValue();
+            appendChatEntry.set({
+              question,
+              answer: { ...answer, text: answer.text, incomplete: false, inError: true, error: result.detail },
+            });
+            chatError.set(result);
+            pendingResults.set(false);
+          }
+        } else if ((result as Ask.Answer).incomplete) {
+          currentAnswer.set(result as Ask.Answer);
+        } else {
+          appendChatEntry.set({ question, answer: result as Ask.Answer });
+          pendingResults.set(false);
+        }
+      }),
+    );
+  }
+
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(() =>
@@ -581,6 +685,7 @@ export function askQuestion(
         combinedFilters.pipe(take(1)),
         combinedFilterExpression.pipe(take(1)),
         filterExpression.pipe(take(1)),
+        andOrFilterLogic.pipe(take(1)),
         reasoningParam.pipe(take(1)),
         rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
@@ -600,6 +705,7 @@ export function askQuestion(
         filters,
         combinedFilterExpression,
         filterExpression,
+        andOrFilterLogic,
         reasoning,
         rangeCreation,
         disableRAG,
@@ -621,6 +727,7 @@ export function askQuestion(
             filterExpression,
             filters,
             combinedFilterExpr: combinedFilterExpression,
+            andOrFilterLogic,
             rangeCreation,
             _images,
             _hasQueryImage,

@@ -149,8 +149,8 @@ export class ExtractionComponent {
 
   private confirmDelete(name: string) {
     return this.modalService.openConfirm({
-      title: 'kb.ai-models.extraction.delete',
-      description: this.translate.instant('kb.ai-models.extraction.delete-confirm', { name }),
+      title: this.translate.instant('kb.ai-models.extraction.delete', { name }),
+      description: this.translate.instant('kb.ai-models.extraction.delete-confirm'),
       confirmLabel: 'generic.delete',
       isDestructive: true,
     }).onClose;

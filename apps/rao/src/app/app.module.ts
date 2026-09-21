@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpBackend, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -15,7 +15,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { AccountModule, BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
+import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
 import { AppComponent } from './app.component';
 
 // Load locales
@@ -48,7 +48,6 @@ const appModules = [
   AppRoutingModule,
   FarewellModule,
   SelectAccountKbModule,
-  AccountModule,
   EntitiesModule,
   LabelSetsModule,
   UploadModule,
@@ -85,7 +84,7 @@ const appModules = [
     },
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
   ],
 })
 export class AppModule {}

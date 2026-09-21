@@ -4,7 +4,6 @@ import { AccountBudget, BillingService, NavigationService, SDKService, STFUtils 
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
 import { of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
-import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
@@ -48,7 +47,6 @@ export class AwsOnboardingComponent {
     private sdk: SDKService,
     private billing: BillingService,
     private toast: SisToastService,
-    private router: Router,
     private navigation: NavigationService,
   ) {}
 
@@ -125,8 +123,9 @@ export class AwsOnboardingComponent {
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(
             tap(() => {
               this.sdk.refreshKbList();
-              this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
+              this.navigation.navigateExternal(this.navigation.getAccountManageUrl(account.slug), {
                 queryParams: { setup: 'invite-collaborators' },
+                withFromApp: true,
               });
             }),
           );

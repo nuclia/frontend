@@ -11,7 +11,11 @@
   @for (row of rows | async; track row.title) {
     <pa-table-row>
       <pa-table-cell>
-        <span class="body-m">{{ row.title }}</span>
+        <span
+          class="body-m"
+          paEllipsisTooltip>
+          {{ row.title }}
+        </span>
       </pa-table-cell>
       <pa-table-cell>
         <span class="body-s">

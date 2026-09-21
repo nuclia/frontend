@@ -5,9 +5,7 @@
   {{ 'nav.skip_to_main' | translate }}
 </a>
 
-<app-topbar
-  [isNotificationPanelOpen]="isNotificationPanelOpen"
-  (toggleNotificationPanel)="isNotificationPanelOpen = !isNotificationPanelOpen"></app-topbar>
+<app-topbar (openNotificationPanel)="isNotificationPanelOpen = true"></app-topbar>
 
 <div
   class="base-container"

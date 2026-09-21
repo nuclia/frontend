@@ -1,9 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavigationService, SDKService, standaloneSimpleAccount, STFUtils, ZoneService } from '@flaps/core';
-import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  IErrorMessages,
+  PaButtonModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
@@ -24,10 +30,12 @@ import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '../onbo
     CommonModule,
     BackButtonComponent,
     ReactiveFormsModule,
+    RouterLink,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     StickyFooterComponent,
     PaButtonModule,
+    PaIconModule,
     PaTextFieldModule,
     PaTogglesModule,
     EmbeddingsModelFormComponent,
@@ -47,6 +55,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private navigationService = inject(NavigationService);
   private translate = inject(TranslateService);
+
+  embedded = !!this.route.snapshot.data['embedded'];
+  embeddedBackCommands: string[] = [];
 
   private unsubscribeAll = new Subject<void>();
 
@@ -85,6 +96,14 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
 
   ngOnInit() {
+    this.account.pipe(take(1)).subscribe((account) => {
+      if (this.embedded) {
+        this.embeddedBackCommands = ['/at', account.slug, 'manage', 'administration', 'knowledge-boxes'];
+        this.backPath = `${this.navigationService.getAccountManageUrl(account.slug)}/administration`;
+        this.cdr.markForCheck();
+      }
+    });
+
     if (this.sdk.nuclia.options.standalone) {
       this.sdk.nuclia.db.getLearningSchema().subscribe({
         next: (schema) => {
@@ -188,7 +207,11 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (nextPath) => {
           this.sdk.refreshKbList();
-          this.router.navigate([nextPath], { relativeTo: this.route });
+          if (this.sdk.nuclia.options.standalone || this.embedded) {
+            this.router.navigateByUrl(this.embedded ? `${nextPath}/knowledge-boxes` : nextPath);
+          } else {
+            this.router.navigate([nextPath], { relativeTo: this.route });
+          }
         },
         error: () => {
           this.toaster.error('kb.create.error');
@@ -205,6 +228,10 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this.router.navigate([this.backPath], { relativeTo: this.route });
+    if (this.sdk.nuclia.options.standalone || this.embedded) {
+      this.router.navigateByUrl(this.embedded ? `${this.backPath}/knowledge-boxes` : this.backPath);
+    } else {
+      this.router.navigate([this.backPath], { relativeTo: this.route });
+    }
   }
 }

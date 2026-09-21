@@ -1,0 +1,29 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>{{ 'retrieval-agents.workflows-list.mcp-endpoint' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <div class="container">
+      <div class="integration-value">
+        <pa-textarea
+          rows="3"
+          readonly
+          [value]="endpoint()"></pa-textarea>
+        <pa-button
+          [icon]="copied() ? 'check' : 'copy'"
+          aspect="basic"
+          size="small"
+          (click)="copy()">
+          {{ 'generic.copy' | translate }}
+        </pa-button>
+      </div>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

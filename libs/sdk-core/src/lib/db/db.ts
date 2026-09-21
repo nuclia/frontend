@@ -39,7 +39,9 @@ import {
   ModelConfigurationItem,
   normalizeSchemaProperty,
   NUAClient,
+  NUAClientEditPayload,
   NUAClientPayload,
+  NUAClientResponse,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -182,7 +184,7 @@ export class Db implements IDb {
           }. You can provide them as parameter or in Nuclia options.`,
       );
     }
-    return forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(slug)]).pipe(
+    return forkJoin([this.nuclia.rest.getAccountZones(slug), this.getKbIndexes(slug)]).pipe(
       switchMap(([zoneMap, indexes]) => {
         const zones = indexes.reduce((zoneIds, index) => {
           const zoneSlug: string = zoneMap[index.zone_id];
@@ -215,6 +217,13 @@ export class Db implements IDb {
     );
   }
 
+  /** Skips the warm-up call if the origin is already known for this zone (e.g. seeded by getAccountZones). */
+  private ensureZoneOriginReady(accountId: string, zone: string): Observable<unknown> {
+    return this.nuclia.rest.getZoneOrigin(zone) !== undefined
+      ? of(undefined)
+      : this.nuclia.rest.getAccountZones(accountId);
+  }
+
   private _getKnowledgeBoxesForZone(
     accountId: string,
     zone: string,
@@ -229,8 +238,7 @@ export class Db implements IDb {
       params.push(`include_search_configs=${includeSearchConfigs}`);
     }
     const path = `/account/${accountId}/kbs${params.length > 0 ? `?${params.join('&')}` : ''}`;
-    // Ensure zoneOrigins is populated before building the URL so that private zones with a custom origin resolve correctly
-    return this.nuclia.rest.getZones().pipe(
+    return this.ensureZoneOriginReady(accountId, zone).pipe(
       take(1),
       switchMap(() => this.nuclia.rest.get<IKnowledgeBoxItem[]>(path, undefined, undefined, zone)),
     );
@@ -457,6 +465,7 @@ export class Db implements IDb {
    * - "quarter"
    * - "year"
    * - "millennium" (used by default)
+   * @param nuaKeyId NUA key identifier to get the metrics for a specific NUA key.
    */
   getUsage(
     accountId: string,
@@ -464,6 +473,7 @@ export class Db implements IDb {
     to?: string,
     knowledgeBoxId?: string,
     aggregation?: UsageAggregation,
+    nuaKeyId?: string,
   ): Observable<UsagePoint[]> {
     const params = [`from=${from}`];
     if (to) {
@@ -471,6 +481,8 @@ export class Db implements IDb {
     }
     if (knowledgeBoxId) {
       params.push(`knowledgebox=${knowledgeBoxId}`);
+    } else if (nuaKeyId) {
+      params.push(`nua_key_id=${nuaKeyId}`);
     }
     if (aggregation) {
       params.push(`aggregation=${aggregation}`);
@@ -535,19 +547,28 @@ export class Db implements IDb {
     );
   }
 
-  getNUAClients(accountId: string): Observable<NUAClient[]> {
-    return this.nuclia.rest.getZones().pipe(
-      switchMap((zones) =>
-        forkJoin(
-          Object.values(zones).map((zoneSlug) =>
-            this.nuclia.rest
-              .get<{ clients: NUAClient[] }>(`/account/${accountId}/nua_clients`, undefined, undefined, zoneSlug)
-              .pipe(
-                map(({ clients }) => clients.map((client) => ({ ...client, zone: zoneSlug }) as NUAClient)),
-                catchError(() => of([] as NUAClient[])),
-              ),
-          ),
+  /** Returns the list of NUA clients for the given account and zone. */
+  getNUAClientsForZone(accountId: string, zoneSlug: string): Observable<NUAClient[]> {
+    return this.ensureZoneOriginReady(accountId, zoneSlug).pipe(
+      take(1),
+      switchMap(() =>
+        this.nuclia.rest.get<{ clients: NUAClient[] }>(
+          `/account/${accountId}/nua_clients`,
+          undefined,
+          undefined,
+          zoneSlug,
         ),
+      ),
+      timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      map(({ clients }) => clients.map((client) => ({ ...client, zone: zoneSlug }) as NUAClient)),
+      catchError(() => of([] as NUAClient[])),
+    );
+  }
+
+  getNUAClients(accountId: string): Observable<NUAClient[]> {
+    return this.nuclia.rest.getAccountZones(accountId).pipe(
+      switchMap((zones) =>
+        forkJoin(Object.values(zones).map((zoneSlug) => this.getNUAClientsForZone(accountId, zoneSlug))),
       ),
       map((response) =>
         response.reduce((allClients, clients) => {
@@ -557,8 +578,13 @@ export class Db implements IDb {
     );
   }
 
-  getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient> {
-    return this.nuclia.rest.get<NUAClient>(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
+  getNUAClient(accountId: string, internalId: string, zone: string): Observable<NUAClient> {
+    return this.nuclia.rest.get<NUAClient>(
+      `/account/${accountId}/nua_client/${internalId}`,
+      undefined,
+      undefined,
+      zone,
+    );
   }
 
   hasNUAClient(): boolean {
@@ -581,34 +607,23 @@ export class Db implements IDb {
    * @param accountId Account identifier
    * @param data NUA client data
    */
-  createNUAClient(accountId: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
-  createNUAClient(
-    accountId: string,
-    data: NUAClientPayload,
-    zone: string,
-  ): Observable<{ client_id: string; token: string }>;
-  createNUAClient(
-    accountId?: string,
-    data?: NUAClientPayload,
-    zone?: string,
-  ): Observable<{ client_id: string; token: string }> {
+  createNUAClient(accountId: string, data: NUAClientPayload): Observable<NUAClientResponse>;
+  createNUAClient(accountId: string, data: NUAClientPayload, zone: string): Observable<NUAClientResponse>;
+  createNUAClient(accountId?: string, data?: NUAClientPayload, zone?: string): Observable<NUAClientResponse> {
     if (!accountId || !data) {
       const error = 'Account and data are required to create a NUA client';
       console.error(error);
       return throwError(() => error);
     }
 
-    const payload: NUAClientPayload & { processing_webhook?: { uri: string } } = { ...data };
+    const payload: NUAClientPayload = { ...data };
     if (payload.webhook) {
       payload.processing_webhook = { uri: payload.webhook };
       delete payload.webhook;
     }
 
     return this.nuclia.rest
-      .post<{
-        client_id: string;
-        token: string;
-      }>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
+      .post<NUAClientResponse>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
       .pipe(
         catchError((err) => {
           if (err.status === 409 && data.client_id) {
@@ -621,18 +636,36 @@ export class Db implements IDb {
   }
 
   /**
+   * Edit a NUA key
+   * @param accountId Account identifier
+   * @param internalId NUA client internal identifier
+   * @param data
+   */
+  editNUAClient(
+    accountId: string,
+    internalId: string,
+    data: NUAClientEditPayload,
+    zone: string,
+  ): Observable<NUAClient> {
+    return this.nuclia.rest.patch<NUAClient>(
+      `/account/${accountId}/nua_client/${internalId}`,
+      data,
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
    *  Renews a NUA token.
    *  Zone parameter must be provided except when working with a local NucliaDB instance.
    */
-  renewNUAClient(accountId: string, client_id: string): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(
-    accountId?: string,
-    client_id?: string,
-    zone?: string,
-  ): Observable<{ client_id: string; token: string }> {
-    return this.nuclia.rest.put<{ client_id: string; token: string }>(
-      `/account/${accountId}/nua_client/${client_id}/key`,
+  renewNUAClient(accountId: string, internalId: string): Observable<NUAClientResponse>;
+  renewNUAClient(accountId: string, internalId: string, zone: string): Observable<NUAClientResponse>;
+  renewNUAClient(accountId?: string, internalId?: string, zone?: string): Observable<NUAClientResponse> {
+    return this.nuclia.rest.put<NUAClientResponse>(
+      `/account/${accountId}/nua_client/${internalId}/key`,
       {},
       undefined,
       undefined,
@@ -645,10 +678,10 @@ export class Db implements IDb {
    * Deletes a NUA client.
    * Zone parameter must be provided except when working with a local NucliaDB instance.
    */
-  deleteNUAClient(accountId: string, client_id: string): Observable<void>;
-  deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
-  deleteNUAClient(accountId?: string, client_id?: string, zone?: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
+  deleteNUAClient(accountId: string, internalId: string): Observable<void>;
+  deleteNUAClient(accountId: string, internalId: string, zone: string): Observable<void>;
+  deleteNUAClient(accountId?: string, internalId?: string, zone?: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${internalId}`, undefined, undefined, zone);
   }
 
   /**

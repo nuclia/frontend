@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { AccountBlockingState, BlockedFeature } from '@nuclia/core';
-import { AccountDetails, AccountUser, KbDetails, KbSummary } from './manage-accounts/account-ui.models';
+import { AccountDetails, AccountUser, KbDetails, KbSummary, ProjectDetails } from './manage-accounts/account-ui.models';
 import { ZoneModels } from './manage-accounts/regional-account.models';
 import { UserService } from '@flaps/core';
 
@@ -26,6 +26,9 @@ export class ManagerStore {
   readonly canAccessKBs = this.userService.userType.pipe(
     map((t) => t == 'ROOT' || t === 'MANAGER' || t === 'READONLY'),
   );
+  readonly canAccessProjects = this.userService.userType.pipe(
+    map((t) => t == 'ROOT' || t === 'MANAGER' || t === 'READONLY'),
+  );
 
   private _accountDetails: BehaviorSubject<AccountDetails | null> = new BehaviorSubject<AccountDetails | null>(null);
   private _kbList: BehaviorSubject<KbSummary[]> = new BehaviorSubject<KbSummary[]>([]);
@@ -34,6 +37,8 @@ export class ManagerStore {
   private _currentState: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private _accountUsers: BehaviorSubject<AccountUser[]> = new BehaviorSubject<AccountUser[]>([]);
   private _accountModels: BehaviorSubject<ZoneModels[]> = new BehaviorSubject<ZoneModels[]>([]);
+  private _projectList: BehaviorSubject<ProjectDetails[]> = new BehaviorSubject<ProjectDetails[]>([]);
+  private _projectDetails: BehaviorSubject<ProjectDetails | null> = new BehaviorSubject<ProjectDetails | null>(null);
 
   accountDetails: Observable<AccountDetails | null> = this._accountDetails.asObservable();
   kbList: Observable<KbSummary[]> = this._kbList.asObservable();
@@ -42,6 +47,8 @@ export class ManagerStore {
   currentState: Observable<string> = this._currentState.asObservable();
   accountUsers: Observable<AccountUser[]> = this._accountUsers.asObservable();
   accountModels: Observable<ZoneModels[]> = this._accountModels.asObservable();
+  projectList: Observable<ProjectDetails[]> = this._projectList.asObservable();
+  projectDetails: Observable<ProjectDetails | null> = this._projectDetails.asObservable();
 
   setAccountDetails(details: AccountDetails | null) {
     this._accountDetails.next(details);
@@ -73,6 +80,12 @@ export class ManagerStore {
   }
   setAccountModels(models: ZoneModels[]) {
     this._accountModels.next(models);
+  }
+  setProjectList(projects: ProjectDetails[]) {
+    this._projectList.next(projects);
+  }
+  setProjectDetails(project: ProjectDetails) {
+    this._projectDetails.next(project);
   }
 
   getAccountId(): string | undefined {

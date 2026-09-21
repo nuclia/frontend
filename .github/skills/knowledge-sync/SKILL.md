@@ -195,6 +195,7 @@ If source files changed in a project that already has an AGENTS.md:
 4. Edit the file in-place — do not rewrite sections that are still accurate
 5. Verify every class name, method name, and file path mentioned still exists in source
 6. Apply the **Content ROI Quick Reference** above — actively remove any low-ROI content (method signature tables, model property lists, dependency tables, integration tutorials) that snuck in. Use the `agents-review` skill for the full evaluation framework if the file needs a deeper overhaul.
+7. **Describe the current state, not the migration.** AGENTS.md documents what exists _now_, not the diff that produced it. Avoid "moved to", "no longer", "used to", "previously", "migrated", "extracted out of" — an agent reading the file later has no use for the change history and it reads as stale the moment the next move happens. Write "there is no `X` here; `Y` handles this instead" rather than "`X` moved to `Y`". The one exception: a `Gotchas`/pending-work note is fine when it flags something genuinely unfinished or fragile, not when it's just narrating a completed rename/relocation.
 
 #### 4c. Skills and agents — update inline knowledge
 
@@ -333,3 +334,4 @@ When reviewing changed diffs for knowledge-impacting changes, look for:
 - **Changes to `tsconfig.base.json` paths** → path aliases changed, update root AGENTS.md
 - **New `i18n/*.json` keys** → check i18n-patterns skill if key naming convention changed
 - **New `@NgModule` or removal of `@NgModule`** → module architecture changed
+- **When editing prose about a moved/removed/renamed thing** → write the resulting current state, not the move itself (see Step 4b)

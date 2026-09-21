@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, ZoneService } from '@flaps/core';
-import { map, switchMap, take } from 'rxjs';
+import { NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { switchMap, take } from 'rxjs';
 
 @Component({
   standalone: false,
@@ -12,14 +13,12 @@ import { map, switchMap, take } from 'rxjs';
 export class McpEndpointModalComponent {
   sdk = inject(SDKService);
   private zoneService = inject(ZoneService);
+  private navigation = inject(NavigationService);
+  private router = inject(Router);
   modal = inject(ModalRef);
 
   endpoint = this.sdk.currentKb.pipe(
-    switchMap((kb) =>
-      this.zoneService
-        .buildZoneUrl(kb.zone, this.sdk.nuclia.options.backend, 'dp')
-        .pipe(map((baseUrl) => `${baseUrl}/v1${kb.path}/mcp`)),
-    ),
+    switchMap((kb) => this.zoneService.buildMcpEndpointUrl(kb, this.sdk.nuclia.options.backend)),
   );
   copied = signal(false);
 
@@ -29,6 +28,13 @@ export class McpEndpointModalComponent {
         this.copied.set(true);
         setTimeout(() => this.copied.set(false), 2000);
       });
+    });
+  }
+
+  goToApiKeys() {
+    this.modal.close();
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/home/api-keys`]);
     });
   }
 }

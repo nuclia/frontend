@@ -9,6 +9,10 @@ export const DEFAULT_LANG = 'en';
 
 export const GETTING_STARTED_DONE_KEY = 'NUCLIA_GETTING_STARTED_DONE';
 
+export function isAbsoluteUrl(url: string) {
+  return /^https?:\/\//.test(url);
+}
+
 const DATE_FORMATS: { [locale: string]: string } = {
   ca: 'dd/LL/yyyy',
   es: 'dd/LL/yyyy',

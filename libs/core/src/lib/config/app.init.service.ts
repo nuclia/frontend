@@ -21,6 +21,8 @@ export type EnvironmentConfiguration = {
     noStripe: boolean;
     assetsPath?: string;
     allowed_hosts_redirect?: string[];
+    // Local-dev-only override for the computed `admin` app origin (e.g. `http://localhost:4300`),
+    adminOrigin?: string;
   };
   oauth: {
     client_id: string;

@@ -1,0 +1,31 @@
+<div
+  class="model-field"
+  role="group"
+  aria-labelledby="model-field-label"
+  [formGroup]="form">
+  <div
+    class="title-s"
+    id="model-field-label">
+    {{ label }}
+    @if (required) {
+      <span class="required">*</span>
+    }
+  </div>
+
+  <stf-model-selector
+    formControlName="model_id"
+    [providers]="(generativeProviders | async) || {}"
+    [learningConfigurations]="(modelSchemas | async) || {}"
+    [externalLabel]="true"></stf-model-selector>
+
+  <label [for]="'reasoning-radio-group-' + id">
+    {{ 'retrieval-agents.workflow.common-forms.reasoning' | translate }}
+  </label>
+  <pa-radio-group
+    [id]="'reasoning-radio-group-' + id"
+    [name]="'reasoning-radio-group-' + id"
+    [formControl]="reasoningControl">
+    <pa-radio value="enabled">{{ 'generic.enabled' | translate }}</pa-radio>
+    <pa-radio value="disabled">{{ 'generic.disabled' | translate }}</pa-radio>
+  </pa-radio-group>
+</div>

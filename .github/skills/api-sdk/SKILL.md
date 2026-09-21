@@ -61,10 +61,10 @@ The `Nuclia` class is the entry point. It exposes three main namespaces:
 
 The Nuclia API has two base URLs:
 
-| Scope        | Base URL                                                           | When to use                           |
-| ------------ | ------------------------------------------------------------------ | ------------------------------------- |
-| **Global**   | `nuclia.backend` → `https://accounts.progress.cloud/api`                | Account CRUD, zones list, NUA clients |
-| **Regional** | `nuclia.regionalBackend` → `https://<zone>.rag.progress.cloud/api` | KB-level & ARAG operations            |
+| Scope        | Base URL                                                          | When to use                           |
+| ------------ | ----------------------------------------------------------------- | ------------------------------------- |
+| **Global**   | `nuclia.backend` → `https://accounts.progress.cloud/api`          | Account CRUD, zones list, NUA clients |
+| **Regional** | `nuclia.regionalBackend` → `https://<zone>.dp.progress.cloud/api` | KB-level & ARAG operations            |
 
 `nuclia.rest.get(path)` targets the **global** backend by default.
 To target the regional backend, pass the `zoneSlug` as the 4th argument OR use `kb.path`/`kb.fullpath`:

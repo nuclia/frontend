@@ -1,0 +1,109 @@
+<h3>{{ title }}</h3>
+<pa-table
+  border
+  columns="2fr repeat(2, 1fr) 96px 120px 1fr 80px">
+  <pa-table-header>
+    <pa-table-cell header>
+      <div class="id-and-lock">
+        <div class="icon-placeholder"></div>
+        Id
+      </div>
+    </pa-table-cell>
+    <pa-table-cell header>Slug</pa-table-cell>
+    <pa-table-cell header>Title</pa-table-cell>
+    <pa-table-cell header>Zone</pa-table-cell>
+    <pa-table-cell header>Resources</pa-table-cell>
+    <pa-table-cell header>Content</pa-table-cell>
+    <pa-table-cell header>Activity</pa-table-cell>
+  </pa-table-header>
+
+  @for (container of containerList | async; track container.id) {
+    <pa-table-row
+      clickable
+      [routerLink]="(canAccessKBs | async) ? '../zone/' + container.zone.id + '/kb/' + container.id : undefined">
+      <pa-table-cell>
+        <div class="id-and-lock">
+          @if (container.private) {
+            <pa-icon
+              name="lock"
+              size="small"></pa-icon>
+          } @else {
+            <div class="icon-placeholder"></div>
+          }
+          <small>{{ container.id }}</small>
+        </div>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ container.slug }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ container.title }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ container.zone.title }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (counters | async; as counts) {
+          <div class="body-s flex-column">
+            @if (counts[container.id]; as count) {
+              <div class="space-between">
+                <span>Total:</span>
+                <strong>{{ count.resources.total | number: '1.0-0' }}</strong>
+              </div>
+              <div class="space-between">
+                <span>Pending:</span>
+                <strong>
+                  {{ count.resources.pending === -1 ? '?' : (count.resources.pending | number: '1.0-0') }}
+                </strong>
+              </div>
+              <div class="space-between">
+                <span>Error:</span>
+                <strong>{{ count.resources.error === -1 ? '?' : (count.resources.error | number: '1.0-0') }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (counters | async; as counts) {
+          <div class="body-s flex-column">
+            @if (counts[container.id]; as count) {
+              <div class="space-between">
+                <span>Paragraphs:</span>
+                <strong>{{ count.paragraphs | number: '1.0-0' }}</strong>
+              </div>
+              <div class="space-between">
+                <span>Fields:</span>
+                <strong>{{ count.fields | number: '1.0-0' }}</strong>
+              </div>
+              <div class="space-between">
+                <span>Sentences:</span>
+                <strong>{{ count.sentences | number: '1.0-0' }}</strong>
+              </div>
+              <div class="space-between">
+                <span>Index size:</span>
+                <strong>{{ count.index_size | size }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </pa-table-cell>
+      <pa-table-cell center>
+        <div class="flex-column body-s">
+          <a
+            [href]="container.activity.redash"
+            target="_blank"
+            rel="noopener noreferrer">
+            <small>Redash</small>
+          </a>
+          <a
+            [href]="container.activity.grafana"
+            target="_blank"
+            rel="noopener noreferrer">
+            <small>Grafana</small>
+          </a>
+        </div>
+      </pa-table-cell>
+    </pa-table-row>
+  }
+</pa-table>

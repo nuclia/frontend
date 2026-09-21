@@ -2,11 +2,12 @@
   <header>
     <div class="page-title">
       {{ 'retrieval-agents.drivers.title' | translate }}
-      <div class="add-driver-container">
+      <div class="page-title-actions">
         <nsi-dropdown-button
+          kind="primary"
           icon="circle-plus"
-          iconAndText
-          fullWidth
+          freeWidth
+          [alignLeft]="false"
           [popupRef]="driverTypes">
           {{ 'retrieval-agents.drivers.add.button' | translate }}
         </nsi-dropdown-button>

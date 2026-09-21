@@ -179,6 +179,9 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
       case 'classify':
         this.router.navigate([`../${resourceId}/edit/classification`], { relativeTo: this.route });
         break;
+      case 'memory':
+        this.router.navigate([`../${resourceId}/edit/memory`], { relativeTo: this.route });
+        break;
       case 'delete':
         this.delete([resource]).subscribe();
         break;

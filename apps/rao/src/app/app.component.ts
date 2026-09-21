@@ -1,26 +1,27 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 
-import { TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
-import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
-export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
 
   private unsubscribeAll: Subject<void>;
 
-  version: string | undefined;
-
   constructor(
     private user: UserService,
+    // Injected only to force instantiation (providedIn: 'root' services are lazy) — the service
+    // hides the splash screen itself once routing settles and the app becomes stable.
     private splashScreenService: STFSplashScreenService,
     private config: BackendConfigurationService,
     private paTranslate: PaTranslateService,
@@ -44,9 +45,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.config.getVersion()) {
-      this.version = this.config.getVersion();
-    }
     this.preventDragAndDropOnWindow();
   }
 
@@ -54,10 +52,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
     this.cleanUpEventListener();
-  }
-
-  ngAfterViewInit() {
-    this.splashScreenService.hide();
   }
 
   initTranslate(userLocale?: string) {

@@ -46,15 +46,16 @@ export class RagLabComponent implements OnChanges {
     map((kbConfig) => kbConfig?.['generative_model'] || ''),
   );
   generativeModelMap = this.ragLabService.generativeModelMap;
-  searchConfigurations: Observable<Widget.SearchConfiguration[]> = this.ragLabService.searchConfigurations.pipe(
-    tap((configs) => {
-      configs.forEach((config) =>
-        this.form.addControl(config.id, new FormControl<boolean>(false, { nonNullable: true })),
-      );
-      this.updateFormContent();
-      this.cdr.detectChanges();
-    }),
-  );
+  searchConfigurations: Observable<Widget.StandardTypedSearchConfiguration[]> =
+    this.ragLabService.searchConfigurations.pipe(
+      tap((configs) => {
+        configs.forEach((config) =>
+          this.form.addControl(config.id, new FormControl<boolean>(false, { nonNullable: true })),
+        );
+        this.updateFormContent();
+        this.cdr.detectChanges();
+      }),
+    );
 
   searchConfigDetails: Observable<{ vectorset?: string; features: string[]; ragStrategies: string[] }[]> =
     this.searchConfigurations.pipe(
@@ -211,7 +212,7 @@ export class RagLabComponent implements OnChanges {
   }
 
   private getRequestConfigList(
-    configurations: Widget.SearchConfiguration[],
+    configurations: Widget.StandardTypedSearchConfiguration[],
     defaultGenerativeModel: string,
   ): RequestConfigAndQueries[] {
     return this.selectedConfigs

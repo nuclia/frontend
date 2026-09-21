@@ -68,7 +68,7 @@ for dir in apps/*/ libs/*/; do
     STALE_FILES+=("$dir ($newer_count source files newer)")
     if [[ "$VERBOSE" = "--verbose" ]]; then
       echo -e "  ${YELLOW}⚠  ${dir}AGENTS.md — ${newer_count} newer source files:${NC}"
-      find "${dir}src" -newer "$agents_md" \( -name "*.ts" -o -name "*.html" -o -name "*.scss" \) 2>/dev/null | head -5 | sed 's/^/       /'
+      find "${dir}src" -newer "$agents_md" \( -name "*.ts" -o -name "*.html" -o -name "*.scss" \) 2>/dev/null | head -5 | sed 's/^/       /' || true
     fi
   fi
 done
@@ -88,7 +88,7 @@ echo ""
 echo -e "${BLUE}[3/3] Checking recent commits (last 7 days) for un-synced changes...${NC}"
 
 # Get commits from last 7 days
-recent_commits=$(git log --since="7 days ago" --oneline 2>/dev/null | head -10)
+recent_commits=$(git log --since="7 days ago" --oneline -10 2>/dev/null)
 
 if [[ -z "$recent_commits" ]]; then
   echo -e "  ${GREEN}✓ No commits in the last 7 days${NC}"
@@ -110,7 +110,7 @@ else
     source_touched=$(git log --since="7 days ago" -- "${project}/src" 2>/dev/null | wc -l | tr -d ' ')
 
     if [[ "$source_touched" -gt 0 ]] && [[ "$agents_touched" -eq 0 ]]; then
-      last_commit_msg=$(git log --since="7 days ago" --oneline -- "${project}/src" 2>/dev/null | head -1)
+      last_commit_msg=$(git log --since="7 days ago" --oneline -1 -- "${project}/src" 2>/dev/null)
       unsynced+=("$project — last: $last_commit_msg")
     fi
   done <<< "$touched_projects"

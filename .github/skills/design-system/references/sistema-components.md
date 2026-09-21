@@ -142,17 +142,18 @@ Compact icon button for dense UIs. Has tooltip, destructive and disabled states.
 
 Button wired to a Pastanaga `DropdownComponent` via template ref. Passes size/kind/aspect through.
 
-| Input       | Type                             | Default       |
-| ----------- | -------------------------------- | ------------- |
-| `popupRef`  | `DropdownComponent \| undefined` | —             |
-| `size`      | `Size`                           | `'medium'`    |
-| `kind`      | `Kind`                           | `'secondary'` |
-| `aspect`    | `Aspect`                         | `'solid'`     |
-| `open`      | `boolean`                        | `false`       |
-| `disabled`  | `boolean`                        | `false`       |
-| `freeWidth` | `boolean`                        | `false`       |
-| `fullWidth` | `boolean`                        | `false`       |
-| `icon`      | `string \| undefined`            | —             |
+| Input         | Type                             | Default       |
+| ------------- | -------------------------------- | ------------- |
+| `popupRef`    | `DropdownComponent \| undefined` | —             |
+| `size`        | `Size`                           | `'medium'`    |
+| `kind`        | `Kind`                           | `'secondary'` |
+| `aspect`      | `Aspect`                         | `'solid'`     |
+| `open`        | `boolean`                        | `false`       |
+| `disabled`    | `boolean`                        | `false`       |
+| `freeWidth`   | `boolean`                        | `false`       |
+| `fullWidth`   | `boolean`                        | `false`       |
+| `icon`        | `string \| undefined`            | —             |
+| `openOnFocus` | `boolean`                        | `false`       |
 
 ```html
 <nsi-dropdown-button
@@ -405,10 +406,10 @@ CTA card with tag-line, title, description, and a text link that navigates via A
 
 Content card wrapping projected content with optional icon and colour variant.
 
-| Input  | Type                                    | Default     |
-| ------ | --------------------------------------- | ----------- |
-| `type` | `'default' \| 'warning' \| 'highlight'` | `'default'` |
-| `icon` | `string \| undefined`                   | —           |
+| Input  | Type                                                     | Default     |
+| ------ | -------------------------------------------------------- | ----------- |
+| `type` | `'default' \| 'warning' \| 'highlight' \| 'transparent'` | `'default'` |
+| `icon` | `string \| undefined`                                    | —           |
 
 ```html
 <nsi-info-card

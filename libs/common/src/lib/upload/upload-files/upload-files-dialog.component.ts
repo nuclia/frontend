@@ -6,7 +6,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   template: `
     @if (!showProgress) {
       <app-upload-files
-        [folderMode]="modal.config.data?.['folderMode']"
+        [folderMode]="$safeNavigationMigration(modal.config.data?.['folderMode'])"
         (upload)="onUpload()"
         (uploadClose)="close($event)"></app-upload-files>
     }

@@ -214,7 +214,7 @@ export function convertChunkToParagraph(chunk: RankedChunk): RankedParagraph {
     page_with_visual: false,
     is_a_table: false,
     reference: '',
-    rank: chunk.rank,
+    ranks: chunk.rank ? [chunk.rank] : undefined,
   };
 }
 

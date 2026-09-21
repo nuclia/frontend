@@ -1,0 +1,24 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    {{ 'onboarding.eula.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-description>{{ 'onboarding.eula.description' | translate }}</pa-modal-description>
+  <pa-modal-content>
+    <div>
+      <pa-checkbox
+        noEllipsis
+        [value]="accepted()"
+        (valueChange)="accepted.set($event)">
+        <span [innerHTML]="'onboarding.eula.label' | translate"></span>
+      </pa-checkbox>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      [disabled]="!accepted()"
+      (click)="accept()">
+      {{ 'generic.accept' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

@@ -1,0 +1,247 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.memory {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.header-actions {
+  align-items: flex-start;
+  display: flex;
+  margin-left: auto;
+  gap: rhythm(1);
+}
+
+.memory-top-row {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  padding: 0 rhythm(1);
+}
+
+.memory-filters {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: rhythm(1) 0;
+}
+
+.memory-controls-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: rhythm(2);
+  padding-left: rhythm(1);
+}
+
+.search-group {
+  flex: 1 1 rhythm(30);
+  max-width: rhythm(50);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.date-filter-row {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+}
+
+.facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(120);
+  padding: 0 rhythm(1);
+  width: 100%;
+
+  &.loading {
+    gap: rhythm(1);
+  }
+}
+
+.loading-progress {
+  color: $color-neutral-regular;
+}
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(120);
+  padding: 0 rhythm(1);
+  width: 100%;
+}
+
+.session-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-header-main {
+  align-items: center;
+  display: inline-flex;
+  gap: rhythm(0.75);
+}
+
+.session-header-name {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+}
+
+.session-header-count {
+  color: $color-neutral-regular;
+
+  &::before {
+    content: '· ';
+  }
+}
+
+.view-facts-link {
+  background: transparent;
+  border: 0;
+  color: $color-primary-regular;
+  cursor: pointer;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  padding: 0;
+
+  &:hover {
+    color: $color-primary-strong;
+    text-decoration: underline;
+  }
+}
+
+.session-body {
+  padding: rhythm(2) rhythm(2) rhythm(2) rhythm(3);
+}
+
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.entry-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry-meta {
+  color: $color-neutral-regular;
+}
+
+.entry-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+// Fact-card expander styles: date + fact text header, expandable body listing the fact's
+// related entries. Same rules are duplicated in memory-facts-modal.component.scss, where the
+// fact card is rendered again inside the per-session facts modal.
+.fact-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.details-expander {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  overflow: hidden;
+
+  ::ng-deep .pa-expander-header:hover {
+    background: $color-neutral-lightest;
+  }
+
+  ::ng-deep .pa-expander-title {
+    color: $color-dark-stronger;
+    // Override the default no-shrink flex so date + text wrap together as one paragraph
+    // instead of the date getting pushed onto its own line.
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    padding: rhythm(0.5) 0;
+  }
+
+  ::ng-deep .pa-expander:not(.pa-expander-card) > .pa-expander-header .pa-expander-title {
+    line-height: 1.5;
+    padding: rhythm(1) rhythm(1) rhythm(1) 0;
+  }
+}
+
+.fact-header-date {
+  color: $color-neutral-regular;
+  font-weight: $font-weight-regular;
+
+  &::after {
+    content: ' ·';
+    margin-right: rhythm(0.5);
+  }
+}
+
+.fact-header-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.fact-body {
+  padding: rhythm(2) rhythm(2) rhythm(2) rhythm(3);
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.source-entry {
+  display: flex;
+  flex-direction: column;
+}
+
+.source-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  margin: 0;
+}
+
+.source-link {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: rhythm(0.5);
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  width: fit-content;
+}
+
+.source-meta {
+  color: $color-primary-regular;
+  font-weight: $font-weight-regular;
+}
+
+.source-link:hover .source-meta {
+  color: $color-primary-strong;
+  text-decoration: underline;
+}
+
+.source-link-icon {
+  color: $color-neutral-regular;
+  display: inline-flex;
+}
+
+::ng-deep.pa-expander-header-extra {
+  margin-right: rhythm(1);
+}

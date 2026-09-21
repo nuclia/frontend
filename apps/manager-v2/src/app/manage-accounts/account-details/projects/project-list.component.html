@@ -1,0 +1,30 @@
+<h3>Projects</h3>
+<pa-table
+  border
+  columns="2fr repeat(2, 1fr) 2fr">
+  <pa-table-header>
+    <pa-table-cell header>Id</pa-table-cell>
+    <pa-table-cell header>Project name</pa-table-cell>
+    <pa-table-cell header>Zone</pa-table-cell>
+    <pa-table-cell header>Description</pa-table-cell>
+  </pa-table-header>
+
+  @for (project of projectList | async; track project.project_id) {
+    <pa-table-row
+      clickable
+      [routerLink]="(canAccessProjects | async) ? '../zone/' + project.zone.id + '/project/' + project.project_id : undefined">
+      <pa-table-cell>
+        <small>{{ project.project_id }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ project.name }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ project.zone.title }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ project.description }}</small>
+      </pa-table-cell>
+    </pa-table-row>
+  }
+</pa-table>

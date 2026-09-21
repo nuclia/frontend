@@ -1,17 +1,18 @@
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { APP_BASE_HREF } from '@angular/common';
-import { BackendConfigurationService } from '@flaps/core';
+import { BrandService } from '@flaps/core';
 
 @Component({
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.component.html',
   styleUrls: ['./page-not-found.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class PageNotFoundComponent {
   baseHref = inject(APP_BASE_HREF, { optional: true }) || '/';
-  private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
-  brandName = this.backendConfig.getBrandName();
+  private brandService = inject(BrandService);
+  logoPath = this.brandService.logoPath;
+  brandName = this.brandService.brandName;
 }

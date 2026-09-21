@@ -41,6 +41,7 @@
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/sistema-demo",
         "index": "apps/sistema-demo/src/index.html",
@@ -70,7 +71,7 @@
         "styles": ["apps/sistema-demo/src/styles.scss"],
         "scripts": [],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/sistema-demo/src"]
+          "includePaths": ["apps/sistema-demo/src", "."]
         }
       },
       "configurations": {
@@ -85,7 +86,7 @@
             {
               "type": "anyComponentStyle",
               "maximumWarning": "4kb",
-              "maximumError": "6kb"
+              "maximumError": "10kb"
             }
           ],
           "fileReplacements": [
@@ -104,11 +105,12 @@
           "sourceMap": true,
           "namedChunks": true
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "defaultConfiguration": "development",
+      "continuous": true,
       "configurations": {
         "production": {
           "buildTarget": "sistema-demo:build:production"
@@ -116,9 +118,7 @@
         "development": {
           "buildTarget": "sistema-demo:build:development"
         }
-      },
-      "defaultConfiguration": "development",
-      "continuous": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -130,11 +130,14 @@
       "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/sistema-demo"],
       "options": {
-        "jestConfig": "apps/sistema-demo/jest.config.js",
-        "tsConfig": "apps/sistema-demo/tsconfig.spec.json"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     }
   }

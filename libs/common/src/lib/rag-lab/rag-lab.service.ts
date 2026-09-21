@@ -16,6 +16,7 @@ import {
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
 import { SearchWidgetService } from '../search-widget';
+import { isGeminiPriorityModel } from '../ai-models';
 import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -48,7 +49,7 @@ export class RagLabService {
   private _kbConfigBackup = new BehaviorSubject<{ [id: string]: any } | null>(null);
   private _generativeProviders = new BehaviorSubject<GenerativeProvider[] | null>(null);
   private _generativeModelMap = new BehaviorSubject<{ [value: string]: string } | null>(null);
-  private _searchConfigurations = new BehaviorSubject<Widget.TypedSearchConfiguration[]>([]);
+  private _searchConfigurations = new BehaviorSubject<Widget.StandardTypedSearchConfiguration[]>([]);
 
   kbConfigBackup = this._kbConfigBackup.asObservable();
   generativeProviders = this._generativeProviders.asObservable();
@@ -73,7 +74,11 @@ export class RagLabService {
         ]),
       ),
       map(([config, schema, providers, savedConfigurations]) => {
-        this._searchConfigurations.next([{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(savedConfigurations));
+        this._searchConfigurations.next(
+          [{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(
+            savedConfigurations.filter(this.isStandardSearchConfiguration.bind(this)),
+          ),
+        );
         this._kbConfigBackup.next(config);
         // Only models present in both schema and providers are allowed
         const allowedModels = new Set((schema[GENERATIVE_MODEL_KEY]?.options || []).map((option) => option.value));
@@ -87,7 +92,10 @@ export class RagLabService {
                   providerKey === 'default' ? [value.name, { ...value, name: key }] : [key, value],
                 )
                 .map((value) => value as [string, ModelInfo])
-                .filter(([key]) => allowedModels.has(key) && key !== 'generative-multilingual-2023'),
+                .filter(
+                  ([key]) =>
+                    allowedModels.has(key) && key !== 'generative-multilingual-2023' && !isGeminiPriorityModel(key),
+                ),
             ),
           }))
           .filter((provider) => Object.keys(provider.models || {}).length > 0);
@@ -135,6 +143,12 @@ export class RagLabService {
     this._progress$.pipe(filter((progress) => progress === requestCount)).subscribe(() => this._loadingModal?.close());
 
     return this._generateResults(requestConfigs, forTab);
+  }
+
+  private isStandardSearchConfiguration(
+    config: Widget.TypedSearchConfiguration,
+  ): config is Widget.StandardTypedSearchConfiguration {
+    return config.searchMode !== 'agentic';
   }
 
   private _generateResults(requestConfigs: RequestConfigAndQueries[], forTab: 'prompt' | 'rag') {

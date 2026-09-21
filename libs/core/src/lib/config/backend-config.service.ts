@@ -28,6 +28,11 @@ export class BackendConfigurationService {
     return this.config.backend.apiOrigin || '';
   }
 
+  /** Local-dev-only override — see `EnvironmentConfiguration.backend.adminOrigin`. */
+  getAdminOrigin(): string | undefined {
+    return this.config.backend.adminOrigin;
+  }
+
   getOAuthSettings() {
     return this.config.oauth;
   }
@@ -61,7 +66,7 @@ export class BackendConfigurationService {
   }
 
   getVersion(): string {
-    return this.config.version;
+    return this.config.version.replace(/^\d+\.\d+\.\d+-/, '');
   }
 
   getCDN(): string {
@@ -73,7 +78,7 @@ export class BackendConfigurationService {
   }
 
   getLogoPath(): string {
-    return `${this.getAssetsPath()}/logos/logo.svg?version=${this.getVersion()}`;
+    return `${this.getAssetsPath()}/logos/logo-horizontal.svg?version=${this.getVersion()}`;
   }
 
   getBrandName(): string {

@@ -41,6 +41,8 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
   OnboardingComponent,
+  redirectToAdminGuard,
+  redirectToWorkflowGuard,
   WorkflowsListComponent,
   WorkflowsComponent,
 } from '@flaps/common';
@@ -85,7 +87,7 @@ const routes: Routes = [
           },
           {
             path: `manage`,
-            loadChildren: () => import('./app-routing.lazy').then((m) => m.AccountModule),
+            children: [{ path: '**', canActivate: [redirectToAdminGuard], component: EmptyComponent }],
           },
           {
             path: `:zone/:kb`,
@@ -179,8 +181,9 @@ const routes: Routes = [
             children: [
               {
                 path: '',
-                redirectTo: 'workflows',
                 pathMatch: 'full',
+                component: EmptyComponent,
+                canActivate: [redirectToWorkflowGuard],
               },
               {
                 path: 'workflows',

@@ -1,12 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData, FeaturesService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  BrandService,
+  FeaturesService,
+  OAuthLoginData,
+  OAuthService,
+  SAMLService,
+} from '@flaps/core';
+import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
-import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
 
 import { LoginComponent } from './login.component';
 
@@ -16,6 +23,7 @@ describe('LoginComponent', () => {
 
   let router: { navigate: jest.Mock };
   let oAuthService: { getCameFrom: jest.Mock; loginUrl: jest.Mock };
+  let brandService: { signUpUrl: Observable<string> };
   let config: {
     useRemoteLogin: jest.Mock;
     getRecaptchaKey: jest.Mock;
@@ -52,6 +60,7 @@ describe('LoginComponent', () => {
         { provide: BackendConfigurationService, useValue: config },
         { provide: SAMLService, useValue: samlService },
         { provide: FeaturesService, useValue: featuresService },
+        { provide: BrandService, useValue: brandService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -74,6 +83,9 @@ describe('LoginComponent', () => {
     oAuthService = {
       getCameFrom: jest.fn(() => 'http://app.local'),
       loginUrl: jest.fn(() => 'http://oauth.here/login'),
+    };
+    brandService = {
+      signUpUrl: of('http://oauth.here/sign-up'),
     };
     config = {
       useRemoteLogin: jest.fn(() => false),
@@ -105,7 +117,7 @@ describe('LoginComponent', () => {
 
   it('should build signUpUrl from cameFrom', async () => {
     await buildComponent();
-    expect(component.signUpUrl).toBe('http://app.local/user/signup');
+    await expect(firstValueFrom(component.signUpUrl)).resolves.toBe('http://app.local/user/signup');
   });
 
   it('should navigate to recover page when initial password is required', async () => {
@@ -121,7 +133,7 @@ describe('LoginComponent', () => {
   it('should set message and loginChallenge from query params', async () => {
     await buildComponent();
 
-    expect(component.message).toBe('hello');
+    expect(component.message()).toBe('hello');
     expect(component.loginChallenge).toBe('challenge-1');
     expect(component.error).toBeNull();
   });
@@ -141,7 +153,7 @@ describe('LoginComponent', () => {
     });
     await buildComponent();
 
-    expect(component.message).toBe('denied by policy');
+    expect(component.message()).toBe('denied by policy');
   });
 
   it('should set fallback message when OAuth error description is missing', async () => {
@@ -151,11 +163,15 @@ describe('LoginComponent', () => {
     });
     await buildComponent();
 
-    expect(component.message).toBe('login.error.invalid_request');
+    expect(component.message()).toBe('login.error.invalid_request');
   });
 
   it('should trigger remoteLogin when remote login is enabled', async () => {
-    const remoteLoginSpy = jest.spyOn(LoginComponent.prototype as never, 'remoteLogin' as never);
+    // Stub the implementation: the real remoteLogin assigns `location.href`, which jsdom
+    // doesn't implement and logs a noisy "not implemented: navigation" console.error.
+    const remoteLoginSpy = jest
+      .spyOn(LoginComponent.prototype as never, 'remoteLogin' as never)
+      .mockImplementation(() => undefined);
     config.useRemoteLogin.mockReturnValue(true);
 
     await buildComponent();
@@ -291,7 +307,7 @@ describe('LoginComponent', () => {
     await buildComponent();
 
     expect(component.emailControl.value).toBe('test@example.com');
-    expect(component.message).toBe('login.account_already_exists');
+    expect(component.message()).toBe('login.account_already_exists');
   });
 
   it('should not pre-fill email and not set account_already_exists message when needs_signup is true', async () => {
@@ -307,6 +323,6 @@ describe('LoginComponent', () => {
     await buildComponent();
 
     expect(component.emailControl.value).toBe('');
-    expect(component.message).not.toBe('login.account_already_exists');
+    expect(component.message()).not.toBe('login.account_already_exists');
   });
 });

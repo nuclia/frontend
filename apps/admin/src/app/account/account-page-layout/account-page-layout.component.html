@@ -1,0 +1,26 @@
+<div class="account-page-layout page-spacing">
+  <!-- Optional slot for content above the header (e.g. trial status banner) -->
+  <ng-content select="[top]"></ng-content>
+
+  <div class="settings-header">
+    <h1 class="page-title">{{ title() }}</h1>
+    <p class="page-description">{{ description() }}</p>
+  </div>
+
+  <div class="settings-navigation">
+    <nsi-back-button
+      class="back-home-button"
+      [link]="backLink()">
+      {{ 'generic.back_to_home' | translate }}
+    </nsi-back-button>
+    <!-- Project pa-tabs here using the [tabs] attribute selector -->
+    <ng-content select="[tabs]"></ng-content>
+  </div>
+
+  <div
+    class="settings-section"
+    [attr.id]="panelId()"
+    role="tabpanel">
+    <router-outlet></router-outlet>
+  </div>
+</div>

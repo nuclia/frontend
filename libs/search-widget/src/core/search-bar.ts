@@ -3,6 +3,9 @@ import { getAnswer } from './api';
 import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
+  agenticConfigId,
+  agenticTransport,
+  andOrFilterLogic,
   askQuestion,
   combinedFilterExpression,
   combinedFilters,
@@ -89,6 +92,7 @@ export const setupTriggerSearch = (
                 combinedFilters.pipe(take(1)),
                 combinedFilterExpression.pipe(take(1)),
                 filterExpression.pipe(take(1)),
+                andOrFilterLogic.pipe(take(1)),
                 rangeCreationISO.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
@@ -96,6 +100,8 @@ export const setupTriggerSearch = (
                 preferMarkdown.pipe(take(1)),
                 widgetJsonSchema.pipe(take(1)),
                 searchConfigId.pipe(take(1)),
+                agenticConfigId.pipe(take(1)),
+                agenticTransport.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -109,6 +115,7 @@ export const setupTriggerSearch = (
                     combinedFilters,
                     combinedFilterExpression,
                     filterExpression,
+                    andOrFilterLogic,
                     rangeCreation,
                     isAnswerEnabled,
                     ragStrategies,
@@ -116,18 +123,38 @@ export const setupTriggerSearch = (
                     preferMarkdown,
                     jsonSchema,
                     searchConfigId,
+                    agenticConfigId,
+                    transport,
                   ]) => {
                     dispatch('search', { query, filters });
+                    if (agenticConfigId && !trigger?.more) {
+                      return askQuestion(query, true, {}, agenticConfigId, transport).pipe(
+                        filter((res) => res.type !== 'error'),
+                        map((res) => ({
+                          results: (res as Ask.Answer).sources,
+                          append: false,
+                          hideResults,
+                          loadingMore: false,
+                        })),
+                      );
+                    }
+                    const useFilterExpression = filterExpression || andOrFilterLogic;
                     const currentOptions: SearchOptions = {
                       ...options,
                       show,
-                      filters: filterExpression ? undefined : combinedFilters,
-                      filter_expression: filterExpression ? combinedFilterExpression : undefined,
-                      range_creation_start: filterExpression ? undefined : rangeCreation?.start,
-                      range_creation_end: filterExpression ? undefined : rangeCreation?.end,
+                      filters: useFilterExpression ? undefined : combinedFilters,
+                      filter_expression: useFilterExpression ? combinedFilterExpression : undefined,
+                      range_creation_start: useFilterExpression ? undefined : rangeCreation?.start,
+                      range_creation_end: useFilterExpression ? undefined : rangeCreation?.end,
                     };
                     if (isAnswerEnabled && !trigger?.more) {
-                      const chatOptions = buildAskChatOptions(currentOptions, ragStrategies, ragImageStrategies, preferMarkdown, jsonSchema);
+                      const chatOptions = buildAskChatOptions(
+                        currentOptions,
+                        ragStrategies,
+                        ragImageStrategies,
+                        preferMarkdown,
+                        jsonSchema,
+                      );
                       return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {
                           if (res.type === 'error' && res.status === 402 && !hideResults) {

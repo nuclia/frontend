@@ -34,7 +34,7 @@
                     rulesDescription="kb.ai-models.extraction.extract.rules-description"
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [vllmOnly]="true"
-                    [config]="config?.vllm_config"
+                    [config]="$safeNavigationMigration(config?.vllm_config)"
                     (valueChange)="vllmConfig = $event"
                     (statusChange)="vllmConfigStatus = $event"></stf-llm-configuration>
                 </div>
@@ -56,7 +56,7 @@
                     [createMode]="createMode"
                     rulesDescription="kb.ai-models.extraction.extract.rules-description"
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
-                    [config]="config?.ai_tables"
+                    [config]="$safeNavigationMigration(config?.ai_tables)"
                     [isAiTable]="true"
                     (valueChange)="aiTables = $event"
                     (statusChange)="aiTablesStatus = $event"></stf-llm-configuration>

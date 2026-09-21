@@ -58,7 +58,7 @@
                     [learningConfigurations]="learningConfigurations"
                     [createMode]="createMode"
                     rulesDescription="kb.ai-models.extraction.split.llm.rules-description"
-                    [config]="config?.llm_split"
+                    [config]="$safeNavigationMigration(config?.llm_split)"
                     (valueChange)="llmSplit = $event"
                     (statusChange)="llmSplitStatus = $event"></stf-llm-configuration>
                 </div>

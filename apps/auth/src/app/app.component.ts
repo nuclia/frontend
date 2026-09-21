@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   inject,
@@ -9,18 +9,19 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 
-import { TranslateService } from '@ngx-translate/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
-export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
 
   private destroyRef = inject(DestroyRef);
@@ -29,6 +30,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   constructor(
     private user: UserService,
+    // Injected only to force instantiation (providedIn: 'root' services are lazy) — the service
+    // hides the splash screen itself once routing settles and the app becomes stable.
     private splashScreenService: STFSplashScreenService,
     private config: BackendConfigurationService,
     private paTranslate: PaTranslateService,
@@ -54,10 +57,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.cleanUpEventListener();
-  }
-
-  ngAfterViewInit() {
-    this.splashScreenService.hide();
   }
 
   initTranslate(userLocale?: string) {

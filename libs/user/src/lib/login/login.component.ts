@@ -1,9 +1,16 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, FeaturesService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  BrandService,
+  FeaturesService,
+  OAuthLoginData,
+  OAuthService,
+  SAMLService,
+} from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -12,6 +19,7 @@ import { ReCaptchaV3Service } from 'ng-recaptcha-2';
   selector: 'nus-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class LoginComponent {
@@ -22,8 +30,14 @@ export class LoginComponent {
   loginChallenge: string | undefined;
   loginData: OAuthLoginData | undefined;
 
-  message: string | null = null;
+  message = signal<string | null>(null);
   error: string | null = null;
+
+  private static readonly POSITIVE_MESSAGES = new Set([
+    'login.account_ready_please_login',
+    'login.invite_accepted_please_login',
+  ]);
+  isPositiveMessage = computed(() => LoginComponent.POSITIVE_MESSAGES.has(this.message() || ''));
 
   loginValidationMessages = {
     email: {
@@ -50,7 +64,6 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
-  signUpUrl = '';
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -63,6 +76,23 @@ export class LoginComponent {
     }),
     map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
   );
+  isPDP = this.brandService.isPDP;
+  brandName = this.brandService.brandName;
+
+  signUpUrl = combineLatest([
+    this.featuresService.unstable.progressComSignup,
+    this.brandService.signUpUrl,
+    this.route.queryParams,
+  ]).pipe(
+    map(([hasProgressComSignup, signUpUrl]) => {
+      if (hasProgressComSignup) {
+        return signUpUrl;
+      } else {
+        const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
+        return `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
+      }
+    }),
+  );
 
   constructor(
     private oAuthService: OAuthService,
@@ -72,18 +102,11 @@ export class LoginComponent {
     public config: BackendConfigurationService,
     private samlService: SAMLService,
     private featuresService: FeaturesService,
+    private brandService: BrandService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
-    const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
-    this.featuresService.unstable.progressComSignup.subscribe((hasProgressComSignup) => {
-      if (hasProgressComSignup) {
-        this.signUpUrl = 'https://www.progress.com/agentic-rag/free-trial-sign-up';
-      } else {
-        this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
-      }
-    });
     this.route.data.subscribe((data) => {
       if (data['loginData']?.['needs_initial_setpassword']) {
         this.router.navigate(['/user/recover'], {
@@ -93,21 +116,22 @@ export class LoginComponent {
       }
     });
     this.route.queryParams.subscribe((params) => {
-      this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
 
       // Get data from resolver - resolver handles skip_login auto-submit before component loads
       this.loginData = this.route.snapshot.data['loginData'];
 
+      this.message.set(params['message'] || this.loginData?.message || null);
+
       if (!this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
       if (params['error']) {
-        this.message = params['error_description'] || 'login.error.' + params['error'];
+        this.message.set(params['error_description'] || 'login.error.' + params['error']);
       }
       if (this.loginData?.email && !this.loginData?.needs_signup) {
         this.emailControl.setValue(this.loginData.email);
-        this.message = 'login.account_already_exists';
+        this.message.set('login.account_already_exists');
       }
     });
   }
@@ -141,6 +165,7 @@ export class LoginComponent {
   }
 
   private remoteLogin() {
-    location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
+    // Use the current origin, not a hardcoded one, so this works for any app/port.
+    location.href = `${this.config.getAPIOrigin()}/redirect?redirect=${window.location.origin}`;
   }
 }

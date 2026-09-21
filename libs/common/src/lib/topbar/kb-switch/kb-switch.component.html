@@ -1,14 +1,20 @@
-@if (showKbSelector | async) {
-  @let current = kb$ | async;
-  <nsi-dropdown-button
-    size="small"
-    aspect="basic"
-    fullWidth
-    openOnFocus
-    [icon]="current?.state === 'PRIVATE' ? 'lock' : undefined"
-    [popupRef]="kbSwitch">
-    {{ current?.title }}
-  </nsi-dropdown-button>
+@if (kb$ | async; as current) {
+  @if (showKbSelector | async) {
+    <nsi-dropdown-button
+      size="small"
+      aspect="basic"
+      freeWidth
+      openOnFocus
+      [popupRef]="kbSwitch">
+      {{ current.title }}
+    </nsi-dropdown-button>
+  } @else if (!(isCowork | async)) {
+    <span
+      class="kb-context-label"
+      [paTooltip]="current.title">
+      {{ current.title }}
+    </span>
+  }
 }
 
 <pa-dropdown #kbSwitch>

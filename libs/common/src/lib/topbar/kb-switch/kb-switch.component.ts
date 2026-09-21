@@ -18,6 +18,7 @@ export class KbSwitchComponent implements OnDestroy {
 
   kb$ = this.sdk.currentKb;
   account: Observable<Account> = this.sdk.currentAccount;
+  isCowork = this.account.pipe(map((account) => account.workflow === 'cowork'));
 
   standalone: boolean = this.sdk.nuclia.options.standalone || false;
   knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;

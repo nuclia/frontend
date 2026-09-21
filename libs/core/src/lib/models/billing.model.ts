@@ -84,7 +84,7 @@ export enum CancellationFeedback {
 }
 
 // TODO: 'NO_SUBSCRIPTION' will be replaced by 'MANUAL'. The old value can be removed once it's removed from backend.
-export type SubscriptionProvider = 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION' | 'MANUAL';
+export type SubscriptionProvider = 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION' | 'MANUAL' | 'CLOUD_ZERO';
 
 export interface AccountSubscription {
   provider: SubscriptionProvider;
@@ -95,6 +95,14 @@ export interface AccountBudget {
   on_demand_budget: number | null;
   action_on_budget_exhausted: 'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER' | null;
   free_tokens_per_billing_cycle?: number;
+}
+
+// GET /billing/account/{account_id}/budget response
+export interface AccountTokenBudget {
+  account_id: string;
+  // null means unlimited
+  budget_value: number | null;
+  action_on_budget_exhausted: 'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER' | null;
 }
 
 export interface StripeAccountSubscription extends AccountBudget {

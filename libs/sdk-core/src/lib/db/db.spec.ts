@@ -42,6 +42,7 @@ describe('Db', () => {
         id: 'qwerty',
         slug: 'geb',
         zone: '1',
+        zone_id: 'qwerty',
         title: 'Gödel, Escher, Bach: an Eternal Golden Braid',
         state: 'PRIVATE',
         description: null,
@@ -50,7 +51,7 @@ describe('Db', () => {
     db.getKnowledgeBoxes('my-account', 'dc-id').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledTimes(3);
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/zones',
+        'http://accounts.here/v1/account/my-account/zones',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -62,7 +63,7 @@ describe('Db', () => {
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/account/dc-id/kbs',
+        'http://geb.dp.here/v1/account/dc-id/kbs',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -78,6 +79,7 @@ describe('Db', () => {
         id: 'qwerty',
         slug: 'geb',
         zone: '1',
+        zone_id: 'qwerty',
         title: 'Gödel, Escher, Bach: an Eternal Golden Braid',
         state: 'PRIVATE',
         description: null,
@@ -86,7 +88,7 @@ describe('Db', () => {
     db.getRetrievalAgents('my-account', 'dc-id').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledTimes(3);
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/zones',
+        'http://accounts.here/v1/account/my-account/zones',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -98,7 +100,7 @@ describe('Db', () => {
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/account/dc-id/kbs?mode=agents',
+        'http://geb.dp.here/v1/account/dc-id/kbs?mode=agents',
         expect.objectContaining({
           method: 'GET',
         }),

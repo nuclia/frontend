@@ -1,0 +1,14 @@
+@if (syncs | async; as syncs) {
+  @if (syncs.length === 0) {
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      {{ 'sync.add-source-page.sync.no-syncs' | translate }}
+    </nsi-info-card>
+  } @else {
+    <pa-select
+      [formControl]="form.controls.connection"
+      [options]="syncs"
+      [label]="'sync.add-source-page.sync.sync' | translate"></pa-select>
+  }
+}

@@ -5,12 +5,7 @@ form.embeddings-model-form {
   flex-direction: column;
   gap: rhythm(2);
 
-  .models-limit {
-    display: flex;
-    gap: rhythm(1);
-  }
-
-  .semantic-model-choice > .body-m {
+  .description {
     color: $color-neutral-regular;
   }
 
@@ -20,33 +15,18 @@ form.embeddings-model-form {
     gap: rhythm(2);
   }
 
-  .checkbox-group {
+  .options-group {
+    padding-bottom: rhythm(1);
     .pa-toggle {
       padding: rhythm(0.5) 0;
     }
-
-    .beta-option {
-      justify-content: space-between;
-    }
   }
 
-  .checkbox-container {
+  .option-container {
     align-items: center;
     display: flex;
     gap: rhythm(1);
     justify-content: space-between;
+    margin-top: rhythm(1);
   }
-}
-
-.languages-container {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  max-height: rhythm(20);
-  margin-top: rhythm(1);
-  row-gap: rhythm(1);
-}
-
-.checkbox-container {
-  margin-top: rhythm(1);
 }

@@ -64,7 +64,9 @@ export class SelectKbComponent implements OnDestroy {
   goToAccountManage() {
     this.account
       .pipe(take(1))
-      .subscribe((account) => this.router.navigate([this.navigation.getAccountManageUrl(account.slug)]));
+      .subscribe((account) =>
+        this.navigation.navigateExternal(this.navigation.getAccountManageUrl(account.slug), { withFromApp: true }),
+      );
   }
 
   goToKb(kb: IKnowledgeBoxItem) {

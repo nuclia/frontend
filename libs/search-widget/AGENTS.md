@@ -15,13 +15,13 @@ Connects to a NucliaDB Knowledge Box (KB) and provides: hybrid search, generativ
 
 ## Tech Stack
 
-| Layer        | Technology                                                                      |
-| ------------ | ------------------------------------------------------------------------------- |
-| UI framework | **Svelte 3** (peer dep); **Svelte 5 runes** used only in `arag-state.svelte.ts` |
-| Build        | Vite + `@sveltejs/vite-plugin-svelte` + `svelte-preprocess`                     |
-| State        | RxJS 7 `BehaviorSubject` via custom `SvelteState` / `writableSubject` wrappers  |
-| SDK          | `@nuclia/core` (peer dep)                                                       |
-| Test         | Vitest + jsdom                                                                  |
+| Layer        | Technology                                                                                                                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| UI framework | **Svelte 5 runes mode** (`$state`/`$derived`/`$effect`/`$props`) — used throughout `components/` and `widgets/` (83 of 92 `.svelte` files). Published `package.json` peer dep still says `svelte: ^3.55.0`; that's stale/for backward compat, not the actual dev version |
+| Build        | Vite + `@sveltejs/vite-plugin-svelte` + `svelte-preprocess`                                                                                                                                                                                                              |
+| State        | RxJS 7 `BehaviorSubject` via custom `SvelteState` / `writableSubject` wrappers                                                                                                                                                                                           |
+| SDK          | `@nuclia/core` (peer dep)                                                                                                                                                                                                                                                |
+| Test         | Vitest + jsdom                                                                                                                                                                                                                                                           |
 
 ---
 
@@ -44,10 +44,10 @@ libs/search-widget/src/
 │       ├── answers.store.ts    # answerState — chat history, streaming, TTS
 │       ├── arag-state.svelte.ts # aragAnswerState — Svelte 5 $state (NOT SvelteState)
 │       ├── effects.ts          # ALL reactive subscriptions (search, ask, viewer, i18n...)
-│       ├── entities.store.ts   # entityState — NER entity groups
+│       ├── entities.store.ts   # entitiesState — NER entity groups
 │       ├── graph.store.ts      # graphState — knowledge-graph data
 │       ├── labels.store.ts     # labelSets — KB label set cache
-│       ├── mime.store.ts       # mimeState — MIME type facets and filters
+│       ├── mime.store.ts       # mimeFacetsState — MIME type facets and filters
 │       ├── paths.store.ts      # pathState — folder path filters
 │       ├── search.store.ts     # searchState — query, filters, results, pagination
 │       ├── suggestions.store.ts # suggestionState — typeahead suggestions
@@ -147,8 +147,8 @@ Typed flux store backed by a single `BehaviorSubject<STATE>`:
 | `widget.store.ts`      | `widgetFeatures`, `widgetFilters`, + ~30 feature-flag derived observables                   |
 | `suggestions.store.ts` | `suggestionState`, `suggestionError` — typeahead suggestion results                         |
 | `labels.store.ts`      | `labelSets` — reactive KB label set cache                                                   |
-| `mime.store.ts`        | `mimeState`, `getMimeFromFilter()`, `MimeFacet`, `MimeFilter`                               |
-| `entities.store.ts`    | `entityState` — NER entity group data                                                       |
+| `mime.store.ts`        | `mimeFacetsState`, `mimeFacets`, `getMimeFromFilter()`, `MimeFacet`, `MimeFilter`           |
+| `entities.store.ts`    | `entitiesState`, `entities` — NER entity group data                                         |
 | `graph.store.ts`       | `graphState` — knowledge-graph node/edge data                                               |
 | `paths.store.ts`       | `pathState` — folder path filters                                                           |
 | `arag-state.svelte.ts` | `aragAnswerState` — **Svelte 5 `$state` rune, not RxJS**                                    |
@@ -198,15 +198,16 @@ nx check search-widget         # svelte-check
 
 2. **`kbstate` / `state` attribute.** The HTML attribute `state` maps to the internal prop `kbstate` via `<svelte:options customElement={{ props: { ... } }}>`. Required for Svelte custom element prop aliasing.
 
-3. **`SvelteState` pattern everywhere except ARAG.** `arag-state.svelte.ts` uses Svelte 5 `$state` rune intentionally — do not wrap it in `SvelteState`.
+3. **`SvelteState` pattern for cross-component stores.** All shared state in `src/core/stores/` uses the RxJS-backed `SvelteState`/`writableSubject` wrappers — except `arag-state.svelte.ts`, which intentionally uses a Svelte 5 `$state` rune instead. This is distinct from component-local reactivity: individual `.svelte` files widely use runes (`$state`, `$derived`, `$props`) for local/props state (see Tech Stack above) — that's normal and unrelated to the stores convention.
 
-4. **Feature flags are additive.** Unknown flags are silently ignored. Never use flags for security — they are purely UI toggles. Key mutual exclusions that **throw at `initNuclia` time:**
-   - `semanticOnly` and `useSynonyms` are both mutually exclusive with `relations`
+4. **Feature flags are additive.** Unknown flags are silently ignored. Never use flags for security — they are purely UI toggles. Search-mode interactions in `_applySearchModeOptions` (`api.ts`): `features.relations` adds `RELATIONS` to both search and chat mode; `features.semanticOnly` (or `noBM25forChat`) removes `KEYWORD` from chat mode, and `semanticOnly` alone also removes it from search mode; `fuzzyOnly` forces keyword-only search mode. (The synonyms feature — `useSynonyms`, `with_synonyms`, and its runtime throw when combined with `relations` — was removed entirely; no synonym option exists anymore.)
 
-5. **CDN immutability.** Set the `cdn` attribute before mount. Do not change it after `onReady()` — all asset paths (`i18n`, fonts, SVG sprite) are computed once at init.
+5. **`orFilterLogic` / `andOrFilterLogic` are mutually distinct combination modes**, not stackable feature toggles. Both are derived from `widgetFeatures` in `widget.store.ts` and consumed in `combinedFilterExpression` (`search.store.ts`): default combines all field/paragraph filters with AND; `orFilterLogic` ORs everything; `andOrFilterLogic` ORs filters within the same labelset but ANDs across labelsets and other filter types (mime/path/date/entities). Either flag (like the separate `filterExpression` option) also forces search/ask requests to use `filter_expression` instead of the legacy `filters` array — see the `useFilterExpression = filterExpression || andOrFilterLogic` pattern repeated in `search-bar.ts` and `effects.ts`.
 
-6. **`accessors` directive.** All web component widgets declare `accessors` in `<svelte:options>`, exposing every exported function (`onReady`, `reset`, `ask`, etc.) as direct DOM element properties.
+6. **CDN immutability.** Set the `cdn` attribute before mount. Do not change it after `onReady()` — all asset paths (`i18n`, fonts, SVG sprite) are computed once at init.
 
-7. **i18n fallback.** Missing key in requested locale → falls back to `en`. Missing in `en` → renders raw key.
+7. **`accessors` directive.** All web component widgets declare `accessors` in `<svelte:options>`, exposing every exported function (`onReady`, `reset`, `ask`, etc.) as direct DOM element properties.
 
-8. **Testing.** `*.spec.ts` co-located in `src/**`. Vitest + jsdom. `@nuclia/core` resolved from source via Vite alias — no mocking needed for SDK types.
+8. **i18n fallback.** Missing key in requested locale → falls back to `en`. Missing in `en` → renders raw key.
+
+9. **Testing.** `*.spec.ts` co-located in `src/**`. Vitest + jsdom. `@nuclia/core` resolved from source via Vite alias — no mocking needed for SDK types.

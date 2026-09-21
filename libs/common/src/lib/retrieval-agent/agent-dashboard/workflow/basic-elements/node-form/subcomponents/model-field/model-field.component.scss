@@ -1,0 +1,21 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.model-field {
+  background-color: $color-neutral-lightest;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-default;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  padding: rhythm(2);
+}
+
+.required {
+  color: red;
+  margin-left: rhythm(0.25);
+}
+
+label {
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: rhythm(0.5);
+}

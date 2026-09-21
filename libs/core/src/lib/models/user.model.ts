@@ -64,6 +64,7 @@ export interface OAuthLoginData {
   came_from?: string;
   fullname?: string;
   company?: string;
+  message?: string;
 }
 
 export interface JwtUser {

@@ -1,0 +1,8 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.model-restrictions {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(6);
+  max-width: $width-large-screen;
+}

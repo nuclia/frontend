@@ -25,6 +25,7 @@ import { MetricsPaginationComponent } from './metrics-pagination/metrics-paginat
 import { MetricsFiltersComponent } from './metrics-filters';
 import { ResourceActivityPageComponent } from './resource-activity-page/resource-activity-page.component';
 import { SearchActivityPageComponent } from './search-activity-page/search-activity-page.component';
+import { ChatActivityPageComponent } from './chat-activity-page/chat-activity-page.component';
 import { UserFeedbackPageComponent } from './user-feedback-page/user-feedback-page.component';
 import { CostTokenUsagePageComponent } from './cost-token-usage-page/cost-token-usage-page.component';
 import { UsageAnalyticsPageComponent } from './usage-analytics-page/usage-analytics-page.component';
@@ -37,6 +38,7 @@ const ROUTES = [
   { path: 'tokens-and-time-usage', component: CostTokenUsagePageComponent },
   { path: 'resource-activity', component: ResourceActivityPageComponent },
   { path: 'search-activity', component: SearchActivityPageComponent },
+  { path: 'chat-activity', component: ChatActivityPageComponent },
   { path: 'user-feedback', component: UserFeedbackPageComponent },
   { path: 'remi-analytics', component: RemiAnalyticsPageComponent },
   { path: 'detailed', loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule) },
@@ -70,6 +72,7 @@ const ROUTES = [
     RemiSidebarGroupComponent,
     ResourceActivityPageComponent,
     SearchActivityPageComponent,
+    ChatActivityPageComponent,
     UserFeedbackPageComponent,
     CostTokenUsagePageComponent,
     UsageAnalyticsPageComponent,

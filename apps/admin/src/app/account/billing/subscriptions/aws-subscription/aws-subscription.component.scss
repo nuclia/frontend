@@ -1,0 +1,18 @@
+@use 'apps/dashboard/src/variables' as *;
+@use 'libs/common/src/lib/account/account';
+
+.page-subtitle {
+  margin: 0 0 rhythm(1);
+}
+
+.aws-subscription {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(6);
+}
+
+.budget {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}

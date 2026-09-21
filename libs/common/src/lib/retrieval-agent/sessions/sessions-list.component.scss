@@ -5,6 +5,16 @@
   flex-direction: column;
   gap: rhythm(4);
 
+  .page-title {
+    justify-content: space-between;
+  }
+
+  .page-title-actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
   .table-container {
     position: relative;
     min-height: calc(100dvh - var(--app-topbar-height) - var(--table-top-position));

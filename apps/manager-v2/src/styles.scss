@@ -122,10 +122,10 @@ form section,
     margin-bottom: rhythm(1.5);
   }
   .radio-limit-container {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
     justify-content: space-between;
-    height: rhythm(6);
+    min-height: rhythm(6);
   }
 
   .limit-container {

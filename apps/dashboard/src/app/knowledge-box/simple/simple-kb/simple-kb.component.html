@@ -1,12 +1,6 @@
 <div
   class="simple-kb"
-  [class.search-view]="view() === 'search'"
-  [class.with-banner]="isCoworkTrial() && isAtEquator()">
-  <div aria-live="polite">
-    @if (isCoworkTrial()) {
-      <app-trial-equator-banner></app-trial-equator-banner>
-    }
-  </div>
+  [class.search-view]="view() === 'search'">
   <h1
     class="title display-m"
     [class.hidden]="view() === 'search'"
@@ -124,7 +118,6 @@
         aspect="basic"
         icon="upload"
         iconAndText
-        [disabled]="uploadInProgress()"
         (click)="fileInput.click()">
         {{ 'simple.add-more' | translate }}
       </pa-button>
@@ -133,7 +126,6 @@
         kind="primary"
         icon="upload"
         iconAndText
-        [disabled]="uploadInProgress()"
         (click)="fileInput.click()">
         {{ 'upload.files' | translate }}
       </pa-button>
@@ -141,7 +133,6 @@
         aspect="basic"
         icon="info"
         iconAndText
-        [disabled]="isAtEquator()"
         (click)="showMcpEndpoint()">
         {{ 'simple.get-mcp-url' | translate }}
       </pa-button>

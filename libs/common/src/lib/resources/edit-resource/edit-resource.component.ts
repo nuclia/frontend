@@ -16,6 +16,7 @@ import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-res
 import { EditResourceService } from './edit-resource.service';
 import { ResourceNavigationService } from './resource-navigation.service';
 import { ResourceCacheService } from '../resource-cache.service';
+import { isMemoryFieldId, isMemoryResource } from '../memory/memory.helpers';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -71,14 +72,18 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     ),
   );
   originalFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(
-    map((fields) => fields.filter((field) => !field.field_id.startsWith('da-'))),
+    map((fields) => fields.filter((field) => !field.field_id.startsWith('da-') && !isMemoryFieldId(field.field_id))),
   );
   generatedFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(
     map((fields) =>
       fields
-        .filter((field) => field.field_id.startsWith('da-'))
+        .filter((field) => field.field_id.startsWith('da-') && !isMemoryFieldId(field.field_id))
         .map((field) => ({ ...field, title: field.field_id.split('-')[1] })),
     ),
+  );
+  // Session/facts fields have their own dedicated "memory" nav tab and are never shown as regular fields.
+  isMemoryResource$: Observable<boolean> = this.editResource.resource.pipe(
+    map((resource) => !!resource && isMemoryResource(resource)),
   );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   summarizationAuthorized = this.features.authorized.summarization;
@@ -139,6 +144,8 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         field === 'resource'
           ? `./${this.currentView}/${field}`
           : `./${this.currentView}/${field.field_type}/${field.field_id}`;
+    } else if (this.currentView === 'memory') {
+      path = field === 'resource' ? './resource' : `./${field.field_type}/${field.field_id}`;
     } else {
       path =
         field === 'resource' ? `./${this.currentView}` : `./${this.currentView}/${field.field_type}/${field.field_id}`;
@@ -150,6 +157,11 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   onViewChange() {
     this.editResource.setCurrentField('resource');
+  }
+
+  navigateToMemory() {
+    this.editResource.setCurrentField('resource');
+    this.router.navigate(['./memory'], { relativeTo: this.route });
   }
 
   reprocessResource() {

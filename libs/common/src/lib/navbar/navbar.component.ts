@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { NavigationEnd, Router } from '@angular/router';
 import {
   BackendConfigurationService,
-  BillingService,
+  FeatureFlagService,
   FeaturesService,
   NavigationService,
   SDKService,
 } from '@flaps/core';
-import { combineLatest, filter, map, merge, Observable, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
 
 @Component({
@@ -25,10 +25,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }),
   );
   inArag = this.navigationService.inArag();
-  inAccount: Observable<boolean> = this.navigationService.inAccount.pipe(takeUntil(this.unsubscribeAll));
+  inAdminApp = this.navigationService.inAdminApp;
   inDashboard = this.navigationService.inDashboard;
   inRaoApp = this.navigationService.inRaoApp;
-  inPlatformApp = this.navigationService.inPlatformApp;
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
@@ -62,14 +61,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ),
   );
 
-  inBilling: Observable<boolean> = merge(
-    of(this.navigationService.inAccountBilling(location.pathname)),
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map((event) => this.navigationService.inAccountBilling((event as NavigationEnd).url)),
-      takeUntil(this.unsubscribeAll),
-    ),
-  );
   simpleMode = this.navigationService.simpleMode;
   showSettings = false;
   showMetrics = false;
@@ -85,27 +76,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isKbAdmin = this.features.isKbAdmin;
   isAragAdmin = this.features.isAragAdmin;
   isAccountManager = this.features.isAccountManager;
-  isCowork = this.sdk.currentAccount.pipe(
-    map((account) => account.workflow === 'cowork'),
-    shareReplay(1),
-  );
-  showAccountNav = combineLatest([this.isCowork, this.isAccountManager]).pipe(
-    map(([isCowork, isAccountManager]) => isAccountManager && !isCowork),
-    shareReplay(1),
-  );
-  isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
+  version = this.backendConfig.getVersion();
+  isStageOrDev = this.featureFlagService.isStageOrDev;
+  showFooter = this.isStageOrDev || !!this.version;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
   isRaoWidgetEnabled = this.features.unstable.raoWidget;
   isAragWithMemory = this.sdk.isAragWithMemory;
+  isAgenticSearchEnabled = this.features.unstable.agenticSearch;
 
   isPromptLabAuthorized = this.features.authorized.promptLab;
 
   standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
-  isSubscribed = this.billing.isSubscribedToStripe;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -114,8 +99,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private router: Router,
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
-    private billing: BillingService,
     private backendConfig: BackendConfigurationService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -190,7 +175,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private isOnMetricsPage(path: string): boolean {
-    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity|user-feedback|detailed)/.test(
+    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity|chat-activity|user-feedback|detailed)/.test(
       path,
     );
   }

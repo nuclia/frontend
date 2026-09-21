@@ -22,8 +22,7 @@ apps/rao/src/
     ├── app.module.ts          # Root NgModule, interceptors, i18n
     ├── app-routing.module.ts  # Full routing tree
     ├── app.component.ts       # Root: translations, auth, splash screen
-    ├── app-title.strategy.ts  # Custom TitleStrategy (account + agent in tab title)
-    └── lazy-user.module.ts    # Lazy wrapper around @nuclia/user
+    └── app-title.strategy.ts  # Custom TitleStrategy (account + agent in tab title)
 ```
 
 ---
@@ -36,7 +35,8 @@ apps/rao/src/
   /redirect                → RedirectComponent
   /at/:account             [canActivate: setAccountGuard]
     /                      → redirect to /manage
-    /manage                → AccountModule (lazy)
+    /manage                → [redirectToAdminGuard] EmptyComponent — never renders; guard does a real
+                              (cross-origin) redirect to the standalone `admin` app's account-management pages
     /:zone/arag/:agent     [canActivate: setAgentGuard]
       /                    → redirect to /workflows
       /workflows           → WorkflowsComponent
@@ -72,9 +72,9 @@ apps/rao/src/
 
 Configures: `RouterModule.forRoot`, `STFConfigModule.forRoot(environment)`, `TranslateModule.forRoot` with `MultiTranslateHttpLoader` (merges `user` + `common` + `sync` i18n files), `AngularSvgIconModule`, `PaToastModule`.
 
-Only four app-level source files exist outside this module: `AppComponent`, `AppRoutingModule`, `AppTitleStrategy`, `LazyUserModule`. Everything else comes from libs.
+Only three app-level source files exist outside this module: `AppComponent`, `AppRoutingModule`, `AppTitleStrategy`. Everything else comes from libs.
 
-Auth-related paths (`/user/callback`, `/user/login-redirect`, `/user/signup`, `/user/onboarding`, `/user/profile`) are declared as flat top-level routes — there is no `LazyUserModule` wrapper in this app. The `LazyUserModule` file exists but is not used in routing.
+Auth-related paths (`/user/callback`, `/user/login-redirect`, `/user/signup`, `/user/onboarding`, `/user/profile`) are declared as flat top-level routes — there is no lazy user module wrapper in this app (unlike `apps/auth`, which has its own `lazy-user.module.ts`).
 
 ---
 
@@ -91,7 +91,7 @@ Feature flags used in rao:
 
 - `unstable.retrievalAgents` — gates entire ARAG section (`setAgentGuard`)
 - `isAragAdmin` — admin-only workflow toolbar items
-- `isAragWithMemory` — memory-related UI
+- `unstable.aragWithMemory` — memory-related UI (e.g. ARAG creation form)
 
 ### `WorkflowService` (`@flaps/common`)
 
@@ -105,17 +105,17 @@ Dynamically creates node form components via `createComponent()` + `ApplicationR
 
 ## Guards Summary
 
-| Guard                | Source          | Purpose                                                                                                                            |
-| -------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `authGuard`          | `@flaps/core`   | Checks `JWT_KEY` in `localStorage`. Redirects to `/user/login` + saves intended URL.                                               |
-| `rootGuard`          | `@flaps/common` | Calls `NavigationService.goToLandingPage()`. Always returns `false`.                                                               |
-| `setAccountGuard`    | `@flaps/common` | Sets `SDKService` current account from `:account` slug.                                                                            |
-| `setAgentGuard`      | `@flaps/common` | Requires `FeaturesService.unstable.retrievalAgents`. Loads ARAG list for zone. Redirects to `/select` if missing or flag disabled. |
-| `selectAccountGuard` | `@flaps/common` | No accounts → onboarding; 1 → skip; multiple → selection page.                                                                     |
-| `selectKbGuard`      | `@flaps/common` | Loads KB + ARAG lists; routes based on count.                                                                                      |
-| `aragOwnerGuard`     | `@flaps/common` | Requires owner/admin ARAG role.                                                                                                    |
-| `awsGuard`           | `@flaps/common` | Exchanges `customer_token` query param for `AuthTokens`.                                                                           |
-| `inviteGuard`        | `@nuclia/user`  | Validates invite token from query string.                                                                                          |
+| Guard                  | Source          | Purpose                                                                                                                                                         |
+| ---------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard`            | `@flaps/core`   | Checks `JWT_KEY` in `localStorage`. Redirects to `/user/login` + saves intended URL.                                                                            |
+| `rootGuard`            | `@flaps/common` | Calls `NavigationService.goToLandingPage()`. Always returns `false`.                                                                                            |
+| `setAccountGuard`      | `@flaps/common` | Sets `SDKService` current account from `:account` slug.                                                                                                         |
+| `setAgentGuard`        | `@flaps/common` | Requires `FeaturesService.unstable.retrievalAgents`. Loads ARAG list for zone. Redirects to `/select` if missing or flag disabled.                              |
+| `selectAccountGuard`   | `@flaps/common` | No accounts → onboarding; 1 → skip; multiple → selection page.                                                                                                  |
+| `selectKbGuard`        | `@flaps/common` | Loads KB + ARAG lists; routes based on count.                                                                                                                   |
+| `aragOwnerGuard`       | `@flaps/common` | Requires owner/admin ARAG role.                                                                                                                                 |
+| `awsGuard`             | `@flaps/common` | Exchanges `customer_token` query param for `AuthTokens`.                                                                                                        |
+| `redirectToAdminGuard` | `@flaps/common` | On `/manage`: redirects to the standalone `admin` app's account-management pages (same-origin or cross-origin, via `NavigationService.resolveGuardRedirect()`). |
 
 ---
 
@@ -174,7 +174,7 @@ nx test rao
 4. **Module-based** — app uses NgModules. Individual lib components may be standalone.
 5. **i18n order** — translations merged: `user` → `common` → `sync`. Later keys override earlier.
 6. **UI ↔ API models** — use `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) from `workflow.models.ts`.
-7. **Lazy loading** — `AccountModule`, `WIDGETS_ROUTES`, `LazyUserModule` are all lazy.
+7. **Lazy loading** — `WIDGETS_ROUTES` is lazy-loaded via `loadChildren`. Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
 8. **SCSS tokens** — always use `@use 'variables'`. Never hard-code colors/spacing/fonts.
 9. **Feature flags** — ARAG availability gated by `FeaturesService.unstable.retrievalAgents`.
 10. **`setAgentGuard`** — guards the entire ARAG section. If the feature flag is off, the guard redirects to `/select`.

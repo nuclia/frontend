@@ -14,7 +14,8 @@
     <div class="schema-fields-section">
       <pa-input
         formControlName="id"
-        [readonly]="isEditMode()">
+        [readonly]="isEditMode()"
+        [errorMessages]="errorMessages">
         {{ 'kb.kv-schemas.form.schema-name' | translate }}
       </pa-input>
 

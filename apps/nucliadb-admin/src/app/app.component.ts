@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { BackendConfigurationService, LabelsService, STFUtils } from '@flaps/core';
+import { LabelsService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -12,17 +12,16 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
   selector: 'nad-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
-  version?: string;
 
   private unsubscribeAll: Subject<void> = new Subject<void>();
 
   constructor(
     private ngxTranslate: TranslateService,
-    private config: BackendConfigurationService,
     private labelService: LabelsService,
     private paTranslate: PaTranslateService,
   ) {
@@ -37,9 +36,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.config.getVersion()) {
-      this.version = this.config.getVersion();
-    }
     this.preventDragAndDropOnWindow();
   }
 

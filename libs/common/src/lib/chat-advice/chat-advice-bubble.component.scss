@@ -147,13 +147,49 @@
   font-size: font-size(xs);
 }
 
+.predefined-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1);
+}
+
+.pill {
+  ::ng-deep .pa-button {
+    border: 1px solid $color-primary-regular;
+    border-radius: rhythm(2);
+    background: transparent;
+    color: $color-primary-regular;
+    font-size: font-size(xs);
+    white-space: nowrap;
+    transition:
+      background 0.15s,
+      color 0.15s;
+
+    &:hover {
+      background: $color-primary-regular;
+      color: $color-light-stronger;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-shadow-focus;
+      outline-offset: 2px;
+    }
+  }
+}
+
 .chat-input-row {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: rhythm(1);
   padding: rhythm(1.5) rhythm(2);
   border-top: 1px solid $color-neutral-light;
   background: $color-light-stronger;
+}
+
+.chat-input-actions {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
 }
 
 .chat-input {

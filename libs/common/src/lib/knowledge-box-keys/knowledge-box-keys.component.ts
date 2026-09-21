@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ServiceAccessComponent } from './service-access/service-access.component';
 
@@ -10,4 +11,6 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
   standalone: true,
   imports: [TranslateModule, ServiceAccessComponent],
 })
-export class KnowledgeBoxKeysComponent {}
+export class KnowledgeBoxKeysComponent {
+  embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
+}

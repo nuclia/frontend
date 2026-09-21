@@ -3,10 +3,10 @@ import { getChatOptions, getFindOptions, SearchAndWidgets } from './search-widge
 import { SDKService } from '@flaps/core';
 import { forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { distinctUntilKeyChanged, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, distinctUntilKeyChanged, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
-import { SearchConfig, SearchConfigs, Widget } from '@nuclia/core';
+import { AgenticConfig, SearchConfig, SearchConfigs, Widget } from '@nuclia/core';
 
 const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
@@ -99,32 +99,61 @@ export class SearchWidgetStorageService {
   }
 
   storeSearchConfig(name: string, config: Widget.AnySearchConfiguration): Observable<void> {
-    if (config.type === 'api') {
-      return forkJoin([this._storeSearchOptions(name, config.value), this._deleteSearchConfig(name)]).pipe(
-        map(() => {
-          this.storageUpdated.next();
-        }),
-      );
-    } else {
-      let searchOptions: SearchConfig;
-      if (config.generativeAnswer.generateAnswer) {
-        searchOptions = { kind: 'ask', config: getChatOptions(config) };
-      } else {
-        searchOptions = { kind: 'find', config: getFindOptions(config) };
-      }
+    const isAgentic = config.type === 'config' && config.searchMode === 'agentic';
+    return this._wasAgenticConfig(name).pipe(
+      switchMap((wasAgentic) => {
+        const cleanupOrphanedAgenticConfig$ =
+          !isAgentic && wasAgentic ? this._deleteAgenticConfig(name) : of(undefined);
 
-      return forkJoin([this._storeSearchConfig(name, config), this._storeSearchOptions(name, searchOptions)]).pipe(
-        map(() => {
-          this.storageUpdated.next();
-        }),
-      );
-    }
+        if (config.type === 'api') {
+          return forkJoin([
+            this._storeSearchOptions(name, config.value),
+            this._deleteSearchConfig(name),
+            cleanupOrphanedAgenticConfig$,
+          ]);
+        } else if (isAgentic) {
+          const leanConfig: Widget.TypedSearchConfiguration = {
+            type: 'config',
+            id: config.id,
+            searchMode: 'agentic',
+            agentic: {
+              configId: name,
+              transport: config.agentic?.transport,
+              searchConfigId: config.agentic?.searchConfigId,
+            },
+          };
+          return this._storeAgenticConfig(name, config.agentic?.config).pipe(
+            switchMap(() => forkJoin([this._storeSearchConfig(name, leanConfig), this._deleteSearchOptions(name)])),
+          );
+        } else {
+          // Guaranteed non-agentic here (isAgentic is false in this branch), so searchBox/etc. are populated.
+          const standardConfig = config as Widget.StandardSearchConfiguration;
+          let searchOptions: SearchConfig;
+          if (config.generativeAnswer?.generateAnswer) {
+            searchOptions = { kind: 'ask', config: getChatOptions(standardConfig) };
+          } else {
+            searchOptions = { kind: 'find', config: getFindOptions(standardConfig) };
+          }
+
+          return forkJoin([
+            this._storeSearchConfig(name, config),
+            this._storeSearchOptions(name, searchOptions),
+            cleanupOrphanedAgenticConfig$,
+          ]);
+        }
+      }),
+      map(() => {
+        this.storageUpdated.next();
+      }),
+    );
   }
 
   deleteSearchConfig(name: string) {
-    return forkJoin([this._deleteSearchConfig(name), this._deleteSearchOptions(name)]).pipe(
-      tap(() => this.storageUpdated.next()),
-    );
+    return forkJoin([
+      this._deleteSearchConfig(name),
+      this._deleteSearchOptions(name),
+      this._deleteAgenticConfig(name),
+    ]).pipe(tap(() => this.storageUpdated.next()));
   }
 
   private _storeSearchConfig(name: string, config: Widget.SearchConfiguration) {
@@ -217,6 +246,47 @@ export class SearchWidgetStorageService {
         ),
       );
     }
+  }
+
+  private _storeAgenticConfig(id: string, config: AgenticConfig | undefined) {
+    if (!config) {
+      return of(undefined);
+    }
+    const configWithTitle: AgenticConfig = { ...config, title: id };
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        // Try to create first, update if it already exists
+        kb.createAgenticConfig(id, configWithTitle).pipe(
+          catchError((error) => {
+            if (error?.status === 409) {
+              return kb.updateAgenticConfig(id, configWithTitle);
+            }
+            throw error;
+          }),
+        ),
+      ),
+    );
+  }
+
+  private _deleteAgenticConfig(id: string) {
+    // Best-effort cleanup: a 404 (config never existed for this widget config name) is expected and ignored.
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.deleteAgenticConfig(id).pipe(catchError(() => of(undefined)))),
+    );
+  }
+
+  /** Whether the currently-saved search config entry with this id is an agentic one (used to detect overwrites). */
+  private _wasAgenticConfig(name: string): Observable<boolean> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      map((kb) => (kb.search_configs as SearchAndWidgets)?.searchConfigurations || []),
+      map((searchConfigs) => {
+        const existing = searchConfigs.find((item) => item.id === name) as Widget.TypedSearchConfiguration | undefined;
+        return existing?.type === 'config' && existing.searchMode === 'agentic';
+      }),
+    );
   }
 
   private refreshSearchConfigs() {

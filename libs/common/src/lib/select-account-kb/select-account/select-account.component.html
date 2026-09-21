@@ -2,8 +2,8 @@
   <div class="select-container">
     <div class="logo">
       <img
-        [src]="!standalone ? logoPath : 'assets/logos/nucliadb.svg'"
-        [alt]="!standalone ? brandName : 'NucliaDB'" />
+        [src]="!standalone ? (logoPath | async) : 'assets/logos/nucliadb.svg'"
+        [alt]="!standalone ? (brandName | async) : 'NucliaDB'" />
     </div>
     <div
       class="select-content"

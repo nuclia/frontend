@@ -28,13 +28,15 @@
         [for]="id">
         <ng-content></ng-content>
       </label>
-      <nsi-badge
-        class="nsi-search-input-button"
-        role="button"
-        [paPopup]="contextualMenu"
-        [popupDisabled]="disabled">
-        {{ displayMode | translate }}
-      </nsi-badge>
+      @if (modes.length > 0) {
+        <nsi-badge
+          class="nsi-search-input-button"
+          role="button"
+          [paPopup]="contextualMenu"
+          [popupDisabled]="disabled">
+          {{ displayMode | translate }}
+        </nsi-badge>
+      }
     </div>
     <pa-dropdown #contextualMenu>
       @for (mode of modes; track mode.id) {

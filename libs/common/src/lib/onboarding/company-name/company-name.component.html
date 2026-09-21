@@ -1,0 +1,22 @@
+<div class="onboarding-form">
+  <div class="field">
+    <label
+      class="title-s"
+      for="company">
+      {{ 'onboarding.step1.company' | translate }}
+    </label>
+    <pa-input
+      [formControl]="company"
+      id="company"
+      externalLabel
+      help="validation.required"></pa-input>
+  </div>
+</div>
+<nsi-sticky-footer>
+  <pa-button
+    (click)="submitForm()"
+    kind="primary"
+    [disabled]="company.invalid">
+    {{ 'onboarding.next-button' | translate }}
+  </pa-button>
+</nsi-sticky-footer>

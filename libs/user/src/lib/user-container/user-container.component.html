@@ -5,8 +5,8 @@
     <div class="inner-container">
       <div class="logo">
         <img
-          [src]="logoPath"
-          [alt]="brandName" />
+          [src]="logoPath | async"
+          [alt]="brandName | async" />
       </div>
       <ng-content></ng-content>
     </div>

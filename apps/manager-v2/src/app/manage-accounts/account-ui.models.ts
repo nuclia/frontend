@@ -8,7 +8,7 @@ import {
   WorkflowType,
 } from '@nuclia/core';
 import { ZoneSummary, ZoneVisibility } from '../manage-zones/zone.models';
-import { AccountLabels } from './regional-account.models';
+import { AccountLabels, Project } from './regional-account.models';
 
 export interface AccountSummary {
   id: string;
@@ -63,6 +63,10 @@ export interface KbDetails extends KbSummary {
   members: KbUser[];
   owners: KbUser[];
   prewarm_enabled?: boolean;
+}
+
+export interface ProjectDetails extends Project {
+  zone: ZoneSummary;
 }
 
 export interface KbUser {

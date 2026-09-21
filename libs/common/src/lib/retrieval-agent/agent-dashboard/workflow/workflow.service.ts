@@ -168,8 +168,14 @@ export class WorkflowService {
    */
   initAndUpdateWorkflow(root: WorkflowRoot) {
     this.workflowRoot = root;
-    return combineLatest([this.sdk.currentAccount, this.sdk.currentArag, this.workflowId]).pipe(
-      map(([account, arag, workflowId]) => {
+    return this.workflowId.pipe(
+      switchMap((workflowId) =>
+        combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
+          take(1),
+          map(([account, arag]) => ({ account, arag, workflowId })),
+        ),
+      ),
+      map(({ account, arag, workflowId }) => {
         nodeInitialisationDone.set(false);
         setAragUrl(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
         return { arag, workflowId };

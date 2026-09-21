@@ -13,16 +13,64 @@
     border-radius: 50%;
   }
 
+  .avatar-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-primary-lightest;
+    border-radius: 50%;
+    padding: rhythm(0.5);
+
+    // Ring matches the surrounding surface so the dot stays legible against both
+    // the avatar fill and the topbar background in either theme.
+    .unread-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: rhythm(1.5);
+      width: rhythm(1.5);
+      border-radius: 50%;
+      background-color: $color-primary-regular;
+      box-shadow: 0 0 0 2px $color-light-stronger;
+    }
+  }
+
+  .option-content {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    justify-content: space-between;
+    width: 100%;
+
+    .option-count {
+      color: $color-neutral-regular;
+      flex-shrink: 0;
+      font-size: font-size(s);
+    }
+  }
+
   pa-avatar ::ng-deep .pa-avatar {
     cursor: pointer;
     height: rhythm(5);
     width: rhythm(5);
+    background-color: $color-primary-lightest;
 
     .pa-avatar-initials {
-      background-color: $color-dark-stronger;
-      color: $color-light-stronger;
+      background-color: $color-primary-lightest;
+      color: $color-primary-regular;
       font-size: font-size(m);
       font-weight: $font-weight-thin;
     }
+  }
+
+  ::ng-deep pa-dropdown .pa-popup-wrapper {
+    max-height: calc(100vh - 120px);
+  }
+
+  // The account name is an identity label, not a generic section heading, so it
+  // takes the primary brand colour rather than the muted section-header grey.
+  ::ng-deep pa-option-header.account-name .pa-option-header {
+    color: $color-primary-regular;
   }
 }

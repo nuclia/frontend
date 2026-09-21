@@ -13,6 +13,7 @@ import {
   PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 
 import { SimplePageComponent } from './simple-page.component';
@@ -21,8 +22,6 @@ import { ReaderExperienceComponent } from './reader-experience/reader-experience
 import { HistoryTableComponent } from './history-table/history-table.component';
 import { ResourceTableComponent } from './resource-table/resource-table.component';
 import { McpEndpointModalComponent } from './mcp-endpoint/mcp-endpoint-modal.component';
-import { TrialEquatorBannerComponent } from './trial-equator-banner/trial-equator-banner.component';
-import { TrialEquatorModalComponent } from './trial-equator-banner/trial-equator-modal.component';
 import { TrialExpiredModalComponent } from './trial-expired-modal/trial-expired-modal.component';
 import { SimplePageRoutingModule } from './simple-page-routing.module';
 
@@ -34,8 +33,6 @@ import { SimplePageRoutingModule } from './simple-page-routing.module';
     HistoryTableComponent,
     ResourceTableComponent,
     McpEndpointModalComponent,
-    TrialEquatorBannerComponent,
-    TrialEquatorModalComponent,
     TrialExpiredModalComponent,
   ],
   imports: [
@@ -54,6 +51,7 @@ import { SimplePageRoutingModule } from './simple-page-routing.module';
     PaPopupModule,
     PaTableModule,
     PaTextFieldModule,
+    PaTooltipModule,
     SisProgressModule,
   ],
 })

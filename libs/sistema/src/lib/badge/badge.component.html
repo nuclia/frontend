@@ -1,9 +1,9 @@
 <span
   class="icon-and-text"
   [class.no-content]="!hasContent">
-  @if (icon) {
+  @if (icon(); as iconName) {
     <pa-icon
-      [name]="icon"
+      [name]="iconName"
       size="small"></pa-icon>
   }
   <span
@@ -14,6 +14,6 @@
   </span>
 </span>
 
-@if (count !== undefined) {
-  <span class="count">{{ count > 999 ? '999+' : count }}</span>
+@if (displayValue()) {
+  <span class="count">{{ displayValue() }}</span>
 }

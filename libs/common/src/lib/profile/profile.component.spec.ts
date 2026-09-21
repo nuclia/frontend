@@ -8,6 +8,7 @@ import { ProfileComponent } from './profile.component';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockModule } from 'ng-mocks';
+import { provideRouter } from '@angular/router';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -29,6 +30,7 @@ describe('ProfileComponent', () => {
         }),
       ],
       providers: [
+        provideRouter([]),
         TranslateService,
         {
           provide: UserService,

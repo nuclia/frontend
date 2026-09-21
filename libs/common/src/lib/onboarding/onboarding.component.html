@@ -17,7 +17,11 @@
 
       @switch (step) {
         @case (1) {
-          @if (!creatingAccount) {
+          @if (enterCompanyName) {
+            <nus-company-name
+              (submit)="createAccountFallback($event)"></nus-company-name>
+          }
+          @else if (!creatingAccount) {
             <nus-onboarding-step1
               [data]="onboardingInquiryPayload"
               (submitStep1)="createAccountAndInquiry($event)"></nus-onboarding-step1>

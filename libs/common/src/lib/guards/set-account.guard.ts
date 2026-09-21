@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { inject } from '@angular/core';
-import { of, switchMap } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 
 export const setAccountGuard = (route: ActivatedRouteSnapshot) => {
   const sdk: SDKService = inject(SDKService);
@@ -19,5 +19,6 @@ export const setAccountGuard = (route: ActivatedRouteSnapshot) => {
       navigation.setSimpleMode(account.workflow === 'cowork');
       return of(true);
     }),
+    catchError(() => of(router.createUrlTree([navigation.getAccountSelectUrl()]))),
   );
 };

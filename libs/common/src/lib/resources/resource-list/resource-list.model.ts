@@ -10,8 +10,10 @@ import {
   getDateFromFilter,
   getVisibilityFromFilter,
   HIDDEN_PREFIX,
+  KeyValueFieldData,
   Resource,
   RESOURCE_STATUS,
+  ResourceProperties,
   Search,
   SortField,
   SortOption,
@@ -31,15 +33,24 @@ export interface ResourceWithLabels {
   status?: string;
   rank?: number;
   errors?: string;
+  keyValue?: { [key: string]: KeyValueFieldData };
 }
 
 export interface ColumnHeader extends IHeaderCell {
   size: string;
   optional?: boolean;
-  visible?: boolean;
 }
 
-export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize' | 'hide' | 'unhide';
+export type MenuAction =
+  | 'edit'
+  | 'annotate'
+  | 'classify'
+  | 'memory'
+  | 'delete'
+  | 'reprocess'
+  | 'summarize'
+  | 'hide'
+  | 'unhide';
 
 export type SearchModes = 'title' | 'startswith' | 'uid' | 'slug';
 
@@ -71,6 +82,7 @@ export interface ResourceListParams {
   query: string | CatalogQuery;
   filters: string[];
   labelsLogic?: LabelsLogic;
+  includeKeyValue?: boolean;
 }
 export function getSearchOptions(params: ResourceListParams, uid?: string, slug?: string): CatalogOptions {
   if (uid) {
@@ -110,6 +122,11 @@ export function getSearchOptions(params: ResourceListParams, uid?: string, slug?
       range_creation_end: end ? getDateFromFilter(end) : undefined,
       hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
       filters,
+      // TODO: VALUES is always requested (regardless of `includeKeyValue`) only so the resource
+      // list can detect memory resources client-side (via their `conversations` field ids).
+      // Remove this once the backend exposes memory-resource detection as a proper resource type/flag,
+      // and go back to only requesting VALUES when `includeKeyValue` is true.
+      show: [ResourceProperties.BASIC, ResourceProperties.ERRORS, ResourceProperties.VALUES],
     };
   }
 }

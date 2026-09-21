@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { BadgeComponent, SisModalService } from '@nuclia/sistema';
 import { UnauthorizedFeatureModalComponent } from './unauthorized-feature-modal.component';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
@@ -6,6 +6,7 @@ import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 @Component({
   selector: 'stf-unauthorized-feature',
   imports: [BadgeComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <nsi-badge
       icon="lock-filled"

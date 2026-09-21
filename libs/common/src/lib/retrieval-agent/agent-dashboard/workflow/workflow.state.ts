@@ -294,7 +294,7 @@ function setNodeState(node: ParentNode, state: NodeState) {
 /**
  * Workflow state
  */
-export const workflowId = signal<string | undefined>(undefined);
+export const workflowId = signal<string | undefined>(undefined, { equal: () => false });
 export const rootSchema = signal<ARAGSchemas | null>(null);
 export const nodeInitialisationDone = signal(false);
 const preprocessNodes = signal<{ [id: string]: ParentNode }>({});

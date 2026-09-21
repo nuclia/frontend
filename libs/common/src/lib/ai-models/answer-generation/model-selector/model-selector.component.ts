@@ -23,7 +23,9 @@ import {
   DataResidencyStatus,
   LearningConfigurations,
 } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 import { map, shareReplay } from 'rxjs';
+import { isGeminiPriorityModel } from '../../ai-models.utils';
 
 @Component({
   selector: 'stf-model-selector',
@@ -54,6 +56,7 @@ import { map, shareReplay } from 'rxjs';
 export class ModelSelectorComponent implements ControlValueAccessor {
   zoneService = inject(ZoneService);
   sdk = inject(SDKService);
+  toaster = inject(SisToastService);
 
   onChange: any;
   onTouched: any;
@@ -89,8 +92,10 @@ export class ModelSelectorComponent implements ControlValueAccessor {
         models: Object.fromEntries(
           Object.entries(provider.models).filter(
             ([key, model]) =>
-              (providerKey !== 'default' && allowedModels?.includes(key)) ||
-              (providerKey === 'default' && allowedModels?.includes(model.name)),
+              ((providerKey !== 'default' && allowedModels?.includes(key)) ||
+                (providerKey === 'default' && allowedModels?.includes(model.name))) &&
+              // Priority models are only selectable via the toggle in the user keys form.
+              (!isGeminiPriorityModel(key) || key === this.selectedModel()),
           ),
         ),
       },
@@ -181,6 +186,9 @@ export class ModelSelectorComponent implements ControlValueAccessor {
     this.term.set('');
     if (value) {
       this.showDisclaimer.set(true);
+    }
+    if (value.includes('fable')) {
+      this.toaster.warning('kb.ai-models.model-selector.fable-warning');
     }
     this.updateControl();
     this.modelSelected.emit(value);

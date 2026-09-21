@@ -4,6 +4,7 @@ import { AccountBlockingState, AccountLimitsPatchPayload, AccountTypes } from '@
 import { Observable } from 'rxjs';
 import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
 import {
+  AccountBudget,
   AccountPatchPayload,
   AccountSummary,
   AccountUserType,
@@ -15,6 +16,7 @@ import {
   ManagerAccountSubscription,
   ManualSubscriptionPayload,
   PaymentLinkPayload,
+  ProductCatalog,
   SearchPrice,
 } from './global-account.models';
 
@@ -113,6 +115,10 @@ export class GlobalAccountService {
     return this.sdk.nuclia.rest.patch<void>(`/billing/account/${accountId}/cloud_zero/subscription`, payload);
   }
 
+  getProductCatalog(): Observable<ProductCatalog> {
+    return this.sdk.nuclia.rest.get<ProductCatalog>(`/billing/cloud_zero/product_catalog`);
+  }
+
   patchManualSubscription(accountId: string, payload: Partial<ManualSubscriptionPayload>): Observable<void> {
     return this.sdk.nuclia.rest.patch<void>(`/billing/account/${accountId}/manual/subscription`, payload);
   }
@@ -123,5 +129,21 @@ export class GlobalAccountService {
 
   deleteManualSubscription(accountId: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/manual/subscription`);
+  }
+
+  getBudget(accountId: string): Observable<AccountBudget> {
+    return this.sdk.nuclia.rest.get<AccountBudget>(`/billing/account/${accountId}/budget`);
+  }
+
+  addBudget(accountId: string, budget: AccountBudget): Observable<AccountBudget> {
+    return this.sdk.nuclia.rest.post(`/billing/account/${accountId}/budget`, budget);
+  }
+
+  patchBudget(accountId: string, budget: AccountBudget): Observable<AccountBudget> {
+    return this.sdk.nuclia.rest.patch(`/billing/account/${accountId}/budget`, budget);
+  }
+
+  deleteBudget(accountId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/budget`);
   }
 }

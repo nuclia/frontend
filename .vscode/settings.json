@@ -1,0 +1,21 @@
+{
+  "angular.enable-strict-mode-prompt": false,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "https-sonar-progress-com",
+    "projectKey": "nuclia-frontend"
+  }
+}

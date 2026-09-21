@@ -21,6 +21,13 @@
     gap: rhythm(2);
     justify-content: space-between;
     margin-bottom: rhythm(2);
+
+    .header-actions {
+      align-items: center;
+      display: flex;
+      flex-shrink: 0;
+      gap: rhythm(1);
+    }
   }
 
   .filters {

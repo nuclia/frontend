@@ -103,14 +103,21 @@
               [labelSets]="displayedLabelSets"
               [selection]="selectedClassifications"
               (selectionChange)="updateClassifications($event)"
+              selectLabelsets
+              [labelsetSelection]="selectedLabelsets"
+              (labelsetSelectionChange)="updateLabelsets($event)"
               [disabled]="filterOptions.classification.length === 0"
               [fullWidth]="true"
               [multiple]="true"
               aspect="basic">
               {{ 'resource.classification-column' | translate }}
-              {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
+              {{
+                selectedClassifications.length || selectedLabelsets.length
+                  ? '(' + (selectedClassifications.length + selectedLabelsets.length) + ')'
+                  : ''
+              }}
             </app-label-dropdown>
-            @if (selectedClassificationOptions.length > 1) {
+            @if (selectedClassificationOptions.length + selectedLabelsetOptions.length > 1) {
               <div class="labels-logic">
                 <pa-toggle
                   labelOnRight
@@ -210,9 +217,22 @@
           }
         </div>
 
-        @if (isAdminOrContrib | async) {
-          <stf-upload-button></stf-upload-button>
-        }
+        <div class="header-actions">
+          @if (isMainView || isProcessedView) {
+            <pa-button
+              kind="primary"
+              aspect="basic"
+              icon="refresh"
+              iconAndText
+              (click)="refresh()">
+              {{ 'generic.refresh' | translate }}
+            </pa-button>
+          }
+
+          @if (isAdminOrContrib | async) {
+            <stf-upload-button></stf-upload-button>
+          }
+        </div>
       </div>
 
       <div class="active-filters">
@@ -247,6 +267,9 @@
         }
         @if (isFiltering | async) {
           <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+        }
+        @for (option of selectedLabelsetOptions; track option.value) {
+          <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
         @for (option of selectedClassificationOptions; track option.value) {
           <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
