@@ -46,7 +46,13 @@ export class AccountNuaGuardComponent implements OnInit {
       )
       .subscribe();
   }
+
   toggleEnabled(policy: NuaGuardPolicy, enabled: boolean) {
+    if (enabled && this.service.limitReached()) {
+      // Prevent enabling a policy when the limit is reached already
+      return;
+    }
+
     if (!this.isSaving()[policy.id]) {
       this.isSaving.set({ [policy.id]: true });
       this.service.editPolicy(policy.id, policy.zone, { enabled }).subscribe({
