@@ -185,12 +185,12 @@ describe('Authentication', () => {
     it('should redirect to OAuth and store state, nonce and code verifier', async () => {
       const getRandomValuesSpy = jest
         .spyOn(crypto, 'getRandomValues')
-        .mockImplementation((arr: ArrayBufferView<ArrayBufferLike>) => {
-          const view = arr as Uint8Array;
+        .mockImplementation((arr: ArrayBufferView<ArrayBuffer>) => {
+          const view = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength);
           for (let i = 0; i < view.length; i += 1) {
             view[i] = i + 1;
           }
-          return view;
+          return arr;
         });
       const generateChallengeSpy = jest
         .spyOn(auth as any, 'generateCodeChallenge')

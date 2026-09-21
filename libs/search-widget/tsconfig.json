@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "esnext",
     "module": "esnext",
     "resolveJsonModule": true,
@@ -9,7 +9,6 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "sourceMap": true,
-    "types": ["svelte"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

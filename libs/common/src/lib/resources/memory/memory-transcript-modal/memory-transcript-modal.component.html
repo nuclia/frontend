@@ -2,7 +2,7 @@
   fitContentHeight
   class="memory-modal">
   <pa-modal-title>
-    {{ 'resource.memory.transcript.title' | translate: { session: data?.['sessionLabel'] } }}
+    {{ 'resource.memory.transcript.title' | translate: { session: $safeNavigationMigration(data?.['sessionLabel']) } }}
   </pa-modal-title>
   <pa-modal-content>
     <div class="modal-content">

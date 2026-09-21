@@ -48,7 +48,7 @@
                   [property]="field.property"
                   [required]="field.required"
                   [initialLanguage]="field.config.additionalProps?.['initialLanguage'] || 'javascript'"
-                  [availableLanguages]="field.config.additionalProps?.['availableLanguages']"
+                  [availableLanguages]="$safeNavigationMigration(field.config.additionalProps?.['availableLanguages'])"
                 [showLanguageSelector]="field.config.additionalProps?.['showLanguageSelector'] ?? true"></app-code-editor>
               }
               <!-- Driver select -->
@@ -58,8 +58,8 @@
                   [required]="field.required"
                   [form]="subFormGroup"
                   [controlName]="field.key"
-                  [provider]="field.config.additionalProps?.['provider']"
-                [multiselect]="field.config.additionalProps?.['multiselect']"></app-driver-select>
+                  [provider]="$safeNavigationMigration(field.config.additionalProps?.['provider'])"
+                [multiselect]="$safeNavigationMigration(field.config.additionalProps?.['multiselect'])"></app-driver-select>
               }
               <!-- Enum select -->
               @case ('enum-select') {

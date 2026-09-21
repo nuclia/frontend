@@ -247,7 +247,7 @@
               step="0.1"
               [paTooltip]="'activity.advice.param.min-score-semantic.help' | translate"
               [paTooltipType]="'action'"
-              [ngModel]="editableParams()?.minScoreSemantic"
+              [ngModel]="$safeNavigationMigration(editableParams()?.minScoreSemantic)"
               (ngModelChange)="updateMinScoreSemantic($event)">
               {{ 'activity.advice.param.min-score-semantic.label' | translate }}
             </pa-input>
@@ -264,7 +264,7 @@
               step="0.1"
               [paTooltip]="'activity.advice.param.min-score-bm25.help' | translate"
               [paTooltipType]="'action'"
-              [ngModel]="editableParams()?.minScoreBm25"
+              [ngModel]="$safeNavigationMigration(editableParams()?.minScoreBm25)"
               (ngModelChange)="updateMinScoreBm25($event)">
               {{ 'activity.advice.param.min-score-bm25.label' | translate }}
             </pa-input>
@@ -280,7 +280,7 @@
               step="1"
               [paTooltip]="'activity.advice.param.top-k.help' | translate"
               [paTooltipType]="'action'"
-              [ngModel]="editableParams()?.topK"
+              [ngModel]="$safeNavigationMigration(editableParams()?.topK)"
               (ngModelChange)="updateTopK($event)">
               {{ 'activity.advice.param.top-k.label' | translate }}
             </pa-input>

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MagicService } from './magic.service';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
@@ -7,6 +7,7 @@ import { getLoginErrorMessageKey } from '../login-error.util';
 @Component({
   selector: 'stf-magic',
   templateUrl: './magic.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class MagicComponent implements OnInit, OnDestroy {

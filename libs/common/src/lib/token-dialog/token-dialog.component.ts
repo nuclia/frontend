@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   templateUrl: './token-dialog.component.html',
   styleUrls: ['./token-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class TokenDialogComponent {

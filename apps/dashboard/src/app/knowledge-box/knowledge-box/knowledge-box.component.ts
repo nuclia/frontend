@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, distinctUntilKeyChanged, filter, map, of, Subject, switchMap, take, takeUntil } from 'rxjs';
@@ -6,6 +6,7 @@ import { addDays } from 'date-fns';
 
 @Component({
   template: '<router-outlet></router-outlet>',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class KnowledgeBoxComponent implements OnInit, OnDestroy {

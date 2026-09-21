@@ -21,13 +21,13 @@
                 <p>{{ paragraph.text }}</p>
                 <div class="labels-container">
                   @for (label of paragraph.generatedClassifications; track label) {
-                    <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                    <pa-chip [backgroundColor]="$safeNavigationMigration((availableLabels | async)?.[label.labelset]?.color)">
                       {{ label.label }}
                     </pa-chip>
                   }
                   @for (label of paragraph.userClassifications; track label) {
                     @if (!label.cancelled_by_user) {
-                      <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                      <pa-chip [backgroundColor]="$safeNavigationMigration((availableLabels | async)?.[label.labelset]?.color)">
                         {{ label.label }}
                       </pa-chip>
                     }

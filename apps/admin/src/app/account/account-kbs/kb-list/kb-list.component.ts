@@ -1,26 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
-import { Subject } from 'rxjs';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SisModalService, SisProgressModule, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
+import { SisModalService, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { Subject } from 'rxjs';
 import { filter, switchMap, take, takeUntil } from 'rxjs/operators';
 import { UsersDialogComponent } from '../users-dialog/users-dialog.component';
-import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-kb-list',
-  imports: [
-    CommonModule,
-    SisProgressModule,
-    PaButtonModule,
-    TranslateModule,
-    PaTooltipModule,
-    RouterLink,
-    StickyFooterComponent,
-  ],
+  imports: [CommonModule, SisProgressModule, PaButtonModule, TranslateModule, PaTooltipModule, RouterLink],
   templateUrl: './kb-list.component.html',
   styleUrl: './kb-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

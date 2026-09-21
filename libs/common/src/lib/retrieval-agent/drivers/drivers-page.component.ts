@@ -35,7 +35,7 @@ import { DriversService } from './drivers.service';
   ],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class DriversPageComponent implements OnInit, OnDestroy {
   private driversService = inject(DriversService);

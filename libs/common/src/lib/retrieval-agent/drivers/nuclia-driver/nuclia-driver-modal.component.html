@@ -1,7 +1,7 @@
 <pa-modal-advanced fitContentHeight="">
   <pa-modal-title>
     @if (isEdit) {
-      {{ 'retrieval-agents.drivers.edit-modal-title' | translate: { name: config?.name } }}
+      {{ 'retrieval-agents.drivers.edit-modal-title' | translate: { name: $safeNavigationMigration(config?.name) } }}
     } @else {
       {{ (isSyncDriver ? 'retrieval-agents.drivers.add.sync' : 'retrieval-agents.drivers.add.nuclia') | translate }}
     }
