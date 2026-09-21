@@ -1,18 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { UploadDialogService, UploadType } from './upload-dialog.service';
-import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'stf-upload-button',
   templateUrl: './upload-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [TranslateModule, PaButtonModule, PaDropdownModule, PaPopupModule],
 })
 export class UploadButtonComponent {
-  constructor(
-    private uploadService: UploadDialogService,
-    private features: FeaturesService,
-  ) {}
+  constructor(private uploadService: UploadDialogService) {}
 
   upload(type: UploadType) {
     this.uploadService.upload(type);

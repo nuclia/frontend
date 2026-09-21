@@ -10,8 +10,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { UploadButtonComponent } from '@flaps/common';
 import { KbHeaderComponent } from '../kb-header/kb-header.component';
-import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 import { KbOnboardingStateService } from './kb-onboarding-state.service';
 import { OnboardingStep } from './kb-onboarding-state.model';
 import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
@@ -25,13 +25,13 @@ const STEP_ORDER: OnboardingStep[] = ['uploading-data', 'processing-data', 'sear
     BadgeComponent,
     InfoCardComponent,
     KbHeaderComponent,
-    KbMoreActionsComponent,
     PaButtonModule,
     PaIconModule,
     PaModalModule,
     PaTooltipModule,
     RouterModule,
     TranslateModule,
+    UploadButtonComponent,
   ],
   templateUrl: './kb-onboarding-header.component.html',
   styleUrl: './kb-onboarding-header.component.scss',
@@ -51,6 +51,11 @@ export class KbOnboardingHeaderComponent {
 
   openRestartModal(): void {
     this.modalService.openModal(RestartOnboardingModalComponent, new ModalConfig({ dismissable: true }));
+  }
+
+  /** Routing to Search is treated as the completion of onboarding, so it exits immediately on click. */
+  trySearch(): void {
+    this.onboardingService.markDone();
   }
 
   /** Badge colour for each onboarding step, relative to the current step. Memoized per `state()` change. */

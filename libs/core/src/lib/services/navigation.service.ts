@@ -111,13 +111,22 @@ export class NavigationService {
       return new RegExp(pattern).test(path);
     }
   }
+  /**
+   * The "Data" nav link lands on `kbUrl + '/sync/resources'`, but its Resources/Sync/Connect tabs
+   * live under `/sync`, `/sync/resources`, and `/sync/connect`. `routerLinkActive`'s built-in
+   * subset matching only recognises the exact landing path as active, so switching to the Sync or
+   * Connect tab would otherwise drop the nav item's active state — this checks the whole `/sync`
+   * subtree instead, mirroring `inKbSettings` above.
+   */
+  inKbSync(path: string, kbUrl: string): boolean {
+    if (path.startsWith('#')) {
+      return /\/sync(\/|$)/.test(path);
+    }
+    return new RegExp(`${kbUrl}/sync(/|$)`).test(path);
+  }
   inAragSettings(path: string, aragUrl: string): boolean {
     const settingsPages = ['ai-models', 'manage', 'activity', 'users', 'keys', 'rag-lab'];
     const pattern = `${aragUrl}/(${settingsPages.join('|')})`;
-    return new RegExp(pattern).test(path);
-  }
-  inKbUpload(path: string, kbUrl: string): boolean {
-    const pattern = `${kbUrl}/upload`;
     return new RegExp(pattern).test(path);
   }
 

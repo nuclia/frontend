@@ -19,20 +19,15 @@
           <div class="onboarding-header-actions">
             @switch (s.currentStep) {
               @case ('uploading-data') {
-                <pa-button
-                  kind="primary"
-                  icon="upload"
-                  iconAndText
-                  [routerLink]="kbUrl() + '/upload'">
-                  {{ 'onboarding.header.step1.upload-btn' | translate }}
-                </pa-button>
+                <stf-upload-button></stf-upload-button>
               }
               @case ('searching-data') {
                 <pa-button
                   kind="primary"
                   icon="search"
                   iconAndText
-                  [routerLink]="kbUrl() + '/search'">
+                  [routerLink]="kbUrl() + '/search'"
+                  (click)="trySearch()">
                   {{ 'onboarding.header.step3.try-search' | translate }}
                 </pa-button>
               }
@@ -42,7 +37,6 @@
               (click)="openSkipModal()">
               {{ 'onboarding.header.skip-btn' | translate }}
             </pa-button>
-            <app-kb-more-actions></app-kb-more-actions>
           </div>
         </div>
 
@@ -69,7 +63,7 @@
               class="processing-info"
               icon="clock-dash">
               <div class="align-center-2">
-                {{ 'onboarding.header.step2.description2' | translate }}
+                <span class="banner-text">{{ 'onboarding.header.step2.description2' | translate }}</span>
                 <pa-button
                   aspect="basic"
                   size="small"
@@ -89,20 +83,13 @@
             <div class="onboarding-title-row">
               <h2 class="onboarding-title">{{ 'onboarding.header.skipped.step1.title' | translate }}</h2>
               <div class="onboarding-header-actions">
-                <pa-button
-                  kind="primary"
-                  icon="upload"
-                  iconAndText
-                  [routerLink]="kbUrl() + '/upload'">
-                  {{ 'onboarding.header.skipped.step1.upload-btn' | translate }}
-                </pa-button>
+                <stf-upload-button></stf-upload-button>
                 <pa-button
                   class="icon-bordered"
                   aspect="basic"
                   icon="help"
                   [paTooltip]="'onboarding.header.restart-btn-tooltip' | translate"
                   (click)="openRestartModal()"></pa-button>
-                <app-kb-more-actions></app-kb-more-actions>
               </div>
             </div>
           }
@@ -117,7 +104,6 @@
                   icon="help"
                   [paTooltip]="'onboarding.header.restart-btn-tooltip' | translate"
                   (click)="openRestartModal()"></pa-button>
-                <app-kb-more-actions></app-kb-more-actions>
               </div>
             </div>
 

@@ -18,6 +18,11 @@ export const SYNC_ROUTES: Routes = [
         children: [
           { path: '', component: SynchronizeComponent },
           { path: 'connect', component: ConnectComponent },
+          {
+            path: 'resources',
+            data: { embedded: true },
+            loadChildren: () => import('./resources-lazy').then((m) => m.ResourcesModule),
+          },
         ],
       },
       {

@@ -186,7 +186,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => this.detectAndAdvanceStep());
+      .subscribe(() => {
+        this.detectAndAdvanceStep();
+      });
 
     // Searching-step live metrics check for account managers
     this.onboardingState$

@@ -5,21 +5,34 @@
   width: 100%;
 }
 
-.banner {
-  width: fit-content;
+nsi-info-card.banner {
+  // Overrides the design-system default via its own supported CSS-var hook, rather than
+  // forking its styles — keeps the border for separation but drops the grey fill so the
+  // banner sits cleanly on the page background.
+  --info-card-background: transparent;
+  width: 100%;
 
-  ::ng-deep pa-icon svg {
-    fill: var(--color-success-strong);
+  ::ng-deep {
+    .body-m {
+      flex: 1;
+      min-width: 0;
+    }
+
+    pa-icon svg {
+      fill: var(--color-success-strong);
+    }
   }
 }
 
 .banner-content {
-  display: flex;
   align-items: center;
-  gap: rhythm(2);
+  display: flex;
   flex-wrap: wrap;
+  gap: rhythm(2);
+  justify-content: space-between;
 }
 
 .banner-text {
-  max-width: 680px;
+  flex: 1;
+  min-width: 0;
 }

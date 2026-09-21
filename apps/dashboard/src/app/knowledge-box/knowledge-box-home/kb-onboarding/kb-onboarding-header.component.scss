@@ -95,4 +95,14 @@
   display: flex;
   align-items: center;
   gap: rhythm(2);
+  width: 100%;
+
+  .banner-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  pa-button {
+    flex: 0 0 auto;
+  }
 }

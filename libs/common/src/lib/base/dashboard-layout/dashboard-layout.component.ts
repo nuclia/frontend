@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { combineLatest, map, startWith, take } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { combineLatest, filter, map, startWith, take } from 'rxjs';
 import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';
 import { DashboardLayoutService } from './dashboard-layout.service';
-import { NavigationService, SDKService } from '@flaps/core';
+import { NavigationService, SDKService, UploadEventService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { EulaModalComponent } from '../../onboarding/eula-modal/eula-modal.component';
 
@@ -19,6 +20,8 @@ export class DashboardLayoutComponent {
   private layoutService = inject(DashboardLayoutService);
   private modalService = inject(SisModalService);
   private sdk = inject(SDKService);
+  private uploadEventService = inject(UploadEventService);
+  private router = inject(Router);
 
   showProgress = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
     map(([progress, disabled]) => !progress.completed && !disabled),
@@ -27,6 +30,20 @@ export class DashboardLayoutComponent {
   showLimit = this.uploadService.pendingResourcesLimitExceeded;
   showStatusBar = combineLatest([this.showLimit.pipe(startWith(false)), this.showProgress.pipe(startWith(false))]).pipe(
     map(([showLimit, showProgress]) => showLimit || showProgress),
+  );
+  kbUrl = this.navigationService.kbUrl;
+  // The KB home page already shows its own step-aware "processing" message
+  // (`KbOnboardingHeaderComponent`), so the global banner would be redundant there.
+  private currentUrl$ = this.router.events.pipe(
+    filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+    map((event) => event.urlAfterRedirects.split(/[?#]/)[0]),
+    startWith(this.router.url.split(/[?#]/)[0]),
+  );
+  private isOnKbHome$ = combineLatest([this.currentUrl$, this.kbUrl]).pipe(
+    map(([url, kbUrl]) => url === kbUrl),
+  );
+  showOnboardingBanner = combineLatest([this.uploadEventService.showOnboardingBanner$, this.isOnKbHome$]).pipe(
+    map(([show, isOnKbHome]) => show && !isOnKbHome),
   );
   collapsedNav = this.layoutService.collapsedNav;
   // Hidden in simple mode outside ARAG, or anywhere under /manage (account-management routes

@@ -16,16 +16,19 @@ section {
     display: flex;
     flex-direction: column;
     gap: rhythm(0.5);
+    max-width: calc(rhythm(80) + rhythm(8));
   }
 
   .setup-sync-agent {
     border: 1px solid $color-neutral-lighter;
     border-radius: rhythm(1);
+    max-width: calc(rhythm(80) + rhythm(8));
     padding: rhythm(3);
 
     .radio-config-row {
       align-items: center;
       display: flex;
+      flex-wrap: wrap;
       gap: rhythm(1);
       justify-content: space-between;
 
@@ -35,11 +38,16 @@ section {
     }
 
     .inline-form {
-      align-items: center;
       display: flex;
-      flex-wrap: wrap;
-      gap: rhythm(1);
-      justify-content: flex-end;
+      margin-top: rhythm(2);
+      padding-left: rhythm(3.5);
+
+      .server-url-row {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: rhythm(1);
+      }
     }
 
     pa-input.server-url ::ng-deep .pa-field-control {

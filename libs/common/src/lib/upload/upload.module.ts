@@ -27,10 +27,6 @@ import { BadgeComponent, InfoCardComponent, ProgressBarComponent, SisProgressMod
 import { HintModule } from '../hint';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
-import { UploadDataComponent } from './upload-data/upload-data.component';
-import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
-import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
-import { UploadRoutingModule } from './upload-routing.module';
 import { ExtractionSelectComponent } from './extraction-select/extraction-select.component';
 import { ResourceHandlingBannerComponent } from './resource-handling-banner/resource-handling-banner.component';
 
@@ -55,7 +51,6 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
     PaTableModule,
     PaExpanderModule,
     ProgressBarComponent,
-    UploadRoutingModule,
     UploadBarComponent,
     CsvSelectComponent,
     InfoCardComponent,
@@ -71,16 +66,10 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
     UploadProgressDialogComponent,
     UploadTextComponent,
     UploadQnaComponent,
-    UploadDataComponent,
-    UploadOptionComponent,
-    DesktopSourcesComponent,
   ],
   exports: [
     UploadBarComponent,
     CsvSelectComponent,
-    UploadDataComponent,
-    DesktopSourcesComponent,
-    UploadOptionComponent,
   ],
 })
 export class UploadModule {}
