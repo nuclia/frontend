@@ -1187,6 +1187,7 @@
 	"kb.users.already-exists": "Ya existe un usuario con correo electrónico <strong>{{email}}</strong> en esta Knowledge Box",
 	"kb.users.insufficient-permissions": "No puedes invitar a <strong>{{email}}</strong> porque no forma parte de esta cuenta.<br>\nEl usuario debe ser invitado primero a la cuenta por un administrador del compte.",
 	"kb.users.pending-invitation": "Invitación pendiente: expira el {{date}}",
+	"kb-switch.select-kb": "Seleccione un cuadro de conocimiento o un agente.",
 	"label-set.add": "Agregar conjunto de etiquetas",
 	"label-set.add-button": "Añadir nuevo",
 	"label-set.creation-modal.title": "Crear conjunto de etiquetas",

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
 import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
@@ -30,7 +29,6 @@ export class KbSwitchComponent implements OnDestroy {
 
   constructor(
     private sdk: SDKService,
-    private router: Router,
     private navigation: NavigationService,
   ) {}
 
@@ -42,14 +40,16 @@ export class KbSwitchComponent implements OnDestroy {
   goToKb(kb: IKnowledgeBoxItem) {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = kb.zone;
-      this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id)]);
+      this.navigation.navigateExternal(
+        this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id),
+      );
       this.switchClose.emit();
     });
   }
   goToArag(arag: IRetrievalAgentItem) {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = arag.zone;
-      this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, arag.slug)]);
+      this.navigation.navigateExternal(this.navigation.getRetrievalAgentUrl(account.slug, arag.slug));
       this.switchClose.emit();
     });
   }

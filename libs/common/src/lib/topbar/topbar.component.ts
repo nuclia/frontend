@@ -17,6 +17,8 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
 
   inAdminApp = this.navigationService.inAdminApp;
+  showKbSwitch =
+    !this.inAdminApp || this.navigationService.fromApp('rao') || this.navigationService.fromApp('dashboard');
   standalone = this.standaloneService.standalone;
 
   private brandService = inject(BrandService);
