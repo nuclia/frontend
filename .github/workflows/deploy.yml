@@ -17,8 +17,8 @@ env:
   S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
   S3_DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_DOCS_STORAGE || secrets.S3_DOCS_STORAGE_DEV }}
   S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_DOCS_SYNC_ROLE || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
-  GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
-  GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
+  GCP_WORKLOAD_IDENTITY_PROVIDER: "projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider"
+  GCP_SERVICE_ACCOUNT: "github-actions@nuclia-internal.iam.gserviceaccount.com"
   DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
   PROMO_PRODUCTION: false
 
@@ -51,12 +51,12 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
-          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db' # v3.0.1
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db" # v3.0.1
 
       - name: Login to Google Artifact Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
@@ -69,7 +69,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         if: github.ref == 'refs/heads/main'
         with:
-          role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
+          role-to-assume: "${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}"
           aws-region: eu-central-1
 
       - name: Configure AWS client
@@ -83,8 +83,8 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'yarn'
+          registry-url: "https://registry.npmjs.org"
+          cache: "yarn"
 
       - name: Debug NPM version 1
         run: |-
@@ -148,7 +148,7 @@ jobs:
           github_repo: ${{ github.repository }}
           version: ${{ env.PACKAGE_VERSION }}
           git_commit_sha: ${{ github.sha }}
-          git_tag_prefix: 'v'
+          git_tag_prefix: "v"
 
       - name: Check apps to deploy
         id: check-deploy
@@ -221,8 +221,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -250,8 +250,8 @@ jobs:
           aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Publish NucliaDB admin app
         if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
@@ -278,8 +278,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push RAO image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -296,8 +296,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push auth image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -314,8 +314,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' || steps.check-deploy.outputs.deploy-rao == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push admin image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -332,8 +332,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' || steps.check-deploy.outputs.deploy-rao == 'yes' || steps.check-deploy.outputs.deploy-auth == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
@@ -384,8 +384,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
-          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -402,8 +402,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -432,7 +432,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: './charts/${{ env.APP_IMAGE_NAME }}'
+          chart-dir: "./charts/${{ env.APP_IMAGE_NAME }}"
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
@@ -466,8 +466,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
-          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -484,8 +484,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -514,7 +514,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: './charts/${{ env.MANAGER_IMAGE_NAME }}'
+          chart-dir: "./charts/${{ env.MANAGER_IMAGE_NAME }}"
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
@@ -548,8 +548,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
-          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -566,8 +566,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -596,7 +596,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: './charts/${{ env.RAO_IMAGE_NAME }}'
+          chart-dir: "./charts/${{ env.RAO_IMAGE_NAME }}"
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
@@ -630,8 +630,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
-          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -648,8 +648,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -712,8 +712,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
-          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -730,8 +730,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -780,8 +780,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: core-apps
           # POST /repos/{owner}/{repo}/dispatches requires contents: write
@@ -847,4 +847,4 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/core-apps
           event-type: promotions
-          client-payload: '${{ env.JSON_PROMO_SUMMARY }}'
+          client-payload: "${{ env.JSON_PROMO_SUMMARY }}"
