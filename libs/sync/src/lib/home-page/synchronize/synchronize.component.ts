@@ -91,7 +91,8 @@ export class SynchronizeComponent implements OnInit, OnDestroy {
       sources
         .filter((conn) => {
           const hidden =
-            (conn.id === 'sharepoint' && !hasSharepoint) || (conn.id === 's3' && zone?.cloud_provider !== 'AWS');
+            ((conn.id === 'sharepoint' || conn.id === 'onedrive-me') && !hasSharepoint) ||
+            (conn.id === 's3' && zone?.cloud_provider !== 'AWS');
           return !hidden;
         })
         .sort((a, b) => a.title.localeCompare(b.title)),
@@ -123,7 +124,11 @@ export class SynchronizeComponent implements OnInit, OnDestroy {
       label: 'sync.home-page.synchronize.sync-list.table-columns.creation-date',
       sortable: true,
     }), */
-    new HeaderCell({ id: 'latest-sync', label: 'sync.home-page.synchronize.sync-list.table-columns.latest-sync', sortable: true }),
+    new HeaderCell({
+      id: 'latest-sync',
+      label: 'sync.home-page.synchronize.sync-list.table-columns.latest-sync',
+      sortable: true,
+    }),
     new HeaderCell({ id: 'actions', label: 'sync.home-page.synchronize.sync-list.table-columns.actions' }),
   ];
 

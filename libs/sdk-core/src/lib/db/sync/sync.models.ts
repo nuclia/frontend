@@ -70,6 +70,7 @@ export interface SyncConfiguration extends SyncConfigurationOptions {
   updated_at: string;
   sync_root_path: string;
   drive_id?: string;
+  drive_type?: string; // personal/business for OneDrive, documentLibrary for SharePoint
   sync_interval_minutes: number;
   last_sync_run: string | null;
   created_by: string;

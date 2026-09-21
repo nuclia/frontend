@@ -34,6 +34,7 @@ import { OAuthConnector } from './connectors/oauth';
 import { compareDesc } from 'date-fns';
 import { SitefinityConnector } from './connectors/sitefinity';
 import { SharepointImpl } from './connectors/sharepoint';
+import { OneDriveImpl, ONEDRIVE_CONNECTOR_ID } from './connectors/onedrive';
 import { S3Impl } from './connectors/s3';
 
 export type SyncServerType = 'desktop' | 'server' | 'cloud';
@@ -96,6 +97,18 @@ export class SyncService {
         permanentSyncOnly: true,
         cloud: true,
         factory: (settings) => new SharepointImpl(settings?.['id'] || '', this.config.getSyncOAuthServer()),
+      },
+    },
+    'onedrive-me': {
+      definition: {
+        id: ONEDRIVE_CONNECTOR_ID,
+        oauth_provider: 'azure_oauth',
+        title: 'OneDrive',
+        logo: `${baseLogoPath}/onedrive.svg`,
+        description: 'Microsoft OneDrive personal file storage',
+        permanentSyncOnly: true,
+        cloud: true,
+        factory: (settings) => new OneDriveImpl(settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     dropbox: {
@@ -197,7 +210,16 @@ export class SyncService {
     return instances[instance];
   }
 
-  getConnectorIdForProvider(provider: string): string | undefined {
+  getConnectorIdForProvider(provider: string, driveType?: string): string | undefined {
+    // "personal"/"business" = the user's own OneDrive; "documentLibrary" = a SharePoint site.
+    if (
+      provider === 'azure_oauth' &&
+      driveType &&
+      driveType !== 'documentLibrary' &&
+      this.connectors[ONEDRIVE_CONNECTOR_ID]
+    ) {
+      return ONEDRIVE_CONNECTOR_ID;
+    }
     return Object.entries(this.connectors).find(
       ([, data]) => data.definition.oauth_provider === provider || data.definition.apikey_provider === provider,
     )?.[0];
@@ -211,7 +233,7 @@ export class SyncService {
   }
 
   private syncConfigtoISyncEntity(config: SyncConfiguration): ISyncEntity {
-    const connectorId = this.getConnectorIdForProvider(config.external_connection.provider);
+    const connectorId = this.getConnectorIdForProvider(config.external_connection.provider, config.drive_type);
     return {
       id: config.id,
       title: config.name,
@@ -240,7 +262,7 @@ export class SyncService {
         map((config) => ({
           ...this.syncConfigtoISyncEntity(config),
           kbId: config.kb_id,
-          connectorId: this.getConnectorIdForProvider(config.external_connection.provider),
+          connectorId: this.getConnectorIdForProvider(config.external_connection.provider, config.drive_type),
         })),
         tap((entity) =>
           this._syncCache.next({
@@ -389,7 +411,10 @@ export class SyncService {
               configs
                 .filter((config) => config.kb_id === kbId)
                 .map((config) => {
-                  const connectorId = this.getConnectorIdForProvider(config.external_connection.provider);
+                  const connectorId = this.getConnectorIdForProvider(
+                    config.external_connection.provider,
+                    config.drive_type,
+                  );
                   return {
                     id: config.id,
                     kbId: config.kb_id,

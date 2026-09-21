@@ -6,7 +6,7 @@
   }
 
   @if (hasSites && !currentSite()) {
-    @if (requiresSiteUrlResolution) {
+    @if (requiresSiteUrlResolution && !forceOneDrive) {
       <nsi-two-columns-configuration-item
         itemTitle="sync.cloud-folder.resolve-site-title"
         description="sync.cloud-folder.resolve-site-description">
@@ -48,13 +48,15 @@
     </nsi-two-columns-configuration-item>
   }
   @if (currentSite() || (currentDrive() && !requiresBucketSearch) || hasCurrentFolder()) {
-    <div>
-      <nsi-button-mini
-        icon="undo"
-        (click)="back()">
-        {{ 'sync.cloud-folder.back' | translate }}
-      </nsi-button-mini>
-    </div>
+    @if (canGoBack()) {
+      <div>
+        <nsi-button-mini
+          icon="undo"
+          (click)="back()">
+          {{ 'sync.cloud-folder.back' | translate }}
+        </nsi-button-mini>
+      </div>
+    }
     <div class="header">
       <h3>
         @if (currentSite()) {
