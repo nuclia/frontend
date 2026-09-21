@@ -30,15 +30,24 @@ export class NuaGuardService {
       tap((createdPolicy) => this._policies.update((policies) => policies.concat([createdPolicy]))),
     );
   }
+
   editPolicy(id: string, zone: string, data: Partial<NuaGuardPolicyPayload>): Observable<NuaGuardPolicy> {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) => this.sdk.nuclia.db.editNuaGuardPolicy(id, account.id, zone, data)),
-      tap((updatedPolicy) => {
+      tap((updatedPolicy) =>
         this._policies.update((policies) =>
           policies.map((policy) => (policy.id === updatedPolicy.id ? updatedPolicy : policy)),
-        );
-      }),
+        ),
+      ),
+    );
+  }
+
+  deletePolicy(id: string, zone: string): Observable<void> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.db.deleteNuaGuardPolicy(id, account.id, zone)),
+      tap(() => this._policies.update((policies) => policies.filter((policy) => policy.id !== id))),
     );
   }
 }

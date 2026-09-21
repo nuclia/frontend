@@ -4,7 +4,7 @@ import { ModalConfig, PaButtonModule, PaTableModule, PaTogglesModule } from '@gu
 import { TranslateModule } from '@ngx-translate/core';
 import { NuaGuardPolicy } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { filter } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { NuaGuardService } from './nua-guard.service';
 import { PolicyDialogComponent } from './policy-dialog/policy-dialog.component';
 
@@ -61,7 +61,20 @@ export class AccountNuaGuardComponent implements OnInit {
       });
     }
   }
+
   deletePolicy(policy: NuaGuardPolicy) {
-    // TODO
+    this.modalService
+      .openConfirm({
+        title: 'account.nua-guard.delete-policy',
+        description: 'account.nua-guard.delete-policy-warning',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.service.deletePolicy(policy.id, policy.zone)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }
