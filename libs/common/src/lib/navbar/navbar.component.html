@@ -415,8 +415,8 @@
     @if (showFooter) {
       <footer class="navbar-footer">
         <div class="footer-items">
-          @if (versionHash) {
-            <span class="version-label">Version: {{ versionHash }}</span>
+          @if (version) {
+            <span class="version-label">Version: {{ version }}</span>
           }
           @if (isStageOrDev) {
             <img
