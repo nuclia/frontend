@@ -10,11 +10,11 @@ pa-card {
   height: 100%;
 }
 
-// pa-card's own wrapper carries no elevation at all (flat border only), so we reach into it
-// to add the elevation this redesign needs, and to keep the background white on hover instead
-// of the base component's default grey fill. Scoped with :host so it only affects this card.
+// pa-card's own wrapper carries no elevation at all (flat border only). Rest state stays
+// flat (no shadow); hover adds the system's default elevation and keeps the background white
+// instead of the base component's default grey fill. Scoped with :host so it only affects this card.
 :host ::ng-deep .pa-card-wrapper {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
   height: 100%;
   transition:
     box-shadow $transition-hint,
@@ -23,7 +23,7 @@ pa-card {
 
 :host ::ng-deep .pa-card-wrapper:not(.pa-disabled):hover {
   background: $color-light-stronger;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-default;
 }
 
 .task-card {
@@ -37,24 +37,18 @@ pa-card {
 
 .icon-badge {
   align-items: center;
-  // No purple token exists in the design system; hand-tuned violet matching
-  // the lightest/strong pairing pattern used by the success (protect) tone.
-  background: hsl(262, 60%, 95%);
+  // Uses the palette's real purple hue ($color-primary-stronger/-light, hue 252) rather than
+  // inventing a new color — the standard "regular/lighter/lightest" primary tokens are
+  // overridden to blue, so the light background tint is derived from the actual purple token.
+  background: color-mix(in srgb, $color-primary-light 15%, $color-light-stronger);
   // Match the card's own border radius so the badge nests naturally within it
   border-radius: rhythm(1);
-  color: hsl(262, 47%, 50%);
+  color: $color-primary-stronger;
   display: flex;
   flex: 0 0 auto;
-  // 80% of rhythm(7) (56px), shrunk 20% per design feedback
-  height: 2.8rem;
+  height: rhythm(6);
   justify-content: center;
-  width: 2.8rem;
-
-  ::ng-deep pa-icon svg {
-    // 80% of the "large" icon size (rhythm(4), 32px), shrunk 20% per design feedback
-    height: 1.6rem;
-    width: 1.6rem;
-  }
+  width: rhythm(6);
 
   .protect & {
     background: var(--color-success-lightest);
@@ -94,7 +88,7 @@ pa-card {
 }
 
 .task-card:hover .go-arrow {
-  color: hsl(262, 47%, 50%);
+  color: $color-primary-stronger;
   opacity: 1;
   transform: translateX(0);
 }
