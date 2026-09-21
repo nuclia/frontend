@@ -3,7 +3,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Inp
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
 import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TASK_ICONS } from '../tasks-automation.models';
+import { TASK_CARD_TONES, TASK_ICONS } from '../tasks-automation.models';
 import { TaskName } from '@nuclia/core';
 
 @Component({
@@ -15,6 +15,7 @@ import { TaskName } from '@nuclia/core';
 })
 export class TaskCardComponent {
   icons = TASK_ICONS;
+  tones = TASK_CARD_TONES;
 
   @Input({ required: true }) type: TaskName = 'ask';
   @Input({ transform: booleanAttribute }) ready = false;

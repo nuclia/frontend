@@ -1,15 +1,104 @@
 @use 'apps/dashboard/src/variables' as *;
 
+:host {
+  display: block;
+  height: 100%;
+}
+
+pa-card {
+  display: block;
+  height: 100%;
+}
+
+// pa-card's own wrapper carries no elevation at all (flat border only), so we reach into it
+// to add the elevation this redesign needs, and to keep the background white on hover instead
+// of the base component's default grey fill. Scoped with :host so it only affects this card.
+:host ::ng-deep .pa-card-wrapper {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  transition:
+    box-shadow $transition-hint,
+    background $transition-hint;
+}
+
+:host ::ng-deep .pa-card-wrapper:not(.pa-disabled):hover {
+  background: $color-light-stronger;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .task-card {
-  height: rhythm(12);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  height: 100%;
+  min-height: rhythm(20);
+}
+
+.icon-badge {
+  align-items: center;
+  // No purple token exists in the design system; hand-tuned violet matching
+  // the lightest/strong pairing pattern used by the success (protect) tone.
+  background: hsl(262, 60%, 95%);
+  // Match the card's own border radius so the badge nests naturally within it
+  border-radius: rhythm(1);
+  color: hsl(262, 47%, 50%);
+  display: flex;
+  flex: 0 0 auto;
+  // 80% of rhythm(7) (56px), shrunk 20% per design feedback
+  height: 2.8rem;
+  justify-content: center;
+  width: 2.8rem;
+
+  ::ng-deep pa-icon svg {
+    // 80% of the "large" icon size (rhythm(4), 32px), shrunk 20% per design feedback
+    height: 1.6rem;
+    width: 1.6rem;
+  }
+
+  .protect & {
+    background: var(--color-success-lightest);
+    color: var(--color-success-strong);
+  }
 }
 
 .card-title {
-  align-items: center;
-  display: flex;
-  gap: rhythm(0.5);
+  color: $color-dark-stronger;
 }
 
 .description {
   color: $color-neutral-regular;
+  display: -webkit-box;
+  flex: 1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.coming-soon {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.go-arrow {
+  color: $color-neutral-light;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(-#{rhythm(1)});
+  transition:
+    opacity $transition-hint,
+    transform $transition-hint;
+}
+
+.task-card:hover .go-arrow {
+  color: hsl(262, 47%, 50%);
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.task-card.protect:hover .go-arrow {
+  color: var(--color-success-strong);
 }

@@ -15,16 +15,31 @@ a:hover {
   color: $color-tertiary-strong;
 }
 
-.section h2 {
-  color: $color-neutral-regular;
-  margin-bottom: rhythm(1.5);
+.tone-section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  & + & {
+    margin-top: rhythm(4);
+  }
+}
+
+.tone-heading {
+  color: $color-dark-stronger;
+  font-size: rhythm(2.5);
+  font-weight: 700;
+  margin: 0;
 }
 
 .create-task {
-  display: flex;
-  gap: rhythm(1.5);
-  flex-wrap: wrap;
-  app-task-card {
-    width: rhythm(45);
+  display: grid;
+  gap: rhythm(2);
+  // Fixed 4-column layout so 4 cards fit on a standard laptop viewport;
+  // step down on narrower screens instead of letting cards shrink indefinitely.
+  grid-template-columns: repeat(4, 1fr);
+
+  @media (max-width: $width-large-screen) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
