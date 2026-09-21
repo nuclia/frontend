@@ -15,6 +15,15 @@
       {{ current.title }}
     </span>
   }
+} @else {
+  <nsi-dropdown-button
+    size="small"
+    aspect="basic"
+    freeWidth
+    openOnFocus
+    [popupRef]="kbSwitch">
+    {{ 'kb-switch.select-kb' | translate }}
+  </nsi-dropdown-button>
 }
 
 <pa-dropdown #kbSwitch>

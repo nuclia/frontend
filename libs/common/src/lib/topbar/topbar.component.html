@@ -10,7 +10,7 @@
         [alt]="!standalone ? brandName : 'NucliaDB'" />
     </button>
 
-    @if (!inAdminApp) {
+    @if (showKbSwitch) {
       <app-kb-switch></app-kb-switch>
     }
   </div>

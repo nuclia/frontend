@@ -1187,6 +1187,7 @@
 	"kb.users.already-exists": "Un usuari amb correu electrònic <strong>{{email}}</strong> ja existeix en aquesta Knowledge Box",
 	"kb.users.insufficient-permissions": "No pots invitar <strong>{{email}}</strong> perquè no forma part d'aquest compte.<br>\nPrimer un administrador del compte ha de convidar l'usuari al compte.",
 	"kb.users.pending-invitation": "Invitació pendent: caduca el {{date}}",
+	"kb-switch.select-kb": "Seleccioneu un quadre de coneixement o un agent",
 	"label-set.add": "Afegeix conjunt d’etiquetes",
 	"label-set.add-button": "Afegir nou",
 	"label-set.creation-modal.title": "Crea un conjunt d’etiquetes",

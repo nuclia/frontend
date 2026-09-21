@@ -1187,6 +1187,7 @@
 	"kb.users.already-exists": "Un utilisateur avec l’adresse e-mail <strong>{{email}}</strong> existe déjà dans cette Knowledge Box",
 	"kb.users.insufficient-permissions": "Vous ne pouvez pas inviter <strong>{{email}}</strong>, car il ne fait pas partie de ce compte.<br>\nL'utilisateur doit d'abord être invité sur le compte par un gestionnaire de compte.",
 	"kb.users.pending-invitation": "En attente d’acceptation: expire le {{date}}",
+	"kb-switch.select-kb": "Sélectionnez une boîte de connaissances ou un agent",
 	"label-set.add": "Ajouter un jeu d’étiquettes",
 	"label-set.add-button": "Ajouter nouveau",
 	"label-set.creation-modal.title": "Créer un jeu d’étiquettes",
