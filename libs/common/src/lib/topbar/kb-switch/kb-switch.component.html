@@ -1,64 +1,54 @@
-@if (kb$ | async; as current) {
-  @if (showKbSelector | async) {
-    <nsi-dropdown-button
-      size="small"
-      aspect="basic"
-      freeWidth
-      openOnFocus
-      [popupRef]="kbSwitch">
-      {{ current.title }}
-    </nsi-dropdown-button>
-
-    <pa-dropdown #kbSwitch>
-      @if (!inRaoApp) {
-        @for (kb of knowledgeBoxes | async; track kb.id) {
-          <pa-option
-            [disabled]="!kb.role_on_kb && !standalone"
-            iconOnRight
-            [paTooltip]="kb.title || ''"
-            [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
-            (selectOption)="goToKb(kb)">
-            <div class="title-wrapper">
-              <pa-icon
-                name="knowledge-box"
-                size="small"></pa-icon>
-              {{ kb.title }}
-            </div>
-          </pa-option>
-        }
-      }
-      @if (!standalone) {
-        @for (arag of arags | async; track arag.id) {
-          <pa-option
-            [disabled]="!arag.role_on_kb"
-            iconOnRight
-            [paTooltip]="arag.title || ''"
-            [icon]="arag.state === 'PUBLISHED' ? '' : 'lock'"
-            (selectOption)="goToArag(arag)">
-            <div class="title-wrapper">
-              <pa-icon
-                name="workflows"
-                size="small"></pa-icon>
-              {{ arag.title }}
-            </div>
-          </pa-option>
-        }
-      }
-    </pa-dropdown>
-  } @else if (!(isCowork | async)) {
-    <div
-      class="kb-context-label"
-      [paTooltip]="current.title">
-      {{ current.title }}
-    </div>
-  }
-} @else {
+@let current = kb$ | async;
+@if (showKbSelector | async) {
   <nsi-dropdown-button
     size="small"
     aspect="basic"
     freeWidth
     openOnFocus
     [popupRef]="kbSwitch">
-    {{ 'kb-switch.select-kb' | translate }}
+    {{ current ? current?.title : ('kb-switch.select-kb' | translate) }}
   </nsi-dropdown-button>
+
+  <pa-dropdown #kbSwitch>
+    @if (!inRaoApp) {
+      @for (kb of knowledgeBoxes | async; track kb.id) {
+        <pa-option
+          [disabled]="!kb.role_on_kb && !standalone"
+          iconOnRight
+          [paTooltip]="kb.title || ''"
+          [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
+          (selectOption)="goToKb(kb)">
+          <div class="title-wrapper">
+            <pa-icon
+              name="knowledge-box"
+              size="small"></pa-icon>
+            {{ kb.title }}
+          </div>
+        </pa-option>
+      }
+    }
+    @if (!standalone) {
+      @for (arag of arags | async; track arag.id) {
+        <pa-option
+          [disabled]="!arag.role_on_kb"
+          iconOnRight
+          [paTooltip]="arag.title || ''"
+          [icon]="arag.state === 'PUBLISHED' ? '' : 'lock'"
+          (selectOption)="goToArag(arag)">
+          <div class="title-wrapper">
+            <pa-icon
+              name="workflows"
+              size="small"></pa-icon>
+            {{ arag.title }}
+          </div>
+        </pa-option>
+      }
+    }
+  </pa-dropdown>
+} @else if (!(isCowork | async) && !!current) {
+  <div
+    class="kb-context-label"
+    [paTooltip]="current.title">
+    {{ current.title }}
+  </div>
 }
