@@ -11,25 +11,25 @@ import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
   standalone: false,
 })
 export class KbSwitchComponent implements OnDestroy {
-  unsubscribeAll = new Subject<void>();
+  private readonly unsubscribeAll = new Subject<void>();
 
   @Output() switchClose = new EventEmitter<void>();
 
-  kb$ = this.sdk.currentKb;
-  account: Observable<Account> = this.sdk.currentAccount;
-  isCowork = this.account.pipe(map((account) => account.workflow === 'cowork'));
+  readonly kb$ = this.sdk.currentKb;
+  readonly account: Observable<Account> = this.sdk.currentAccount;
+  readonly isCowork = this.account.pipe(map((account) => account.workflow === 'cowork'));
 
-  standalone: boolean = this.sdk.nuclia.options.standalone || false;
-  knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
-  arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
-  showKbSelector: Observable<boolean> = this.standalone
+  readonly standalone: boolean = this.sdk.nuclia.options.standalone || false;
+  readonly knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
+  readonly arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
+  readonly showKbSelector: Observable<boolean> = this.standalone
     ? of(true)
     : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length + arags.length > 1));
-  inRaoApp = this.navigation.inRaoApp;
+  readonly inRaoApp = this.navigation.inRaoApp;
 
   constructor(
-    private sdk: SDKService,
-    private navigation: NavigationService,
+    private readonly sdk: SDKService,
+    private readonly navigation: NavigationService,
   ) {}
 
   ngOnDestroy(): void {
