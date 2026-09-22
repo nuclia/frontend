@@ -8,12 +8,49 @@
       [popupRef]="kbSwitch">
       {{ current.title }}
     </nsi-dropdown-button>
+
+    <pa-dropdown #kbSwitch>
+      @if (!inRaoApp) {
+        @for (kb of knowledgeBoxes | async; track kb.id) {
+          <pa-option
+            [disabled]="!kb.role_on_kb && !standalone"
+            iconOnRight
+            [paTooltip]="kb.title || ''"
+            [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
+            (selectOption)="goToKb(kb)">
+            <div class="title-wrapper">
+              <pa-icon
+                name="knowledge-box"
+                size="small"></pa-icon>
+              {{ kb.title }}
+            </div>
+          </pa-option>
+        }
+      }
+      @if (!standalone) {
+        @for (arag of arags | async; track arag.id) {
+          <pa-option
+            [disabled]="!arag.role_on_kb"
+            iconOnRight
+            [paTooltip]="arag.title || ''"
+            [icon]="arag.state === 'PUBLISHED' ? '' : 'lock'"
+            (selectOption)="goToArag(arag)">
+            <div class="title-wrapper">
+              <pa-icon
+                name="workflows"
+                size="small"></pa-icon>
+              {{ arag.title }}
+            </div>
+          </pa-option>
+        }
+      }
+    </pa-dropdown>
   } @else if (!(isCowork | async)) {
-    <span
+    <div
       class="kb-context-label"
       [paTooltip]="current.title">
       {{ current.title }}
-    </span>
+    </div>
   }
 } @else {
   <nsi-dropdown-button
@@ -25,40 +62,3 @@
     {{ 'kb-switch.select-kb' | translate }}
   </nsi-dropdown-button>
 }
-
-<pa-dropdown #kbSwitch>
-  @if (!inRaoApp) {
-    @for (kb of knowledgeBoxes | async; track kb.id) {
-      <pa-option
-        [disabled]="!kb.role_on_kb && !standalone"
-        iconOnRight
-        [paTooltip]="kb.title || ''"
-        [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
-        (selectOption)="goToKb(kb)">
-        <div class="title-wrapper">
-          <pa-icon
-            name="knowledge-box"
-            size="small"></pa-icon>
-          {{ kb.title }}
-        </div>
-      </pa-option>
-    }
-  }
-  @if (!standalone) {
-    @for (arag of arags | async; track arag.id) {
-      <pa-option
-        [disabled]="!arag.role_on_kb"
-        iconOnRight
-        [paTooltip]="arag.title || ''"
-        [icon]="arag.state === 'PUBLISHED' ? '' : 'lock'"
-        (selectOption)="goToArag(arag)">
-        <div class="title-wrapper">
-          <pa-icon
-            name="workflows"
-            size="small"></pa-icon>
-          {{ arag.title }}
-        </div>
-      </pa-option>
-    }
-  }
-</pa-dropdown>
