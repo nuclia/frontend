@@ -1,0 +1,7 @@
+rules:
+  adhoc-packages:
+    ignore:
+      # Bootstraps npm itself to a fixed, known-good version before `npm publish`
+      # later in this job. There is no lockfile-based way to pin the package
+      # manager binary itself (see .github/workflows/deploy.yml).
+      - deploy.yml:95
