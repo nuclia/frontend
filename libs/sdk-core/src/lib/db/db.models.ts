@@ -500,3 +500,18 @@ export interface ModelConfiguration extends ModelConfigurationItem {
 export type ModelConfigurationCreation = Omit<ModelConfiguration, 'id'>;
 
 export type KnowledgeBoxMode = 'kb' | 'agent' | 'agent_no_memory' | 'agents';
+
+export interface NuaGuardPolicy {
+  id: string;
+  name: string;
+  description?: string;
+  instruction: string;
+  query: string;
+  target: 'QUERY';
+  zone: string;
+  enabled: boolean;
+  blocking: boolean;
+}
+
+export type NuaGuardPolicyPayload = Omit<NuaGuardPolicy, 'id' | 'zone'>;
+export type NuaGuardPolicyResponse = Omit<NuaGuardPolicy, 'zone'>;

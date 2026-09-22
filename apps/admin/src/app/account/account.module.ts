@@ -6,21 +6,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { LowerCaseInputDirective, UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
-import {
-  PaButtonModule,
-  PaDateTimeModule,
-  PaDropdownModule,
-  PaIconModule,
-  PaModalModule,
-  PaPopupModule,
-  PaTableModule,
-  PaTabsModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-  PaTooltipModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, DropdownButtonComponent, NsiSkeletonComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   AccountDeleteComponent,
   AccountStatusComponent,
@@ -38,22 +23,40 @@ import {
   agentFeatureEnabledGuard,
   canMatchSimpleMode,
 } from '@flaps/common';
+import { LowerCaseInputDirective, UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDateTimeModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaModalModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTabsModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { BackButtonComponent, DropdownButtonComponent, NsiSkeletonComponent, SisProgressModule } from '@nuclia/sistema';
+import { AccountAdministrationComponent } from './account-administration/account-administration.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
 import { AccountBillingComponent } from './account-billing/account-billing.component';
-import { AccountAdministrationComponent } from './account-administration/account-administration.component';
 import { AccountConfigurationComponent } from './account-configuration/account-configuration.component';
+import { AccountConsumptionComponent } from './account-home/account-consumption.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountSettingsComponent } from './account-home/account-settings.component';
-import { AccountPageLayoutComponent } from './account-page-layout/account-page-layout.component';
+import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
 import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
+import { AccountModelsComponent } from './account-models/account-models.component';
+import { AccountNuaGuardComponent } from './account-nua-guard/account-nua-guard.component';
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
+import { AccountPageLayoutComponent } from './account-page-layout/account-page-layout.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
-import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
 import { BillingModule } from './billing/billing.module';
 import { CheckoutComponent } from './billing/checkout/checkout.component';
 import { HistoryComponent } from './billing/history/history.component';
@@ -62,8 +65,6 @@ import { RedirectComponent } from './billing/redirect.component';
 import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
 import { UsageTableComponent } from './billing/usage/usage-table.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
-import { AccountModelsComponent } from './account-models/account-models.component';
-import { AccountConsumptionComponent } from './account-home/account-consumption.component';
 
 const routes: Routes = [
   {
@@ -122,6 +123,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'nua', pathMatch: 'full' },
       { path: 'nua', component: AccountNUAComponent },
       { path: 'nua/:id/activity', component: NuaActivityComponent },
+      { path: 'nua-guard', component: AccountNuaGuardComponent },
       { path: 'models', component: AccountModelsComponent },
     ],
   },
