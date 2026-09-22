@@ -18,6 +18,7 @@ export interface AccountSummary {
   created: string;
   email: string;
   labels: AccountLabels | null;
+  workflow: WorkflowType;
 }
 
 export interface AccountDetails extends AccountSummary {
@@ -28,7 +29,6 @@ export interface AccountDetails extends AccountSummary {
   maxMemories: number;
   trialExpirationDate?: string;
   users: AccountUser[];
-  workflow?: WorkflowType;
   allowAccessNonEnterpriseModels: boolean;
   zoneVisibility: ZoneVisibility;
 }
