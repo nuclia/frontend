@@ -1,15 +1,12 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BackendConfigurationService, LoginService } from '@flaps/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 
-import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisPasswordInputModule } from '@nuclia/sistema';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { SisModalService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { UserContainerComponent } from '../user-container';
 import { RecoverComponent } from './recover.component';
 
 describe('RecoverComponent', () => {
@@ -22,7 +19,7 @@ describe('RecoverComponent', () => {
   let config: { getRecaptchaKey: jest.Mock; getAppName: jest.Mock };
   let modalService: { openConfirm: jest.Mock };
   let translateService: { get: jest.Mock };
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     queryParams$ = new BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>({
       login_challenge: 'challenge-1',
       isPasswordInit: true,
@@ -51,15 +48,7 @@ describe('RecoverComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [RecoverComponent],
-      imports: [
-        MockModule(ReactiveFormsModule),
-        MockModule(PaButtonModule),
-        MockModule(PaTextFieldModule),
-        MockModule(PaTranslateModule),
-        MockModule(SisPasswordInputModule),
-        MockComponent(UserContainerComponent),
-        RouterModule.forRoot([]),
-      ],
+      imports: [ReactiveFormsModule],
       providers: [
         { provide: ActivatedRoute, useValue: { queryParams: queryParams$.asObservable() } },
         { provide: LoginService, useValue: loginService },
@@ -68,8 +57,12 @@ describe('RecoverComponent', () => {
         { provide: SisModalService, useValue: modalService },
         { provide: TranslateService, useValue: translateService },
       ],
-    }).compileComponents();
-  }));
+    })
+      .overrideComponent(RecoverComponent, {
+        set: { template: '' },
+      })
+      .compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RecoverComponent);
