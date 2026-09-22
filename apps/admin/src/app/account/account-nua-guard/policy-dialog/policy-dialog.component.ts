@@ -51,11 +51,11 @@ export class PolicyDialogComponent implements OnInit {
     zone: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
   });
   validationMessages = {
-    name: { required: 'validation.required', maxlength: 'account.nua-guard.field.name.maxlength' },
-    instruction: { required: 'validation.required', maxlength: 'account.nua-guard.field.instruction.maxlength' },
-    query: { required: 'validation.required', maxlength: 'account.nua-guard.field.query.maxlength' },
+    name: { required: 'validation.required', maxlength: 'account.nua-guard.field.name-maxlength' },
+    instruction: { required: 'validation.required', maxlength: 'account.nua-guard.field.instruction-maxlength' },
+    query: { required: 'validation.required', maxlength: 'account.nua-guard.field.query-maxlength' },
     zone: { required: 'validation.required' },
-    description: { maxlength: 'account.nua-guard.field.description.maxlength' },
+    description: { maxlength: 'account.nua-guard.field.description-maxlength' },
   };
 
   zoneOptions = signal<OptionModel[]>([]);
