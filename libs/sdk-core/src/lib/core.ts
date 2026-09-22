@@ -7,6 +7,7 @@ import { Rest } from './rest';
 import { normalizeGlobalBackendUrl, setZoneInRegionalUrl } from './rest/utils';
 
 export class Nuclia implements INuclia {
+  /** Nuclia configuration options */
   options: NucliaOptions;
   /** Allows you to authenticate using username/password or using an API key. */
   auth: IAuthentication;
