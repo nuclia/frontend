@@ -8616,12 +8616,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/adapter-auto@npm:^6.0.0":
-  version: 6.1.1
-  resolution: "@sveltejs/adapter-auto@npm:6.1.1"
+"@sveltejs/adapter-auto@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@sveltejs/adapter-auto@npm:7.0.1"
   peerDependencies:
     "@sveltejs/kit": ^2.0.0
-  checksum: 10/f7d33ecc27ccf5eb6a75637c7c1273637c2b47509a708e5fad5e9b41f923ea5e27e195f38eb19a5e041e4afd79d3a1507ae3ce4cbcb0b539a4ed9f902bd966a9
+  checksum: 10/5be03c393435d6f3759645d83569760039a86b296dca43bec5324e0e21cb2e5734336e36a667dcffa374064cbc7b24d2ebe3ad00ccabeb922065b8d3d65e3ede
   languageName: node
   linkType: hard
 
@@ -20862,7 +20862,7 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^12.3.0"
     "@schematics/angular": "npm:22.1.7"
     "@sentry/angular": "npm:10.65.0"
-    "@sveltejs/adapter-auto": "npm:^6.0.0"
+    "@sveltejs/adapter-auto": "npm:^7.0.1"
     "@sveltejs/package": "npm:^2.0.0"
     "@sveltejs/vite-plugin-svelte": "npm:^5.0.0"
     "@swc-node/register": "npm:1.12.1"

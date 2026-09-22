@@ -103,7 +103,7 @@
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@schematics/angular": "22.1.7",
-    "@sveltejs/adapter-auto": "^6.0.0",
+    "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/package": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@swc-node/register": "1.12.1",
