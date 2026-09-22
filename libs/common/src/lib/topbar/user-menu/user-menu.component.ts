@@ -108,6 +108,7 @@ export class UserMenuComponent implements OnInit {
   private readonly isBillingEnabled = this.features.unstable.billing;
   private readonly isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   private readonly isModelManagementEnabled = this.features.unstable.modelManagement;
+  private readonly isNuaGuardManagementEnabled = this.features.unstable.nuaGuardsManagement;
 
   private readonly isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
@@ -301,6 +302,7 @@ export class UserMenuComponent implements OnInit {
           icon: 'forbidden',
           dataCy: 'go-to-nua-guard',
           action: () => this.go('configuration/nua-guard'),
+          visible$: this.isNuaGuardManagementEnabled,
         },
         {
           label: 'navbar.models',
