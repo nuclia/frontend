@@ -184,7 +184,7 @@
     "vite-plugin-dts": "~4.5.0",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^4.0.2",
-    "vitest": "4.1.11"
+    "vitest": "5.0.0"
   },
   "resolutions": {
     "stylus": "0.59.0"
