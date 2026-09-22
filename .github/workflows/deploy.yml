@@ -237,7 +237,7 @@ jobs:
           persist-credentials: false
 
       - name: Push dashboard image to registries
-        uses: ./tooling/.github/actions/build-img-regcache
+        uses: $/tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-app == 'yes'
         with:
           build-arg: |
@@ -264,7 +264,7 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
       - name: Push manager image to registries
-        uses: ./tooling/.github/actions/build-img-regcache
+        uses: $/tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
         with:
           build-arg: |
@@ -282,7 +282,7 @@ jobs:
           ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push RAO image to registries
-        uses: ./tooling/.github/actions/build-img-regcache
+        uses: $/tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-rao == 'yes'
         with:
           build-arg: |
@@ -300,7 +300,7 @@ jobs:
           ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push auth image to registries
-        uses: ./tooling/.github/actions/build-img-regcache
+        uses: $/tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-auth == 'yes'
         with:
           build-arg: |
@@ -318,7 +318,7 @@ jobs:
           ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push admin image to registries
-        uses: ./tooling/.github/actions/build-img-regcache
+        uses: $/tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-admin == 'yes'
         with:
           build-arg: |
@@ -424,7 +424,7 @@ jobs:
           echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
-        uses: ./tooling/.github/actions/build-helm-chart
+        uses: $/tooling/.github/actions/build-helm-chart
         with:
           component: ${{ env.APP_IMAGE_NAME }}
           chart-version: ${{ steps.chart-version-app.outputs.chart-version }}
@@ -506,7 +506,7 @@ jobs:
           echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
-        uses: ./tooling/.github/actions/build-helm-chart
+        uses: $/tooling/.github/actions/build-helm-chart
         with:
           component: ${{ env.MANAGER_IMAGE_NAME }}
           chart-version: ${{ steps.chart-version-manager.outputs.chart-version }}
@@ -588,7 +588,7 @@ jobs:
           echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
-        uses: ./tooling/.github/actions/build-helm-chart
+        uses: $/tooling/.github/actions/build-helm-chart
         with:
           component: ${{ env.RAO_IMAGE_NAME }}
           chart-version: ${{ steps.chart-version-rao.outputs.chart-version }}
@@ -670,7 +670,7 @@ jobs:
           echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
-        uses: ./tooling/.github/actions/build-helm-chart
+        uses: $/tooling/.github/actions/build-helm-chart
         with:
           component: ${{ env.AUTH_IMAGE_NAME }}
           chart-version: ${{ steps.chart-version-auth.outputs.chart-version }}
@@ -752,7 +752,7 @@ jobs:
           echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
-        uses: ./tooling/.github/actions/build-helm-chart
+        uses: $/tooling/.github/actions/build-helm-chart
         with:
           component: ${{ env.ADMIN_IMAGE_NAME }}
           chart-version: ${{ steps.chart-version-admin.outputs.chart-version }}
