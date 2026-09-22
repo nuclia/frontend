@@ -147,19 +147,21 @@
       display: flex;
       flex: 0 0 auto;
       gap: rhythm(2);
-      justify-content: space-between;
-    }
+      justify-content: flex-end;
 
-    .configuration-drawer-title {
-      @include title-m();
-      color: $color-dark-stronger;
-    }
+      .modification-warning {
+        flex: 1 1 auto;
+        margin-right: auto;
+        min-width: 0;
+        padding: rhythm(0.5) rhythm(1.5);
 
-    .configuration-drawer-actions {
-      align-items: center;
-      display: flex;
-      flex: 0 0 auto;
-      gap: rhythm(1);
+        &::ng-deep .body-s,
+        &::ng-deep .body-m {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
 
     /* Resizer area is 2px each side of the border to make it easily clickable */

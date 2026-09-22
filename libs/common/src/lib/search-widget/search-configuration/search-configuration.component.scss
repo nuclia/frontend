@@ -22,25 +22,8 @@
   }
 
   .config-selection-container {
-    position: relative;
-  }
-
-  .config-status-indicator {
-    background-color: $color-success-regular;
-    border-radius: 50%;
-    height: rhythm(1);
-    position: absolute;
-    right: rhythm(6);
-    top: 50%;
-    transform: translateY(-50%);
-    transition:
-      top $transition-hint,
-      right $transition-hint;
-    width: rhythm(1);
-
-    &.modified {
-      background-color: $color-secondary-regular;
-    }
+    display: flex;
+    flex-direction: column;
   }
 
   .config-actions {
@@ -51,8 +34,27 @@
   }
 
   .search-mode-container {
+    border-top: 1px solid $color-neutral-lighter;
     display: flex;
     flex-direction: column;
+    gap: rhythm(1);
+    padding-top: rhythm(2);
+  }
+
+  .search-mode-header {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.25);
+
+    .section-title {
+      @include title-m();
+      color: $color-dark-stronger;
+    }
+
+    .section-description {
+      @include body-s();
+      color: $color-neutral-regular;
+    }
   }
 
   .search-mode-label {
@@ -70,12 +72,5 @@
   .agentic-config-flow .config-form-help {
     @include body-m();
     color: $color-neutral-regular;
-  }
-
-  @container (max-width: 336px) {
-    .config-status-indicator {
-      right: calc(#{rhythm(2)} + 1px);
-      top: rhythm(2);
-    }
   }
 }

@@ -1,6 +1,15 @@
 <pa-modal-dialog>
   <pa-modal-title>{{ 'search.configuration.save-config-modal.title' | translate }}</pa-modal-title>
-  <pa-modal-description>{{ 'search.configuration.save-config-modal.description' | translate }}</pa-modal-description>
+  <pa-modal-description>
+    {{
+      (reason === 'default-embed'
+        ? 'search.configuration.save-config-modal.description-embed'
+        : reason === 'default-readonly'
+          ? 'search.configuration.save-config-modal.description-readonly'
+          : 'search.configuration.save-config-modal.description'
+      ) | translate
+    }}
+  </pa-modal-description>
 
   <pa-modal-content>
     <div class="form-container">

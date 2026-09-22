@@ -77,7 +77,7 @@ import { SearchWidgetService } from '../search-widget.service';
 import { AgenticConfigurationComponent } from './agentic-configuration';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
-import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
+import { SaveConfigModalComponent, SaveConfigModalReason } from './save-config-modal/save-config-modal.component';
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
@@ -346,7 +346,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
           id: 'nuclia-standard',
           value: 'nuclia-standard',
           label: this.translate.instant('search.configuration.options.nuclia-standard'),
-          help: this.generativeModelNames[this.generativeModelFromSettings] || this.generativeModelFromSettings,
         });
 
         const configurations: OptionType[] = [standardConfigOption];
@@ -360,11 +359,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
                 id: item.id,
                 value: item.id,
                 label: item.id,
-                help:
-                  item.type === 'config'
-                    ? this.generativeModelNames[item.generativeAnswer?.generativeModel || ''] ||
-                      item.generativeAnswer?.generativeModel
-                    : undefined,
               }),
           ),
         );
@@ -630,7 +624,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     if (this.isNucliaConfig) {
       this.modalService
-        .openModal(SaveConfigModalComponent)
+        .openModal(SaveConfigModalComponent, new ModalConfig<SaveConfigModalReason>({ data: 'default-embed' }))
         .onClose.pipe(
           filter((configName): configName is string => !!configName),
           switchMap((configName) =>
@@ -718,7 +712,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   saveConfig() {
     if (this.validateConfigBeforeSave()) {
       this.modalService
-        .openModal(SaveConfigModalComponent)
+        .openModal(
+          SaveConfigModalComponent,
+          this.isNucliaConfig
+            ? new ModalConfig<SaveConfigModalReason>({ data: 'default-readonly' })
+            : undefined,
+        )
         .onClose.pipe(
           filter((confirm) => !!confirm),
           switchMap((configName) => this._saveConfig(configName, true)),

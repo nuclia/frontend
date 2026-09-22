@@ -51,27 +51,24 @@
       <div class="border"></div>
     </div>
     <div class="configuration-drawer-header">
-      <div class="configuration-drawer-title">{{ 'search.configuration.title' | translate }}</div>
-      <div class="configuration-drawer-actions">
-        @if (!(inArag | async) && (canModifyConfig | async)) {
-          <pa-button
-            kind="primary"
-            size="small"
-            (click)="viewAllConfigurations()">
-            {{ 'search.configuration.action.manage-embeds' | translate }}
-          </pa-button>
-        }
-        <pa-button
-          icon="cross"
-          aspect="basic"
-          size="small"
-          (click)="toggleConfigurationPanel()">
-          {{ 'generic.close' | translate }}
-        </pa-button>
-      </div>
+      @if (configPanel.isConfigModified && (configPanel.canModifyConfig | async)) {
+        <nsi-info-card
+          type="warning"
+          class="modification-warning">
+          {{ 'search.configuration.modification-warning' | translate }}
+        </nsi-info-card>
+      }
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        size="small"
+        (click)="toggleConfigurationPanel()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
     </div>
 
     <stf-search-configuration
+      #configPanel
       displayWidgetButtonLine
       [configurationContainer]="configurationContainerElement()"
       [initialWidgetSlug]="initialWidgetSlug"

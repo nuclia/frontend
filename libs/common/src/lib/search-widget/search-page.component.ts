@@ -17,8 +17,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ModalConfig, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService, UploadEventService } from '@flaps/core';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { NavigationService, UploadEventService } from '@flaps/core';
 import { take } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { SearchWidgetService } from './search-widget.service';
@@ -26,7 +26,7 @@ import { EmbedWidgetDialogComponent } from './widgets';
 
 @Component({
   selector: 'stf-search-page',
-  imports: [CommonModule, TranslateModule, SearchConfigurationComponent, PaIconModule, PaButtonModule],
+  imports: [CommonModule, TranslateModule, SearchConfigurationComponent, PaIconModule, PaButtonModule, InfoCardComponent],
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss', '_common-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,7 +40,6 @@ export class SearchPageComponent implements OnDestroy {
   private document = inject(DOCUMENT);
   private uploadEventService = inject(UploadEventService);
   private navigationService = inject(NavigationService);
-  private features = inject(FeaturesService);
 
   configurationContainerElement = viewChild<ElementRef>('configurationContainer');
   previewStageElement = viewChild<ElementRef<HTMLElement>>('previewStage');
@@ -48,7 +47,6 @@ export class SearchPageComponent implements OnDestroy {
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   inArag = this.navigationService.inArag();
-  canModifyConfig = this.features.isKbAdmin;
   searchConfig?: Widget.AnySearchConfiguration;
   widgetOptions?: Widget.WidgetConfiguration;
   /** Set from the (redirected) old /widgets/:slug admin URL, if the current route carries one. */
@@ -112,10 +110,6 @@ export class SearchPageComponent implements OnDestroy {
 
   toggleConfigurationPanel() {
     this.configPanelCollapsed = !this.configPanelCollapsed;
-  }
-
-  viewAllConfigurations() {
-    this.searchConfigurationComponent()?.manageWidgets();
   }
 
   onPreviewContainerTransitionEnd(event: TransitionEvent) {

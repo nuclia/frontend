@@ -6,16 +6,9 @@
     <pa-select
       [formControl]="selectedConfig"
       [options]="configurations"
+      [label]="'search.configuration.title' | translate"
       (valueChange)="selectConfig($event)"></pa-select>
-    @if (canModifyConfig | async) {
-      <div
-        class="config-status-indicator"
-        [class.modified]="isConfigModified"></div>
-    }
   </div>
-  @if (isConfigModified && (canModifyConfig | async)) {
-    <nsi-info-card type="warning">{{ 'search.configuration.modification-warning' | translate }}</nsi-info-card>
-  }
   @if (displayWidgetButtonLine) {
     <div class="config-actions">
       @if (canModifyConfig | async) {
@@ -25,7 +18,7 @@
             [disabled]="!isConfigModified && !isNucliaConfig"
             [paPopup]="isNucliaConfig ? null : saveMenu"
             (click)="isNucliaConfig ? saveConfig() : null">
-            {{ 'search.configuration.action.save' | translate }}
+            {{ (isNucliaConfig ? 'search.configuration.action.save-as' : 'search.configuration.action.save') | translate }}
           </nsi-button-mini>
           <pa-dropdown #saveMenu>
             <pa-option (selectOption)="saveConfig()">
@@ -50,6 +43,13 @@
           [paTooltip]="isEmbedCodeDisabled ? 'search.configuration.action.get-embed-code-tooltip' : undefined"
           (click)="triggerGetEmbedCode()">
           {{ 'search.configuration.action.get-embed-code' | translate }}
+        </nsi-button-mini>
+      }
+      @if (!(inArag | async) && (canModifyConfig | async)) {
+        <nsi-button-mini
+          icon="list"
+          (click)="manageWidgets()">
+          {{ 'search.configuration.action.manage-embeds' | translate }}
         </nsi-button-mini>
       }
       <div>
@@ -106,25 +106,11 @@
         (valueChange)="updateJsonConfig($event)"></nsi-expandable-textarea>
     } @else if ((savedConfig | isTypedConfig) && (currentConfig | isTypedConfig)) {
       <div class="search-mode-container">
-        <pa-radio-group
-          noBackground
-          [value]="searchMode()"
-          (valueChange)="updateSearchMode($event)">
-          @if ((isAgenticSearchEnabled | async) || searchMode() === 'agentic') {
-            <pa-radio value="agentic">
-              <span class="search-mode-label">
-                <span>{{ 'search.configuration.search-mode.agentic' | translate }}</span>
-                <pa-button
-                  icon="info"
-                  aspect="basic"
-                  size="small"
-                  (click)="$event.stopPropagation()"
-                  [paPopup]="agenticModeInfoDropdown"></pa-button>
-                <nsi-badge kind="tertiary">BETA</nsi-badge>
-              </span>
-            </pa-radio>
-          }
-
+        <div class="search-mode-header">
+          <div class="section-title">{{ 'search.configuration.search-mode.title' | translate }}</div>
+          <div class="section-description">{{ 'search.configuration.search-mode.description' | translate }}</div>
+        </div>
+        <pa-radio-group noBackground [value]="searchMode()" (valueChange)="updateSearchMode($event)">
           <pa-radio value="simple-rag">
             <span class="search-mode-label">
               <span>{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
@@ -148,6 +134,21 @@
                 [paPopup]="searchModeInfoDropdown"></pa-button>
             </span>
           </pa-radio>
+
+          @if ((isAgenticSearchEnabled | async) || searchMode() === 'agentic') {
+            <pa-radio value="agentic">
+              <span class="search-mode-label">
+                <span>{{ 'search.configuration.search-mode.agentic' | translate }}</span>
+                <pa-button
+                  icon="info"
+                  aspect="basic"
+                  size="small"
+                  (click)="$event.stopPropagation()"
+                  [paPopup]="agenticModeInfoDropdown"></pa-button>
+                <nsi-badge kind="tertiary">BETA</nsi-badge>
+              </span>
+            </pa-radio>
+          }
         </pa-radio-group>
 
         <pa-dropdown
@@ -201,15 +202,11 @@
             (expandedChange)="updateAgenticConfigHeight()">
             <pa-accordion-item-body>
               @if (agenticSourcesRequiredWarning()) {
-                <nsi-info-card
-                  type="warning"
-                  icon="warning">
+                <nsi-info-card type="warning">
                   {{ 'search.configuration.agentic.sources-required' | translate }}
                 </nsi-info-card>
               } @else if (isConfigModified) {
-                <nsi-info-card
-                  type="warning"
-                  icon="warning">
+                <nsi-info-card type="warning">
                   {{ 'search.configuration.unsupported-warning' | translate }}
                 </nsi-info-card>
               }
