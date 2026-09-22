@@ -20887,7 +20887,7 @@ __metadata:
     jest: "npm:30.3.0"
     jest-environment-jsdom: "npm:30.0.5"
     jest-preset-angular: "npm:17.0.0"
-    jest-util: "npm:30.0.5"
+    jest-util: "npm:30.5.1"
     jiti: "npm:2.4.2"
     jsdom: "npm:^26.1.0"
     latinize: "npm:^0.5.0"
