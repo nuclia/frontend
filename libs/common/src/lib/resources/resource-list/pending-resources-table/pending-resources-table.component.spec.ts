@@ -2,16 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RouterModule } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import {
-  PaButtonModule,
-  PaScrollModule,
-  PaTableModule,
-  PaTogglesModule,
-  PaTooltipModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PaScrollModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UploadService } from '../../../upload';
@@ -24,15 +19,11 @@ describe('PendingResourcesTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PendingResourcesTableComponent],
       imports: [
         RouterModule.forRoot([]),
-        MockModule(TranslateModule),
+        TranslateModule.forRoot(),
+        PendingResourcesTableComponent,
         MockModule(PaScrollModule),
-        MockModule(PaTableModule),
-        MockModule(PaButtonModule),
-        MockModule(PaTogglesModule),
-        MockModule(PaTooltipModule),
         MockComponent(StickyFooterComponent),
         MockComponent(TablePaginationComponent),
       ],
@@ -50,7 +41,6 @@ describe('PendingResourcesTableComponent', () => {
         }),
         MockProvider(SisModalService),
         MockProvider(SisToastService),
-        MockProvider(TranslateService),
         MockProvider(FeaturesService, {
           isKbAdminOrContrib: of(true),
           authorized: {},
@@ -58,6 +48,14 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
 

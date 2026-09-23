@@ -2,16 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RouterModule } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import {
-  PaButtonModule,
-  PaScrollModule,
-  PaTableModule,
-  PaTogglesModule,
-  PaTooltipModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PaScrollModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisSearchInputComponent, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UploadService } from '../../../upload/upload.service';
@@ -24,15 +19,11 @@ describe('ErrorResourcesTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ErrorResourcesTableComponent],
       imports: [
         RouterModule.forRoot([]),
-        MockModule(TranslateModule),
+        TranslateModule.forRoot(),
+        ErrorResourcesTableComponent,
         MockModule(PaScrollModule),
-        MockModule(PaTableModule),
-        MockModule(PaButtonModule),
-        MockModule(PaTogglesModule),
-        MockModule(PaTooltipModule),
         MockComponent(StickyFooterComponent),
         MockComponent(TablePaginationComponent),
         MockComponent(SisSearchInputComponent),
@@ -51,7 +42,6 @@ describe('ErrorResourcesTableComponent', () => {
         }),
         MockProvider(SisModalService),
         MockProvider(SisToastService),
-        MockProvider(TranslateService),
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
@@ -59,6 +49,14 @@ describe('ErrorResourcesTableComponent', () => {
           isKbAdminOrContrib: of(true),
           authorized: {},
         } as FeaturesService),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
 
