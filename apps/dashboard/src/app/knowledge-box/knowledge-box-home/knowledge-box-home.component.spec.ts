@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { RouterModule } from '@angular/router';
 import {
   AccountStatusComponent,
   AppService,
@@ -19,12 +18,10 @@ import {
   FeaturesService,
   NavigationService,
   SDKService,
+  STFPipesModule,
   UploadEventService,
   ZoneService,
-  STFPipesModule,
 } from '@flaps/core';
-import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
-import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -34,11 +31,14 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { UsageChartsComponent } from './kb-usage/usage-charts.component';
-import { RouterModule } from '@angular/router';
+import { Account, WritableKnowledgeBox } from '@nuclia/core';
+import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
+import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
 import { KbOnboardingHeaderComponent } from './kb-onboarding/kb-onboarding-header.component';
 import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
-import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
+import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { LastResourcesComponent } from './last-resources/last-resources.component';
 
 function createTranslateLoader() {
@@ -54,8 +54,8 @@ describe('KnowledgeBoxHomeComponent', () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [KnowledgeBoxHomeComponent],
         imports: [
+          KnowledgeBoxHomeComponent,
           TranslateModule.forRoot({
             loader: {
               provide: TranslateLoader,
@@ -192,6 +192,9 @@ describe('KnowledgeBoxHomeComponent', () => {
   );
 
   beforeEach(() => {
+    // `defaultLanguage` alone never sets `currentLang`; the pipe's translation lookup then
+    // relies on a fallback path that can race with its own onDefaultLangChange subscription.
+    TestBed.inject(TranslateService).use('en');
     fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);
     component = fixture.componentInstance;
   });

@@ -14,8 +14,7 @@ describe('KnowledgeBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterModule.forRoot([])],
-      declarations: [KnowledgeBoxComponent],
+      imports: [RouterModule.forRoot([]), KnowledgeBoxComponent],
       providers: [
         MockProvider(SDKService, {
           counters: of({ resources: 0 }),
