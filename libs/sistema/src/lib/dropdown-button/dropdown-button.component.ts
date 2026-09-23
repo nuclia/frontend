@@ -23,7 +23,6 @@ export class DropdownButtonComponent {
   @Input() size: Size = 'medium';
   @Input() kind: Kind = 'secondary';
   @Input() aspect: Aspect = 'solid';
-  @Input({ transform: booleanAttribute }) openOnFocus = false;
   @Input({ transform: booleanAttribute }) open = false;
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input({ transform: booleanAttribute }) freeWidth = false;
