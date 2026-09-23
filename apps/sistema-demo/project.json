@@ -39,14 +39,16 @@
   },
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath.base}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/sistema-demo",
+        "outputPath": {
+          "base": "dist/apps/sistema-demo",
+          "browser": ""
+        },
         "index": "apps/sistema-demo/src/index.html",
-        "main": "apps/sistema-demo/src/main.ts",
-        "polyfills": "apps/sistema-demo/src/polyfills.ts",
+        "polyfills": ["apps/sistema-demo/src/polyfills.ts"],
         "tsConfig": "apps/sistema-demo/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -72,7 +74,8 @@
         "scripts": [],
         "stylePreprocessorOptions": {
           "includePaths": ["apps/sistema-demo/src", "."]
-        }
+        },
+        "browser": "apps/sistema-demo/src/main.ts"
       },
       "configurations": {
         "production": {
@@ -98,9 +101,7 @@
           "outputHashing": "all"
         },
         "development": {
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
@@ -108,7 +109,7 @@
       }
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
       "continuous": true,
       "configurations": {
@@ -121,7 +122,7 @@
       }
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@angular/build:extract-i18n",
       "options": {
         "buildTarget": "sistema-demo:build"
       }

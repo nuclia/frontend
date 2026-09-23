@@ -13,16 +13,18 @@
   },
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath.base}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/nucliadb-admin",
+        "outputPath": {
+          "base": "dist/apps/nucliadb-admin",
+          "browser": ""
+        },
         "subresourceIntegrity": true,
         "baseHref": "/admin/",
         "index": "apps/nucliadb-admin/src/index.html",
-        "main": "apps/nucliadb-admin/src/main.ts",
-        "polyfills": "apps/nucliadb-admin/src/polyfills.ts",
+        "polyfills": ["apps/nucliadb-admin/src/polyfills.ts"],
         "tsConfig": "apps/nucliadb-admin/tsconfig.app.json",
         "allowedCommonJsDependencies": [],
         "inlineStyleLanguage": "scss",
@@ -64,7 +66,8 @@
         "stylePreprocessorOptions": {
           "includePaths": ["apps/nucliadb-admin/src", "."]
         },
-        "scripts": []
+        "scripts": [],
+        "browser": "apps/nucliadb-admin/src/main.ts"
       },
       "configurations": {
         "production": {
@@ -131,17 +134,13 @@
           ]
         },
         "development": {
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
         },
         "local-stage": {
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -183,7 +182,7 @@
       }
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@angular/build:dev-server",
       "defaultConfiguration": "local-stage",
       "continuous": true,
       "configurations": {
@@ -196,7 +195,7 @@
       }
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@angular/build:extract-i18n",
       "options": {
         "buildTarget": "nucliadb-admin:build"
       }

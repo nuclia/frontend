@@ -1,14 +1,9 @@
 @forward './fonts/source-code-pro';
 
-// Roboto fonts - loaded from CDN
-@import url('https://cdn.rag.progress.cloud/fonts/roboto.css');
-
-
-
 /* Enable with ?fontTest=progress-sans (and disable with ?fontTest=default) */
 @font-face {
   font-family: 'Progress Sans Text';
-  src: url('./fonts/progress-sans/ProgressSansText-Regular.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansText-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -16,7 +11,7 @@
 
 @font-face {
   font-family: 'Progress Sans Text';
-  src: url('./fonts/progress-sans/ProgressSansText-Medium.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansText-Medium.woff2') format('woff2');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -24,7 +19,7 @@
 
 @font-face {
   font-family: 'Progress Sans Text';
-  src: url('./fonts/progress-sans/ProgressSansText-Bold.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansText-Bold.woff2') format('woff2');
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -32,7 +27,7 @@
 
 @font-face {
   font-family: 'Progress Sans Text';
-  src: url('./fonts/progress-sans/ProgressSansText-ExtraBold.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansText-ExtraBold.woff2') format('woff2');
   font-style: normal;
   font-weight: 800;
   font-display: swap;
@@ -40,7 +35,7 @@
 
 @font-face {
   font-family: 'Progress Sans Display';
-  src: url('./fonts/progress-sans/ProgressSansDisplay-Regular.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -48,7 +43,7 @@
 
 @font-face {
   font-family: 'Progress Sans Display';
-  src: url('./fonts/progress-sans/ProgressSansDisplay-Medium.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Medium.woff2') format('woff2');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -56,7 +51,7 @@
 
 @font-face {
   font-family: 'Progress Sans Display';
-  src: url('./fonts/progress-sans/ProgressSansDisplay-Bold.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Bold.woff2') format('woff2');
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -64,7 +59,7 @@
 
 @font-face {
   font-family: 'Progress Sans Display';
-  src: url('./fonts/progress-sans/ProgressSansDisplay-ExtraBold.woff2') format('woff2');
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-ExtraBold.woff2') format('woff2');
   font-style: normal;
   font-weight: 800;
   font-display: swap;

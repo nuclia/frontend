@@ -13,15 +13,17 @@
   },
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@angular/build:application",
       "defaultConfiguration": "production",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{options.outputPath.base}"],
       "options": {
-        "outputPath": "dist/apps/rao",
+        "outputPath": {
+          "base": "dist/apps/rao",
+          "browser": ""
+        },
         "subresourceIntegrity": true,
         "index": "apps/rao/src/index.html",
-        "main": "apps/rao/src/main.ts",
-        "polyfills": "apps/rao/src/polyfills.ts",
+        "polyfills": ["apps/rao/src/polyfills.ts"],
         "tsConfig": "apps/rao/tsconfig.app.json",
         "allowedCommonJsDependencies": [],
         "assets": [
@@ -64,7 +66,6 @@
           "includePaths": ["apps/rao/src", "."]
         },
         "scripts": [],
-        "ngswConfigPath": "apps/rao/src/ngsw-config.json",
         "budgets": [
           {
             "type": "initial",
@@ -76,7 +77,9 @@
             "maximumWarning": "50kb",
             "maximumError": "100kb"
           }
-        ]
+        ],
+        "browser": "apps/rao/src/main.ts",
+        "serviceWorker": false
       },
       "configurations": {
         "production": {
@@ -89,7 +92,7 @@
             "fonts": true
           },
           "outputHashing": "all",
-          "serviceWorker": true,
+          "serviceWorker": "apps/rao/src/ngsw-config.json",
           "fileReplacements": [
             {
               "replace": "apps/rao/src/environments/environment.ts",
@@ -135,9 +138,7 @@
         "local-stage": {
           "aot": false,
           "subresourceIntegrity": false,
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -180,9 +181,7 @@
         "local-dev": {
           "aot": false,
           "subresourceIntegrity": false,
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -225,9 +224,7 @@
         "local-prod": {
           "aot": false,
           "subresourceIntegrity": false,
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -270,7 +267,7 @@
       }
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@angular/build:dev-server",
       "defaultConfiguration": "local-stage",
       "continuous": true,
       "options": {
@@ -292,7 +289,7 @@
       }
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@angular/build:extract-i18n",
       "options": {
         "buildTarget": "rao:build"
       }
