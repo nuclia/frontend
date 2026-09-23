@@ -1,5 +1,8 @@
+import { AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BillingService, BillingUsageType, InvoiceItem } from '@flaps/core';
+import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, Observable, shareReplay } from 'rxjs';
 
 @Component({
@@ -7,7 +10,7 @@ import { map, Observable, shareReplay } from 'rxjs';
   templateUrl: './usage-table.component.html',
   styleUrls: ['./usage-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, AsyncPipe, DecimalPipe, CurrencyPipe, DatePipe, TranslatePipe],
 })
 export class UsageTableComponent {
   paramsToShow = ['media', 'paragraphs_processed', 'searches', 'predict', 'generative', 'paragraphs', 'training'];

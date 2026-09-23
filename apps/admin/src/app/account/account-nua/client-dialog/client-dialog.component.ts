@@ -1,10 +1,27 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, map, shareReplay, take, tap } from 'rxjs';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HintComponent } from '@flaps/common';
+import {
+  BillingService,
+  FeaturesService,
+  SDKService,
+  UnauthorizedFeatureDirective,
+  UserService,
+  ZoneService,
+} from '@flaps/core';
+import {
+  ModalRef,
+  OptionModel,
+  PaButtonModule,
+  PaModalModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NUAClient } from '@nuclia/core';
-import { BillingService, FeaturesService, SDKService, UserService, ZoneService } from '@flaps/core';
+import { filter, map, shareReplay, take, tap } from 'rxjs';
 import { AccountNUAService } from '../account-nua.service';
-import { ModalRef, OptionModel } from '@guillotinaweb/pastanaga-angular';
 
 export interface ClientDialogData {
   client?: NUAClient;
@@ -15,7 +32,18 @@ const DEFAULT_TOKENS_LIMIT = 50_000;
   templateUrl: './client-dialog.component.html',
   styleUrls: ['./client-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaModalModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    UnauthorizedFeatureDirective,
+    HintComponent,
+    PaButtonModule,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ClientDialogComponent implements OnInit {
   private billingService = inject(BillingService);

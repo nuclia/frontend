@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { catchError, concatMap, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AccountDeleteComponent, Sluggable } from '@flaps/common';
 import {
   AccountVerificationService,
   BillingService,
@@ -11,17 +11,28 @@ import {
   STFUtils,
   SubscriptionStatus,
 } from '@flaps/core';
+import { IErrorMessages, PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Account, SamlConfig } from '@nuclia/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { AccountDeleteComponent, Sluggable } from '@flaps/common';
+import { Subject } from 'rxjs';
+import { catchError, concatMap, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-account-manage',
   templateUrl: './account-manage.component.html',
   styleUrls: ['./account-manage.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaButtonModule,
+    PaDropdownModule,
+    RouterLink,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class AccountManageComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

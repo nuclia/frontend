@@ -1,3 +1,4 @@
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,8 +8,37 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BudgetComponent } from '@flaps/common';
+import {
+  AccountBudget,
+  BillingService,
+  injectScript,
+  NavigationService,
+  RecurrentPriceInterval,
+  SDKService,
+  StripeCustomer,
+  SubscriptionError,
+  UserService,
+} from '@flaps/core';
+import {
+  IErrorMessages,
+  PaButtonModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { AccountTypes } from '@nuclia/core';
+import {
+  BackButtonComponent,
+  COUNTRIES,
+  CountrySelectComponent,
+  SisModalService,
+  SisProgressModule,
+  SisToastService,
+} from '@nuclia/sistema';
 import { combineLatest, forkJoin, from, merge, of, Subject } from 'rxjs';
 import {
   catchError,
@@ -22,21 +52,6 @@ import {
   takeUntil,
   tap,
 } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import {
-  AccountBudget,
-  BillingService,
-  injectScript,
-  NavigationService,
-  RecurrentPriceInterval,
-  SDKService,
-  StripeCustomer,
-  SubscriptionError,
-  UserService,
-} from '@flaps/core';
-import { COUNTRIES, SisModalService, SisToastService } from '@nuclia/sistema';
-import { AccountTypes } from '@nuclia/core';
 import { ReviewComponent } from '../review/review.component';
 import { SubscriptionService } from '../subscription.service';
 
@@ -45,7 +60,22 @@ import { SubscriptionService } from '../subscription.service';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    BackButtonComponent,
+    PaIconModule,
+    PaButtonModule,
+    RouterLink,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTogglesModule,
+    PaTextFieldModule,
+    CountrySelectComponent,
+    BudgetComponent,
+    SisProgressModule,
+    AsyncPipe,
+    CurrencyPipe,
+    TranslatePipe,
+  ],
 })
 export class CheckoutComponent implements OnDestroy, OnInit {
   customerForm = new FormGroup({
