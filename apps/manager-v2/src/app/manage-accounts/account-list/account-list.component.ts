@@ -25,7 +25,8 @@ export class AccountListComponent {
               account.title.includes(filter) ||
               account.slug.includes(filter) ||
               account.email.includes(filter) ||
-              account.type.includes(filter),
+              account.type.includes(filter) ||
+              account.workflow.includes(filter),
           )
         : accounts,
     ),
