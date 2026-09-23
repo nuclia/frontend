@@ -1,13 +1,22 @@
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
-import { switchMap, take } from 'rxjs';
-import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { UploadService } from '../upload.service';
-import { parseCsvLabels } from '../csv-parser';
-import { StandaloneService } from '../../services';
-import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 import { SDKService } from '@flaps/core';
+import {
+  markForCheck,
+  ModalRef,
+  PaButtonModule,
+  PaModalModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
+import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { switchMap, take } from 'rxjs';
+import { StandaloneService } from '../../services';
+import { parseCsvLabels } from '../csv-parser';
+import { CsvSelectComponent } from '../csv-select/csv-select.component';
+import { UploadService } from '../upload.service';
+import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
 const FORMATS: Set<TextFormat> = new Set(['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST']);
 
@@ -23,7 +32,17 @@ interface Row {
   templateUrl: './upload-text.component.html',
   styleUrls: ['./upload-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaModalModule,
+    PaButtonModule,
+    InfoCardComponent,
+    CsvSelectComponent,
+    PaTooltipModule,
+    SisProgressModule,
+    AsyncPipe,
+    DecimalPipe,
+    TranslatePipe,
+  ],
 })
 export class UploadTextComponent {
   isUploading = false;

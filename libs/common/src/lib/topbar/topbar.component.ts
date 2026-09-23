@@ -3,13 +3,24 @@ import { Router } from '@angular/router';
 import { AccountEntryContextService, BrandService, NavigationService, SDKService, UserService } from '@flaps/core';
 import { combineLatest, map, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
+import { KbSwitchComponent } from './kb-switch/kb-switch.component';
+import { PlanStatusComponent } from './plan-status/plan-status.component';
+import { UserMenuComponent } from './user-menu/user-menu.component';
+import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-topbar',
-  templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+    selector: 'app-topbar',
+    templateUrl: './topbar.component.html',
+    styleUrls: ['./topbar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        KbSwitchComponent,
+        PlanStatusComponent,
+        UserMenuComponent,
+        StandaloneMenuComponent,
+        AsyncPipe,
+    ],
 })
 export class TopbarComponent {
   @Output() openNotificationPanel = new EventEmitter<void>();

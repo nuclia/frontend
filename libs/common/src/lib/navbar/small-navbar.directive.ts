@@ -4,10 +4,7 @@ import { WINDOW } from '@ng-web-apis/common';
 // Height from which the menu get smaller (prevents scrollbar to appear)
 export const heightMediaQuery = '(max-height: 856px)';
 
-@Directive({
-  selector: '[appSmallNavbar]',
-  standalone: false,
-})
+@Directive({ selector: '[appSmallNavbar]', })
 export class SmallNavbarDirective implements OnDestroy {
   private mediaQueryList;
 

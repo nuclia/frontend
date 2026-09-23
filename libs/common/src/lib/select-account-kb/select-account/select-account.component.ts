@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,18 +8,20 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { NavigationStart, Router, Scroll } from '@angular/router';
-import { filter, Observable, of, Subject } from 'rxjs';
+import { NavigationStart, Router, RouterLink, RouterOutlet, Scroll } from '@angular/router';
 import {
   BrandService,
+  SDKService,
+  SelectAccountKbService,
   standaloneSimpleAccount,
   StaticEnvironmentConfiguration,
-  SelectAccountKbService,
-  SDKService,
 } from '@flaps/core';
-import { selectAnimations } from '../utils';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
+import { filter, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { selectAnimations } from '../utils';
 
 @Component({
   selector: 'app-select-account',
@@ -26,7 +29,7 @@ import { map, takeUntil } from 'rxjs/operators';
   styleUrls: ['./select-account.component.scss'],
   animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [RouterLink, PaIconModule, PaButtonModule, RouterOutlet, AsyncPipe, TranslatePipe, TranslateModule],
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
   accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(

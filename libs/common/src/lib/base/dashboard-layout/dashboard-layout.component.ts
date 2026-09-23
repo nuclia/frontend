@@ -1,17 +1,31 @@
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { combineLatest, map, startWith, take } from 'rxjs';
-import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';
-import { DashboardLayoutService } from './dashboard-layout.service';
+import { RouterOutlet } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
-import { SisModalService } from '@nuclia/sistema';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { combineLatest, map, startWith, take } from 'rxjs';
+import { NavbarComponent } from '../../navbar/navbar.component';
 import { EulaModalComponent } from '../../onboarding/eula-modal/eula-modal.component';
+import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';
+import { UploadBarComponent } from '../../upload/upload-bar/upload-bar.component';
+import { DashboardLayoutService } from './dashboard-layout.service';
 
 @Component({
   selector: 'stf-dashboard-layout',
   templateUrl: './dashboard-layout.component.html',
   styleUrls: ['./dashboard-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    NavbarComponent,
+    UploadBarComponent,
+    InfoCardComponent,
+    RouterOutlet,
+    AsyncPipe,
+    DecimalPipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class DashboardLayoutComponent {
   private uploadService = inject(UploadService);

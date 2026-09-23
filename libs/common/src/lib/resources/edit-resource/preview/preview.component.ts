@@ -1,8 +1,20 @@
+import { AsyncPipe, KeyValuePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LabelsService, NavigationService, SDKService } from '@flaps/core';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { LabelModule, LabelsService, NavigationService, SDKService } from '@flaps/core';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaChipsModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
+  PaTabsModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import {
   Classification,
   ExtractConfig,
@@ -21,7 +33,14 @@ import {
   trimLabelSets,
   TypeParagraph,
 } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
+import {
+  BadgeComponent,
+  DropdownButtonComponent,
+  InfoCardComponent,
+  NsiSkeletonComponent,
+  SisModalService,
+  SisProgressModule,
+} from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -47,7 +66,10 @@ import {
 } from '../edit-resource.helpers';
 import { EditResourceService } from '../edit-resource.service';
 import { ParagraphService } from '../paragraph.service';
+import { ThumbnailComponent } from '../profile/thumbnail/thumbnail.component';
 import { ResourceNavigationService } from '../resource-navigation.service';
+import { KeyValueFieldComponent } from './key-value-field/key-value-field.component';
+import { PreviewTableComponent } from './preview-table.component';
 import { PreviewService } from './preview.service';
 import { WarningModalComponent } from './warning-modal/warning-modal.component';
 
@@ -55,7 +77,31 @@ import { WarningModalComponent } from './warning-modal/warning-modal.component';
   templateUrl: './preview.component.html',
   styleUrls: ['../common-page-layout.scss', './preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaIconModule,
+    NsiSkeletonComponent,
+    PaTabsModule,
+    InfoCardComponent,
+    RouterLink,
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaTogglesModule,
+    LabelModule,
+    PaChipsModule,
+    PreviewTableComponent,
+    PaTooltipModule,
+    BadgeComponent,
+    PaButtonModule,
+    KeyValueFieldComponent,
+    ThumbnailComponent,
+    PaTableModule,
+    SisProgressModule,
+    AsyncPipe,
+    SlicePipe,
+    KeyValuePipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class PreviewComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);

@@ -1,6 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
+import { PaDropdownModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Account, IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
 
 @Component({
@@ -8,7 +12,15 @@ import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
   templateUrl: './kb-switch.component.html',
   styleUrls: ['./kb-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaTooltipModule,
+    PaIconModule,
+    AsyncPipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class KbSwitchComponent implements OnDestroy {
   private readonly unsubscribeAll = new Subject<void>();

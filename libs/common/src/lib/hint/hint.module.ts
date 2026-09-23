@@ -4,8 +4,7 @@ import { PaButtonModule, PaExpanderModule, PaIconModule } from '@guillotinaweb/p
 import { HintComponent } from './hint.component';
 
 @NgModule({
-  imports: [CommonModule, PaIconModule, PaExpanderModule, PaButtonModule],
+  imports: [CommonModule, PaIconModule, PaExpanderModule, PaButtonModule, HintComponent],
   exports: [HintComponent],
-  declarations: [HintComponent],
 })
 export class HintModule {}

@@ -3,10 +3,7 @@ import { formatDate } from '@angular/common';
 import { STFUtils } from '@flaps/core';
 import { AppService } from '../services';
 
-@Pipe({
-  name: 'formatDate',
-  standalone: false,
-})
+@Pipe({ name: 'formatDate', })
 export class FormatDatePipe implements PipeTransform {
   constructor(private appService: AppService) {}
 

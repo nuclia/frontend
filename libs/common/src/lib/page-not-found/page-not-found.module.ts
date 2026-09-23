@@ -4,8 +4,7 @@ import { PageNotFoundComponent } from './page-not-found.component';
 import { UserContainerComponent } from '@nuclia/user';
 
 @NgModule({
-  declarations: [PageNotFoundComponent],
-  imports: [CommonModule, UserContainerComponent],
-  exports: [PageNotFoundComponent],
+    imports: [CommonModule, UserContainerComponent, PageNotFoundComponent],
+    exports: [PageNotFoundComponent],
 })
 export class PageNotFoundModule {}

@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,17 +7,25 @@ import {
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
+import { isMemoryFieldId, isMemoryResource } from '../memory/memory.helpers';
+import { ResourceCacheService } from '../resource-cache.service';
 import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-resource.helpers';
 import { EditResourceService } from './edit-resource.service';
 import { ResourceNavigationService } from './resource-navigation.service';
-import { ResourceCacheService } from '../resource-cache.service';
-import { isMemoryFieldId, isMemoryResource } from '../memory/memory.helpers';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -31,7 +40,19 @@ const AUTO_FILE_FIELD_ID = /^[a-z0-9]{32}$/;
   styleUrls: ['edit-resource.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [
+    PaButtonModule,
+    PaTooltipModule,
+    RouterLink,
+    PaPopupModule,
+    PaDropdownModule,
+    PaIconModule,
+    RouterLinkActive,
+    RouterOutlet,
+    AsyncPipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

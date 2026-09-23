@@ -1,16 +1,44 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, forkJoin, map, Observable, switchMap, take } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import {
+  PaExpanderModule,
+  PaIconModule,
+  PaScrollModule,
+  PaTabsModule,
+  PaTextFieldModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Search } from '@nuclia/core';
-import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
+import { SisProgressModule } from '@nuclia/sistema';
+import { combineLatest, forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { shareReplay, takeUntil } from 'rxjs/operators';
-import { ParagraphAnnotationService } from './paragraph-annotation.service';
+import { SafeHtmlPipe } from '../../../../pipes/safe-html.pipe';
+import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
 import { SelectFirstFieldDirective } from '../../select-first-field/select-first-field.directive';
+import { RelationsComponent } from '../relations/relations.component';
+import { ParagraphAnnotationService } from './paragraph-annotation.service';
 
 @Component({
   templateUrl: './paragraph-annotation.component.html',
   styleUrls: ['../../common-page-layout.scss', './paragraph-annotation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTabsModule,
+    PaTextFieldModule,
+    FormsModule,
+    PaScrollModule,
+    PaIconModule,
+    PaExpanderModule,
+    PaTooltipModule,
+    RelationsComponent,
+    SisProgressModule,
+    AsyncPipe,
+    TranslatePipe,
+    SafeHtmlPipe,
+    TranslateModule,
+  ],
 })
 export class ParagraphAnnotationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithTextAndAnnotations[]> = this.annotationService.paragraphs;

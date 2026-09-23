@@ -1,7 +1,18 @@
+import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, Input } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  PaButtonModule,
+  PaChipsModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
+import { DropdownButtonComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { INVITE_REMOVE_ARIA_I18N_KEY, INVITE_STATUS_CLASS, INVITE_STATUS_I18N_KEY } from './users-manage.config';
 import { InviteEntry, InviteEntryStatus } from './users-manage.model';
@@ -12,7 +23,24 @@ import { UsersManageService } from './users-manage.service';
   templateUrl: './users-manage.component.html',
   styleUrls: ['./users-manage.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    ExpandableTextareaComponent,
+    PaButtonModule,
+    PaChipsModule,
+    NgClass,
+    PaTextFieldModule,
+    PaDropdownModule,
+    InfoCardComponent,
+    DropdownButtonComponent,
+    PaTableModule,
+    PaIconModule,
+    PaTooltipModule,
+    AsyncPipe,
+    DatePipe,
+    TranslatePipe,
+  ],
 })
 export class UsersManageComponent {
   @Input() set kb(value: WritableKnowledgeBox | undefined) {

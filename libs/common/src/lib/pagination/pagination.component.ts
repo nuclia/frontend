@@ -1,12 +1,14 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateDirective, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-pagination',
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [PaButtonModule, TranslateDirective, TranslatePipe, TranslateModule],
 })
 export class PaginationComponent {
   @Input()

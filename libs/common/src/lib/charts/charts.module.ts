@@ -8,8 +8,7 @@ import { BarChartComponent } from './bar-chart/bar-chart.component';
 import { EmptyChartComponent } from './empty-chart/empty-chart.component';
 
 @NgModule({
-  imports: [CommonModule, AngularSvgIconModule, TranslateModule.forChild()],
-  declarations: [LineChartComponent, BarChartComponent, EmptyChartComponent],
-  exports: [LineChartComponent, BarChartComponent, EmptyChartComponent],
+    imports: [CommonModule, AngularSvgIconModule, TranslateModule.forChild(), LineChartComponent, BarChartComponent, EmptyChartComponent],
+    exports: [LineChartComponent, BarChartComponent, EmptyChartComponent],
 })
 export class ChartsModule {}

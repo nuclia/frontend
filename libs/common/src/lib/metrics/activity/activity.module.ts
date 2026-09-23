@@ -24,22 +24,22 @@ const ROUTES = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    AngularSvgIconModule,
-    TranslateModule.forChild(),
-    RouterModule.forChild(ROUTES),
-    PaButtonModule,
-    PaTabsModule,
-    PaIconModule,
-    PaPopupModule,
-    PaExpanderModule,
-    PaTooltipModule,
-    ActivityLogTableComponent,
-    InfoCardComponent,
-    SisProgressModule,
-  ],
-  declarations: [ActivityDownloadComponent],
-  exports: [],
+    imports: [
+        CommonModule,
+        AngularSvgIconModule,
+        TranslateModule.forChild(),
+        RouterModule.forChild(ROUTES),
+        PaButtonModule,
+        PaTabsModule,
+        PaIconModule,
+        PaPopupModule,
+        PaExpanderModule,
+        PaTooltipModule,
+        ActivityLogTableComponent,
+        InfoCardComponent,
+        SisProgressModule,
+        ActivityDownloadComponent,
+    ],
+    exports: [],
 })
 export class ActivityModule {}

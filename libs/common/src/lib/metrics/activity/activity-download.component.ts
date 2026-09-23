@@ -1,4 +1,16 @@
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { SDKService, UserService } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaExpanderModule,
+  PaIconModule,
+  PaTabsModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { EventType } from '@nuclia/core';
+import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
 import {
   concatMap,
   filter,
@@ -15,12 +27,9 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { SDKService, UserService } from '@flaps/core';
-import { EventType } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
-import { LogEntry } from './log.models';
 import { ActivityService } from './activity.service';
+import { ActivityLogTableComponent } from './log-table.component';
+import { LogEntry } from './log.models';
 
 type Tab = 'resources' | 'searches';
 type ActivityTab = EventType;
@@ -62,7 +71,20 @@ const chatColumns = [
   templateUrl: './activity-download.component.html',
   styleUrls: ['./activity-download.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTabsModule,
+    PaExpanderModule,
+    PaIconModule,
+    PaButtonModule,
+    PaTooltipModule,
+    SisProgressModule,
+    InfoCardComponent,
+    ActivityLogTableComponent,
+    AsyncPipe,
+    DatePipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class ActivityDownloadComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();

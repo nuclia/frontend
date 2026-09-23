@@ -5,10 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import PerfectScrollbar from 'perfect-scrollbar';
 
-@Directive({
-  selector: '[stfPerfectScrollbar]',
-  standalone: false,
-})
+@Directive({ selector: '[stfPerfectScrollbar]', })
 export class STFPerfectScrollbarDirective implements AfterViewInit, OnDestroy {
   isInitialized: boolean;
   isMobile: boolean;

@@ -1,8 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, SelectAccountKbService } from '@flaps/core';
+import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
+import { BackButtonComponent, ButtonMiniComponent, SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,7 +14,16 @@ import { map } from 'rxjs/operators';
   templateUrl: './select-kb.component.html',
   styleUrls: ['./select-kb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    BackButtonComponent,
+    ButtonMiniComponent,
+    PaTooltipModule,
+    PaButtonModule,
+    PaIconModule,
+    AsyncPipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class SelectKbComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();

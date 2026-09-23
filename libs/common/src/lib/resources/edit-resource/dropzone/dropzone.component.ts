@@ -1,3 +1,4 @@
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,14 +9,16 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { FileUploadModule } from '@flaps/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { SisProgressModule } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-dropzone',
   templateUrl: './dropzone.component.html',
   styleUrls: ['./dropzone.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [FileUploadModule, SisProgressModule, TranslatePipe, TranslateModule],
 })
 export class DropzoneComponent {
   @Input()

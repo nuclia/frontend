@@ -1,10 +1,21 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import {
+  DatePickerComponent,
+  ModalConfig,
+  PaButtonModule,
+  PaDatePickerModule,
+  PaExpanderModule,
+  PaIconModule,
+  PaTabsModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
-import { DatePickerComponent, ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { NsiSkeletonComponent, SisModalService, SisSearchInputComponent, SisToastService } from '@nuclia/sistema';
 import { catchError, delay, filter, forkJoin, of, switchMap, take } from 'rxjs';
 import { EditResourceService } from '../edit-resource';
 import { MemoryFactsModalComponent } from './memory-facts-modal/memory-facts-modal.component';
@@ -17,8 +28,22 @@ import { MemoryService } from './memory.service';
   templateUrl: './memory.component.html',
   styleUrl: './memory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [MemoryService],
+  imports: [
+    PaTabsModule,
+    PaButtonModule,
+    PaTooltipModule,
+    PaExpanderModule,
+    NsiSkeletonComponent,
+    SisSearchInputComponent,
+    PaDatePickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaIconModule,
+    DatePipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class MemoryComponent implements OnInit {
   private modal = inject(SisModalService);

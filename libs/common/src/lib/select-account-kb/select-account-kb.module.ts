@@ -11,20 +11,20 @@ import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from
 import { BackButtonComponent, ButtonMiniComponent } from '@nuclia/sistema';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    AngularSvgIconModule,
-    TranslateModule.forChild(),
-    ReactiveFormsModule,
-    RouterModule,
-    PaButtonModule,
-    PaIconModule,
-    PaTooltipModule,
-    PaTextFieldModule,
-    BackButtonComponent,
-    ButtonMiniComponent,
-  ],
-  declarations: [SelectAccountComponent, SelectKbComponent],
-  exports: [],
+    imports: [
+        CommonModule,
+        AngularSvgIconModule,
+        TranslateModule.forChild(),
+        ReactiveFormsModule,
+        RouterModule,
+        PaButtonModule,
+        PaIconModule,
+        PaTooltipModule,
+        PaTextFieldModule,
+        BackButtonComponent,
+        ButtonMiniComponent,
+        SelectAccountComponent, SelectKbComponent,
+    ],
+    exports: [],
 })
 export class SelectAccountKbModule {}

@@ -1,12 +1,14 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
+import { PaButtonModule, PaFocusableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-thumbnail',
   templateUrl: './thumbnail.component.html',
   styleUrls: ['./thumbnail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaFocusableModule, PaButtonModule, TranslatePipe, TranslateModule],
 })
 export class ThumbnailComponent {
   @Input() url: SafeUrl | string | undefined;

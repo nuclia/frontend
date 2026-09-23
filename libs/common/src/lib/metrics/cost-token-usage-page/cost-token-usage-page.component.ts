@@ -1,16 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { DownloadFormat } from '@nuclia/core';
+import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
 import { MetricsMonthRange } from '../metrics-column.model';
 import { BooleanCondition, DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
-import { CostTokenUsagePageService } from './cost-token-usage-page.service';
+import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
+import { MetricsPageComponent } from '../metrics-page.component';
 import { COST_TOKEN_COLUMNS, COST_TOKEN_SIDEBAR_FIELDS } from './cost-token-usage-page.config';
-import { DownloadFormat } from '@nuclia/core';
+import { CostTokenUsagePageService } from './cost-token-usage-page.service';
 
 @Component({
   selector: 'app-cost-token-usage-page',
   templateUrl: './cost-token-usage-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [CostTokenUsagePageService],
+  imports: [MetricsPageComponent, MetricsFiltersComponent, TranslatePipe, CompactNumberPipe, TranslateModule],
 })
 export class CostTokenUsagePageComponent {
   protected service = inject(CostTokenUsagePageService);

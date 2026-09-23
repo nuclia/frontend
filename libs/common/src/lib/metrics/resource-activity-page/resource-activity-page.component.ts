@@ -1,16 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { EventType } from '@nuclia/core';
+import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
 import { MetricsMonthRange } from '../metrics-column.model';
 import { DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
-import { ResourceActivityPageService } from './resource-activity-page.service';
+import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
+import { MetricsPageComponent } from '../metrics-page.component';
 import { PROCESSING_ACTIVITY_COLUMNS, PROCESSING_ACTIVITY_SIDEBAR_FIELDS } from './resource-activity-page.config';
+import { ResourceActivityPageService } from './resource-activity-page.service';
 
 @Component({
   selector: 'app-resource-activity-page',
   templateUrl: './resource-activity-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [ResourceActivityPageService],
+  imports: [MetricsPageComponent, MetricsFiltersComponent, TranslatePipe, CompactNumberPipe, TranslateModule],
 })
 export class ResourceActivityPageComponent {
   protected service = inject(ResourceActivityPageService);

@@ -1,11 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
-import { EntitiesComponent } from './entities.component';
-import { EntityListComponent } from './entity-list/entity-list.component';
 import {
   PaButtonModule,
   PaIconModule,
@@ -13,8 +11,10 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { HintModule } from '../hint';
 import { SisProgressModule } from '@nuclia/sistema';
+import { HintModule } from '../hint';
+import { EntitiesComponent } from './entities.component';
+import { EntityListComponent } from './entity-list/entity-list.component';
 
 @NgModule({
   imports: [
@@ -29,8 +29,9 @@ import { SisProgressModule } from '@nuclia/sistema';
     HintModule,
     SisProgressModule,
     PaTableModule,
+    EntitiesComponent,
+    EntityListComponent,
   ],
-  declarations: [EntitiesComponent, EntityListComponent],
   exports: [],
 })
 export class EntitiesModule {}

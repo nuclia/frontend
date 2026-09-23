@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { Entity, NerFamily } from '../model';
 
@@ -9,7 +11,7 @@ const COUNT_ROWS_DISPLAYED = 1000;
   templateUrl: './entity-list.component.html',
   styleUrls: ['./entity-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, TranslatePipe, TranslateModule],
 })
 export class EntityListComponent implements OnDestroy {
   @Input()

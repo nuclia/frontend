@@ -1,16 +1,32 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { LabelModule, LabelsService } from '@flaps/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelSetKind, LabelSets, Resource } from '@nuclia/core';
+import {
+  getClassificationFromSelection,
+  getSelectionFromClassification,
+  LabelsExpanderComponent,
+} from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, map, Observable, Subject, tap } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
-import { LabelsService } from '@flaps/core';
-import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 import { EditResourceService } from '../edit-resource.service';
 
 @Component({
   templateUrl: './resource-classification.component.html',
   styleUrls: ['../common-page-layout.scss', './resource-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    RouterLink,
+    LabelModule,
+    LabelsExpanderComponent,
+    PaButtonModule,
+    AsyncPipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class ResourceClassificationComponent implements OnInit, OnDestroy {
   backupLabels: Classification[] = [];

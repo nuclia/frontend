@@ -1,12 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import {
   BackendConfigurationService,
   FeatureFlagService,
   FeaturesService,
   NavigationService,
   SDKService,
+  UnauthorizedFeatureDirective,
 } from '@flaps/core';
+import { PaFocusableModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
 
@@ -15,7 +19,16 @@ import { StandaloneService } from '../services';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    RouterLinkActive,
+    RouterLink,
+    PaIconModule,
+    PaFocusableModule,
+    UnauthorizedFeatureDirective,
+    AsyncPipe,
+    TranslatePipe,
+    TranslateModule,
+  ],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

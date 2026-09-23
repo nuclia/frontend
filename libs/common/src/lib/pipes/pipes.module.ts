@@ -6,8 +6,7 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 import { FormatTimePipe } from './format-time.pipe';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [FormatDatePipe, FormatTimePipe, SafeHtmlPipe],
-  exports: [FormatDatePipe, FormatTimePipe, SafeHtmlPipe],
+    imports: [CommonModule, FormatDatePipe, FormatTimePipe, SafeHtmlPipe],
+    exports: [FormatDatePipe, FormatTimePipe, SafeHtmlPipe],
 })
 export class PipesModule {}
