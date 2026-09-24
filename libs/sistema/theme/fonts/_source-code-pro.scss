@@ -1,10 +1,11 @@
-$font-path: '../../assets/fonts';
+$font-path: '/assets/fonts';
 
 /* source-code-pro-regular - latin */
 @font-face {
   font-family: 'Source Code Pro';
   font-style: normal;
   font-weight: 400;
-  src: url($font-path + '/source-code-pro/source-code-pro-v14-latin-regular.woff2') format('woff2'),
+  src:
+    url($font-path + '/source-code-pro/source-code-pro-v14-latin-regular.woff2') format('woff2'),
     url($font-path + '/source-code-pro/source-code-pro-v14-latin-regular.woff') format('woff');
 }
