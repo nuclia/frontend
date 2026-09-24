@@ -13,8 +13,7 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterModule.forRoot([])],
-      declarations: [AppComponent],
+      imports: [AppComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(SisModalService),
         MockProvider(BackendConfigurationService),
