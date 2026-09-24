@@ -68,7 +68,7 @@ const ROUTES = [
     UserFeedbackPageComponent,
     CostTokenUsagePageComponent,
     UsageAnalyticsPageComponent,
-],
+  ],
   providers: [DatePipe],
 })
 export class MetricsModule {}

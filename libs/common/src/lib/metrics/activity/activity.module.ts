@@ -24,7 +24,7 @@ const ROUTES = [
 ];
 
 @NgModule({
-    imports: [
+  imports: [
     CommonModule,
     AngularSvgIconModule,
     TranslateModule.forChild(),
@@ -38,7 +38,7 @@ const ROUTES = [
     ActivityLogTableComponent,
     InfoCardComponent,
     ActivityDownloadComponent,
-],
-    exports: [],
+  ],
+  exports: [],
 })
 export class ActivityModule {}

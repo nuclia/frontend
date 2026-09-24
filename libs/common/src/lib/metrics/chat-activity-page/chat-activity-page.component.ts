@@ -7,11 +7,11 @@ import { MetricsPageComponent } from '../metrics-page.component';
 import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
 
 @Component({
-    selector: 'app-chat-activity-page',
-    templateUrl: './chat-activity-page.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ChatActivityPageService],
-    imports: [MetricsPageComponent, MetricsFiltersComponent],
+  selector: 'app-chat-activity-page',
+  templateUrl: './chat-activity-page.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ChatActivityPageService],
+  imports: [MetricsPageComponent, MetricsFiltersComponent],
 })
 export class ChatActivityPageComponent {
   protected service = inject(ChatActivityPageService);

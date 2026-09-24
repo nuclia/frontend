@@ -6,11 +6,11 @@ import { MutableLabelSet } from '../model';
 import { LabelSetFormComponent } from './label-set-form/label-set-form.component';
 
 @Component({
-    selector: 'app-label-set',
-    templateUrl: './label-set.component.html',
-    styleUrls: ['./label-set.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [LabelSetFormComponent],
+  selector: 'app-label-set',
+  templateUrl: './label-set.component.html',
+  styleUrls: ['./label-set.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LabelSetFormComponent],
 })
 export class LabelSetComponent implements OnInit, OnDestroy {
   labelSet?: MutableLabelSet;

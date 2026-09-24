@@ -6,7 +6,22 @@ import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { AccountDeleteComponent, AccountStatusComponent, ChartsModule, HintModule, KbCreationComponent, KnowledgeBoxKeysComponent, NavbarModule, OtpInputComponent, ProfileComponent, TokenDialogModule, UsersManageModule, accountOwnerGuard, agentFeatureEnabledGuard, canMatchSimpleMode } from '@flaps/common';
+import {
+  AccountDeleteComponent,
+  AccountStatusComponent,
+  ChartsModule,
+  HintModule,
+  KbCreationComponent,
+  KnowledgeBoxKeysComponent,
+  NavbarModule,
+  OtpInputComponent,
+  ProfileComponent,
+  TokenDialogModule,
+  UsersManageModule,
+  accountOwnerGuard,
+  agentFeatureEnabledGuard,
+  canMatchSimpleMode,
+} from '@flaps/common';
 import { LowerCaseInputDirective, UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
 import {
   PaButtonModule,
@@ -136,7 +151,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [
+  imports: [
     CommonModule,
     AngularSvgIconModule,
     TranslateModule.forChild(),
@@ -192,7 +207,7 @@ const routes: Routes = [
     AccountUsersComponent,
     NuaActivityComponent,
     SimpleAccountHomeComponent,
-],
-    exports: [AccountHomeComponent, AccountSettingsComponent, AccountManageComponent, SimpleAccountHomeComponent],
+  ],
+  exports: [AccountHomeComponent, AccountSettingsComponent, AccountManageComponent, SimpleAccountHomeComponent],
 })
 export class AccountModule {}

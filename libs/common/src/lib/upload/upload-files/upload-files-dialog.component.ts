@@ -4,8 +4,8 @@ import { UploadFilesComponent } from './upload-files.component';
 import { UploadProgressComponent } from '../upload-progress/upload-progress.component';
 
 @Component({
-    selector: 'app-upload-files-dialog',
-    template: `
+  selector: 'app-upload-files-dialog',
+  template: `
     @if (!showProgress) {
       <app-upload-files
         [folderMode]="$safeNavigationMigration(modal.config.data?.['folderMode'])"
@@ -16,8 +16,8 @@ import { UploadProgressComponent } from '../upload-progress/upload-progress.comp
       <app-upload-progress (progressClose)="close()"></app-upload-progress>
     }
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [UploadFilesComponent, UploadProgressComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [UploadFilesComponent, UploadProgressComponent],
 })
 export class UploadFilesDialogComponent {
   showProgress = false;

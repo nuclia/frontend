@@ -10,17 +10,11 @@ import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.compo
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-topbar',
-    templateUrl: './topbar.component.html',
-    styleUrls: ['./topbar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        KbSwitchComponent,
-        PlanStatusComponent,
-        UserMenuComponent,
-        StandaloneMenuComponent,
-        AsyncPipe,
-    ],
+  selector: 'app-topbar',
+  templateUrl: './topbar.component.html',
+  styleUrls: ['./topbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [KbSwitchComponent, PlanStatusComponent, UserMenuComponent, StandaloneMenuComponent, AsyncPipe],
 })
 export class TopbarComponent {
   @Output() openNotificationPanel = new EventEmitter<void>();

@@ -3,10 +3,10 @@ import { isColorInList } from '../../utils';
 import { getLabelColor, isHexColor, isSameHexColor } from '@nuclia/sistema';
 
 @Component({
-    selector: 'app-color-picker',
-    templateUrl: './color-picker.component.html',
-    styleUrls: ['./color-picker.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-color-picker',
+  templateUrl: './color-picker.component.html',
+  styleUrls: ['./color-picker.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColorPickerComponent {
   @Input() hexColors: string[] = [];

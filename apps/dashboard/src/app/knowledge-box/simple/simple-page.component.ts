@@ -10,16 +10,16 @@ import { ReaderExperienceComponent } from './reader-experience/reader-experience
 import { SimpleKBComponent } from './simple-kb/simple-kb.component';
 
 @Component({
-    selector: 'app-simple-page',
-    template: `
+  selector: 'app-simple-page',
+  template: `
     @if (isReader()) {
       <app-reader-experience></app-reader-experience>
     } @else {
       <app-simple-kb></app-simple-kb>
     }
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ReaderExperienceComponent, SimpleKBComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReaderExperienceComponent, SimpleKBComponent],
 })
 export class SimplePageComponent {
   private sdk = inject(SDKService);

@@ -4,8 +4,8 @@ import { BillingService } from '@flaps/core';
 import { take } from 'rxjs';
 
 @Component({
-    template: '',
-    changeDetection: ChangeDetectionStrategy.Eager,
+  template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class RedirectComponent {
   constructor(

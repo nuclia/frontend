@@ -37,7 +37,7 @@ export const COMMON_COLUMNS = [
   },
 ];
 
-@Directive({ selector: '[stfResourcesTable]', })
+@Directive({ selector: '[stfResourcesTable]' })
 export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected resourceListService = inject(ResourceListService);
   protected resourceCacheService = inject(ResourceCacheService);

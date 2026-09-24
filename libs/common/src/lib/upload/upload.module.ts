@@ -35,7 +35,7 @@ import { ExtractionSelectComponent } from './extraction-select/extraction-select
 import { ResourceHandlingBannerComponent } from './resource-handling-banner/resource-handling-banner.component';
 
 @NgModule({
-    imports: [
+  imports: [
     CommonModule,
     AngularSvgIconModule,
     TranslateModule.forChild(),
@@ -70,13 +70,13 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
     UploadDataComponent,
     UploadOptionComponent,
     DesktopSourcesComponent,
-],
-    exports: [
-        UploadBarComponent,
-        CsvSelectComponent,
-        UploadDataComponent,
-        DesktopSourcesComponent,
-        UploadOptionComponent,
-    ],
+  ],
+  exports: [
+    UploadBarComponent,
+    CsvSelectComponent,
+    UploadDataComponent,
+    DesktopSourcesComponent,
+    UploadOptionComponent,
+  ],
 })
 export class UploadModule {}

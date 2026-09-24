@@ -29,7 +29,7 @@ import { ManualSubscriptionComponent } from './subscriptions/manual-subscription
 import { BudgetComponent } from '@flaps/common';
 
 @NgModule({
-    imports: [
+  imports: [
     CommonModule,
     TranslateModule.forChild(),
     AngularSvgIconModule,
@@ -57,7 +57,7 @@ import { BudgetComponent } from '@flaps/common';
     UnsubscribeComponent,
     AwsSubscriptionComponent,
     ManualSubscriptionComponent,
-],
-    exports: [SubscriptionsComponent],
+  ],
+  exports: [SubscriptionsComponent],
 })
 export class BillingModule {}

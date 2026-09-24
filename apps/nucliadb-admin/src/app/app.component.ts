@@ -10,11 +10,11 @@ import { RouterOutlet } from '@angular/router';
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
 @Component({
-    selector: 'nad-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [RouterOutlet],
+  selector: 'nad-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;

@@ -30,7 +30,7 @@ import { EntityListComponent } from './entity-list/entity-list.component';
     PaTableModule,
     EntitiesComponent,
     EntityListComponent,
-],
+  ],
   exports: [],
 })
 export class EntitiesModule {}

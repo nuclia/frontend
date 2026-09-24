@@ -6,9 +6,9 @@ import { addDays } from 'date-fns';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-    template: '<router-outlet></router-outlet>',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [RouterOutlet],
+  template: '<router-outlet></router-outlet>',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterOutlet],
 })
 export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

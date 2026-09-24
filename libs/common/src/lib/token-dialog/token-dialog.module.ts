@@ -7,7 +7,14 @@ import { TokenDialogComponent } from './token-dialog.component';
 import { PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-    imports: [CommonModule, AngularSvgIconModule, TranslateModule.forChild(), PaButtonModule, PaModalModule, TokenDialogComponent],
-    exports: [TokenDialogComponent],
+  imports: [
+    CommonModule,
+    AngularSvgIconModule,
+    TranslateModule.forChild(),
+    PaButtonModule,
+    PaModalModule,
+    TokenDialogComponent,
+  ],
+  exports: [TokenDialogComponent],
 })
 export class TokenDialogModule {}

@@ -3,10 +3,10 @@ import { DesktopUploadService } from '../..';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
-    selector: 'stf-desktop-sources',
-    templateUrl: './desktop-sources.component.html',
-    styleUrls: ['./desktop-sources.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'stf-desktop-sources',
+  templateUrl: './desktop-sources.component.html',
+  styleUrls: ['./desktop-sources.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DesktopSourcesComponent {
   @Input()

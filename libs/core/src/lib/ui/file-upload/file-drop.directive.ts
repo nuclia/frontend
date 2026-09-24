@@ -4,7 +4,7 @@ import { getDroppedFiles } from './file-drop.utils';
 export type DroppedFile = File & { relativePath: string };
 const extensionRegexp = /^\.[a-zA-Z0-9]+$/;
 
-@Directive({ selector: '[stfFileDrop]', })
+@Directive({ selector: '[stfFileDrop]' })
 export class FileDropDirective {
   public constructor(element: ElementRef) {
     this.element = element;

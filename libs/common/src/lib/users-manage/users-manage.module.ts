@@ -15,22 +15,22 @@ import { DropdownButtonComponent, ExpandableTextareaComponent, InfoCardComponent
 import { UsersManageComponent } from './users-manage.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        TranslateModule.forChild(),
-        ReactiveFormsModule,
-        PaButtonModule,
-        PaChipsModule,
-        PaDropdownModule,
-        PaIconModule,
-        DropdownButtonComponent,
-        PaTableModule,
-        PaTextFieldModule,
-        PaTooltipModule,
-        ExpandableTextareaComponent,
-        InfoCardComponent,
-        UsersManageComponent,
-    ],
-    exports: [UsersManageComponent],
+  imports: [
+    CommonModule,
+    TranslateModule.forChild(),
+    ReactiveFormsModule,
+    PaButtonModule,
+    PaChipsModule,
+    PaDropdownModule,
+    PaIconModule,
+    DropdownButtonComponent,
+    PaTableModule,
+    PaTextFieldModule,
+    PaTooltipModule,
+    ExpandableTextareaComponent,
+    InfoCardComponent,
+    UsersManageComponent,
+  ],
+  exports: [UsersManageComponent],
 })
 export class UsersManageModule {}

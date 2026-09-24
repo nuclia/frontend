@@ -5,7 +5,7 @@ import { SizePipe } from './size.pipe';
 const PIPES = [SizePipe];
 
 @NgModule({
-    imports: [CommonModule, ...PIPES],
-    exports: [...PIPES],
+  imports: [CommonModule, ...PIPES],
+  exports: [...PIPES],
 })
 export class STFPipesModule {}
