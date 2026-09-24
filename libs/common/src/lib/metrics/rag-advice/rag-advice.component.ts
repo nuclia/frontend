@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, NgZone, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, NgZone, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { SDKService } from '@flaps/core';
 import {
   ModalConfig,
   ModalRef,
@@ -13,7 +14,20 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  LearningConfigurationOption,
+  RAGStrategy,
+  RagStrategyName,
+  RemiQueryCriteria,
+  RemiQueryResponseItem,
+} from '@nuclia/core';
+import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SpinnerComponent } from '@nuclia/sistema';
+import { catchError, last, Observable, of, switchMap, take, timer } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { isGeminiPriorityModel } from '../../ai-models';
+import { SearchWidgetService } from '../../search-widget';
+import { RemiScoreDisplayComponent } from '../remi-score-display';
 import {
   AdviceInput,
   AdviceResult,
@@ -22,20 +36,6 @@ import {
   RagAdviceService,
   suggestedParamsToSearchConfig,
 } from './rag-advice.service';
-import { SDKService } from '@flaps/core';
-import { isGeminiPriorityModel } from '../../ai-models';
-import {
-  LearningConfigurationOption,
-  RAGStrategy,
-  RagStrategyName,
-  RemiQueryCriteria,
-  RemiQueryResponseItem,
-} from '@nuclia/core';
-import { SearchWidgetService } from '../../search-widget';
-import { RemiScoreDisplayComponent } from '../remi-score-display';
-import { catchError, last, Observable, of, switchMap, take, timer } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
 
 type ModalState = 'input' | 'analyzing' | 'advice' | 'testing' | 'tested' | 'saving' | 'done' | 'error';
 type FieldState = 'original' | 'suggested' | 'modified';
@@ -75,7 +75,7 @@ type NumericInputOrUndefined = string | number | null | undefined;
     PaTooltipModule,
     InfoCardComponent,
     NsiSkeletonComponent,
-    SisProgressModule,
+    SpinnerComponent,
     RemiScoreDisplayComponent,
   ],
   templateUrl: './rag-advice.component.html',

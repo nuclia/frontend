@@ -2,11 +2,18 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { DroppedFile, FeaturesService, FileUploadModule, SDKService, SizePipe } from '@flaps/core';
+import {
+  DroppedFile,
+  FeaturesService,
+  FileDropDirective,
+  FileSelectDirective,
+  SDKService,
+  SizePipe,
+} from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { SisModalService, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { combineLatest, delay, distinctUntilChanged, filter, of, Subject, switchMap, take, tap } from 'rxjs';
 import { HistoryTableComponent } from '../history-table/history-table.component';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
@@ -20,10 +27,11 @@ import { SimpleKBService } from './simple-kb.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SizePipe],
   imports: [
-    SisProgressModule,
+    SpinnerComponent,
     PaIconModule,
     PaButtonModule,
-    FileUploadModule,
+    FileDropDirective,
+    FileSelectDirective,
     ResourceTableComponent,
     HistoryTableComponent,
     AsyncPipe,

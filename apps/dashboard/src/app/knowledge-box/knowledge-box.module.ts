@@ -18,7 +18,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisIconsModule } from '@nuclia/sistema';
+import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent } from '@nuclia/sistema';
 import { KbOnboardingHeaderComponent } from './knowledge-box-home/kb-onboarding/kb-onboarding-header.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
@@ -29,7 +29,6 @@ import {
   GenerativeModelPipe,
   HintModule,
   KnowledgeBoxSettingsComponent,
-  PipesModule,
   RangeChartComponent,
   TokenDialogModule,
   UploadModule,
@@ -51,7 +50,6 @@ import { LastResourcesComponent } from './knowledge-box-home/last-resources/last
     RouterModule,
     TokenDialogModule,
     ChartsModule,
-    PipesModule,
     HintModule,
     UsersManageModule,
     PaButtonModule,
@@ -69,7 +67,6 @@ import { LastResourcesComponent } from './knowledge-box-home/last-resources/last
     HomeContainerComponent,
     KnowledgeBoxSettingsComponent,
     PaTooltipModule,
-    SisIconsModule,
     PaButtonModule,
     PaDropdownModule,
     PaTableModule,

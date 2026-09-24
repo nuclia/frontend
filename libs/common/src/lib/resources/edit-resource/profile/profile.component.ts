@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { FeaturesService, FileUploadModule, SDKService } from '@flaps/core';
+import { FeaturesService, FileDropDirective, FileSelectDirective, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -23,7 +23,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
-import { ExpandableTextareaComponent, JsonViewerComponent, SisProgressModule } from '@nuclia/sistema';
+import { ExpandableTextareaComponent, JsonViewerComponent, SpinnerComponent } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { delay, shareReplay, take, takeUntil } from 'rxjs/operators';
 import { HintComponent } from '../../../hint/hint.component';
@@ -38,7 +38,7 @@ import { ThumbnailComponent } from './thumbnail/thumbnail.component';
   styleUrls: ['../common-page-layout.scss', 'profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SisProgressModule,
+    SpinnerComponent,
     FormsModule,
     ReactiveFormsModule,
     AccordionComponent,
@@ -47,7 +47,8 @@ import { ThumbnailComponent } from './thumbnail/thumbnail.component';
     PaTextFieldModule,
     ExpandableTextareaComponent,
     PaTogglesModule,
-    FileUploadModule,
+    FileDropDirective,
+    FileSelectDirective,
     ThumbnailComponent,
     PaDatePickerModule,
     PaTableModule,

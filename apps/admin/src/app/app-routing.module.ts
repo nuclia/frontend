@@ -1,20 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
-import {
-  BaseComponent,
-  DashboardLayoutComponent,
-  EmptyComponent,
-  PageNotFoundComponent,
-  PageNotFoundModule,
-  rootGuard,
-  awsGuard,
-  AwsOnboardingComponent,
-  SelectAccountComponent,
-  selectAccountGuard,
-  selectAccountManageGuard,
-  setAccountGuard,
-} from '@flaps/common';
+import { BaseComponent, DashboardLayoutComponent, EmptyComponent, PageNotFoundComponent, rootGuard, awsGuard, AwsOnboardingComponent, SelectAccountComponent, selectAccountGuard, selectAccountManageGuard, setAccountGuard } from '@flaps/common';
 import { RedirectComponent, FarewellComponent, CallbackComponent, AppLoginComponent } from '@nuclia/user';
 import { authGuard, redirectToSignUp } from '@flaps/core';
 import { fallbackRedirectGuard } from './fallback-redirect.guard';
@@ -79,7 +66,7 @@ const routerOptions: ExtraOptions = {
 };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, routerOptions), PageNotFoundModule],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

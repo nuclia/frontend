@@ -5,14 +5,14 @@ import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
-import { SisModalService, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { filter, switchMap, take, takeUntil } from 'rxjs/operators';
 import { UsersDialogComponent } from '../users-dialog/users-dialog.component';
 
 @Component({
   selector: 'app-kb-list',
-  imports: [CommonModule, SisProgressModule, PaButtonModule, TranslateModule, PaTooltipModule, RouterLink],
+  imports: [CommonModule, SpinnerComponent, PaButtonModule, TranslateModule, PaTooltipModule, RouterLink],
   templateUrl: './kb-list.component.html',
   styleUrl: './kb-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

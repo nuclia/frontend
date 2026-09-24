@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { I18N_EN, PA_LANG, PaButtonModule, PaSideNavModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DEMO_LA, PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SistemaPagesModule } from './sistema-pages/sistema-pages.module';

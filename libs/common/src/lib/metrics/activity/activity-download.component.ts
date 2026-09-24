@@ -10,7 +10,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventType } from '@nuclia/core';
-import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import {
   concatMap,
   filter,
@@ -77,7 +77,7 @@ const chatColumns = [
     PaIconModule,
     PaButtonModule,
     PaTooltipModule,
-    SisProgressModule,
+    SpinnerComponent,
     InfoCardComponent,
     ActivityLogTableComponent,
     AsyncPipe,

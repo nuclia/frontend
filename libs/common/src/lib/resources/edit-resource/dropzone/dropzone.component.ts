@@ -9,16 +9,17 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FileUploadModule } from '@flaps/core';
+import { FileDropDirective, FileSelectDirective } from '@flaps/core';
+
 import { TranslatePipe } from '@ngx-translate/core';
-import { SisProgressModule } from '@nuclia/sistema';
+import { SpinnerComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-dropzone',
   templateUrl: './dropzone.component.html',
   styleUrls: ['./dropzone.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FileUploadModule, SisProgressModule, TranslatePipe],
+  imports: [FileDropDirective, FileSelectDirective, SpinnerComponent, TranslatePipe],
 })
 export class DropzoneComponent {
   @Input()

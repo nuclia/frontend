@@ -26,12 +26,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivityLogItem, DownloadFormat } from '@nuclia/core';
-import {
-  DropdownButtonComponent,
-  InfoCardComponent,
-  SisProgressModule,
-  SisSearchInputComponent,
-} from '@nuclia/sistema';
+import { DropdownButtonComponent, InfoCardComponent, SisSearchInputComponent, SpinnerComponent } from '@nuclia/sistema';
 import { debounceTime, Subject } from 'rxjs';
 import { MetricsCellPlugin, MetricsSidebarPlugin } from './metrics-cell-plugin';
 import { MetricsColumnDef, MetricsMonthRange, MetricsSidebarField } from './metrics-column.model';
@@ -51,7 +46,7 @@ import { METRICS_EMPTY_STATE, METRICS_PAGE_SIZES } from './metrics.config';
     DropdownButtonComponent,
     PaTogglesModule,
     SisSearchInputComponent,
-    SisProgressModule,
+    SpinnerComponent,
     InfoCardComponent,
     PaButtonModule,
     PaTableModule,

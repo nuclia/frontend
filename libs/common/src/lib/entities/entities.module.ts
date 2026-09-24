@@ -11,7 +11,7 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SisProgressModule } from '@nuclia/sistema';
+
 import { HintModule } from '../hint';
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
@@ -27,11 +27,10 @@ import { EntityListComponent } from './entity-list/entity-list.component';
     PaIconModule,
     PaTooltipModule,
     HintModule,
-    SisProgressModule,
     PaTableModule,
     EntitiesComponent,
     EntityListComponent,
-  ],
+],
   exports: [],
 })
 export class EntitiesModule {}

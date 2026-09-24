@@ -12,12 +12,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  DropdownButtonComponent,
-  InfoCardComponent,
-  SisProgressModule,
-  SisSearchInputComponent,
-} from '@nuclia/sistema';
+import { DropdownButtonComponent, InfoCardComponent, SisSearchInputComponent } from '@nuclia/sistema';
 import { CompactNumberPipe } from '../pipes/compact-number.pipe';
 
 import { ChatActivityPageComponent } from './chat-activity-page/chat-activity-page.component';
@@ -59,7 +54,6 @@ const ROUTES = [
     PaTooltipModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    SisProgressModule,
     SisSearchInputComponent,
     RemiAnalyticsPageComponent,
     MetricsFiltersComponent,
@@ -74,7 +68,7 @@ const ROUTES = [
     UserFeedbackPageComponent,
     CostTokenUsagePageComponent,
     UsageAnalyticsPageComponent,
-  ],
+],
   providers: [DatePipe],
 })
 export class MetricsModule {}

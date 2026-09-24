@@ -10,7 +10,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
-import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
 import { StandaloneService } from '../../services';
 import { parseCsvLabels } from '../csv-parser';
@@ -38,7 +38,7 @@ interface Row {
     InfoCardComponent,
     CsvSelectComponent,
     PaTooltipModule,
-    SisProgressModule,
+    SpinnerComponent,
     AsyncPipe,
     DecimalPipe,
     TranslatePipe,

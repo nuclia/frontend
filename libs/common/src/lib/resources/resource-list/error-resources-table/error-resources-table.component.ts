@@ -9,7 +9,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { SisProgressModule, StickyFooterComponent } from '@nuclia/sistema';
+import { SpinnerComponent, StickyFooterComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { UploadService } from '../../../upload/upload.service';
 import { ColumnHeader } from '../resource-list.model';
@@ -23,7 +23,7 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
   styleUrls: ['../resources-table.component.scss', './error-resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SisProgressModule,
+    SpinnerComponent,
     PaButtonModule,
     PaTableModule,
     PaTogglesModule,

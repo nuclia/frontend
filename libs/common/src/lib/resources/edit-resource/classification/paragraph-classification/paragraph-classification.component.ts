@@ -6,7 +6,8 @@ import { LabelsService } from '@flaps/core';
 import { PaChipsModule, PaScrollModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FieldId, IFieldData, LabelSets, Resource, Search } from '@nuclia/core';
-import { SisProgressModule } from '@nuclia/sistema';
+
+import { DelayedSpinnerComponent } from '@nuclia/sistema';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
@@ -17,7 +18,15 @@ import { ParagraphService } from '../../paragraph.service';
   templateUrl: './paragraph-classification.component.html',
   styleUrls: ['../../common-page-layout.scss', './paragraph-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaTextFieldModule, FormsModule, PaScrollModule, PaChipsModule, SisProgressModule, AsyncPipe, TranslatePipe],
+  imports: [
+    PaTextFieldModule,
+    FormsModule,
+    PaScrollModule,
+    PaChipsModule,
+    DelayedSpinnerComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

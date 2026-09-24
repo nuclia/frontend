@@ -1,19 +1,23 @@
-import { NgModule } from '@angular/core';
+import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { A11yModule } from '@angular/cdk/a11y';
+import { TranslateModule } from '@ngx-translate/core';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
+import { LabelModule, STFPipesModule } from '@flaps/core';
 import {
-  ErrorResourcesTableComponent,
-  PendingResourcesTableComponent,
-  ProcessedResourcesTableComponent,
-  ResourcesTableComponent,
-  ResourceListComponent,
-  ResourcesTableDirective,
-} from './resource-list';
+  BackButtonComponent,
+  BadgeComponent,
+  DropdownButtonComponent,
+  NsiSkeletonComponent,
+  SisLabelModule,
+  SisSearchInputComponent,
+  SisStatusComponent,
+  StickyFooterComponent,
+} from '@nuclia/sistema';
+import { PaginationModule } from '../pagination';
 import {
   AddFieldComponent,
   EditResourceComponent,
@@ -26,25 +30,20 @@ import {
   ResourceProfileComponent,
   ResourceTextComponent,
 } from './edit-resource';
-import { ResourcesComponent } from './resources.component';
 import { MemoryComponent } from './memory/memory.component';
 import {
-  BackButtonComponent,
-  BadgeComponent,
-  DropdownButtonComponent,
-  NsiSkeletonComponent,
-  SisIconsModule,
-  SisLabelModule,
-  SisProgressModule,
-  SisSearchInputComponent,
-  SisStatusComponent,
-  StickyFooterComponent,
-} from '@nuclia/sistema';
-import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
+  ErrorResourcesTableComponent,
+  PendingResourcesTableComponent,
+  ProcessedResourcesTableComponent,
+  ResourceListComponent,
+  ResourcesTableComponent,
+  ResourcesTableDirective,
+  TablePaginationComponent,
+  TitleCellComponent,
+} from './resource-list';
+import { ResourcesComponent } from './resources.component';
 import { UploadButtonComponent } from './upload-button';
-import { PaginationModule } from '../pagination';
-import { PipesModule } from '../pipes';
-import { EditResourceModule } from './edit-resource/edit-resource.module';
+
 import {
   PaButtonModule,
   PaChipsModule,
@@ -61,7 +60,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TablePaginationComponent, TitleCellComponent } from './resource-list';
+import { EditResourceModule } from './edit-resource/edit-resource.module';
 
 const ROUTES: Routes = [
   {
@@ -145,59 +144,54 @@ const ROUTES: Routes = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        A11yModule,
-        AngularSvgIconModule,
-        ReactiveFormsModule,
-        RouterModule.forChild(ROUTES),
-        TranslateModule.forChild(),
-        // Pastanaga
-        PaButtonModule,
-        PaChipsModule,
-        PaDatePickerModule,
-        PaDateTimeModule,
-        PaDropdownModule,
-        PaExpanderModule,
-        PaIconModule,
-        PaPopupModule,
-        PaScrollModule,
-        PaTableModule,
-        PaTabsModule,
-        PaTextFieldModule,
-        PaTogglesModule,
-        PaTooltipModule,
-        // FIXME: move what we need from old pastanaga to sistema
-        STFPipesModule,
-        // Sistema
-        SisIconsModule,
-        SisLabelModule,
-        SisProgressModule,
-        SisStatusComponent,
-        BackButtonComponent,
-        BadgeComponent,
-        DropdownButtonComponent,
-        SisSearchInputComponent,
-        NsiSkeletonComponent,
-        // Nuclia
-        PaginationModule,
-        PipesModule,
-        LabelModule,
-        FileUploadModule,
-        EditResourceModule,
-        TitleCellComponent,
-        TablePaginationComponent,
-        StickyFooterComponent,
-        ResourcesComponent,
-        ResourceListComponent,
-        ProcessedResourcesTableComponent,
-        ResourcesTableComponent,
-        UploadButtonComponent,
-        PendingResourcesTableComponent,
-        ResourcesTableDirective,
-        ErrorResourcesTableComponent,
-        MemoryComponent,
-    ],
-    exports: [],
+  imports: [
+    CommonModule,
+    A11yModule,
+    AngularSvgIconModule,
+    ReactiveFormsModule,
+    RouterModule.forChild(ROUTES),
+    TranslateModule.forChild(),
+    // Pastanaga
+    PaButtonModule,
+    PaChipsModule,
+    PaDatePickerModule,
+    PaDateTimeModule,
+    PaDropdownModule,
+    PaExpanderModule,
+    PaIconModule,
+    PaPopupModule,
+    PaScrollModule,
+    PaTableModule,
+    PaTabsModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    PaTooltipModule,
+    // FIXME: move what we need from old pastanaga to sistema
+    STFPipesModule,
+    SisLabelModule,
+    SisStatusComponent,
+    BackButtonComponent,
+    BadgeComponent,
+    DropdownButtonComponent,
+    SisSearchInputComponent,
+    NsiSkeletonComponent,
+    // Nuclia
+    PaginationModule,
+    LabelModule,
+    EditResourceModule,
+    TitleCellComponent,
+    TablePaginationComponent,
+    StickyFooterComponent,
+    ResourcesComponent,
+    ResourceListComponent,
+    ProcessedResourcesTableComponent,
+    ResourcesTableComponent,
+    UploadButtonComponent,
+    PendingResourcesTableComponent,
+    ResourcesTableDirective,
+    ErrorResourcesTableComponent,
+    MemoryComponent,
+  ],
+  exports: [],
 })
 export class ResourcesModule {}

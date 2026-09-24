@@ -13,7 +13,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, WritableKnowledgeBox } from '@nuclia/core';
-import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { catchError, Observable, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../../services';
 import { parseCsvLabels } from '../csv-parser';
@@ -48,7 +48,7 @@ type UploadOption = 'one' | 'multiple' | 'csv';
     ExtractionSelectComponent,
     CsvSelectComponent,
     LabelModule,
-    SisProgressModule,
+    SpinnerComponent,
     AsyncPipe,
     DecimalPipe,
     TranslatePipe,

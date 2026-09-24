@@ -12,7 +12,8 @@ import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import {
   DroppedFile,
   FeaturesService,
-  FileUploadModule,
+  FileDropDirective,
+  FileSelectDirective,
   LabelModule,
   NavigationService,
   SDKService,
@@ -46,7 +47,8 @@ const GENERAL_LABELSET = 'General';
   imports: [
     PaModalModule,
     InfoCardComponent,
-    FileUploadModule,
+    FileDropDirective,
+    FileSelectDirective,
     PaTogglesModule,
     LabelModule,
     PaButtonModule,

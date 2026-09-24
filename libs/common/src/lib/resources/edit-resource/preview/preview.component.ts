@@ -35,11 +35,11 @@ import {
 } from '@nuclia/core';
 import {
   BadgeComponent,
+  DelayedSpinnerComponent,
   DropdownButtonComponent,
   InfoCardComponent,
   NsiSkeletonComponent,
   SisModalService,
-  SisProgressModule,
 } from '@nuclia/sistema';
 import {
   BehaviorSubject,
@@ -95,7 +95,7 @@ import { WarningModalComponent } from './warning-modal/warning-modal.component';
     KeyValueFieldComponent,
     ThumbnailComponent,
     PaTableModule,
-    SisProgressModule,
+    DelayedSpinnerComponent,
     AsyncPipe,
     SlicePipe,
     KeyValuePipe,

@@ -17,7 +17,7 @@ import {
   DropdownButtonComponent,
   NsiSkeletonComponent,
   SisLabelModule,
-  SisProgressModule,
+  SpinnerComponent,
   StickyFooterComponent,
 } from '@nuclia/sistema';
 import { catchError, combineLatest, defer, from, Observable, of, take, toArray } from 'rxjs';
@@ -35,7 +35,7 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SisProgressModule,
+    SpinnerComponent,
     PaButtonModule,
     LabelModule,
     DropdownButtonComponent,

@@ -5,7 +5,7 @@ import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTableModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Resource, RESOURCE_STATUS } from '@nuclia/core';
-import { SisIconsModule, SisModalService, StandaloneMimeIconPipe } from '@nuclia/sistema';
+import { SisModalService, StandaloneMimeIconPipe } from '@nuclia/sistema';
 import { addMinutes } from 'date-fns';
 import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
 import { SimpleKBService } from '../simple-kb/simple-kb.service';
@@ -34,7 +34,6 @@ interface TableRow {
     AsyncPipe,
     DatePipe,
     TranslatePipe,
-    SisIconsModule,
     StandaloneMimeIconPipe,
   ],
 })

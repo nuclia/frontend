@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, take, tap } from 'rxjs';
 import { SDKService, STFUtils } from '@flaps/core';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, AuthTokens } from '@nuclia/core';
+import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
+import { switchMap, take, tap } from 'rxjs';
 import { AwsOnboardingPayload, Step1Component } from '../../onboarding';
 
 interface SetupAccountPayload {
@@ -17,7 +17,7 @@ interface SetupAccountPayload {
 
 @Component({
   selector: 'app-aws-setup-account',
-  imports: [CommonModule, TranslateModule, PaTextFieldModule, PaButtonModule, SisProgressModule, Step1Component],
+  imports: [CommonModule, TranslateModule, PaTextFieldModule, PaButtonModule, SpinnerComponent, Step1Component],
   templateUrl: './aws-setup-account.component.html',
   styleUrl: './aws-setup-account.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

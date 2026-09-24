@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -8,19 +9,18 @@ import {
   OnInit,
   Output,
   signal,
-  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ExternalConnection, StorageDrive, StorageFolder, StorageSite } from '@nuclia/core';
 import { SyncService } from '../logic';
 import { ONEDRIVE_CONNECTOR_ID } from '../logic/connectors/onedrive';
-import { ExternalConnection, StorageDrive, StorageFolder, StorageSite } from '@nuclia/core';
 
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ButtonMiniComponent,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 
@@ -30,7 +30,7 @@ import {
     ButtonMiniComponent,
     ReactiveFormsModule,
     TranslateModule,
-    SisProgressModule,
+    SpinnerComponent,
     TwoColumnsConfigurationItemComponent,
     PaButtonModule,
     PaIconModule,

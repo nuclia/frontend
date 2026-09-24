@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { AssumeRoleModalComponent } from '@flaps/common';
 import {
+  BEDROCK_IAM_POLICY,
   BedrockService,
   BedrockStatus,
-  BEDROCK_IAM_POLICY,
   FeaturesService,
   SDKService,
   Zone,
@@ -21,15 +22,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModelConfigurationItem } from '@nuclia/core';
 import {
   SisModalService,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import { forkJoin, of, ReplaySubject } from 'rxjs';
 import { catchError, filter, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { CreateConfigComponent } from './create-config/create-config.component';
 import { ModelRestrictionsComponent } from './model-restrictons/model-restrictions.component';
-import { AssumeRoleModalComponent } from '@flaps/common';
 
 interface ModelConfigurationWithZone extends ModelConfigurationItem {
   zone: string;
@@ -49,7 +49,7 @@ interface BedrockIntegration extends BedrockStatus {
     PaPopupModule,
     PaTableModule,
     PaTooltipModule,
-    SisProgressModule,
+    SpinnerComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
   ],

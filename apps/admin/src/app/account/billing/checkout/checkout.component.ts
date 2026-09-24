@@ -36,8 +36,8 @@ import {
   COUNTRIES,
   CountrySelectComponent,
   SisModalService,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
 } from '@nuclia/sistema';
 import { combineLatest, forkJoin, from, merge, of, Subject } from 'rxjs';
 import {
@@ -71,7 +71,7 @@ import { SubscriptionService } from '../subscription.service';
     PaTextFieldModule,
     CountrySelectComponent,
     BudgetComponent,
-    SisProgressModule,
+    SpinnerComponent,
     AsyncPipe,
     CurrencyPipe,
     TranslatePipe,

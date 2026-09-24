@@ -33,8 +33,8 @@ import {
 import {
   DropdownButtonComponent,
   NsiSkeletonComponent,
-  SisProgressModule,
   SisSearchInputComponent,
+  SpinnerComponent,
 } from '@nuclia/sistema';
 import { endOfDay } from 'date-fns';
 import { distinctUntilChanged, filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
@@ -56,7 +56,7 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NsiSkeletonComponent,
-    SisProgressModule,
+    SpinnerComponent,
     UploadButtonComponent,
     DropdownButtonComponent,
     PaDropdownModule,

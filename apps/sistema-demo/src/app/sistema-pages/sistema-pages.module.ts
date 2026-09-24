@@ -13,6 +13,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   BackButtonComponent,
@@ -21,10 +22,9 @@ import {
   NsiSkeletonComponent,
   SisLabelModule,
   SisPasswordInputModule,
-  SisProgressModule,
   SisSearchInputComponent,
+  SpinnerComponent,
 } from '@nuclia/sistema';
-import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import {
   DialogExampleComponent,
   ModalExampleComponent,
@@ -35,10 +35,10 @@ import {
   SistemaToastComponent,
 } from './pastanaga-pages-override';
 import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
+import { SistemaCountrySelectComponent } from './sistema-country-select/sistema-country-select.component';
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
-import { SistemaCountrySelectComponent } from './sistema-country-select/sistema-country-select.component';
 import { SistemaSearchInputComponent } from './sistema-search-input/sistema-search-input.component';
 import { SistemaSkeletonComponent } from './sistema-skeleton/sistema-skeleton.component';
 import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.component';
@@ -77,13 +77,13 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     PaTextFieldModule,
     PaTogglesModule,
 
+    SpinnerComponent,
     BackButtonComponent,
     CountrySelectComponent,
     DropdownButtonComponent,
     NsiSkeletonComponent,
     SisPasswordInputModule,
     SisSearchInputComponent,
-    SisProgressModule,
     ReactiveFormsModule,
     SisLabelModule,
     TranslateModule.forRoot(),

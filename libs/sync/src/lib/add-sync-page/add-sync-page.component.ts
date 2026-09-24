@@ -4,18 +4,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { ExternalConnection } from '@nuclia/core';
 import {
   BackButtonComponent,
   SisModalService,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
   StickyFooterComponent,
 } from '@nuclia/sistema';
 import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
-import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
-import { ExternalConnection } from '@nuclia/core';
 import {
   CloudSyncOptionsPayload,
   getCloudSyncOptionsPayload,
@@ -36,7 +36,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
     StickyFooterComponent,
     TranslateModule,
     ConfigurationFormComponent,
-    SisProgressModule,
+    SpinnerComponent,
     PaTogglesModule,
     CloudFolderComponent,
     SyncOptionsFormComponent,

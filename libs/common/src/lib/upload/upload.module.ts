@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
+import { LabelModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -23,7 +23,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BadgeComponent, InfoCardComponent, ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent, ProgressBarComponent } from '@nuclia/sistema';
 import { HintModule } from '../hint';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
@@ -36,43 +36,41 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
 
 @NgModule({
     imports: [
-        CommonModule,
-        AngularSvgIconModule,
-        TranslateModule.forChild(),
-        ReactiveFormsModule,
-        RouterModule,
-        FileUploadModule,
-        STFPipesModule,
-        LabelModule,
-        HintModule,
-        PaButtonModule,
-        PaIconModule,
-        PaTogglesModule,
-        PaTooltipModule,
-        PaTextFieldModule,
-        SisProgressModule,
-        PaModalModule,
-        PaTableModule,
-        PaExpanderModule,
-        ProgressBarComponent,
-        UploadRoutingModule,
-        UploadBarComponent,
-        CsvSelectComponent,
-        InfoCardComponent,
-        BadgeComponent,
-        ExtractionSelectComponent,
-        ResourceHandlingBannerComponent,
-        CreateLinkComponent,
-        UploadFilesComponent,
-        UploadFilesDialogComponent,
-        UploadProgressComponent,
-        UploadProgressDialogComponent,
-        UploadTextComponent,
-        UploadQnaComponent,
-        UploadDataComponent,
-        UploadOptionComponent,
-        DesktopSourcesComponent,
-    ],
+    CommonModule,
+    AngularSvgIconModule,
+    TranslateModule.forChild(),
+    ReactiveFormsModule,
+    RouterModule,
+    STFPipesModule,
+    LabelModule,
+    HintModule,
+    PaButtonModule,
+    PaIconModule,
+    PaTogglesModule,
+    PaTooltipModule,
+    PaTextFieldModule,
+    PaModalModule,
+    PaTableModule,
+    PaExpanderModule,
+    ProgressBarComponent,
+    UploadRoutingModule,
+    UploadBarComponent,
+    CsvSelectComponent,
+    InfoCardComponent,
+    BadgeComponent,
+    ExtractionSelectComponent,
+    ResourceHandlingBannerComponent,
+    CreateLinkComponent,
+    UploadFilesComponent,
+    UploadFilesDialogComponent,
+    UploadProgressComponent,
+    UploadProgressDialogComponent,
+    UploadTextComponent,
+    UploadQnaComponent,
+    UploadDataComponent,
+    UploadOptionComponent,
+    DesktopSourcesComponent,
+],
     exports: [
         UploadBarComponent,
         CsvSelectComponent,

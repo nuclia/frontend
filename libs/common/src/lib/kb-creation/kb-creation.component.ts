@@ -15,8 +15,8 @@ import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
   BackButtonComponent,
   SisModalService,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
@@ -39,7 +39,7 @@ import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '../onbo
     PaTextFieldModule,
     PaTogglesModule,
     EmbeddingsModelFormComponent,
-    SisProgressModule,
+    SpinnerComponent,
   ],
   templateUrl: './kb-creation.component.html',
   styleUrl: './kb-creation.component.scss',
