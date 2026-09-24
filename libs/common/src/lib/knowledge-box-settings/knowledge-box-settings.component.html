@@ -67,7 +67,7 @@
               resizable>
               {{ 'kb.form.allowed_origins.label' | translate }}
             </pa-textarea>
-            <div class="allowed-ips">
+            <div class="with-info">
               <pa-textarea
                 formControlName="allowed_ip_addresses"
                 [placeholder]="'kb.form.allowed-ips.placeholder' | translate: { ip: ipAddress | async }"
@@ -85,6 +85,33 @@
                 </pa-popover>
               </div>
             </div>
+            @if (!(isArag | async)) {
+              <div>
+                <div class="with-info">
+                  <pa-input
+                    formControlName="webhookUri"
+                    placeholder="https://your.endpoint">
+                    {{ 'kb.form.processing-webhook.url' | translate }}
+                  </pa-input>
+                  <div>
+                    <pa-icon
+                      name="info"
+                      [paPopover]="webhookInfo"></pa-icon>
+                    <pa-popover #webhookInfo>
+                      {{ 'kb.form.processing-webhook.help' | translate }}
+                    </pa-popover>
+                  </div>
+                </div>
+              </div>
+              @if (kbForm.controls.webhookUri.value) {
+                <div class="headers">
+                  <label class="body-m">{{ 'kb.form.processing-webhook.headers' | translate }}</label>
+                  <app-parameters-table
+                    secretDisabled
+                    [(values)]="headers"></app-parameters-table>
+                </div>
+              }
+            }
           }
 
           @if (kb.state?.toLowerCase(); as state) {
@@ -104,12 +131,12 @@
               type="submit"
               kind="primary"
               data-cy="save-kb-settings"
-              [disabled]="kbForm.invalid || kbForm.pristine || saving">
+              [disabled]="kbForm.invalid || (kbForm.pristine && headersPristine()) || saving">
               {{ 'generic.save' | translate }}
             </pa-button>
             <pa-button
               aspect="basic"
-              [disabled]="kbForm.pristine"
+              [disabled]="kbForm.pristine && headersPristine()"
               (click)="resetKbForm()">
               {{ 'generic.cancel' | translate }}
             </pa-button>

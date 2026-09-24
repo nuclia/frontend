@@ -86,6 +86,7 @@ import {
   ServiceAccountCreation,
   SplitStrategies,
   SplitStrategy,
+  ProcessingHook,
 } from './kb.models';
 import { SyncManager } from '../sync/sync';
 import { ISyncManager } from '../sync/sync.models';
@@ -1003,6 +1004,12 @@ export class KnowledgeBox implements IKnowledgeBox {
 
     return subject.asObservable();
   }
+
+  getProcessingHook(): Observable<ProcessingHook | undefined> {
+    return this.nuclia.rest
+      .get<ProcessingHook>(`${this.path}/processing_webhooks/webhook/default`)
+      .pipe(catchError(() => of(undefined)));
+  }
 }
 
 /** Extends `KnowledgeBox` with all the write operations. */
@@ -1378,5 +1385,13 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   /** Deletes a KV schema from the Knowledge Box. */
   deleteKVSchema(id: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/kv-schemas/${id}`);
+  }
+
+  updateProcessingHook(data: ProcessingHook): Observable<ProcessingHook> {
+    return this.nuclia.rest.put<ProcessingHook>(`${this.path}/processing_webhooks/webhook/default`, data);
+  }
+
+  deleteProcessingHook(): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/processing_webhooks/webhook/default`);
   }
 }
