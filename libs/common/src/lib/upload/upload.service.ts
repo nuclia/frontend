@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LabelsService, md5, NotificationService, SDKService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Classification,
   ConversationField,
@@ -18,6 +19,7 @@ import {
   UploadStatus,
   WritableKnowledgeBox,
 } from '@nuclia/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -40,11 +42,9 @@ import {
   toArray,
 } from 'rxjs';
 import { debounceTime, delay, tap } from 'rxjs/operators';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
-import { PENDING_RESOURCES_LIMIT } from './upload.utils';
 import SparkMD5 from 'spark-md5';
-import { mergeExistingAndNewLabels } from '../resources/edit-resource';
+import { mergeExistingAndNewLabels } from '../resources/edit-resource/edit-resource.helpers';
+import { PENDING_RESOURCES_LIMIT } from './upload.utils';
 
 export const SPREADSHEET_MIMES = [
   'text/csv',

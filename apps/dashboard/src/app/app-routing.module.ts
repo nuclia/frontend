@@ -109,7 +109,7 @@ const routes: Routes = [
               },
               {
                 path: 'resources',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.ResourcesModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.RESOURCE_ROUTES),
               },
               {
                 path: 'search',
