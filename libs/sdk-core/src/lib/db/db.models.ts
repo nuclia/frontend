@@ -97,7 +97,7 @@ export enum BlockedFeature {
 export type WorkflowType = 'classic' | 'cowork';
 
 export interface AccountCreation {
-  slug: string;
+  slug?: string;
   title: string;
   description?: string;
   email?: string;

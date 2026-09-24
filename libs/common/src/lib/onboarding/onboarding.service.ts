@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
-import { SDKService, STFUtils, UserService, NavigationService, AuthService, FeaturesService } from '@flaps/core';
+import { SDKService, UserService, NavigationService, AuthService, FeaturesService } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
@@ -101,43 +101,38 @@ export class OnboardingService {
       kbCreated: false,
       creationFailed: false,
     });
-    return this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
-      switchMap((accountSlug) => {
-        if (data.workflow) {
-          this.setSteps(data.workflow);
-        }
-        return this.sdk.nuclia.db
-          .createAccount({
-            slug: accountSlug,
-            title: data.company,
-            workflow: data.workflow,
-            eula_accepted: true,
-          })
-          .pipe(
-            catchError((error) => {
-              this._onboardingState.next({
-                creating: false,
-                accountCreated: false,
-                kbCreated: false,
-                creationFailed: true,
-              });
-              console.error(`Account creation failed`, error);
-              this.toaster.error('Account creation failed');
-              throw error;
-            }),
-          );
-      }),
-      switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
-      switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
-      tap(() => {
-        this._onboardingState.next({
-          creating: false,
-          accountCreated: true,
-          kbCreated: false,
-          creationFailed: false,
-        });
-      }),
-    );
+    if (data.workflow) {
+      this.setSteps(data.workflow);
+    }
+    return this.sdk.nuclia.db
+      .createAccount({
+        title: data.company,
+        workflow: data.workflow,
+        eula_accepted: true,
+      })
+      .pipe(
+        catchError((error) => {
+          this._onboardingState.next({
+            creating: false,
+            accountCreated: false,
+            kbCreated: false,
+            creationFailed: true,
+          });
+          console.error(`Account creation failed`, error);
+          this.toaster.error('Account creation failed');
+          throw error;
+        }),
+        switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
+        switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
+        tap(() => {
+          this._onboardingState.next({
+            creating: false,
+            accountCreated: true,
+            kbCreated: false,
+            creationFailed: false,
+          });
+        }),
+      );
   }
 
   modifyAccount(accountSlug: string, data: AccountModification): Observable<void> {
@@ -244,24 +239,5 @@ export class OnboardingService {
     // creation failed but account creation worked, so we redirect to account management page to unblock people
     const path = `/at/${accountSlug}`;
     this.router.navigate([path]);
-  }
-
-  getAvailableAccountSlug(slug: string): Observable<string> {
-    return this.sdk.nuclia.db.getAccountStatus(slug).pipe(
-      switchMap((status) => {
-        if (status.available) {
-          return of(slug);
-        } else {
-          return this.getAvailableAccountSlug(this.getIncrementedSlug(slug));
-        }
-      }),
-    );
-  }
-
-  private getIncrementedSlug(slug: string): string {
-    const existingIncrement = Number.parseInt(slug.split('_').pop() || '');
-    return isNaN(existingIncrement)
-      ? `${slug}_1`
-      : `${slug.slice(0, -1 - String(existingIncrement).length)}_${existingIncrement + 1}`;
   }
 }
