@@ -33,18 +33,18 @@ const ROUTES: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(ROUTES),
-    PaButtonModule,
-    PaTableModule,
-    PaTextFieldModule,
-    PaIconModule,
-    PaTogglesModule,
-    ReactiveFormsModule,
-    PaScrollModule,
-    TranslateModule,
-  ],
-  declarations: [ManageZonesComponent, ZoneDetailsComponent, ZoneListComponent],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(ROUTES),
+        PaButtonModule,
+        PaTableModule,
+        PaTextFieldModule,
+        PaIconModule,
+        PaTogglesModule,
+        ReactiveFormsModule,
+        PaScrollModule,
+        TranslateModule,
+        ManageZonesComponent, ZoneDetailsComponent, ZoneListComponent,
+    ],
 })
 export class ManageZonesModule {}

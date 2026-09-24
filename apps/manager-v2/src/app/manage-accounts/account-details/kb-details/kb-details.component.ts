@@ -1,20 +1,41 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AccountService } from '../../account.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SisToastService } from '@nuclia/sistema';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { KBRoles } from '@nuclia/core';
-import { UserService } from '../../../manage-users/user.service';
+import { SisToastService } from '@nuclia/sistema';
+import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { UserSearch } from '../../../manage-users/user.models';
+import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails, KbDetails, KbSummary, KbUser } from '../../account-ui.models';
+import { AccountService } from '../../account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
 
 @Component({
   templateUrl: './kb-details.component.html',
   styleUrls: ['./kb-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaButtonModule,
+    PaPopupModule,
+    PaDropdownModule,
+    PaTogglesModule,
+    FormFooterComponent,
+    PaTableModule,
+    AsyncPipe,
+  ],
 })
 export class KbDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -76,7 +97,12 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       )
       .subscribe((kb) => {
         this.backupKb = kb;
-        this.kbForm.patchValue({ title: kb.title, slug: kb.slug, zone: kb.zone.title, prewarm_enabled: kb.prewarm_enabled ?? false });
+        this.kbForm.patchValue({
+          title: kb.title,
+          slug: kb.slug,
+          zone: kb.zone.title,
+          prewarm_enabled: kb.prewarm_enabled ?? false,
+        });
         this.cdr.markForCheck();
       });
   }
@@ -107,7 +133,11 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   reset() {
     if (this.backupKb) {
-      this.kbForm.patchValue({ title: this.backupKb.title, slug: this.backupKb.slug, prewarm_enabled: this.backupKb.prewarm_enabled ?? false });
+      this.kbForm.patchValue({
+        title: this.backupKb.title,
+        slug: this.backupKb.slug,
+        prewarm_enabled: this.backupKb.prewarm_enabled ?? false,
+      });
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
     }

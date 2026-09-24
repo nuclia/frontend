@@ -30,24 +30,25 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
 }
 
 @NgModule({
-  declarations: [AppComponent, AppLayoutComponent, MainComponent],
-  imports: [
-    BrowserModule,
-    RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
-    STFConfigModule.forRoot(environment),
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpBackend, BackendConfigurationService],
-      },
-    }),
-    AngularSvgIconModule.forRoot(),
-    PaAvatarModule,
-    PaDropdownModule,
-    PaPopupModule,
-  ],
-  providers: [TranslatePipe],
-  bootstrap: [AppComponent],
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
+        STFConfigModule.forRoot(environment),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: createTranslateLoader,
+                deps: [HttpBackend, BackendConfigurationService],
+            },
+        }),
+        AngularSvgIconModule.forRoot(),
+        PaAvatarModule,
+        PaDropdownModule,
+        PaPopupModule,
+        AppLayoutComponent, MainComponent,
+    ],
+    providers: [TranslatePipe],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

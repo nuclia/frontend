@@ -41,17 +41,17 @@ const ROUTES: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(ROUTES),
-    PaButtonModule,
-    PaDateTimeModule,
-    PaTableModule,
-    PaTextFieldModule,
-    PaIconModule,
-    ReactiveFormsModule,
-    PaScrollModule,
-  ],
-  declarations: [ManageUsersComponent, UserListComponent, UserDetailsComponent],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(ROUTES),
+        PaButtonModule,
+        PaDateTimeModule,
+        PaTableModule,
+        PaTextFieldModule,
+        PaIconModule,
+        ReactiveFormsModule,
+        PaScrollModule,
+        ManageUsersComponent, UserListComponent, UserDetailsComponent,
+    ],
 })
 export class ManageUsersModule {}

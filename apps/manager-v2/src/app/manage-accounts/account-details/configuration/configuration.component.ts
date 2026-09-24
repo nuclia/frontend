@@ -1,22 +1,45 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDatePickerModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
 import { catchError, take, takeUntil } from 'rxjs/operators';
+import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
-import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
-import { GlobalAccountService } from '../../global-account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { AccountBudget, ActionOnBudgetExhausted } from '../../global-account.models';
+import { GlobalAccountService } from '../../global-account.service';
+import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 
 @Component({
   templateUrl: './configuration.component.html',
   styleUrls: ['configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaDropdownModule,
+    PaDatePickerModule,
+    PaButtonModule,
+    PaTogglesModule,
+    PaTooltipModule,
+    FormFooterComponent,
+    BlockedFeaturesComponent,
+    AsyncPipe,
+  ],
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

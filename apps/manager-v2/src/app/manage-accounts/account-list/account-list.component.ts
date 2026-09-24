@@ -1,14 +1,32 @@
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import {
+  PaButtonModule,
+  PaDateTimeModule,
+  PaScrollModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
+import { ManagerStore } from '../../manager.store';
 import { AccountSummary } from '../account-ui.models';
 import { AccountService } from '../account.service';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { ManagerStore } from '../../manager.store';
 
 @Component({
   templateUrl: './account-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTextFieldModule,
+    PaButtonModule,
+    RouterLink,
+    PaScrollModule,
+    PaTableModule,
+    PaDateTimeModule,
+    AsyncPipe,
+    SlicePipe,
+  ],
 })
 export class AccountListComponent {
   private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);

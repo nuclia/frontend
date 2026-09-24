@@ -1,4 +1,7 @@
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { PaButtonModule, PaScrollModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { ZoneSummary } from '../zone.models';
@@ -7,7 +10,7 @@ import { ZoneService } from '../zone.service';
 @Component({
   templateUrl: './zone-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTextFieldModule, PaButtonModule, RouterLink, PaScrollModule, PaTableModule, AsyncPipe, SlicePipe],
 })
 export class ZoneListComponent {
   private _allZones: Observable<ZoneSummary[]> = this.zoneService.zones;

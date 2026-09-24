@@ -4,15 +4,16 @@ import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { RouterOutlet } from '@angular/router';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
 @Component({
-  selector: 'nma-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+    selector: 'nma-main',
+    templateUrl: './main.component.html',
+    styleUrls: ['./main.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [RouterOutlet],
 })
 export class MainComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;

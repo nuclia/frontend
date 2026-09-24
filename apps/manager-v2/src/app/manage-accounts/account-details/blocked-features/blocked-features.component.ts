@@ -1,10 +1,14 @@
+import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { BlockedFeature } from '@nuclia/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { BlockedFeature } from '@nuclia/core';
-import { AccountService } from '../../account.service';
 import { ManagerStore } from '../../../manager.store';
+import { AccountService } from '../../account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
+import { FeatureNamePipe } from './feature-name.pipe';
 
 type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
 
@@ -13,7 +17,7 @@ type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
   templateUrl: './blocked-features.component.html',
   styleUrls: ['./blocked-features.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [FormsModule, ReactiveFormsModule, PaTogglesModule, FormFooterComponent, KeyValuePipe, FeatureNamePipe],
 })
 export class BlockedFeaturesComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

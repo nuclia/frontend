@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -7,6 +8,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { ManagerStore } from '../../manager.store';
 
 @Component({
@@ -14,7 +16,7 @@ import { ManagerStore } from '../../manager.store';
   templateUrl: './form-footer.component.html',
   styleUrls: ['./form-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaButtonModule, AsyncPipe],
 })
 export class FormFooterComponent {
   @Input({ transform: booleanAttribute }) disabled = false;
