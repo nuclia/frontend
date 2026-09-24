@@ -5,3 +5,20 @@ rules:
       # later in this job. There is no lockfile-based way to pin the package
       # manager binary itself (see .github/workflows/deploy.yml).
       - deploy.yml:95
+  self-repository:
+    ignore:
+      # These `uses: ./tooling/...` steps reference actions that live in the
+      # separate nuclia/tooling repo, checked out at runtime into ./tooling
+      # (not part of this repo's own tree). The `$/...` self-repository syntax
+      # cannot resolve actions cloned at runtime in a previous step, so the
+      # workspace-relative `./` form must be kept here.
+      - deploy.yml:240
+      - deploy.yml:267
+      - deploy.yml:285
+      - deploy.yml:303
+      - deploy.yml:321
+      - deploy.yml:427
+      - deploy.yml:509
+      - deploy.yml:591
+      - deploy.yml:673
+      - deploy.yml:755
