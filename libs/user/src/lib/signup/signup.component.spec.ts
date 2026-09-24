@@ -13,11 +13,11 @@ import {
   SignupResponse,
   StaticEnvironmentConfiguration,
 } from '@flaps/core';
-import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { SisPasswordInputModule } from '@nuclia/sistema';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { TranslateModule } from '@ngx-translate/core';
+import { MockComponent, MockProvider } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, of } from 'rxjs';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 import { SsoButtonsComponent } from '../sso/sso-buttons.component';
 import { UserContainerComponent } from '../user-container';
 import { SignupComponent } from './signup.component';
@@ -53,11 +53,8 @@ describe('SignupComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        MockModule(PaTextFieldModule),
-        MockModule(PaButtonModule),
-        MockModule(PaTranslateModule),
-        MockModule(ReactiveFormsModule),
-        MockModule(SisPasswordInputModule),
+        SignupComponent,
+        TranslateModule.forRoot(),
         RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }]),
       ],
       declarations: [SignupComponent, MockComponent(UserContainerComponent), MockComponent(SsoButtonsComponent)],
@@ -92,6 +89,14 @@ describe('SignupComponent', () => {
           getSocialLogin: () => false,
           staticConf: { client: '' } as StaticEnvironmentConfiguration,
         }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
 

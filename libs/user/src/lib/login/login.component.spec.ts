@@ -10,8 +10,6 @@ import {
   OAuthService,
   SAMLService,
 } from '@flaps/core';
-import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
 
@@ -39,8 +37,7 @@ describe('LoginComponent', () => {
 
   const buildComponent = async () => {
     await TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [ReactiveFormsModule, MockModule(PaTranslateModule)],
+      imports: [LoginComponent, ReactiveFormsModule],
       providers: [
         { provide: OAuthService, useValue: oAuthService },
         { provide: Router, useValue: router },

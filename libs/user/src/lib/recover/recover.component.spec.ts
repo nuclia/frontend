@@ -47,8 +47,7 @@ describe('RecoverComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [RecoverComponent],
-      imports: [ReactiveFormsModule],
+      imports: [RecoverComponent, ReactiveFormsModule],
       providers: [
         { provide: ActivatedRoute, useValue: { queryParams: queryParams$.asObservable() } },
         { provide: LoginService, useValue: loginService },

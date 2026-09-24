@@ -25,8 +25,7 @@ describe('ResetComponent', () => {
 
   const buildComponent = async () => {
     await TestBed.configureTestingModule({
-      declarations: [ResetComponent],
-      imports: [ReactiveFormsModule],
+      imports: [ResetComponent, ReactiveFormsModule],
       providers: [
         { provide: LoginService, useValue: loginService },
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },

@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RouterModule } from '@angular/router';
-import { PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { TranslateModule } from '@ngx-translate/core';
+import { MockComponent } from 'ng-mocks';
 import { UserContainerComponent } from '../user-container';
 import { CheckMailComponent } from './check-mail.component';
 
@@ -12,8 +12,7 @@ describe('CheckMailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaIconModule), MockModule(PaTranslateModule), RouterModule.forRoot([])],
-      declarations: [CheckMailComponent, MockComponent(UserContainerComponent)],
+      imports: [CheckMailComponent, TranslateModule.forRoot(), RouterModule.forRoot([]), MockComponent(UserContainerComponent)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CheckMailComponent);
