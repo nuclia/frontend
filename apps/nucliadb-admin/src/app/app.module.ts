@@ -40,32 +40,33 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
 }
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent],
-  bootstrap: [AppComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AngularSvgIconModule.forRoot(),
-    STFConfigModule.forRoot(environment),
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpBackend, BackendConfigurationService],
-      },
-    }),
-    RouterModule.forRoot(routes, routerOptions),
-    PaIconModule,
-    HomeContainerComponent,
-    MainContainerComponent,
-    // PaTranslateModule needs to be imported in the root module for pa-datetime to work
-    PaTranslateModule,
-  ],
-  providers: [
-    TranslatePipe,
-    { provide: APP_BASE_HREF, useValue: '/admin' },
-    { provide: TitleStrategy, useClass: AppTitleStrategy },
-    provideHttpClient(withXhr(), withInterceptorsFromDi()),
-  ],
+    declarations: [AppComponent],
+    bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AngularSvgIconModule.forRoot(),
+        STFConfigModule.forRoot(environment),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: createTranslateLoader,
+                deps: [HttpBackend, BackendConfigurationService],
+            },
+        }),
+        RouterModule.forRoot(routes, routerOptions),
+        PaIconModule,
+        HomeContainerComponent,
+        MainContainerComponent,
+        // PaTranslateModule needs to be imported in the root module for pa-datetime to work
+        PaTranslateModule,
+        HomePageComponent,
+    ],
+    providers: [
+        TranslatePipe,
+        { provide: APP_BASE_HREF, useValue: '/admin' },
+        { provide: TitleStrategy, useClass: AppTitleStrategy },
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    ],
 })
 export class AppModule {}
