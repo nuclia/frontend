@@ -1,4 +1,5 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 import { getLabelColor, LABEL_COLORS, LabelColor } from './label.utils';
 
 @Component({
@@ -6,7 +7,7 @@ import { getLabelColor, LABEL_COLORS, LabelColor } from './label.utils';
   templateUrl: './label.component.html',
   styleUrls: ['./label.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaChipsModule],
 })
 export class LabelComponent {
   @Input() set color(value: string) {

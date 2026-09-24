@@ -5,8 +5,7 @@ import { PaButtonModule, PaFormFieldModule, PaTextFieldModule } from '@guillotin
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [PasswordInputComponent],
-  exports: [PasswordInputComponent],
-  imports: [CommonModule, PaFormFieldModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
+    exports: [PasswordInputComponent],
+    imports: [CommonModule, PaFormFieldModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule, PasswordInputComponent],
 })
 export class SisPasswordInputModule {}

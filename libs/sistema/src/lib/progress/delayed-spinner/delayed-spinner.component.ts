@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Size } from '@guillotinaweb/pastanaga-angular';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
-  selector: 'nsi-delayed-spinner',
-  templateUrl: './delayed-spinner.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+    selector: 'nsi-delayed-spinner',
+    templateUrl: './delayed-spinner.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [SpinnerComponent],
 })
 export class DelayedSpinnerComponent implements OnInit {
   @Input()

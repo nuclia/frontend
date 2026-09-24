@@ -12,15 +12,20 @@ import {
   Self,
   SimpleChanges,
 } from '@angular/core';
-import { NativeTextFieldDirective, TextFieldUtilityService } from '@guillotinaweb/pastanaga-angular';
-import { NgControl } from '@angular/forms';
+import { FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  NativeTextFieldDirective,
+  PaButtonModule,
+  PaFormFieldModule,
+  TextFieldUtilityService,
+} from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-password-input',
   templateUrl: './password-input.component.html',
   styleUrls: ['./password-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [FormsModule, ReactiveFormsModule, PaButtonModule, PaFormFieldModule],
 })
 export class PasswordInputComponent
   extends NativeTextFieldDirective

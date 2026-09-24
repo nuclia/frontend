@@ -4,8 +4,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
 import { DelayedSpinnerComponent } from './delayed-spinner/delayed-spinner.component';
 
 @NgModule({
-  declarations: [SpinnerComponent, DelayedSpinnerComponent],
-  imports: [CommonModule],
-  exports: [SpinnerComponent, DelayedSpinnerComponent],
+    imports: [CommonModule, SpinnerComponent, DelayedSpinnerComponent],
+    exports: [SpinnerComponent, DelayedSpinnerComponent],
 })
 export class SisProgressModule {}
