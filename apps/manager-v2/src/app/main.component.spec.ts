@@ -10,8 +10,7 @@ import { MainComponent } from './main.component';
 describe('MainComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterModule.forRoot([])],
-      declarations: [MainComponent],
+      imports: [RouterModule.forRoot([]), MainComponent],
       providers: [
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService, { onLangChange: new EventEmitter<LangChangeEvent>() }),

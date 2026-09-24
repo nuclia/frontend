@@ -2,13 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { UserService } from '../../../manage-users/user.service';
+import { ManagerStore } from '../../../manager.store';
 import { AccountService } from '../../account.service';
+import { ACCOUNT_DETAILS } from '../../test-utils';
 import { AccountDetailsStore } from '../account-details.store';
 import { KbDetailsComponent } from './kb-details.component';
-import { ManagerStore } from '../../../manager.store';
-import { of } from 'rxjs';
-import { ACCOUNT_DETAILS } from '../../test-utils';
 
 describe('KbDetailsComponent', () => {
   let component: KbDetailsComponent;
@@ -16,8 +16,7 @@ describe('KbDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterModule.forRoot([])],
-      declarations: [KbDetailsComponent],
+      imports: [KbDetailsComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(AccountService),
         MockProvider(UserService),
