@@ -51,7 +51,9 @@ const ROUTES: Routes = [
     PaIconModule,
     ReactiveFormsModule,
     PaScrollModule,
+    ManageUsersComponent,
+    UserListComponent,
+    UserDetailsComponent,
   ],
-  declarations: [ManageUsersComponent, UserListComponent, UserDetailsComponent],
 })
 export class ManageUsersModule {}

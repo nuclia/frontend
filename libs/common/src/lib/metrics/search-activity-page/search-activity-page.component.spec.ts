@@ -1,10 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, UserService } from '@flaps/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { SearchActivityPageComponent } from './search-activity-page.component';
 
 describe('SearchActivityPageComponent', () => {
@@ -24,13 +25,19 @@ describe('SearchActivityPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [SearchActivityPageComponent],
-      imports: [MockModule(TranslateModule)],
+      imports: [TranslateModule.forRoot(), SearchActivityPageComponent],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(UserService),
         MockProvider(SisToastService),
-        MockProvider(TranslateService, { instant: (key: string) => key }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

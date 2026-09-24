@@ -1,7 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { ModalConfig, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, UsagePoint, UsageType } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
 import {
   combineLatest,
   filter,
@@ -14,17 +19,15 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
-import { SisModalService } from '@nuclia/sistema';
-import { MetricsService } from '@flaps/common';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal';
+import { NucliaTokensComponent } from '../nuclia-tokens/nuclia-tokens.component';
 
 @Component({
   selector: 'app-account-home',
   templateUrl: './account-home.component.html',
   styleUrls: ['./account-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [NucliaTokensComponent, PaIconModule, AsyncPipe, DecimalPipe, TranslatePipe],
 })
 export class AccountHomeComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

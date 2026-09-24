@@ -9,7 +9,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 
-import { FeaturesModalComponent } from '@flaps/common';
+import { AsyncPipe } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+import { ChatAdviceBubbleComponent, FeaturesModalComponent } from '@flaps/common';
 import {
   BackendConfigurationService,
   FeaturesService,
@@ -35,7 +37,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [RouterOutlet, ChatAdviceBubbleComponent, AsyncPipe],
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;

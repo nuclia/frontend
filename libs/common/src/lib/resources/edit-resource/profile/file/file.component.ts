@@ -1,14 +1,18 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
-import { FIELD_TYPE, FileFieldData } from '@nuclia/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FIELD_TYPE, FileFieldData } from '@nuclia/core';
+import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
+import { DropzoneComponent } from '../../dropzone/dropzone.component';
 import { EditResourceService } from '../../edit-resource.service';
 
 @Component({
   templateUrl: 'file.component.html',
   styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [DropzoneComponent, PaButtonModule, AsyncPipe, TranslatePipe],
 })
 export class ResourceFileComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

@@ -1,20 +1,23 @@
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { filter, map, switchMap, take } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+import { TokenDialogComponent } from '@flaps/common';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { PaButtonModule, PaDateTimeModule, PaTableModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NUAClient } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { filter, map, switchMap, take } from 'rxjs';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
-import { Router } from '@angular/router';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { SisModalService } from '@nuclia/sistema';
-import { TokenDialogComponent } from '@flaps/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-account-nua',
   templateUrl: './account-nua.component.html',
   styleUrls: ['./account-nua.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, PaTooltipModule, PaDateTimeModule, PaButtonModule, AsyncPipe, DecimalPipe, TranslatePipe],
 })
 export class AccountNUAComponent {
   private destroyRef = inject(DestroyRef);

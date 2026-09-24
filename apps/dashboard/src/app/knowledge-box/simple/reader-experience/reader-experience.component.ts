@@ -1,27 +1,39 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  OnDestroy,
-  signal,
-} from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchWidgetService } from '@flaps/common';
-import { OptionModel, OptionSeparator, OptionType } from '@guillotinaweb/pastanaga-angular';
-import { TranslateService } from '@ngx-translate/core';
-import { catchError, delay, forkJoin, map, of, Subject, switchMap, take, timeout } from 'rxjs';
 import { SDKService } from '@flaps/core';
+import {
+  OptionModel,
+  OptionSeparator,
+  OptionType,
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG_ID, Widget } from '@nuclia/core';
+import { catchError, delay, forkJoin, map, of, Subject, switchMap, take, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-reader-experience',
-  standalone: false,
   templateUrl: './reader-experience.component.html',
   styleUrls: ['./reader-experience.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    PaButtonModule,
+    PaPopupModule,
+    PaDropdownModule,
+    PaTextFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaIconModule,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ReaderExperienceComponent implements OnDestroy {
   private el = inject(ElementRef);

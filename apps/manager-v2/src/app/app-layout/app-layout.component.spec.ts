@@ -5,8 +5,8 @@ import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/
 import { TranslateModule } from '@ngx-translate/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
-import { AppLayoutComponent } from './app-layout.component';
 import { ManagerStore } from '../manager.store';
+import { AppLayoutComponent } from './app-layout.component';
 
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;
@@ -15,13 +15,13 @@ describe('AppLayoutComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        AppLayoutComponent,
         RouterModule.forRoot([]),
-        MockModule(TranslateModule),
+        TranslateModule.forRoot(),
         MockModule(PaAvatarModule),
         MockModule(PaDropdownModule),
         MockModule(PaPopupModule),
       ],
-      declarations: [AppLayoutComponent],
       providers: [
         MockProvider(SDKService, {
           nuclia: {

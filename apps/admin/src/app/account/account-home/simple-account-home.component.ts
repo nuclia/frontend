@@ -1,16 +1,32 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MetricsService, ProfileComponent } from '@flaps/common';
 import { AccountEntryContextService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { UsagePoint } from '@nuclia/core';
+import { BackButtonComponent } from '@nuclia/sistema';
 import { combineLatest, map, of, ReplaySubject, shareReplay, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { MetricsService } from '@flaps/common';
+import { AccountUsersComponent } from '../account-users/account-users.component';
+import { SubscriptionsComponent } from '../billing/subscriptions/subscriptions.component';
+import { NucliaTokensComponent } from '../nuclia-tokens/nuclia-tokens.component';
 
 @Component({
   selector: 'app-simple-account-home',
   templateUrl: './simple-account-home.component.html',
   styleUrl: './simple-account-home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    BackButtonComponent,
+    PaTabsModule,
+    NucliaTokensComponent,
+    SubscriptionsComponent,
+    AccountUsersComponent,
+    ProfileComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class SimpleAccountHomeComponent implements OnInit, OnDestroy {
   selectedTab: 'consumption' | 'subscriptions' | 'users' | 'preferences' = 'consumption';

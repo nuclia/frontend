@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -12,13 +11,14 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, ButtonMiniComponent } from '@nuclia/sistema';
 
 import { KnowledgeBoxSettingsComponent } from '../knowledge-box-settings.component';
 import { KbSettingsLayoutComponent } from './kb-settings-layout/kb-settings-layout.component';
 import { KvSchemasComponent } from './kv-schemas.component';
-import { SchemaFormComponent } from './schema-form/schema-form.component';
 import { SchemaEditModalComponent } from './schema-edit-modal/schema-edit-modal.component';
+import { SchemaFormComponent } from './schema-form/schema-form.component';
 
 const ROUTES: Routes = [
   {
@@ -33,7 +33,6 @@ const ROUTES: Routes = [
 ];
 
 @NgModule({
-  declarations: [KbSettingsLayoutComponent, KvSchemasComponent, SchemaFormComponent, SchemaEditModalComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -49,6 +48,10 @@ const ROUTES: Routes = [
     PaTogglesModule,
     ButtonMiniComponent,
     BadgeComponent,
+    KbSettingsLayoutComponent,
+    KvSchemasComponent,
+    SchemaFormComponent,
+    SchemaEditModalComponent,
   ],
   exports: [KbSettingsLayoutComponent],
 })

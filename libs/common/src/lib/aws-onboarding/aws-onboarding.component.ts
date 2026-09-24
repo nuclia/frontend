@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { AccountBudget, BillingService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
-import { of, ReplaySubject, switchMap, take, tap } from 'rxjs';
-import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
-import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
+import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { UserContainerComponent } from '@nuclia/user';
+import { of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import {
   EmbeddingModelStepComponent,
   KbNameStepComponent,
   LearningConfigurationForm,
   ZoneStepComponent,
 } from '../onboarding';
+import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
+import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
 
 @Component({
   imports: [
@@ -24,7 +24,7 @@ import {
     ZoneStepComponent,
     EmbeddingModelStepComponent,
     TranslateModule,
-    SisProgressModule,
+    SpinnerComponent,
     AwsSetupAccountComponent,
   ],
   templateUrl: './aws-onboarding.component.html',

@@ -5,7 +5,6 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   templateUrl: './empty-chart.component.html',
   styleUrls: ['./empty-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
 })
 export class EmptyChartComponent {
   @Input()

@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { SisToastService, SisPasswordInputModule, SisProgressModule } from '@nuclia/sistema';
+import { SisPasswordInputModule, SisToastService } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent } from '../../basic-elements';
 
@@ -15,7 +15,6 @@ import { ConfigurationFormComponent } from '../../basic-elements';
     PaTogglesModule,
     ReactiveFormsModule,
     SisPasswordInputModule,
-    SisProgressModule,
     TranslateModule,
   ],
   templateUrl: './import-panel.component.html',

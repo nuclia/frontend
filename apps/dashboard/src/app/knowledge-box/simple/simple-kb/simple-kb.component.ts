@@ -1,21 +1,42 @@
-import { ChangeDetectionStrategy, computed, Component, inject, OnDestroy, signal } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
-import { DroppedFile, FeaturesService, SDKService, SizePipe } from '@flaps/core';
+import {
+  DroppedFile,
+  FeaturesService,
+  FileDropDirective,
+  FileSelectDirective,
+  SDKService,
+  SizePipe,
+} from '@flaps/core';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
-import { SimpleKBService } from './simple-kb.service';
+import { SisModalService, SisToastService, SpinnerComponent } from '@nuclia/sistema';
+import { combineLatest, delay, distinctUntilChanged, filter, of, Subject, switchMap, take, tap } from 'rxjs';
+import { HistoryTableComponent } from '../history-table/history-table.component';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
+import { ResourceTableComponent } from '../resource-table/resource-table.component';
+import { SimpleKBService } from './simple-kb.service';
 
 @Component({
-  standalone: false,
   selector: 'app-simple-kb',
   templateUrl: './simple-kb.component.html',
   styleUrls: ['./simple-kb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SizePipe],
+  imports: [
+    SpinnerComponent,
+    PaIconModule,
+    PaButtonModule,
+    FileDropDirective,
+    FileSelectDirective,
+    ResourceTableComponent,
+    HistoryTableComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class SimpleKBComponent implements OnDestroy {
   private simpleKBService = inject(SimpleKBService);

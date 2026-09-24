@@ -1,9 +1,16 @@
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, combineLatest, Observable, of, Subject, take } from 'rxjs';
-import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { NavigationService, SDKService } from '@flaps/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LowerCaseInputDirective, NavigationService, SDKService } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   Account,
   AccountRoles,
@@ -12,14 +19,30 @@ import {
   InviteAccountUserPayload,
   PendingInvitation,
 } from '@nuclia/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
+import { combineLatest, forkJoin, Observable, of, Subject, take } from 'rxjs';
+import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-account-users',
   templateUrl: './account-users.component.html',
   styleUrls: ['./account-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    LowerCaseInputDirective,
+    PaDropdownModule,
+    PaTableModule,
+    DropdownButtonComponent,
+    PaTooltipModule,
+    PaIconModule,
+    AsyncPipe,
+    KeyValuePipe,
+    TranslatePipe,
+  ],
 })
 export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;

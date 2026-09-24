@@ -1,5 +1,15 @@
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { AppService, ChartData, MetricsService, RangeChartData, RemiMetricsService } from '@flaps/common';
+import { RouterLink } from '@angular/router';
+import {
+  AppService,
+  ChartData,
+  GenerativeModelPipe,
+  MetricsService,
+  RangeChartComponent,
+  RangeChartData,
+  RemiMetricsService,
+} from '@flaps/common';
 import {
   FeaturesService,
   GETTING_STARTED_DONE_KEY,
@@ -8,9 +18,18 @@ import {
   UploadEventService,
   ZoneService,
 } from '@flaps/core';
-import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  OptionModel,
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BlockedFeature, Counters, UsageType } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
+import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -28,8 +47,12 @@ import {
   timer,
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
+import { KbOnboardingHeaderComponent } from './kb-onboarding/kb-onboarding-header.component';
 import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
+import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
+import { LastResourcesComponent } from './last-resources/last-resources.component';
 
 const POLLING_DELAY = 30000; // 30 seconds
 
@@ -38,7 +61,27 @@ const POLLING_DELAY = 30000; // 30 seconds
   templateUrl: './knowledge-box-home.component.html',
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    KbOnboardingHeaderComponent,
+    HomeContainerComponent,
+    PaIconModule,
+    InfoCardComponent,
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaButtonModule,
+    UsageChartsComponent,
+    PaPopupModule,
+    RouterLink,
+    RangeChartComponent,
+    ContentPlaceholderComponent,
+    PaTableModule,
+    LastResourcesComponent,
+    AsyncPipe,
+    DecimalPipe,
+    DatePipe,
+    TranslatePipe,
+    GenerativeModelPipe,
+  ],
 })
 export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

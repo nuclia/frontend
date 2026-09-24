@@ -6,10 +6,11 @@ import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { TrialExpiredModalComponent } from './trial-expired-modal/trial-expired-modal.component';
 import { isTrialExpired } from './simple.utils';
+import { ReaderExperienceComponent } from './reader-experience/reader-experience.component';
+import { SimpleKBComponent } from './simple-kb/simple-kb.component';
 
 @Component({
   selector: 'app-simple-page',
-  standalone: false,
   template: `
     @if (isReader()) {
       <app-reader-experience></app-reader-experience>
@@ -18,6 +19,7 @@ import { isTrialExpired } from './simple.utils';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReaderExperienceComponent, SimpleKBComponent],
 })
 export class SimplePageComponent {
   private sdk = inject(SDKService);

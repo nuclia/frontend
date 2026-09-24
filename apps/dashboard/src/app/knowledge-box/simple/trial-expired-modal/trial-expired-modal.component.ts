@@ -1,16 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { Router } from '@angular/router';
-import { map, take } from 'rxjs';
 import { NavigationService, SDKService } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { map, take } from 'rxjs';
 
 @Component({
   selector: 'app-trial-expired-modal',
-  standalone: false,
   templateUrl: './trial-expired-modal.component.html',
   styleUrl: './trial-expired-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaModalModule, InfoCardComponent, PaButtonModule, TranslatePipe],
 })
 export class TrialExpiredModalComponent {
   modal = inject(ModalRef);

@@ -1,17 +1,30 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { EditResourceService } from '../edit-resource.service';
-import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { IErrorMessages, PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
+import { DropdownButtonComponent, ExpandableTextareaComponent } from '@nuclia/sistema';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { DropzoneComponent } from '../dropzone/dropzone.component';
+import { EditResourceService } from '../edit-resource.service';
 import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Component({
   templateUrl: './add-field.component.html',
   styleUrls: ['../common-page-layout.scss', './add-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    DropdownButtonComponent,
+    PaDropdownModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    ExpandableTextareaComponent,
+    DropzoneComponent,
+    PaButtonModule,
+    TranslatePipe,
+  ],
 })
 export class AddFieldComponent implements OnInit, OnDestroy {
   availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON', 'JSONL'];

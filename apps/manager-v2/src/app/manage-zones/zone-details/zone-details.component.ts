@@ -1,18 +1,19 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ZoneService } from '../zone.service';
-import { Zone, ZoneAccountEntry } from '../zone.models';
-import { UserService } from '../../manage-users/user.service';
+import { TokenDialogComponent, ValidSlug } from '@flaps/common';
+import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Location } from '@angular/common';
-import { TokenDialogComponent, ValidSlug } from '@flaps/common';
+import { UserService } from '../../manage-users/user.service';
+import { Zone, ZoneAccountEntry } from '../zone.models';
+import { ZoneService } from '../zone.service';
 
 @Component({
   templateUrl: './zone-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaButtonModule, FormsModule, ReactiveFormsModule, PaTextFieldModule, PaDropdownModule, PaTogglesModule],
 })
 export class ZoneDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

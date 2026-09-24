@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
@@ -12,26 +11,22 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import {
-  DropdownButtonComponent,
-  InfoCardComponent,
-  SisProgressModule,
-  SisSearchInputComponent,
-} from '@nuclia/sistema';
+import { TranslateModule } from '@ngx-translate/core';
+import { DropdownButtonComponent, InfoCardComponent, SisSearchInputComponent } from '@nuclia/sistema';
 import { CompactNumberPipe } from '../pipes/compact-number.pipe';
 
+import { ChatActivityPageComponent } from './chat-activity-page/chat-activity-page.component';
+import { CostTokenUsagePageComponent } from './cost-token-usage-page/cost-token-usage-page.component';
+import { MetricsFiltersComponent } from './metrics-filters';
 import { MetricsPageComponent } from './metrics-page.component';
 import { MetricsPaginationComponent } from './metrics-pagination/metrics-pagination.component';
-import { MetricsFiltersComponent } from './metrics-filters';
-import { ResourceActivityPageComponent } from './resource-activity-page/resource-activity-page.component';
-import { SearchActivityPageComponent } from './search-activity-page/search-activity-page.component';
-import { ChatActivityPageComponent } from './chat-activity-page/chat-activity-page.component';
-import { UserFeedbackPageComponent } from './user-feedback-page/user-feedback-page.component';
-import { CostTokenUsagePageComponent } from './cost-token-usage-page/cost-token-usage-page.component';
-import { UsageAnalyticsPageComponent } from './usage-analytics-page/usage-analytics-page.component';
 import { RemiAnalyticsPageComponent } from './remi-analytics-page';
 import { RemiScoreDisplayComponent } from './remi-score-display';
 import { RemiSidebarGroupComponent } from './remi-sidebar-group/remi-sidebar-group.component';
+import { ResourceActivityPageComponent } from './resource-activity-page/resource-activity-page.component';
+import { SearchActivityPageComponent } from './search-activity-page/search-activity-page.component';
+import { UsageAnalyticsPageComponent } from './usage-analytics-page/usage-analytics-page.component';
+import { UserFeedbackPageComponent } from './user-feedback-page/user-feedback-page.component';
 
 const ROUTES = [
   { path: 'usage-analytics', component: UsageAnalyticsPageComponent },
@@ -59,15 +54,12 @@ const ROUTES = [
     PaTooltipModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    SisProgressModule,
     SisSearchInputComponent,
     RemiAnalyticsPageComponent,
     MetricsFiltersComponent,
     MetricsPaginationComponent,
     CompactNumberPipe,
     RemiScoreDisplayComponent,
-  ],
-  declarations: [
     MetricsPageComponent,
     RemiSidebarGroupComponent,
     ResourceActivityPageComponent,

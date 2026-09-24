@@ -1,6 +1,7 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { KVRange, KVSchema, KVSchemaField, KVValue } from '@nuclia/core';
+import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { KVSchema, KVValue } from '@nuclia/core';
 import { formatKeyValue } from '../../edit-resource.helpers';
 
 @Component({
@@ -8,7 +9,7 @@ import { formatKeyValue } from '../../edit-resource.helpers';
   templateUrl: './key-value-field.component.html',
   styleUrl: './key-value-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, KeyValuePipe],
 })
 export class KeyValueFieldComponent {
   fieldId = input<string>();

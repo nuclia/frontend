@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BrandService, OAuthConsentData, OAuthService } from '@flaps/core';
+import { PaAvatarModule, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 const INVISIBLE_SCOPES = ['offline'];
 
@@ -9,7 +12,7 @@ const INVISIBLE_SCOPES = ['offline'];
   templateUrl: './consent.component.html',
   styleUrls: ['./consent.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [PaAvatarModule, PaIconModule, FormsModule, PaButtonModule, TranslatePipe],
 })
 export class ConsentComponent implements OnInit {
   consentChallenge: string | null = null;

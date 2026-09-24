@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import { createYAxis, drawThreshold } from '../chart-utils';
 import { getDate } from 'date-fns';
 import { BaseChartDirective } from '../base-chart.directive';
+import { DecimalPipe } from '@angular/common';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 3;
@@ -13,7 +14,7 @@ const NUM_TICKS = 3;
   styleUrls: ['./bar-chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [DecimalPipe],
 })
 export class BarChartComponent extends BaseChartDirective implements AfterViewInit, OnDestroy {
   id = `bar-chart-${nextUniqueId++}`;

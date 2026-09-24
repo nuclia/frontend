@@ -23,8 +23,9 @@ import { BackButtonComponent, ButtonMiniComponent } from '@nuclia/sistema';
     PaTextFieldModule,
     BackButtonComponent,
     ButtonMiniComponent,
+    SelectAccountComponent,
+    SelectKbComponent,
   ],
-  declarations: [SelectAccountComponent, SelectKbComponent],
   exports: [],
 })
 export class SelectAccountKbModule {}

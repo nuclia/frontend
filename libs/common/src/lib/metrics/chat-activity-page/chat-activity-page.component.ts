@@ -3,13 +3,15 @@ import { MetricsMonthRange } from '../metrics-column.model';
 import { BooleanCondition, DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
 import { ChatActivityPageService } from './chat-activity-page.service';
 import { CHAT_ACTIVITY_COLUMNS, CHAT_ACTIVITY_SIDEBAR_FIELDS } from './chat-activity-page.config';
+import { MetricsPageComponent } from '../metrics-page.component';
+import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
 
 @Component({
   selector: 'app-chat-activity-page',
   templateUrl: './chat-activity-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [ChatActivityPageService],
+  imports: [MetricsPageComponent, MetricsFiltersComponent],
 })
 export class ChatActivityPageComponent {
   protected service = inject(ChatActivityPageService);

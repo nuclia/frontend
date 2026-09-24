@@ -1,11 +1,14 @@
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
-import { SimpleKBService } from '../simple-kb/simple-kb.service';
-import { Resource, RESOURCE_STATUS } from '@nuclia/core';
 import { getResourceErrors } from '@flaps/common';
 import { SDKService } from '@flaps/core';
+import { PaButtonModule, PaIconModule, PaTableModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Resource, RESOURCE_STATUS } from '@nuclia/core';
+import { SisModalService, StandaloneMimeIconPipe } from '@nuclia/sistema';
 import { addMinutes } from 'date-fns';
-import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
+import { SimpleKBService } from '../simple-kb/simple-kb.service';
 
 interface TableRow {
   id?: string;
@@ -22,8 +25,17 @@ interface TableRow {
   selector: 'app-resource-table',
   templateUrl: './resource-table.component.html',
   styleUrl: './resource-table.component.scss',
-  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    PaTableModule,
+    PaTooltipModule,
+    PaIconModule,
+    PaButtonModule,
+    AsyncPipe,
+    DatePipe,
+    TranslatePipe,
+    StandaloneMimeIconPipe,
+  ],
 })
 export class ResourceTableComponent {
   simpleKBService = inject(SimpleKBService);

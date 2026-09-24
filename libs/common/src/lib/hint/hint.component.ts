@@ -12,6 +12,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { SDKService } from '@flaps/core';
+import { PaButtonModule, PaExpanderModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { delay, map, take } from 'rxjs';
 
 @Component({
@@ -20,7 +21,7 @@ import { delay, map, take } from 'rxjs';
   styleUrls: ['hint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [PaExpanderModule, PaIconModule, PaButtonModule],
 })
 export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges {
   @Input() learnMore?: string;
@@ -31,7 +32,7 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   @ViewChild('content') content?: ElementRef;
   @ViewChild('container') container?: ElementRef;
 
-  clipboardSupported = !!(navigator.clipboard?.writeText);
+  clipboardSupported = !!navigator.clipboard?.writeText;
   hasCodeExample = false;
 
   containerWidth = '100%';

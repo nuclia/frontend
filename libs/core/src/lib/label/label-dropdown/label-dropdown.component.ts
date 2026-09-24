@@ -1,3 +1,4 @@
+import { KeyValuePipe, SlicePipe } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -8,15 +9,36 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
+import { FormsModule } from '@angular/forms';
+import {
+  Aspect,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PopupComponent,
+  Size,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelSet, LabelSets } from '@nuclia/core';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-label-dropdown',
   templateUrl: './label-dropdown.component.html',
   styleUrls: ['./label-dropdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaPopupModule,
+    PaTogglesModule,
+    PaTextFieldModule,
+    FormsModule,
+    SlicePipe,
+    KeyValuePipe,
+    TranslatePipe,
+  ],
 })
 export class LabelDropdownComponent {
   @Input() aspect: Aspect = 'solid';

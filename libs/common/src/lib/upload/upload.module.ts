@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
+import { LabelModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -23,7 +23,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BadgeComponent, InfoCardComponent, ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent, ProgressBarComponent } from '@nuclia/sistema';
 import { HintModule } from '../hint';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
@@ -41,7 +41,6 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,
-    FileUploadModule,
     STFPipesModule,
     LabelModule,
     HintModule,
@@ -50,7 +49,6 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
     PaTogglesModule,
     PaTooltipModule,
     PaTextFieldModule,
-    SisProgressModule,
     PaModalModule,
     PaTableModule,
     PaExpanderModule,
@@ -62,8 +60,6 @@ import { ResourceHandlingBannerComponent } from './resource-handling-banner/reso
     BadgeComponent,
     ExtractionSelectComponent,
     ResourceHandlingBannerComponent,
-  ],
-  declarations: [
     CreateLinkComponent,
     UploadFilesComponent,
     UploadFilesDialogComponent,

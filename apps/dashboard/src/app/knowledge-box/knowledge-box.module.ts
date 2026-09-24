@@ -1,12 +1,10 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
-import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -20,26 +18,27 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisIconsModule } from '@nuclia/sistema';
+import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent } from '@nuclia/sistema';
 import { KbOnboardingHeaderComponent } from './knowledge-box-home/kb-onboarding/kb-onboarding-header.component';
+import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
+import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 
 import {
+  AccountStatusComponent,
   ChartsModule,
   GenerativeModelPipe,
   HintModule,
   KnowledgeBoxSettingsComponent,
-  PipesModule,
   RangeChartComponent,
   TokenDialogModule,
   UploadModule,
   UsersManageModule,
-  AccountStatusComponent,
 } from '@flaps/common';
 import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts.component';
 
 import { STFPipesModule } from '@flaps/core';
-import { LastResourcesComponent } from './knowledge-box-home/last-resources/last-resources.component';
 import { ContentPlaceholderComponent } from './knowledge-box-home/content-placeholder/content-placeholder.component';
+import { LastResourcesComponent } from './knowledge-box-home/last-resources/last-resources.component';
 
 @NgModule({
   imports: [
@@ -51,7 +50,6 @@ import { ContentPlaceholderComponent } from './knowledge-box-home/content-placeh
     RouterModule,
     TokenDialogModule,
     ChartsModule,
-    PipesModule,
     HintModule,
     UsersManageModule,
     PaButtonModule,
@@ -69,7 +67,6 @@ import { ContentPlaceholderComponent } from './knowledge-box-home/content-placeh
     HomeContainerComponent,
     KnowledgeBoxSettingsComponent,
     PaTooltipModule,
-    SisIconsModule,
     PaButtonModule,
     PaDropdownModule,
     PaTableModule,
@@ -83,8 +80,9 @@ import { ContentPlaceholderComponent } from './knowledge-box-home/content-placeh
     LastResourcesComponent,
     ContentPlaceholderComponent,
     KbOnboardingHeaderComponent,
+    KnowledgeBoxComponent,
+    KnowledgeBoxHomeComponent,
   ],
-  declarations: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
   exports: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
 })
 export class KnowledgeBoxModule {}

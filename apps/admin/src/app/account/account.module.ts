@@ -15,7 +15,6 @@ import {
   KnowledgeBoxKeysComponent,
   NavbarModule,
   OtpInputComponent,
-  PipesModule,
   ProfileComponent,
   TokenDialogModule,
   UsersManageModule,
@@ -37,7 +36,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, DropdownButtonComponent, NsiSkeletonComponent, SisProgressModule } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, NsiSkeletonComponent } from '@nuclia/sistema';
 import { AccountAdministrationComponent } from './account-administration/account-administration.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
 import { AccountBillingComponent } from './account-billing/account-billing.component';
@@ -160,7 +159,6 @@ const routes: Routes = [
     FormsModule,
     RouterModule.forChild(routes),
     OverlayModule,
-    PipesModule,
     TokenDialogModule,
     ChartsModule,
     NavbarModule,
@@ -176,7 +174,6 @@ const routes: Routes = [
     DropdownButtonComponent,
     BackButtonComponent,
     PaDropdownModule,
-    SisProgressModule,
     PaTableModule,
     PaTabsModule,
     BillingModule,
@@ -195,8 +192,6 @@ const routes: Routes = [
     AccountModelsComponent,
     KbListComponent,
     KbCreationComponent,
-  ],
-  declarations: [
     AccountAdministrationComponent,
     AccountBillingComponent,
     AccountHomeComponent,

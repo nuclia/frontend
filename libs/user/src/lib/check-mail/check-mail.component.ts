@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'stf-check-mail',
   templateUrl: './check-mail.component.html',
   styleUrls: ['./check-mail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [UserContainerComponent, RouterLink, TranslatePipe],
 })
 export class CheckMailComponent {
   email: string;

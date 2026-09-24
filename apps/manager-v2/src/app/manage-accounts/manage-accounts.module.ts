@@ -151,8 +151,6 @@ const ROUTES: Routes = [
     TranslateModule,
     InfoCardComponent,
     PaTogglesModule,
-  ],
-  declarations: [
     ManageAccountsComponent,
     AccountDetailsComponent,
     AccountListComponent,

@@ -1,9 +1,9 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { MetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
 import { IKnowledgeBoxItem, NUAClient, UsagePoint } from '@nuclia/core';
 import { MockProvider } from 'ng-mocks';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { MetricsService } from '@flaps/common';
 import { AccountConsumptionComponent } from './account-consumption.component';
 
 const mockKb = (id: string): IKnowledgeBoxItem =>
@@ -38,7 +38,7 @@ describe('AccountConsumptionComponent', () => {
     getUsage = jest.fn().mockReturnValue(of(mockUsage()));
 
     await TestBed.configureTestingModule({
-      declarations: [AccountConsumptionComponent],
+      imports: [AccountConsumptionComponent],
       providers: [
         MockProvider(MetricsService, {
           account$: currentAccount$ as any,

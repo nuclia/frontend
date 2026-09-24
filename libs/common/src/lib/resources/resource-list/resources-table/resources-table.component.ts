@@ -1,20 +1,61 @@
+import { AsyncPipe, DatePipe, KeyValuePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnChanges, SimpleChanges } from '@angular/core';
-import { ColoredLabel, ColumnHeader } from '../resource-list.model';
-import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { catchError, combineLatest, defer, from, Observable, of, take, toArray } from 'rxjs';
-import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
+import { LabelModule, LabelsService } from '@flaps/core';
+import {
+  HeaderCell,
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, Resource, UserClassification } from '@nuclia/core';
-import { LabelsService } from '@flaps/core';
-import { ResourcesTableDirective } from '../resources-table.directive';
+import {
+  DropdownButtonComponent,
+  NsiSkeletonComponent,
+  SisLabelModule,
+  SpinnerComponent,
+  StickyFooterComponent,
+} from '@nuclia/sistema';
+import { catchError, combineLatest, defer, from, Observable, of, take, toArray } from 'rxjs';
+import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { UploadService } from '../../../upload/upload.service';
 import { formatKeyValue, mergeExistingAndNewLabels, removeLabels } from '../../edit-resource';
+import { ColoredLabel, ColumnHeader } from '../resource-list.model';
+import { ResourcesTableDirective } from '../resources-table.directive';
+import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
+import { TitleCellComponent } from '../title-cell/title-cell.component';
 
 @Component({
   selector: 'stf-resources-table',
   templateUrl: './resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    SpinnerComponent,
+    PaButtonModule,
+    LabelModule,
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaTogglesModule,
+    PaTableModule,
+    PaTooltipModule,
+    NsiSkeletonComponent,
+    TitleCellComponent,
+    SisLabelModule,
+    PaIconModule,
+    PaPopupModule,
+    StickyFooterComponent,
+    TablePaginationComponent,
+    AsyncPipe,
+    SlicePipe,
+    DatePipe,
+    KeyValuePipe,
+    TranslatePipe,
+  ],
 })
 export class ResourcesTableComponent extends ResourcesTableDirective implements OnChanges {
   protected uploadService = inject(UploadService);

@@ -1,14 +1,56 @@
+import { AsyncPipe, DatePipe, KeyValuePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { UploadService } from '../../../upload';
+import { LabelModule } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  DropdownButtonComponent,
+  NsiSkeletonComponent,
+  SisLabelModule,
+  SpinnerComponent,
+  StickyFooterComponent,
+} from '@nuclia/sistema';
 import { map } from 'rxjs';
+import { UploadService } from '../../../upload';
 import { ResourcesTableComponent } from '../resources-table/resources-table.component';
+import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
+import { TitleCellComponent } from '../title-cell/title-cell.component';
 
 @Component({
   selector: 'stf-processed-resources-table',
   templateUrl: '../resources-table/resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    SpinnerComponent,
+    PaButtonModule,
+    LabelModule,
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaTogglesModule,
+    PaTableModule,
+    PaTooltipModule,
+    NsiSkeletonComponent,
+    TitleCellComponent,
+    SisLabelModule,
+    PaIconModule,
+    PaPopupModule,
+    StickyFooterComponent,
+    TablePaginationComponent,
+    AsyncPipe,
+    SlicePipe,
+    DatePipe,
+    KeyValuePipe,
+    TranslatePipe,
+  ],
 })
 export class ProcessedResourcesTableComponent extends ResourcesTableComponent {
   override uploadService = inject(UploadService);

@@ -56,7 +56,7 @@ export const routes: Routes = [
                 path: 'resources',
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
-                  import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+                  import('../../../../libs/common/src/lib/resources/resource.routes').then((m) => m.RESOURCE_ROUTES),
               },
               {
                 path: 'upload',

@@ -1,13 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { filter, Observable, startWith } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LabelSetKind } from '@nuclia/core';
+import { filter, Observable, startWith } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LabelsService } from '../labels.service';
 import { LabelSetDisplay } from './model';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { FeaturesService } from '@flaps/core';
-import { ModalService } from '@guillotinaweb/pastanaga-angular';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+
+import { ModalService, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FeaturesService } from '../../analytics';
+import { LabelSetListComponent } from './label-set-list/label-set-list.component';
 import { MissingLabelsDialogComponent } from './missing-labels';
 
 @Component({
@@ -15,7 +18,15 @@ import { MissingLabelsDialogComponent } from './missing-labels';
   templateUrl: './label-sets.component.html',
   styleUrl: './label-sets.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaButtonModule,
+    RouterLink,
+    RouterLinkActive,
+    LabelSetListComponent,
+    RouterOutlet,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class LabelSetsComponent {
   private _labelSets: Observable<LabelSetDisplay[]> = this.labelsService.labelSets.pipe(

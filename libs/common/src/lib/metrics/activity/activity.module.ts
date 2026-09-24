@@ -14,7 +14,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { ActivityDownloadComponent } from './activity-download.component';
 import { ActivityLogTableComponent } from './log-table.component';
-import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent } from '@nuclia/sistema';
 
 const ROUTES = [
   {
@@ -37,9 +37,8 @@ const ROUTES = [
     PaTooltipModule,
     ActivityLogTableComponent,
     InfoCardComponent,
-    SisProgressModule,
+    ActivityDownloadComponent,
   ],
-  declarations: [ActivityDownloadComponent],
   exports: [],
 })
 export class ActivityModule {}

@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { UsersManageService } from '@flaps/common';
+import { UsersManageComponent, UsersManageService } from '@flaps/common';
+import { ModalRef, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './users-dialog.component.html',
   styleUrls: ['./users-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [UsersManageService],
+  imports: [PaModalModule, UsersManageComponent, TranslatePipe],
 })
 export class UsersDialogComponent {
   kb = this.modal.config.data?.['kb'];

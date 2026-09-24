@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SsoButtonComponent } from './sso-button.component';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { EventEmitter } from '@angular/core';
 import { SsoService } from '@flaps/core';
-import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
+import { SsoButtonComponent } from './sso-button.component';
 
 describe('SsoButtonComponent', () => {
   let component: SsoButtonComponent;
@@ -14,13 +15,24 @@ describe('SsoButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaIconModule), MockModule(TranslateModule)],
-      declarations: [SsoButtonComponent],
+      imports: [SsoButtonComponent, TranslateModule.forRoot()],
       providers: [
         MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => of(`sso/login/${provider}`)) }),
         MockProvider(WINDOW, { location: { href: '' } } as Window),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
         MockProvider(TranslateService, {
           instant: jest.fn((key) => `translate--${key}`),
+          get: jest.fn((key) => of(`translate--${key}`)),
+          onTranslationChange: new EventEmitter(),
+          onLangChange: new EventEmitter(),
+          onDefaultLangChange: new EventEmitter(),
         }),
       ],
     }).compileComponents();

@@ -1,19 +1,21 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { filter, switchMap } from 'rxjs/operators';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService } from '@nuclia/sistema';
+import { ModalConfig, PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { KVSchema } from '@nuclia/core';
+import { BadgeComponent, SisModalService } from '@nuclia/sistema';
+import { filter, switchMap } from 'rxjs/operators';
+import { KV_SCHEMA_LIST_CONFIG } from './kv-schemas.config';
 import { KvSchemasService } from './kv-schemas.service';
 import { SchemaEditModalComponent } from './schema-edit-modal/schema-edit-modal.component';
-import { TranslateService } from '@ngx-translate/core';
-import { KV_SCHEMA_LIST_CONFIG } from './kv-schemas.config';
+import { SchemaFormComponent } from './schema-form/schema-form.component';
 
 @Component({
   selector: 'app-kv-schemas',
-  standalone: false,
   templateUrl: './kv-schemas.component.html',
   styleUrl: './kv-schemas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaButtonModule, SchemaFormComponent, PaTableModule, BadgeComponent, AsyncPipe, TranslatePipe],
 })
 export class KvSchemasComponent {
   private kvService = inject(KvSchemasService);

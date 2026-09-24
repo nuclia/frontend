@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,13 +8,34 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { take } from 'rxjs';
-import { DroppedFile, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  DroppedFile,
+  FeaturesService,
+  FileDropDirective,
+  FileSelectDirective,
+  LabelModule,
+  NavigationService,
+  SDKService,
+  STFPipesModule,
+  STFUtils,
+} from '@flaps/core';
+import {
+  PaButtonModule,
+  PaExpanderModule,
+  PaModalModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
-import { UploadService } from '../upload.service';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { take } from 'rxjs';
+import { HintComponent } from '../../hint/hint.component';
 import { StandaloneService } from '../../services';
+import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
+import { UploadService } from '../upload.service';
 import { getFilesGroupedByType } from '../upload.utils';
-import { FormControl, Validators } from '@angular/forms';
 
 const GENERAL_LABELSET = 'General';
 
@@ -22,7 +44,24 @@ const GENERAL_LABELSET = 'General';
   templateUrl: './upload-files.component.html',
   styleUrls: ['./upload-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaModalModule,
+    InfoCardComponent,
+    FileDropDirective,
+    FileSelectDirective,
+    PaTogglesModule,
+    LabelModule,
+    PaButtonModule,
+    PaExpanderModule,
+    PaTextFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ExtractionSelectComponent,
+    HintComponent,
+    AsyncPipe,
+    TranslatePipe,
+    STFPipesModule,
+  ],
 })
 export class UploadFilesComponent {
   @Input() folderMode = false;

@@ -87,3 +87,6 @@ vitest.config.*.timestamp*
 .claude/settings.local.json
 
 .nx/migrate-runs
+
+# Metrics
+.VSCodeCounter

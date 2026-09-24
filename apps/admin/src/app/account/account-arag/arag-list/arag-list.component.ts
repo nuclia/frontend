@@ -12,7 +12,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, IRetrievalAgentItem, RetrievalAgent, RetrievalAgentCreation } from '@nuclia/core';
-import { BadgeComponent, InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { forkJoin, Subject, throwError } from 'rxjs';
 import { catchError, filter, map, switchMap, take } from 'rxjs/operators';
 import { CreateAragComponent } from '../create-arag/create-arag.component';
@@ -21,7 +21,7 @@ import { CreateAragComponent } from '../create-arag/create-arag.component';
   selector: 'app-arag-list',
   imports: [
     CommonModule,
-    SisProgressModule,
+    SpinnerComponent,
     PaButtonModule,
     PaDropdownModule,
     PaPopupModule,

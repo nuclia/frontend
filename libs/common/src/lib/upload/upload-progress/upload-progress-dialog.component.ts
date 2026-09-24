@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { UploadProgressComponent } from './upload-progress.component';
 
 @Component({
   selector: 'app-upload-progress-dialog',
@@ -8,7 +9,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   `,
   styleUrls: ['./upload-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [UploadProgressComponent],
 })
 export class UploadProgressDialogComponent {
   constructor(public modal: ModalRef) {}

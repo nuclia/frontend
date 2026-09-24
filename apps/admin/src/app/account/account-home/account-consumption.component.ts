@@ -1,7 +1,12 @@
+import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, NUAClient, UsagePoint, UsageType } from '@nuclia/core';
+import { NsiSkeletonComponent } from '@nuclia/sistema';
 import {
   catchError,
   combineLatest,
@@ -20,7 +25,7 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
-import { MetricsService } from '@flaps/common';
+import { NucliaTokensComponent } from '../nuclia-tokens/nuclia-tokens.component';
 
 interface UsageListItem {
   id: string;
@@ -36,7 +41,16 @@ interface UsageListItem {
   templateUrl: './account-consumption.component.html',
   styleUrl: './account-consumption.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    NsiSkeletonComponent,
+    NucliaTokensComponent,
+    PaTooltipModule,
+    PaIconModule,
+    NgTemplateOutlet,
+    AsyncPipe,
+    DecimalPipe,
+    TranslatePipe,
+  ],
 })
 export class AccountConsumptionComponent implements OnInit, OnDestroy {
   private metrics = inject(MetricsService);

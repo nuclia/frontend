@@ -28,9 +28,10 @@ import { PlanStatusComponent } from './plan-status/plan-status.component';
     UserMenuComponent,
     StandaloneMenuComponent,
     PlanStatusComponent,
+    TopbarComponent,
+    KbSwitchComponent,
   ],
   exports: [TopbarComponent],
-  declarations: [TopbarComponent, KbSwitchComponent],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

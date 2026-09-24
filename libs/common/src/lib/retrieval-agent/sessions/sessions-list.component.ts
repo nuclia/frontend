@@ -17,12 +17,12 @@ import {
   HeaderCell,
   PaButtonModule,
   PaDatePickerModule,
+  PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
-  PaDateTimeModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { getFilterFromDate, getFilterFromVisibility, Session, SortField, SortOption } from '@nuclia/core';
@@ -36,17 +36,17 @@ import {
 } from '@nuclia/sistema';
 import { endOfDay } from 'date-fns';
 import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { ResourceNavigationService } from '../../resources/edit-resource/resource-navigation.service';
+import { Filters } from '../../resources/resource-filters.utils';
 import {
   ColumnHeader,
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
-  Filters,
   PAGE_SIZES,
   ResourceListParams,
-  ResourceNavigationService,
   searchResources,
-  TablePaginationComponent,
-} from '../../resources';
+} from '../../resources/resource-list/resource-list.model';
+import { TablePaginationComponent } from '../../resources/resource-list/table-pagination/table-pagination.component';
 
 @Component({
   selector: 'app-sessions-list',

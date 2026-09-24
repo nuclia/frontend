@@ -6,7 +6,6 @@ import { take } from 'rxjs';
 @Component({
   template: '',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
 })
 export class RedirectComponent {
   constructor(

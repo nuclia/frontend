@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { ModalRef, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { KVSchema } from '@nuclia/core';
+import { SchemaFormComponent } from '../schema-form/schema-form.component';
 
 @Component({
   selector: 'app-schema-edit-modal',
-  standalone: false,
   templateUrl: './schema-edit-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaModalModule, SchemaFormComponent, TranslatePipe],
 })
 export class SchemaEditModalComponent {
   modal = inject(ModalRef<{ schema: KVSchema }>);

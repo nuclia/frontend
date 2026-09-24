@@ -3,11 +3,12 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, distinctUntilKeyChanged, filter, map, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { addDays } from 'date-fns';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   template: '<router-outlet></router-outlet>',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [RouterOutlet],
 })
 export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

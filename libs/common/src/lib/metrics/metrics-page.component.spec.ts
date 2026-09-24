@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MetricsPageComponent } from './metrics-page.component';
 import { MetricsPageService } from './metrics-page.service';
 
@@ -12,11 +12,17 @@ describe('MetricsPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MetricsPageComponent],
-      imports: [MockModule(TranslateModule)],
+      imports: [TranslateModule.forRoot(), MetricsPageComponent],
       providers: [
         DatePipe,
-        MockProvider(TranslateService, { instant: (key: string) => key }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

@@ -34,7 +34,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, NsiSkeletonComponent, SisModalService } from '@nuclia/sistema';
 import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, map, take, takeUntil } from 'rxjs/operators';
 import {
@@ -89,7 +89,6 @@ interface RemiHealthSummary {
     AccordionComponent,
     AccordionItemComponent,
     AccordionBodyDirective,
-    SisProgressModule,
     ReactiveFormsModule,
     InfoCardComponent,
     NsiSkeletonComponent,

@@ -6,18 +6,25 @@ import {
   AgentDashboardComponent,
   AiModelsComponent,
   aragOwnerGuard,
+  awsGuard,
+  AwsOnboardingComponent,
   BaseComponent,
   DashboardLayoutComponent,
   DriversPageComponent,
   EditResourceComponent,
   EmptyComponent,
   inviteInProgressGuard,
+  KnowledgeBoxKeysComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
+  KnowledgeBoxUsersComponent,
+  OnboardingComponent,
   PageNotFoundComponent,
-  PageNotFoundModule,
   PreviewComponent,
+  ProfileComponent,
   RagLabPageComponent,
+  redirectToAdminGuard,
+  redirectToWorkflowGuard,
   ResourceFileComponent,
   ResourceLinkComponent,
   ResourceTextComponent,
@@ -35,26 +42,18 @@ import {
   setAgentGuard,
   setKbGuard,
   simpleModeGuard,
-  awsGuard,
-  AwsOnboardingComponent,
-  KnowledgeBoxKeysComponent,
-  KnowledgeBoxUsersComponent,
-  ProfileComponent,
-  OnboardingComponent,
-  redirectToAdminGuard,
-  redirectToWorkflowGuard,
-  WorkflowsListComponent,
   WorkflowsComponent,
+  WorkflowsListComponent,
 } from '@flaps/common';
 import {
-  RedirectComponent,
+  AppLoginComponent,
+  CallbackComponent,
   FarewellComponent,
   FeedbackComponent,
-  CallbackComponent,
+  RedirectComponent,
   SetPasswordComponent,
-  AppLoginComponent,
-  TestingAppSignupComponent,
   TemporaryContextBoxSignupComponent,
+  TestingAppSignupComponent,
 } from '@nuclia/user';
 
 import { authGuard, redirectToSignUp } from '@flaps/core';
@@ -110,7 +109,7 @@ const routes: Routes = [
               },
               {
                 path: 'resources',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.ResourcesModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.RESOURCE_ROUTES),
               },
               {
                 path: 'search',
@@ -342,7 +341,7 @@ const routerOptions: ExtraOptions = {
 };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, routerOptions), PageNotFoundModule],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

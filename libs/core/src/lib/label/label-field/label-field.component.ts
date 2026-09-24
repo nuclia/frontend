@@ -1,15 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Size } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, map, of, switchMap, tap } from 'rxjs';
+import { LabelDropdownComponent } from '../label-dropdown/label-dropdown.component';
+import { LabelListComponent } from '../label-list/label-list.component';
 import { LabelsService } from '../labels.service';
-import { Size } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-label-field',
   templateUrl: './label-field.component.html',
   styleUrls: ['./label-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [LabelDropdownComponent, LabelListComponent, AsyncPipe, TranslatePipe],
 })
 export class LabelFieldComponent {
   @Input()

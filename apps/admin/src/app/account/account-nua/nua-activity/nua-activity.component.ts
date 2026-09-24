@@ -1,10 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { SDKService } from '@flaps/core';
+import { PaButtonModule, PaDateTimeModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Account, NUAClient } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
-import { Account, NUAClient } from '@nuclia/core';
 import { Activity, NuaActivityService } from './nua-activity.service';
 
 @Component({
@@ -12,7 +15,7 @@ import { Activity, NuaActivityService } from './nua-activity.service';
   templateUrl: './nua-activity.component.html',
   styleUrls: ['./nua-activity.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaButtonModule, RouterLink, PaTableModule, PaDateTimeModule, AsyncPipe, TranslatePipe],
 })
 export class NuaActivityComponent implements OnInit, OnDestroy {
   private _terminator = new Subject<void>();
