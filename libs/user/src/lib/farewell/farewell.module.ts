@@ -9,17 +9,17 @@ import { FeedbackComponent } from './feedback.component';
 import { UserContainerComponent } from '../user-container';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TranslateModule.forChild(),
-    RouterModule,
-    UserContainerComponent,
-    PaButtonModule,
-    PaTextFieldModule,
-    PaTogglesModule,
-    SisProgressModule,
-  ],
-  declarations: [FarewellComponent, FeedbackComponent],
-  exports: [],
+    imports: [
+        CommonModule,
+        TranslateModule.forChild(),
+        RouterModule,
+        UserContainerComponent,
+        PaButtonModule,
+        PaTextFieldModule,
+        PaTogglesModule,
+        SisProgressModule,
+        FarewellComponent, FeedbackComponent,
+    ],
+    exports: [],
 })
 export class FarewellModule {}

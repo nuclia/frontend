@@ -1,26 +1,39 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   AnalyticsService,
   AuthService,
   BackendConfigurationService,
   FeaturesService,
+  injectScript,
   LoginService,
   OAuthService,
   SDKService,
-  injectScript,
 } from '@flaps/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { Subject } from 'rxjs';
 import { StrongPassword } from '../password.validator';
+import { SsoButtonsComponent } from '../sso/sso-buttons.component';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'nus-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    UserContainerComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    PasswordInputComponent,
+    PaButtonModule,
+    SsoButtonsComponent,
+    TranslatePipe,
+  ],
 })
 export class SignupComponent implements OnInit {
   config = inject(BackendConfigurationService);

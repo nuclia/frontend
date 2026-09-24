@@ -1,19 +1,29 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoginService, ResetResponse, SetupResponse } from '@flaps/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { SisToastService } from '@nuclia/sistema';
+import { IErrorMessages, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { PasswordInputComponent, SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { StrongPassword, SamePassword } from '../password.validator';
 import { Observable } from 'rxjs';
+import { SamePassword, StrongPassword } from '../password.validator';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'nus-reset',
   templateUrl: './reset.component.html',
   styleUrls: ['./reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    UserContainerComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PasswordInputComponent,
+    PaButtonModule,
+    TranslatePipe,
+  ],
 })
 export class ResetComponent {
   magicToken: string | undefined;

@@ -1,15 +1,25 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BillingService, CancellationFeedback, NavigationService, SDKService } from '@flaps/core';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { map, switchMap, take } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
-import { BillingService, NavigationService, CancellationFeedback, SDKService } from '@flaps/core';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
   styleUrls: ['./feedback.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    UserContainerComponent,
+    PaTogglesModule,
+    PaTextFieldModule,
+    PaButtonModule,
+    SpinnerComponent,
+    TranslatePipe,
+  ],
 })
 export class FeedbackComponent {
   feedback?: CancellationFeedback;

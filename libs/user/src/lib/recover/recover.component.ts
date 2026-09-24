@@ -1,20 +1,31 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BackendConfigurationService, LoginService, LowerCaseInputDirective, RecoverData } from '@flaps/core';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { forkJoin, map } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'nus-recover',
   templateUrl: './recover.component.html',
   styleUrls: ['./recover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    UserContainerComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    LowerCaseInputDirective,
+    PaButtonModule,
+    RouterLink,
+    TranslatePipe,
+  ],
 })
 export class RecoverComponent {
   recoverForm = new FormGroup({
