@@ -11,7 +11,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, Resource, UserClassification } from '@nuclia/core';
 import {
   DropdownButtonComponent,
@@ -55,7 +55,6 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
     DatePipe,
     KeyValuePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class ResourcesTableComponent extends ResourcesTableDirective implements OnChanges {

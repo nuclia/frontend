@@ -21,7 +21,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { KVFieldType, KVSchema, KVSchemaField } from '@nuclia/core';
 import { ButtonMiniComponent } from '@nuclia/sistema';
 import { KV_SCHEMA_FORM_CONFIG, KvSchemaFormColumn } from '../kv-schemas.config';
@@ -48,7 +48,6 @@ function uniqueKeysValidator(control: AbstractControl): ValidationErrors | null 
     PaButtonModule,
     ButtonMiniComponent,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class SchemaFormComponent {

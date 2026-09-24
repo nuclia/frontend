@@ -8,7 +8,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisProgressModule, StickyFooterComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { UploadService } from '../../../upload';
@@ -36,7 +36,6 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
     AsyncPipe,
     DatePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class PendingResourcesTableComponent extends ResourcesTableDirective {

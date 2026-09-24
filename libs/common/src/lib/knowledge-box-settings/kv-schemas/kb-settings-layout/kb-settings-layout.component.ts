@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs/operators';
 
 @Component({
@@ -10,7 +10,7 @@ import { filter, map, startWith } from 'rxjs/operators';
   templateUrl: './kb-settings-layout.component.html',
   styleUrl: './kb-settings-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaTabsModule, RouterOutlet, TranslatePipe, TranslateModule],
+  imports: [PaTabsModule, RouterOutlet, TranslatePipe],
 })
 export class KbSettingsLayoutComponent {
   private router = inject(Router);

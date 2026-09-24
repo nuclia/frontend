@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { RouterLink } from '@angular/router';
 import { LabelModule, LabelsService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelSetKind, LabelSets, Resource } from '@nuclia/core';
 import {
   getClassificationFromSelection,
@@ -18,15 +18,7 @@ import { EditResourceService } from '../edit-resource.service';
   templateUrl: './resource-classification.component.html',
   styleUrls: ['../common-page-layout.scss', './resource-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterLink,
-    LabelModule,
-    LabelsExpanderComponent,
-    PaButtonModule,
-    AsyncPipe,
-    TranslatePipe,
-    TranslateModule,
-  ],
+  imports: [RouterLink, LabelModule, LabelsExpanderComponent, PaButtonModule, AsyncPipe, TranslatePipe],
 })
 export class ResourceClassificationComponent implements OnInit, OnDestroy {
   backupLabels: Classification[] = [];

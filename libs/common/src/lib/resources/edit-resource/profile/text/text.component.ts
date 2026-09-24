@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, TextField, TextFieldData } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
@@ -13,14 +13,7 @@ import { EditResourceService } from '../../edit-resource.service';
   templateUrl: 'text.component.html',
   styleUrls: ['../../common-page-layout.scss', './text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    ExpandableTextareaComponent,
-    PaButtonModule,
-    TranslatePipe,
-    TranslateModule,
-  ],
+  imports: [FormsModule, ReactiveFormsModule, ExpandableTextareaComponent, PaButtonModule, TranslatePipe],
 })
 export class ResourceTextComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

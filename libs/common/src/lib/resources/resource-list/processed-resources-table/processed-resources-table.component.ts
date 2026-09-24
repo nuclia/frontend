@@ -10,7 +10,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   DropdownButtonComponent,
   NsiSkeletonComponent,
@@ -50,7 +50,6 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
     DatePipe,
     KeyValuePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class ProcessedResourcesTableComponent extends ResourcesTableComponent {

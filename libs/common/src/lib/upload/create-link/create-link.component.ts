@@ -11,7 +11,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { catchError, Observable, switchMap, take } from 'rxjs';
@@ -52,7 +52,6 @@ type UploadOption = 'one' | 'multiple' | 'csv';
     AsyncPipe,
     DecimalPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class CreateLinkComponent {

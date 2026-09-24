@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { getResourceErrors } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTableModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Resource, RESOURCE_STATUS } from '@nuclia/core';
 import { SisIconsModule, SisModalService, StandaloneMimeIconPipe } from '@nuclia/sistema';
 import { addMinutes } from 'date-fns';
@@ -35,7 +35,6 @@ interface TableRow {
     DatePipe,
     TranslatePipe,
     SisIconsModule,
-    TranslateModule,
     StandaloneMimeIconPipe,
   ],
 })

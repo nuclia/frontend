@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NotificationService, NotificationsPanelComponent } from '@flaps/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TopbarComponent, RouterOutlet, NotificationsPanelComponent, TranslatePipe, TranslateModule],
+  imports: [TopbarComponent, RouterOutlet, NotificationsPanelComponent, TranslatePipe],
 })
 export class BaseComponent implements OnInit {
   private notificationService = inject(NotificationService);

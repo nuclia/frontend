@@ -10,7 +10,7 @@ import {
   UnauthorizedFeatureDirective,
 } from '@flaps/core';
 import { PaFocusableModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
 
@@ -27,7 +27,6 @@ import { StandaloneService } from '../services';
     UnauthorizedFeatureDirective,
     AsyncPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class NavbarComponent implements OnInit, OnDestroy {

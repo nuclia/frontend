@@ -27,7 +27,7 @@ import {
   PaPopupModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BlockedFeature, Counters, UsageType } from '@nuclia/core';
 import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import {
@@ -81,7 +81,6 @@ const POLLING_DELAY = 30000; // 30 seconds
     DatePipe,
     TranslatePipe,
     GenerativeModelPipe,
-    TranslateModule,
   ],
 })
 export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {

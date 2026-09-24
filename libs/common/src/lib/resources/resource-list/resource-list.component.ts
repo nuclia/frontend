@@ -15,7 +15,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   Classification,
   getFilterFromDate,
@@ -77,7 +77,6 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
     AsyncPipe,
     DatePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class ResourceListComponent implements OnDestroy {

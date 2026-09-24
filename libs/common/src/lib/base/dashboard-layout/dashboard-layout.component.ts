@@ -2,7 +2,7 @@ import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { combineLatest, map, startWith, take } from 'rxjs';
 import { NavbarComponent } from '../../navbar/navbar.component';
@@ -24,7 +24,6 @@ import { DashboardLayoutService } from './dashboard-layout.service';
     AsyncPipe,
     DecimalPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class DashboardLayoutComponent {

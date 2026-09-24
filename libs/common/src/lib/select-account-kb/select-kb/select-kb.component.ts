@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, SelectAccountKbService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
 import { BackButtonComponent, ButtonMiniComponent, SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
@@ -22,7 +22,6 @@ import { map } from 'rxjs/operators';
     PaIconModule,
     AsyncPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class SelectKbComponent implements OnDestroy {

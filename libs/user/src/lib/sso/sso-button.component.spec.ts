@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventEmitter } from '@angular/core';
-import { SsoButtonComponent } from './sso-button.component';
-import { SvgIconRegistryService } from 'angular-svg-icon';
-import { MockProvider } from 'ng-mocks';
 import { SsoService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
+import { SsoButtonComponent } from './sso-button.component';
 
 describe('SsoButtonComponent', () => {
   let component: SsoButtonComponent;

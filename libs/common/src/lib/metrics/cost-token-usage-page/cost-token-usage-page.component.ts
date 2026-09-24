@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DownloadFormat } from '@nuclia/core';
 import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
 import { MetricsMonthRange } from '../metrics-column.model';
@@ -14,7 +14,7 @@ import { CostTokenUsagePageService } from './cost-token-usage-page.service';
   templateUrl: './cost-token-usage-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CostTokenUsagePageService],
-  imports: [MetricsPageComponent, MetricsFiltersComponent, TranslatePipe, CompactNumberPipe, TranslateModule],
+  imports: [MetricsPageComponent, MetricsFiltersComponent, TranslatePipe, CompactNumberPipe],
 })
 export class CostTokenUsagePageComponent {
   protected service = inject(CostTokenUsagePageService);

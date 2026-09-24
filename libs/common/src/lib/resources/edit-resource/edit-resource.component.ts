@@ -16,7 +16,7 @@ import {
   PaPopupModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
@@ -51,7 +51,6 @@ const AUTO_FILE_FIELD_ID = /^[a-z0-9]{32}$/;
     RouterOutlet,
     AsyncPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class EditResourceComponent implements OnInit, OnDestroy {

@@ -14,7 +14,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   Classification,
   ExtractConfig,
@@ -100,7 +100,6 @@ import { WarningModalComponent } from './warning-modal/warning-modal.component';
     SlicePipe,
     KeyValuePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class PreviewComponent implements OnInit, OnDestroy {

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { map, take } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { map, take } from 'rxjs';
   templateUrl: './trial-expired-modal.component.html',
   styleUrl: './trial-expired-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaModalModule, InfoCardComponent, PaButtonModule, TranslatePipe, TranslateModule],
+  imports: [PaModalModule, InfoCardComponent, PaButtonModule, TranslatePipe],
 })
 export class TrialExpiredModalComponent {
   modal = inject(ModalRef);

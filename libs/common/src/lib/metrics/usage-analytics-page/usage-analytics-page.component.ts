@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, ViewChild, computed, inject, signal
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FeaturesService } from '@flaps/core';
 import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ActivityLogItem, RemiAnswerStatus } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { take } from 'rxjs';
@@ -40,7 +40,6 @@ import { UsageAnalyticsPageService } from './usage-analytics-page.service';
     RemiScoreDisplayComponent,
     RemiSidebarGroupComponent,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class UsageAnalyticsPageComponent {

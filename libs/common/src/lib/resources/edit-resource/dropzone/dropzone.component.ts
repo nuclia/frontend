@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FileUploadModule } from '@flaps/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisProgressModule } from '@nuclia/sistema';
 
 @Component({
@@ -18,7 +18,7 @@ import { SisProgressModule } from '@nuclia/sistema';
   templateUrl: './dropzone.component.html',
   styleUrls: ['./dropzone.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FileUploadModule, SisProgressModule, TranslatePipe, TranslateModule],
+  imports: [FileUploadModule, SisProgressModule, TranslatePipe],
 })
 export class DropzoneComponent {
   @Input()

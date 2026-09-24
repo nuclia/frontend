@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {
   AnalyticsService,
@@ -14,10 +13,10 @@ import {
   StaticEnvironmentConfiguration,
 } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockComponent, MockProvider } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, of } from 'rxjs';
-import { SvgIconRegistryService } from 'angular-svg-icon';
 import { SsoButtonsComponent } from '../sso/sso-buttons.component';
 import { UserContainerComponent } from '../user-container';
 import { SignupComponent } from './signup.component';

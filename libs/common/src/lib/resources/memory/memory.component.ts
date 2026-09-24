@@ -13,7 +13,7 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { NsiSkeletonComponent, SisModalService, SisSearchInputComponent, SisToastService } from '@nuclia/sistema';
 import { catchError, delay, filter, forkJoin, of, switchMap, take } from 'rxjs';
@@ -42,7 +42,6 @@ import { MemoryService } from './memory.service';
     PaIconModule,
     DatePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class MemoryComponent implements OnInit {

@@ -8,7 +8,7 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventType } from '@nuclia/core';
 import { InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
 import {
@@ -83,7 +83,6 @@ const chatColumns = [
     AsyncPipe,
     DatePipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class ActivityDownloadComponent implements OnDestroy {

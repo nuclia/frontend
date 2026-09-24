@@ -9,7 +9,7 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Search } from '@nuclia/core';
 import { SisProgressModule } from '@nuclia/sistema';
 import { combineLatest, forkJoin, map, Observable, switchMap, take } from 'rxjs';
@@ -37,7 +37,6 @@ import { ParagraphAnnotationService } from './paragraph-annotation.service';
     AsyncPipe,
     TranslatePipe,
     SafeHtmlPipe,
-    TranslateModule,
   ],
 })
 export class ParagraphAnnotationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {

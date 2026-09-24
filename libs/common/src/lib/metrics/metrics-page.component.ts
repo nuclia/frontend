@@ -24,7 +24,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ActivityLogItem, DownloadFormat } from '@nuclia/core';
 import {
   DropdownButtonComponent,
@@ -61,7 +61,6 @@ import { METRICS_EMPTY_STATE, METRICS_PAGE_SIZES } from './metrics.config';
     MetricsPaginationComponent,
     PaExpanderModule,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class MetricsPageComponent {

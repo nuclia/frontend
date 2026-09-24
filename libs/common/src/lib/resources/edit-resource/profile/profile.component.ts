@@ -21,7 +21,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { ExpandableTextareaComponent, JsonViewerComponent, SisProgressModule } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
@@ -56,7 +56,6 @@ import { ThumbnailComponent } from './thumbnail/thumbnail.component';
     HintComponent,
     AsyncPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class ResourceProfileComponent implements OnInit, OnDestroy {

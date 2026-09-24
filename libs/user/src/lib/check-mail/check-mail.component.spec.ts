@@ -12,7 +12,12 @@ describe('CheckMailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CheckMailComponent, TranslateModule.forRoot(), RouterModule.forRoot([]), MockComponent(UserContainerComponent)],
+      imports: [
+        CheckMailComponent,
+        TranslateModule.forRoot(),
+        RouterModule.forRoot([]),
+        MockComponent(UserContainerComponent),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CheckMailComponent);

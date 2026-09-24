@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, LinkField, LinkFieldData } from '@nuclia/core';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { EditResourceService } from '../../edit-resource.service';
   templateUrl: 'link.component.html',
   styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule, TranslatePipe, TranslateModule],
+  imports: [FormsModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule, TranslatePipe],
 })
 export class ResourceLinkComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

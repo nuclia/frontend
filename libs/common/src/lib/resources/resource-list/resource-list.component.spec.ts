@@ -110,7 +110,6 @@ describe('ResourceListComponent', () => {
           DropdownButtonComponent,
           SisSearchInputComponent,
           TranslatePipe,
-          TranslateModule,
         ],
       },
       add: {

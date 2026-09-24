@@ -3,14 +3,14 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router } from '@angular/router';
 import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 
 @Component({
   templateUrl: './mcp-endpoint-modal.component.html',
   styleUrl: './mcp-endpoint-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaModalModule, PaButtonModule, AsyncPipe, TranslatePipe, TranslateModule],
+  imports: [PaModalModule, PaButtonModule, AsyncPipe, TranslatePipe],
 })
 export class McpEndpointModalComponent {
   sdk = inject(SDKService);

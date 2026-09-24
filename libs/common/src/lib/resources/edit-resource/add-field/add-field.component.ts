@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import {
-  IErrorMessages,
-  PaButtonModule,
-  PaDropdownModule,
-  PaTextFieldModule,
-  PaTranslateModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages, PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
 import { DropdownButtonComponent, ExpandableTextareaComponent } from '@nuclia/sistema';
@@ -30,7 +24,6 @@ import { ResourceNavigationService } from '../resource-navigation.service';
     DropzoneComponent,
     PaButtonModule,
     TranslatePipe,
-    PaTranslateModule,
   ],
 })
 export class AddFieldComponent implements OnInit, OnDestroy {

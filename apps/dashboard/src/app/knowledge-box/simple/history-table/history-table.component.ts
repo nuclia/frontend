@@ -2,7 +2,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NsiSkeletonComponent, SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, filter, map, Observable, switchMap } from 'rxjs';
 import { ConversationsPage, SimpleKBService } from '../simple-kb/simple-kb.service';
@@ -25,16 +25,7 @@ interface TableRow {
   templateUrl: './history-table.component.html',
   styleUrl: './history-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    PaTableModule,
-    PaButtonModule,
-    PaIconModule,
-    NsiSkeletonComponent,
-    AsyncPipe,
-    DatePipe,
-    TranslatePipe,
-    TranslateModule,
-  ],
+  imports: [PaTableModule, PaButtonModule, PaIconModule, NsiSkeletonComponent, AsyncPipe, DatePipe, TranslatePipe],
 })
 export class HistoryTableComponent {
   simpleKBService = inject(SimpleKBService);

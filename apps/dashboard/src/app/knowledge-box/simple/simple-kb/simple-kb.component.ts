@@ -4,7 +4,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { DroppedFile, FeaturesService, FileUploadModule, SDKService, SizePipe } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService, SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { combineLatest, delay, distinctUntilChanged, filter, of, Subject, switchMap, take, tap } from 'rxjs';
@@ -28,7 +28,6 @@ import { SimpleKBService } from './simple-kb.service';
     HistoryTableComponent,
     AsyncPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class SimpleKBComponent implements OnDestroy {

@@ -17,7 +17,7 @@ import {
   StaticEnvironmentConfiguration,
 } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
 import { filter, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -29,7 +29,7 @@ import { selectAnimations } from '../utils';
   styleUrls: ['./select-account.component.scss'],
   animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, PaIconModule, PaButtonModule, RouterOutlet, AsyncPipe, TranslatePipe, TranslateModule],
+  imports: [RouterLink, PaIconModule, PaButtonModule, RouterOutlet, AsyncPipe, TranslatePipe],
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
   accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(

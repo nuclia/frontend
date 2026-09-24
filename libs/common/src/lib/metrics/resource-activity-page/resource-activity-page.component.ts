@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EventType } from '@nuclia/core';
 import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
 import { MetricsMonthRange } from '../metrics-column.model';
@@ -14,7 +14,7 @@ import { ResourceActivityPageService } from './resource-activity-page.service';
   templateUrl: './resource-activity-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ResourceActivityPageService],
-  imports: [MetricsPageComponent, MetricsFiltersComponent, TranslatePipe, CompactNumberPipe, TranslateModule],
+  imports: [MetricsPageComponent, MetricsFiltersComponent, TranslatePipe, CompactNumberPipe],
 })
 export class ResourceActivityPageComponent {
   protected service = inject(ResourceActivityPageService);

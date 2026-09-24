@@ -14,7 +14,7 @@ import {
   PaPopupModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG_ID, Widget } from '@nuclia/core';
 import { catchError, delay, forkJoin, map, of, Subject, switchMap, take, timeout } from 'rxjs';
 
@@ -33,7 +33,6 @@ import { catchError, delay, forkJoin, map, of, Subject, switchMap, take, timeout
     PaIconModule,
     AsyncPipe,
     TranslatePipe,
-    TranslateModule,
   ],
 })
 export class ReaderExperienceComponent implements OnDestroy {

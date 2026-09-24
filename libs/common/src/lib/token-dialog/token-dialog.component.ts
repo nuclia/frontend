@@ -1,13 +1,13 @@
 import { SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './token-dialog.component.html',
   styleUrls: ['./token-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [PaModalModule, PaButtonModule, SlicePipe, TranslatePipe, TranslateModule],
+  imports: [PaModalModule, PaButtonModule, SlicePipe, TranslatePipe],
 })
 export class TokenDialogComponent {
   clipboardSupported = !!navigator.clipboard?.writeText;
