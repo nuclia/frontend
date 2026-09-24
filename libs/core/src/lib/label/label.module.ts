@@ -17,8 +17,6 @@ import { LabelDropdownComponent } from './label-dropdown/label-dropdown.componen
 import { LabelFieldComponent } from './label-field/label-field.component';
 import { LabelListComponent } from './label-list/label-list.component';
 
-const components = [LabelListComponent, LabelFieldComponent];
-
 @NgModule({
   imports: [
     CommonModule,
@@ -32,8 +30,10 @@ const components = [LabelListComponent, LabelFieldComponent];
     PaTogglesModule,
     DropdownButtonComponent,
     FormsModule,
+    LabelListComponent,
+    LabelFieldComponent,
+    LabelDropdownComponent,
   ],
-  declarations: [...components, LabelDropdownComponent],
-  exports: [...components, LabelDropdownComponent],
+  exports: [LabelListComponent, LabelFieldComponent, LabelDropdownComponent],
 })
 export class LabelModule {}

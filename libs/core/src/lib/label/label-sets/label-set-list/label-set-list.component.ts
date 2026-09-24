@@ -1,18 +1,19 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { filter, switchMap } from 'rxjs/operators';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LabelSet } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
+import { filter, switchMap } from 'rxjs/operators';
 import { LabelsService } from '../../labels.service';
 import { LabelSetDisplay } from '../model';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-label-set-list',
   templateUrl: './label-set-list.component.html',
   styleUrls: ['./label-set-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [RouterLinkActive, RouterLink, PaTooltipModule, PaButtonModule, TranslatePipe],
 })
 export class LabelSetListComponent {
   @Input() labelSets: LabelSetDisplay[] = [];

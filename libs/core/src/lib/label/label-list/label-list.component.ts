@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 import { Classification, LabelSets } from '@nuclia/core';
 
 @Component({
@@ -6,7 +7,7 @@ import { Classification, LabelSets } from '@nuclia/core';
   templateUrl: './label-list.component.html',
   styleUrls: ['./label-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaChipsModule],
 })
 export class LabelListComponent {
   @Input() labelSelection: Classification[] = [];

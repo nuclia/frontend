@@ -2,10 +2,7 @@ import { Directive, ElementRef, HostListener, Output, EventEmitter } from '@angu
 
 // todo: filters
 
-@Directive({
-  selector: '[stfFileSelect]',
-  standalone: false,
-})
+@Directive({ selector: '[stfFileSelect]', })
 export class FileSelectDirective {
   @Output() atFileSelect: EventEmitter<File[]> = new EventEmitter<File[]>();
 
