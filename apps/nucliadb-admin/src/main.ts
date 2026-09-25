@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 
 import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import { HttpBackend, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
@@ -18,7 +18,6 @@ import { routerOptions, routes } from './app/app-routing';
 import { AppTitleStrategy } from './app/app-title.strategy';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
-
 function createTranslateLoader(http: HttpBackend, config: BackendConfigurationService) {
   const suffix = `.json?version=${config.getVersion()}`;
   return new MultiTranslateHttpLoader(http, [
@@ -58,5 +57,6 @@ bootstrapApplication(AppComponent, {
     { provide: APP_BASE_HREF, useValue: '/admin' },
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideZonelessChangeDetection(),
   ],
 }).catch((err) => console.error(err));
