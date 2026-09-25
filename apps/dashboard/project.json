@@ -21,7 +21,7 @@
           "base": "dist/apps/dashboard",
           "browser": ""
         },
-        "subresourceIntegrity": true,
+        "subresourceIntegrity": false,
         "index": "apps/dashboard/src/index.html",
         "polyfills": ["apps/dashboard/src/polyfills.ts"],
         "tsConfig": "apps/dashboard/tsconfig.app.json",
