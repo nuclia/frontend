@@ -122,7 +122,7 @@
 	"sync.connectors.oauth.drive.label": "Drive",
 	"sync.connectors.oauth.folder.title": "Folder",
 	"sync.connectors.oauth.path.label": "Path",
-	"sync.connectors.oauth.sharepoint-site-pages.label": "Synchronized SharePoint pages",
+	"sync.connectors.oauth.sharepoint-site-pages.label": "Synchronized pages",
 	"sync.connectors.rss.url.label": "RSS feed URL",
 	"sync.connectors.sharepoint.account.title": "Sharepoint account",
 	"sync.connectors.sharepoint.client_id.label": "Client ID",

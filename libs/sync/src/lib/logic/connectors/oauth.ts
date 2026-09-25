@@ -42,11 +42,6 @@ export class OAuthConnector implements IConnector {
             type: 'text',
             required: true,
           },
-          {
-            id: 'sharepoint_site_pages_site_id',
-            label: 'sync.connectors.oauth.sharepoint-site-pages.label',
-            type: 'text',
-          },
         ],
       },
     ]);
