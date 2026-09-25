@@ -26,11 +26,11 @@ Use these exact names in `nx <target> <project>` commands.
 
 | CLI name             | Type | Stack           | Path                       |
 | -------------------- | ---- | --------------- | -------------------------- |
-| `dashboard`          | app  | Angular 21      | `apps/dashboard/`          |
-| `rao`                | app  | Angular 21      | `apps/rao/`                |
-| `manager-v2`         | app  | Angular 21      | `apps/manager-v2/`         |
-| `nucliadb-admin`     | app  | Angular 21      | `apps/nucliadb-admin/`     |
-| `sistema-demo`       | app  | Angular 21      | `apps/sistema-demo/`       |
+| `dashboard`          | app  | Angular 22      | `apps/dashboard/`          |
+| `rao`                | app  | Angular 22      | `apps/rao/`                |
+| `manager-v2`         | app  | Angular 22      | `apps/manager-v2/`         |
+| `nucliadb-admin`     | app  | Angular 22      | `apps/nucliadb-admin/`     |
+| `sistema-demo`       | app  | Angular 22      | `apps/sistema-demo/`       |
 | `search-widget-demo` | app  | Svelte 5 + Vite | `apps/search-widget-demo/` |
 | `sdk-core`           | lib  | TypeScript      | `libs/sdk-core/`           |
 | `core`               | lib  | Angular         | `libs/core/`               |

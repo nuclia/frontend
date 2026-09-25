@@ -15,16 +15,16 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 
 ### Apps
 
-| Project              | Stack           | Purpose                                                                                                                                                           |
-| -------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth                                                                                                        |
-| `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                                                                                                                     |
-| `rao`                | Angular 21      | RAO white-label (agents only, no KB management)                                                                                                                   |
-| `admin`              | Angular 21      | Standalone account-management app (billing, members, API keys, `/at/:account/**`) — extracted out of `dashboard`; reused by `rao` and future white-label surfaces |
-| `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                                                                                                                     |
-| `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                                                                                                                          |
-| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                                                                                                                        |
-| `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                                                                                                                           |
+| Project              | Stack           | Purpose                                                                                                                  |
+| -------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `auth`               | Angular 22      | Dedicated auth app — login, signup, magic link, SSO, OAuth                                                               |
+| `dashboard`          | Angular 22      | Primary ARAG platform UI (KBs, agents, usage)                                                                            |
+| `rao`                | Angular 22      | RAO white-label (agents only, no KB management)                                                                          |
+| `admin`              | Angular 22      | Account-management app (billing, members, API keys, `/at/:account/**`) — reused by `rao` and future white-label surfaces |
+| `manager-v2`         | Angular 22      | Internal back-office (accounts, users, zones)                                                                            |
+| `nucliadb-admin`     | Angular 22      | NucliaDB admin (hash routing)                                                                                            |
+| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                                                                               |
+| `sistema-demo`       | Angular 22      | Interactive showcase for `libs/sistema`                                                                                  |
 
 ### Libraries
 

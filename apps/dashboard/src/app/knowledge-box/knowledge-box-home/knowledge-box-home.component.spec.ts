@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { RouterModule } from '@angular/router';
 import {
   AccountStatusComponent,
@@ -34,6 +33,7 @@ import {
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
 import { KbOnboardingHeaderComponent } from './kb-onboarding/kb-onboarding-header.component';

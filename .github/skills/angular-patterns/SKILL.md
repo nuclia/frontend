@@ -1,7 +1,7 @@
 ---
 name: angular-patterns
 description: >
-  Angular 21 patterns as used in the Nuclia frontend monorepo — covering OnPush change detection,
+  Angular 22 patterns as used in the Nuclia frontend monorepo — covering OnPush change detection,
   inject() dependency injection, NgModule-based components (default), signal-based state,
   RxJS↔Signal bridges, functional guards, and lazy routing. Activate this skill for ANY Angular
   task in this repo: creating or modifying components, writing services, managing state, adding
@@ -9,12 +9,12 @@ description: >
   or deciding which state management tier to use. Do not wait to be asked about "Angular patterns"
   specifically — if the task involves TypeScript files in apps/ or Angular libs/, this skill
   applies. Also use when migrating from @Input/@Output decorators or constructor injection to the
-  modern Angular 21 style.
+  modern Angular 22 style.
 ---
 
 # Angular Patterns — Nuclia Frontend Monorepo
 
-This skill encodes patterns as they are **actually used** in this codebase. Angular 21 has
+This skill encodes patterns as they are **actually used** in this codebase. Angular 22 has
 many features; this covers only what the team has adopted. When in doubt, match existing code.
 
 ---

@@ -2,9 +2,9 @@
 
 ## Overview
 
-`apps/dashboard` is the primary Angular (NgModule-based) frontend for Nuclia's ARAG platform. Lets users manage Knowledge Boxes (KBs) and Retrieval Agents (ARAGs), upload resources, monitor usage, configure AI models, and interact with Nuclia's search/RAG capabilities.
+`apps/dashboard` is the primary Angular frontend for Nuclia's ARAG platform, built with standalone components. Lets users manage Knowledge Boxes (KBs) and Retrieval Agents (ARAGs), upload resources, monitor usage, configure AI models, and interact with Nuclia's search/RAG capabilities.
 
-**Entry point:** `main.ts` → `AppModule` → `AppComponent`  
+**Entry point:** `main.ts` (`bootstrapApplication(AppComponent, …)`) — legacy providers/lazy route groupings are still pulled in via `importProvidersFrom()`.  
 All ARAG workflow code lives in `libs/common` and is shared with `apps/rao`.
 
 ---
@@ -13,8 +13,7 @@ All ARAG workflow code lives in `libs/common` and is shared with `apps/rao`.
 
 ```
 apps/dashboard/src/app/
-├── app.module.ts              # Root NgModule
-├── app-routing.module.ts      # Top-level route definitions (routes to @nuclia/user components declared directly, no wrapper module)
+├── app-routing.module.ts      # Top-level route definitions as a legacy NgModule wrapper (routes to @nuclia/user components declared directly, no wrapper module)
 ├── app-routing.lazy.ts        # Re-exports for all lazy-loaded modules/routes (single dynamic import surface)
 ├── app.component.ts           # Root (toast container, splash screen, global chat-advice bubble)
 ├── app-title.strategy.ts
@@ -190,7 +189,7 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 1. **Signal-based workflow state** — mutations via exported state functions in `workflow.state.ts` (`addNode()`, `deleteNode()`, `updateNode()`). Never mutate signals from outside the state file.
 2. **Dynamic sidebar** — `WorkflowService.openSidebar()` uses `createComponent()`. No template slots.
 3. **Shared ARAG code** — `AgentDashboardComponent` + all workflow code in `libs/common`. Dashboard-specific code: `app/` directory only.
-4. **Module-based** — app uses NgModules; imported lib components may be standalone.
+4. **Standalone-first** — components are standalone; a handful of `@NgModule`s remain only as route-grouping wrappers for lazy-loaded feature areas (e.g. `KnowledgeBoxModule`, `SimplePageModule`, `AppRoutingModule`) or to import legacy library modules — they no longer declare/wrap component logic.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
 6. **Lazy modules** — `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `ResourcesModule`, `TASK_AUTOMATION_ROUTES`, `UploadModule`, `WIDGETS_ROUTES`, `SimplePageModule`, `LabelSetsModule` — all re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module). Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
 7. **`/metrics` always loads `MetricsModule`** — the legacy REMI-only page and the `metricsDisabledGuard`/`metricsEnabledGuard` split were removed. `MetricsModule` is always loaded when the `/metrics` route is activated.
