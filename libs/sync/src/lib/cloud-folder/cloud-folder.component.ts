@@ -15,7 +15,7 @@ import { ExternalConnection, StorageDrive, StorageFolder, StorageSite } from '@n
 import { SyncService } from '../logic';
 import { ONEDRIVE_CONNECTOR_ID } from '../logic/connectors/onedrive';
 
-import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ButtonMiniComponent,
@@ -35,6 +35,7 @@ import {
     PaButtonModule,
     PaIconModule,
     PaTextFieldModule,
+    PaTogglesModule,
   ],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
@@ -50,11 +51,13 @@ export class CloudFolderComponent implements OnInit {
     sync_root_path?: string;
     folder_id?: string;
     drive_id: string;
+    sharepoint_site_pages_site_id?: string;
   }>();
   currentSite = signal<StorageSite | undefined>(undefined);
   currentDrive = signal<StorageDrive | undefined>(undefined);
   currentFolder = signal<StorageFolder[]>([]);
   selectedFolder = signal<StorageFolder | undefined>(undefined);
+  syncPages = signal<boolean>(false);
   isCurrentSelected = computed(
     () => this.selectedFolder() && this.selectedFolder()?.path === this.currentFolder().at(-1)?.path,
   );
@@ -73,6 +76,7 @@ export class CloudFolderComponent implements OnInit {
   requiresBucketSearch = false;
   bucketName = '';
   usePath = false;
+  isSharepoint = false;
   private cdr = inject(ChangeDetectorRef);
   private syncService = inject(SyncService);
   private translate = inject(TranslateService);
@@ -86,6 +90,7 @@ export class CloudFolderComponent implements OnInit {
     this.forceOneDrive = this.connectorId === ONEDRIVE_CONNECTOR_ID;
     this.requiresBucketSearch = this.externalConnection?.provider === 'aws_s3_assume_role';
     this.usePath = this.externalConnection?.provider === 'aws_s3_assume_role';
+    this.isSharepoint = this.connectorId === 'sharepoint';
     if (this.forceOneDrive) {
       this.resolveAndBrowseSite();
     } else if (!this.requiresSearch && !this.requiresSiteUrlResolution && !this.requiresBucketSearch) {
@@ -167,6 +172,7 @@ export class CloudFolderComponent implements OnInit {
       drive_id: this.currentDrive()?.id || '',
       sync_root_path: this.usePath ? folder?.path || '' : undefined,
       folder_id: !this.usePath ? folder?.id || '' : undefined,
+      sharepoint_site_pages_site_id: this.syncPages() ? this.currentSite()?.id || '' : undefined,
     });
     this.selectedFolder.set(folder);
     this.cdr.markForCheck();
@@ -240,5 +246,10 @@ export class CloudFolderComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  updateSyncPages(value: boolean) {
+    this.syncPages.set(value);
+    this.selectFolder();
   }
 }

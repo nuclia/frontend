@@ -15,9 +15,6 @@
   justify-content: center;
   z-index: 120;
 }
-nsi-two-columns-configuration-item {
-  margin-bottom: rhythm(2);
-}
 .header {
   align-items: center;
   display: flex;
@@ -42,6 +39,10 @@ nsi-two-columns-configuration-item {
   pa-input {
     flex: 1;
   }
+}
+
+.back {
+  display: inline-block;
 }
 
 .selected {
