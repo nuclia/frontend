@@ -9,14 +9,14 @@ import { SDKService } from '../api';
 export class SAMLService {
   constructor(private sdk: SDKService) {}
 
-  checkDomain(domain: string): Observable<{ account_id: string }> {
+  checkDomain(domain: string): Observable<{ token: string }> {
     const authUrl = this.sdk.nuclia.auth.getAuthUrl();
-    return this.sdk.nuclia.rest.get<{ account_id: string }>(`${authUrl}/saml/inquiry?domain=${domain}`);
+    return this.sdk.nuclia.rest.get<{ token: string }>(`${authUrl}/saml/inquiry?domain=${domain}`);
   }
 
-  ssoUrl(accountId: string, loginChallenge?: string): string {
+  ssoUrl(token: string, loginChallenge?: string): string {
     const authUrl = this.sdk.nuclia.auth.getAuthUrl();
-    let url = `${authUrl}/saml/sso?account_id=${accountId}`;
+    let url = `${authUrl}/saml/sso?token=${encodeURIComponent(token)}`;
     if (loginChallenge) {
       url += `&login_challenge=${loginChallenge}`;
     }
