@@ -9,10 +9,10 @@
     (transitionend)="onPreviewContainerTransitionEnd($event)">
     <header>
       <div class="page-title">
-        {{ ((inArag | async) ? 'search.title' : 'search.studio.title') | translate }}
+        {{ 'search.title' | translate }}
       </div>
       <div class="page-description">
-        {{ ((inArag | async) ? 'search.description' : 'search.studio.description') | translate }}
+        {{ ((inArag | async) ? 'search.description' : 'search.embed.description') | translate }}
       </div>
     </header>
     <div
