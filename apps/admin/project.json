@@ -21,7 +21,7 @@
           "base": "dist/apps/admin",
           "browser": ""
         },
-        "subresourceIntegrity": true,
+        "subresourceIntegrity": false,
         "index": "apps/admin/src/index.html",
         "polyfills": ["apps/admin/src/polyfills.ts"],
         "tsConfig": "apps/admin/tsconfig.app.json",

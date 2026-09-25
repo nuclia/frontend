@@ -21,7 +21,7 @@
           "base": "dist/apps/rao",
           "browser": ""
         },
-        "subresourceIntegrity": true,
+        "subresourceIntegrity": false,
         "index": "apps/rao/src/index.html",
         "polyfills": ["apps/rao/src/polyfills.ts"],
         "tsConfig": "apps/rao/tsconfig.app.json",

@@ -21,7 +21,7 @@
           "base": "dist/apps/auth",
           "browser": ""
         },
-        "subresourceIntegrity": true,
+        "subresourceIntegrity": false,
         "index": "apps/auth/src/index.html",
         "polyfills": ["apps/auth/src/polyfills.ts"],
         "tsConfig": "apps/auth/tsconfig.app.json",
