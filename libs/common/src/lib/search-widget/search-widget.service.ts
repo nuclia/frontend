@@ -129,6 +129,15 @@ export class SearchWidgetService {
     this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions, widgetId, scrollContainer });
   }
 
+  generateWidgetSnippetForEmbed(
+    currentConfig: Widget.AnySearchConfiguration,
+    widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+    widgetId?: string,
+    scrollContainer?: string,
+  ) {
+    return this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer);
+  }
+
   private _generateWidgetSnippet(
     currentConfig: Widget.AnySearchConfiguration,
     widgetOptions: Widget.WidgetConfiguration,
@@ -431,12 +440,15 @@ export class SearchWidgetService {
       );
   }
 
-  /**
-   * Deletes a widget deployment without its own confirmation dialog — used when the deletion has
-   * already been confirmed at a higher level (e.g. deleting the search configuration it's linked to).
-   */
-  deleteWidgetSilently(slug: string) {
-    return this._deleteWidget(slug);
+  deleteWidgetsForSearchConfig(searchConfigId: string) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) =>
+        this.searchWidgetStorage.storeWidgets(
+          storedWidgets.filter((widget) => widget.searchConfigId !== searchConfigId),
+        ),
+      ),
+    );
   }
 
   private _deleteWidget(slug: string) {

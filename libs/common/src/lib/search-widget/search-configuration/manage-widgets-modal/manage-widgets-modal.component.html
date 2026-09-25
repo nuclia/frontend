@@ -46,14 +46,14 @@
           </pa-table-cell>
         </pa-table-header>
 
-        @for (item of configurationList | async; track item.config.id) {
+        @for (item of configurationList | async; track item.widget?.slug ?? item.config.id) {
           <pa-table-row>
             <pa-table-cell>
               <button
                 type="button"
                 class="table-link"
                 (click)="selectConfiguration(item)">
-                {{ item.config.id }}
+                {{ item.displayName }}
               </button>
             </pa-table-cell>
             <pa-table-cell>

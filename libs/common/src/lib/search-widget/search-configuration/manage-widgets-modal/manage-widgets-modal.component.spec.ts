@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
@@ -47,6 +48,13 @@ describe('ManageWidgetsModalComponent', () => {
             widgetList,
           },
         },
+        {
+          provide: TranslateService,
+          useValue: {
+            instant: (key: string) =>
+              key === 'search.configuration.options.nuclia-standard' ? 'Agentic RAG default' : key,
+          },
+        },
         { provide: SisModalService, useValue: {} },
         { provide: ModalRef, useValue: { close } },
       ],
@@ -69,6 +77,11 @@ describe('ManageWidgetsModalComponent', () => {
       savedConfig.id,
       undeployedConfig.id,
     ]);
+    expect(items.map((item) => item.displayName)).toEqual([
+      'Agentic RAG default',
+      savedConfig.id,
+      undeployedConfig.id,
+    ]);
     expect(items.find((item) => item.config.id === undeployedConfig.id)?.widget).toBeUndefined();
   });
 
@@ -84,6 +97,31 @@ describe('ManageWidgetsModalComponent', () => {
     expect(close).toHaveBeenCalledWith({
       configId: savedConfig.id,
       widgetSlug: linkedWidget.slug,
+    });
+  });
+
+  it('lists and selects every embed linked to the same configuration', async () => {
+    const secondWidget: Widget.Widget = {
+      ...linkedWidget,
+      slug: 'saved-configuration-chat',
+      widgetConfig: { widgetMode: 'chat' },
+    };
+    widgetList.next([linkedWidget, secondWidget]);
+
+    const items = await firstValueFrom(component.configurationList);
+    const savedConfigurationItems = items.filter((item) => item.config.id === savedConfig.id);
+
+    expect(savedConfigurationItems).toHaveLength(2);
+    expect(savedConfigurationItems.map((item) => item.widget?.slug)).toEqual([
+      linkedWidget.slug,
+      secondWidget.slug,
+    ]);
+
+    component.selectConfiguration(savedConfigurationItems[1]);
+
+    expect(close).toHaveBeenLastCalledWith({
+      configId: savedConfig.id,
+      widgetSlug: secondWidget.slug,
     });
   });
 });

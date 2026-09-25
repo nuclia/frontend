@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ModalConfig,
   ModalRef,
@@ -12,7 +12,7 @@ import {
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { combineLatest, filter, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../../search-widget.service';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
@@ -22,7 +22,9 @@ import { DEFAULT_WIDGET_CONFIG } from '../../search-widget.models';
 
 interface ConfigurationListItem {
   config: Widget.AnySearchConfiguration;
+  displayName: string;
   widget?: Widget.Widget;
+  widgets: Widget.Widget[];
   generativeModel?: string;
   creationDate?: string;
   searchMode: 'agentic' | 'simple-rag' | 'search';
@@ -57,6 +59,7 @@ export class ManageWidgetsModalComponent {
   private sdk = inject(SDKService);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
 
   modal = inject(ModalRef);
 
@@ -71,12 +74,18 @@ export class ManageWidgetsModalComponent {
     this.searchWidgetService.searchConfigurations,
     this.defaultModel,
   ]).pipe(
-    map(([widgets, searchConfigs, defaultModel]) =>
-      [{ ...NUCLIA_STANDARD_SEARCH_CONFIG }, ...searchConfigs].map((config) => {
-        const widget = widgets.find((candidate) => candidate.searchConfigId === config.id);
-        return {
+    map(([widgets, searchConfigs, defaultModel]) => {
+      const configs = [{ ...NUCLIA_STANDARD_SEARCH_CONFIG }, ...searchConfigs];
+      return configs.flatMap((config) => {
+        const linkedWidgets = widgets.filter((widget) => widget.searchConfigId === config.id);
+        return (linkedWidgets.length > 0 ? linkedWidgets : [undefined]).map((widget) => ({
           config,
+          displayName:
+            config.id === NUCLIA_STANDARD_SEARCH_CONFIG.id
+              ? this.translate.instant('search.configuration.options.nuclia-standard')
+              : config.id,
           widget,
+          widgets: linkedWidgets,
           generativeModel:
             config.type === 'config' ? config.generativeAnswer?.generativeModel || defaultModel : defaultModel,
           creationDate: widget?.creationDate,
@@ -88,9 +97,9 @@ export class ManageWidgetsModalComponent {
                 : 'search',
           widgetMode: widget ? (widget.widgetConfig ?? DEFAULT_WIDGET_CONFIG).widgetMode : undefined,
           builtIn: config.id.startsWith('nuclia-'),
-        };
-      }),
-    ),
+        }));
+      });
+    }),
   );
 
   emptyList: Observable<boolean> = this.configurationList.pipe(map((list) => list.length === 0));
@@ -157,8 +166,12 @@ export class ManageWidgetsModalComponent {
       take(1),
       switchMap((kb) => this.searchWidgetService.saveSearchConfig(kb.id, name, item.config, false)),
       switchMap(() =>
-        item.widget
-          ? this.searchWidgetService.createWidget(name, item.widget.widgetConfig ?? DEFAULT_WIDGET_CONFIG, name)
+        item.widgets.length > 0
+          ? forkJoin(
+              item.widgets.map((widget) =>
+                this.searchWidgetService.createWidget(name, widget.widgetConfig ?? DEFAULT_WIDGET_CONFIG, name),
+              ),
+            )
           : of(undefined),
       ),
     );
@@ -167,10 +180,6 @@ export class ManageWidgetsModalComponent {
   private deleteConfiguration(item: ConfigurationListItem) {
     return this.searchWidgetService
       .deleteSearchConfig(item.config.id)
-      .pipe(
-        switchMap(() =>
-          item.widget ? this.searchWidgetService.deleteWidgetSilently(item.widget.slug) : of(undefined),
-        ),
-      );
+      .pipe(switchMap(() => this.searchWidgetService.deleteWidgetsForSearchConfig(item.config.id)));
   }
 }

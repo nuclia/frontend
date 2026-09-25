@@ -19,7 +19,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { NavigationService, UploadEventService } from '@flaps/core';
-import { take } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { SearchWidgetService } from './search-widget.service';
 import { EmbedWidgetDialogComponent } from './widgets';
@@ -88,14 +87,15 @@ export class SearchPageComponent implements OnDestroy {
     if (!this.searchConfig) {
       return;
     }
-    this.searchWidgetService.generateWidgetSnippet(this.searchConfig, this.widgetOptions, widgetSlug, '.preview-stage');
-    this.searchWidgetService.widgetPreview.pipe(take(1)).subscribe(({ snippet, synchSnippet }) => {
+    this.searchWidgetService
+      .generateWidgetSnippetForEmbed(this.searchConfig, this.widgetOptions, widgetSlug, '.preview-stage')
+      .subscribe(({ snippet, synchSnippet }) => {
       this.modalService.openModal(
         EmbedWidgetDialogComponent,
         new ModalConfig({ dismissable: true, data: { code: { snippet, synchSnippet } } }),
       );
       this.refreshPreview();
-    });
+      });
   }
 
   updateConfig(config: Widget.AnySearchConfiguration) {

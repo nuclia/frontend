@@ -765,7 +765,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   deleteConfig() {
     if (this.savedConfig && !this.savedConfig.id.startsWith('nuclia-')) {
       const config = this.savedConfig;
-      const linkedWidget = this.linkedWidget();
       this.modalService
         .openConfirm({
           title: this.translate.instant('search.configuration.delete-config-confirm.title', { configName: config.id }),
@@ -776,11 +775,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         .onClose.pipe(
           filter((confirm) => !!confirm),
           switchMap(() => this.searchWidgetService.deleteSearchConfig(config.id)),
-          // A deployed widget references this configuration by id — delete it too so it doesn't get
-          // orphaned (pointing to a search configuration that no longer exists).
-          switchMap(() =>
-            linkedWidget ? this.searchWidgetService.deleteWidgetSilently(linkedWidget.slug) : of(undefined),
-          ),
+          switchMap(() => this.searchWidgetService.deleteWidgetsForSearchConfig(config.id)),
           switchMap(() => this.setConfigurations()),
         )
         .subscribe();
