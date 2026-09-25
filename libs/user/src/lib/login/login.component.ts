@@ -92,7 +92,7 @@ export class LoginComponent {
         ? this.samlService.checkDomain(domain).pipe(catchError(() => of(undefined)))
         : of(undefined);
     }),
-    map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
+    map((result) => (result ? this.samlService.ssoUrl(result.token, this.loginChallenge) : undefined)),
   );
   isPDP = this.brandService.isPDP;
   brandName = this.brandService.brandName;

@@ -94,8 +94,8 @@ describe('LoginComponent', () => {
       execute: jest.fn(() => of('captcha-token')),
     };
     samlService = {
-      checkDomain: jest.fn(() => of({ account_id: 'acc-1' })),
-      ssoUrl: jest.fn((accountId: string, challenge?: string) => `https://sso.local/${accountId}?c=${challenge || ''}`),
+      checkDomain: jest.fn(() => of({ token: 'opaque-token' })),
+      ssoUrl: jest.fn((token: string, challenge?: string) => `https://sso.local/${token}?c=${challenge || ''}`),
     };
 
     routeData$ = new BehaviorSubject<{ loginData: OAuthLoginData }>({
@@ -266,9 +266,9 @@ describe('LoginComponent', () => {
     const ssoPromise = firstValueFrom(component.ssoUrl);
     component.loginForm.controls.email.setValue('bruce@wayne.corp');
 
-    await expect(ssoPromise).resolves.toBe('https://sso.local/acc-1?c=challenge-1');
+    await expect(ssoPromise).resolves.toBe('https://sso.local/opaque-token?c=challenge-1');
     expect(samlService.checkDomain).toHaveBeenCalledWith('wayne.corp');
-    expect(samlService.ssoUrl).toHaveBeenCalledWith('acc-1', 'challenge-1');
+    expect(samlService.ssoUrl).toHaveBeenCalledWith('opaque-token', 'challenge-1');
   });
 
   it('should emit undefined for email without domain', async () => {
