@@ -71,6 +71,7 @@ export interface SyncConfiguration extends SyncConfigurationOptions {
   sync_root_path: string;
   drive_id?: string;
   drive_type?: string; // personal/business for OneDrive, documentLibrary for SharePoint
+  sharepoint_site_pages_site_id?: string;
   sync_interval_minutes: number;
   last_sync_run: string | null;
   created_by: string;
@@ -86,6 +87,7 @@ export interface SyncConfigurationCreate extends SyncConfigurationOptions {
   folder_id?: string;
   sync_root_path?: string;
   drive_id?: string;
+  sharepoint_site_pages_site_id?: string;
   external_connection_id: string;
 }
 
