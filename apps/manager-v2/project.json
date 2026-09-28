@@ -23,7 +23,6 @@
         },
         "subresourceIntegrity": true,
         "index": "apps/manager-v2/src/index.html",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/manager-v2/tsconfig.app.json",
         "allowedCommonJsDependencies": [],
         "assets": [
