@@ -222,13 +222,14 @@
     </nsi-two-columns-configuration-item>
 
     <nsi-sticky-footer>
-
       <pa-button
+        data-analytics-id="da-agent-form-cancel"
         aspect="basic"
         (click)="taskCancel.emit()">
         {{ 'generic.cancel' | translate }}
       </pa-button>
       <pa-button
+        data-analytics-id="da-agent-form-submit"
         kind="primary"
         type="submit"
         [disabled]="form.invalid || userKeysForm?.invalid || !validFormInside">

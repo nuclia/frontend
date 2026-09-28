@@ -8,6 +8,7 @@
           <div class="nav-group">
             <div class="group-items">
               <a
+                data-analytics-id="navbar-enter-home"
                 [routerLink]="kbUrl"
                 class="nav-link"
                 routerLinkActive="active"
@@ -21,6 +22,7 @@
           <div class="nav-group">
             <div class="group-items">
               <a
+                data-analytics-id="navbar-enter-upload"
                 [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/upload' : null"
                 class="nav-link"
                 routerLinkActive="active"
@@ -30,6 +32,7 @@
                 <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
               </a>
               <a
+                data-analytics-id="navbar-enter-resources"
                 [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
                 routerLinkActive="active"
                 class="nav-link"
@@ -39,6 +42,7 @@
                 <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
               </a>
               <a
+                data-analytics-id="navbar-enter-sync"
                 [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/sync' : null"
                 routerLinkActive="active"
                 class="nav-link"
@@ -50,6 +54,7 @@
                 </span>
               </a>
               <a
+                data-analytics-id="navbar-enter-search"
                 class="nav-link"
                 data-cy="go-to-search"
                 routerLinkActive="active"
@@ -59,6 +64,7 @@
                 <span class="nav-link-title">{{ 'search.title' | translate }}</span>
               </a>
               <a
+                data-analytics-id="navbar-enter-widgets"
                 [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/widgets' : null"
                 routerLinkActive="active"
                 class="nav-link"
@@ -90,6 +96,7 @@
             <div class="nav-group">
               <div class="group-items">
                 <a
+                  data-analytics-id="navbar-enter-settings"
                   [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
@@ -99,6 +106,7 @@
                   <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
                 </a>
                 <a
+                  data-analytics-id="navbar-enter-ai-models"
                   [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
@@ -109,6 +117,7 @@
                 </a>
                 @if (!standalone) {
                   <a
+                    data-analytics-id="navbar-enter-da-agents"
                     [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/tasks' : null"
                     routerLinkActive="active"
                     data-cy="go-to-tasks"
@@ -119,6 +128,7 @@
                   </a>
                   @if (isKbAdmin | async) {
                     <a
+                      data-analytics-id="navbar-enter-api-keys"
                       [routerLink]="kbUrl + '/keys'"
                       routerLinkActive="active"
                       data-cy="go-to-api-keys"
@@ -130,6 +140,7 @@
                 }
 
                 <a
+                  data-analytics-id="navbar-enter-label-sets"
                   [routerLink]="!(invalidKey | async) ? kbUrl + '/label-sets' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
@@ -139,6 +150,7 @@
                   <span class="nav-link-title">{{ 'navbar.classification' | translate }}</span>
                 </a>
                 <a
+                  data-analytics-id="navbar-enter-entities"
                   [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
@@ -151,6 +163,7 @@
                 @if (!standalone) {
                   @if (isKbAdmin | async) {
                     <a
+                      data-analytics-id="navbar-enter-rag-lab"
                       [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/rag-lab' : null"
                       routerLinkActive="active"
                       data-cy="go-to-prompt-lab"
@@ -160,6 +173,7 @@
                       <span class="nav-link-title">{{ 'navbar.rag-lab' | translate }}</span>
                     </a>
                     <a
+                      data-analytics-id="navbar-enter-users"
                       [routerLink]="kbUrl + '/users'"
                       routerLinkActive="active"
                       data-cy="go-to-users"
@@ -176,6 +190,7 @@
             <div class="nav-group">
               <div class="group-items">
                 <a
+                  data-analytics-id="navbar-enter-metrics"
                   (click)="toggleMetrics()"
                   (keyup.enter)="toggleMetrics()"
                   class="nav-link"
@@ -195,6 +210,7 @@
                 <div class="group-items">
                   @if (isRemiMetricsEnabled | async) {
                     <a
+                      data-analytics-id="navbar-enter-remi-analytics"
                       [routerLink]="
                         (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null
                       "
@@ -206,6 +222,7 @@
                       <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
                     </a>
                     <a
+                      data-analytics-id="navbar-enter-usage-analytics"
                       [routerLink]="
                         (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null
                       "
@@ -218,6 +235,7 @@
                     </a>
                   }
                   <a
+                    data-analytics-id="navbar-enter-tokens-and-time-usage"
                     [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async)
                         ? kbUrl + '/metrics/tokens-and-time-usage'
@@ -231,6 +249,7 @@
                     <span class="nav-link-title">{{ 'navbar.metrics.cost-token-usage' | translate }}</span>
                   </a>
                   <a
+                    data-analytics-id="navbar-enter-user-feedback"
                     [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/user-feedback' : null
                     "
@@ -242,6 +261,7 @@
                     <span class="nav-link-title">{{ 'navbar.metrics.user-feedback' | translate }}</span>
                   </a>
                   <a
+                    data-analytics-id="navbar-enter-resource-activity"
                     [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/resource-activity' : null
                     "
@@ -253,6 +273,7 @@
                     <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
                   </a>
                   <a
+                    data-analytics-id="navbar-enter-search-activity"
                     [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/search-activity' : null
                     "
@@ -264,6 +285,7 @@
                     <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
                   </a>
                   <a
+                    data-analytics-id="navbar-enter-chat-activity"
                     [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/chat-activity' : null
                     "
@@ -275,6 +297,7 @@
                     <span class="nav-link-title">{{ 'navbar.metrics.chat-activity' | translate }}</span>
                   </a>
                   <a
+                    data-analytics-id="navbar-enter-detailed-logs"
                     [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/detailed' : null
                     "
@@ -295,6 +318,7 @@
           <div class="nav-group">
             <div class="group-items">
               <a
+                data-analytics-id="navbar-enter-workflows"
                 [routerLink]="(isAragAdmin | async) ? aragUrl + '/workflows' : null"
                 class="nav-link"
                 routerLinkActive="active"
@@ -305,6 +329,7 @@
               </a>
               @if (isAragWithMemory | async) {
                 <a
+                  data-analytics-id="navbar-enter-sessions"
                   [routerLink]="aragUrl + '/sessions'"
                   routerLinkActive="active"
                   class="nav-link"
@@ -314,6 +339,7 @@
                 </a>
               }
               <a
+                data-analytics-id="navbar-enter-drivers"
                 [routerLink]="(isAragAdmin | async) ? aragUrl + '/sources' : null"
                 class="nav-link"
                 routerLinkActive="active"
@@ -325,6 +351,7 @@
               </a>
               @if (isAragWithMemory | async) {
                 <a
+                  data-analytics-id="navbar-enter-arag-with-memory-search"
                   class="nav-link"
                   data-cy="go-to-search"
                   routerLinkActive="active"
@@ -336,6 +363,7 @@
               }
               @if (isRaoWidgetEnabled | async) {
                 <a
+                  data-analytics-id="navbar-enter-rao-widgets"
                   [routerLink]="(isAragAdmin | async) && !(invalidKey | async) ? aragUrl + '/widgets' : null"
                   routerLinkActive="active"
                   class="nav-link"
@@ -368,6 +396,7 @@
             <div class="nav-group">
               <div class="group-items">
                 <a
+                  data-analytics-id="navbar-enter-rao-settings"
                   [routerLink]="(isAragAdmin | async) && !(invalidKey | async) ? aragUrl + '/manage' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
@@ -379,6 +408,7 @@
 
                 @if (isAragAdmin | async) {
                   <a
+                    data-analytics-id="navbar-enter-rao-activity"
                     [routerLink]="aragUrl + '/activity'"
                     routerLinkActive="active"
                     class="nav-link sub-item"
@@ -388,6 +418,7 @@
                   </a>
 
                   <a
+                    data-analytics-id="navbar-enter-rao-api-keys"
                     [routerLink]="aragUrl + '/keys'"
                     routerLinkActive="active"
                     data-cy="go-to-api-keys"
@@ -397,6 +428,7 @@
                   </a>
 
                   <a
+                    data-analytics-id="navbar-enter-rao-users"
                     [routerLink]="aragUrl + '/users'"
                     routerLinkActive="active"
                     data-cy="go-to-users"

@@ -1,7 +1,9 @@
 <form
   [formGroup]="form"
   (ngSubmit)="submitForm()">
-  <div class="onboarding-form">
+  <div
+    class="onboarding-form"
+    data-analytics-id="onboarding-zone-choice">
     <div class="field">
       <pa-radio-group
         id="region"
@@ -17,11 +19,13 @@
   </div>
   <nsi-sticky-footer>
     <pa-button
+      data-analytics-id="onboarding-zone-back"
       aspect="basic"
       (click)="goBack()">
       {{ 'generic.back' | translate }}
     </pa-button>
     <pa-button
+      data-analytics-id="onboarding-zone-submit"
       type="submit"
       kind="primary"
       [disabled]="form.invalid">
