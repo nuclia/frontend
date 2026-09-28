@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ZoneService } from '@flaps/core';
@@ -20,6 +29,7 @@ import { NuaGuardService } from '../nua-guard.service';
   imports: [PaButtonModule, PaModalModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './policy-dialog.component.html',
   styleUrl: './policy-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PolicyDialogComponent implements OnInit {
   modal = inject<ModalRef<NuaGuardPolicy>>(ModalRef);
