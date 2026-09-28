@@ -23,7 +23,7 @@ import {
   SyncOptionsFormComponent,
 } from '../sync-options-form';
 
-// Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
+// Warning: this key name is declared in both dashboard app.init and in @nuclia/sync
 // to avoid making a dependency
 const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
 @Component({
@@ -54,10 +54,13 @@ export class AddSyncPageComponent implements OnInit {
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
   private uploadEventService = inject(UploadEventService);
-  selectedFolder = signal<{ sync_root_path?: string; folder_id?: string; drive_id: string } | undefined>(undefined);
+  selectedFolder = signal<
+    | { sync_root_path?: string; folder_id?: string; drive_id: string; sharepoint_site_pages_site_id?: string }
+    | undefined
+  >(undefined);
   isFolderSelectionValid = computed(() => {
     const folder = this.selectedFolder();
-    return !!(folder?.folder_id || folder?.sync_root_path);
+    return !!(folder?.folder_id || folder?.sync_root_path || folder?.sharepoint_site_pages_site_id);
   });
 
   connectorId = this.currentRoute.params.pipe(
@@ -296,7 +299,12 @@ export class AddSyncPageComponent implements OnInit {
     this.toaster.error('sync.add-page.toast.generic-error');
   }
 
-  selectFolder(folder: { sync_root_path?: string; folder_id?: string; drive_id: string }) {
+  selectFolder(folder: {
+    sync_root_path?: string;
+    folder_id?: string;
+    drive_id: string;
+    sharepoint_site_pages_site_id?: string;
+  }) {
     this.selectedFolder.set(folder);
   }
 }

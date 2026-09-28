@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { OAuthConnector } from './oauth';
-import { Section } from '../models';
+import { Field, Section } from '../models';
 
 export class SharepointImpl extends OAuthConnector {
   override allowToSelectFolders = true;
@@ -52,7 +52,21 @@ export class SharepointImpl extends OAuthConnector {
       ],
     };
 
-    return super.getParametersSections().pipe(map((folderSections) => [credentialsSection, ...folderSections]));
+    return super.getParametersSections().pipe(
+      map((folderSections) => {
+        const sitePagesField: Field = {
+          id: 'sharepoint_site_pages_site_id',
+          label: 'sync.connectors.oauth.sharepoint-site-pages.label',
+          type: 'text',
+        };
+        const folderSection = folderSections.find((section) => section.id === 'folder');
+        if (!folderSection) {
+          return [credentialsSection];
+        } else {
+          return [credentialsSection, { ...folderSection, fields: [...folderSection.fields, sitePagesField] }];
+        }
+      }),
+    );
   }
 
   private handlePfx(file: File): Observable<string> {

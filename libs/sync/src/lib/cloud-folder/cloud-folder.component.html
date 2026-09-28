@@ -1,4 +1,4 @@
-<div class="container">
+<div>
   @if (loading) {
     <div class="loading-shade">
       <nsi-spinner></nsi-spinner>
@@ -9,7 +9,8 @@
     @if (requiresSiteUrlResolution && !forceOneDrive) {
       <nsi-two-columns-configuration-item
         itemTitle="sync.cloud-folder.resolve-site-title"
-        description="sync.cloud-folder.resolve-site-description">
+        description="sync.cloud-folder.resolve-site-description"
+        noTopBorder>
         <div class="resolve-site-input">
           <pa-input
             [formControl]="siteUrlControl"
@@ -47,86 +48,104 @@
       </div>
     </nsi-two-columns-configuration-item>
   }
-  @if (currentSite() || (currentDrive() && !requiresBucketSearch) || hasCurrentFolder()) {
-    @if (canGoBack()) {
-      <div>
-        <nsi-button-mini
-          icon="undo"
-          (click)="back()">
-          {{ 'sync.cloud-folder.back' | translate }}
-        </nsi-button-mini>
+  <div class="container">
+    @if (currentSite() || (currentDrive() && !requiresBucketSearch) || hasCurrentFolder()) {
+      @if (canGoBack()) {
+        <div>
+          <nsi-button-mini
+            icon="undo"
+            class="back"
+            (click)="back()">
+            {{ 'sync.cloud-folder.back' | translate }}
+          </nsi-button-mini>
+        </div>
+      }
+      <div class="header">
+        <h3>
+          @if (currentSite()) {
+            {{ currentSite()?.name }}
+            @if (currentDrive()) {
+              <span>-</span>
+            }
+          }
+          @if (currentDrive()) {
+            {{ currentDrive()?.name }}
+          }
+          @if (hasCurrentFolder()) {
+            {{ currentFolder().at(-1)?.path }}
+          }
+          @if (isCurrentSelected()) {
+            <pa-icon
+              name="check"
+              class="selected"></pa-icon>
+          }
+        </h3>
+        @if (hasCurrentFolder()) {
+          <nsi-button-mini (click)="selectFolder()">
+            {{ 'sync.cloud-folder.select' | translate }}
+          </nsi-button-mini>
+        }
       </div>
     }
-    <div class="header">
-      <h3>
-        @if (currentSite()) {
-          {{ currentSite()?.name }}
-          @if (currentDrive()) {
-            <span>-</span>
-          }
-        }
-        @if (currentDrive()) {
-          {{ currentDrive()?.name }}
-        }
-        @if (hasCurrentFolder()) {
-          {{ currentFolder().at(-1)?.path }}
-        }
-        @if (isCurrentSelected()) {
-          <pa-icon
-            name="check"
-            class="selected"></pa-icon>
-        }
-      </h3>
-      @if (hasCurrentFolder()) {
-        <nsi-button-mini (click)="selectFolder()">
-          {{ 'sync.cloud-folder.select' | translate }}
-        </nsi-button-mini>
-      }
-    </div>
-  }
 
-  @if (hasSites && !currentSite()) {
-    @if (sites !== undefined) {
+    @if (hasSites && !currentSite()) {
+      @if (sites !== undefined) {
+        <ul>
+          @for (site of sites; track site.id) {
+            <li>
+              <pa-icon name="folder"></pa-icon>
+              {{ site.name }}
+              <nsi-button-mini (click)="browseSite(site)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+            </li>
+          } @empty {
+            <li class="body-m">{{ 'generic.no-results' | translate }}</li>
+          }
+        </ul>
+      }
+    } @else if (!currentDrive()) {
       <ul>
-        @for (site of sites; track site.id) {
+        @for (drive of drives; track drive.id) {
           <li>
             <pa-icon name="folder"></pa-icon>
-            {{ site.name }}
-            <nsi-button-mini (click)="browseSite(site)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+            {{ drive.name }}
+            <nsi-button-mini (click)="browseDrive(drive)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
           </li>
-        } @empty {
-          <li class="body-m">{{ 'generic.no-results' | translate }}</li>
+        }
+        @for (folder of folders; track folder.id) {
+          <li>
+            <pa-icon name="folder"></pa-icon>
+            {{ folder.name }}
+            <nsi-button-mini (click)="browseFolder(folder)">
+              {{ 'sync.cloud-folder.browse' | translate }}
+            </nsi-button-mini>
+          </li>
+        }
+      </ul>
+    } @else {
+      <ul>
+        @for (folder of folders; track folder.id) {
+          <li>
+            <pa-icon name="folder"></pa-icon>
+            {{ folder.name }}
+            <nsi-button-mini
+              (click)="browseFolder(folder)"
+              icon="chevron-down"></nsi-button-mini>
+          </li>
         }
       </ul>
     }
-  } @else if (!currentDrive()) {
-    <ul>
-      @for (drive of drives; track drive.id) {
-        <li>
-          <pa-icon name="folder"></pa-icon>
-          {{ drive.name }}
-          <nsi-button-mini (click)="browseDrive(drive)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
-        </li>
-      }
-      @for (folder of folders; track folder.id) {
-        <li>
-          <pa-icon name="folder"></pa-icon>
-          {{ folder.name }}
-          <nsi-button-mini (click)="browseFolder(folder)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
-        </li>
-      }
-    </ul>
-  } @else {
-    <ul>
-      @for (folder of folders; track folder.id) {
-        <li>
-          <pa-icon name="folder"></pa-icon>
-          {{ folder.name }}
-          <nsi-button-mini
-            (click)="browseFolder(folder)"
-            icon="chevron-down"></nsi-button-mini>
-        </li>
-      }
-    </ul>
+  </div>
+
+  @if (isSharepoint && currentSite()) {
+    <nsi-two-columns-configuration-item
+      itemTitle="sync.cloud-folder.sync-pages.title"
+      [description]="'sync.cloud-folder.sync-pages.description' | translate: { site: currentSite()?.name }">
+      <pa-toggle
+        labelOnRight
+        [value]="syncPages"
+        (valueChange)="updateSyncPages($event)">
+        {{ 'sync.cloud-folder.sync-pages.title' | translate }}
+      </pa-toggle>
+    </nsi-two-columns-configuration-item>
   }
 </div>
