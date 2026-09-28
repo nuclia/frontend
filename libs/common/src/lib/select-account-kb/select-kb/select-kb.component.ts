@@ -62,14 +62,17 @@ export class SelectKbComponent implements OnDestroy {
   createKb() {
     this.account
       .pipe(take(1))
-      .subscribe((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)]));
+      .subscribe((account) =>
+        this.navigation.navigateExternal(this.navigation.getKbCreationUrl(account.slug), { withFromApp: true }),
+      );
   }
   createArag() {
-    this.account
-      .pipe(take(1))
-      .subscribe((account) =>
-        this.router.navigate([this.navigation.getAragCreationUrl(account.slug)], { queryParams: { create: true } }),
-      );
+    this.account.pipe(take(1)).subscribe((account) =>
+      this.navigation.navigateExternal(this.navigation.getAragCreationUrl(account.slug), {
+        queryParams: { create: 'true' },
+        withFromApp: true,
+      }),
+    );
   }
 
   goToAccountManage() {
