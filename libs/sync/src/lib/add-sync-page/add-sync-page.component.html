@@ -55,6 +55,7 @@
 
       <nsi-sticky-footer>
         <pa-button
+          data-analytics-id="add-sync-cancel"
           aspect="basic"
           (click)="cancel()">
           {{ 'generic.cancel' | translate }}
@@ -62,6 +63,7 @@
 
         @if (!!(isCloud | async) && enterCredentials) {
           <pa-button
+            data-analytics-id="add-sync-authenticate"
             kind="primary"
             [disabled]="!validForm || saving"
             (click)="authenticate()">
@@ -69,6 +71,7 @@
           </pa-button>
         } @else {
           <pa-button
+            data-analytics-id="add-sync-save"
             kind="primary"
             [disabled]="!validForm || (connector.allowToSelectFolders && !isFolderSelectionValid()) || saving"
             (click)="save()">
