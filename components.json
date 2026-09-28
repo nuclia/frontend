@@ -1,0 +1,7 @@
+{
+  "componentsPath": "libs/ui/spartan-components",
+  "buildable": false,
+  "generateAs": "library",
+  "importAlias": "@spartan-ng/helm",
+  "style": "nova"
+}

@@ -12,8 +12,15 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2023",
     "module": "esnext",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2023", "dom", "esnext.asynciterable", "esnext.bigint"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2023",
+      "dom",
+      "esnext.asynciterable",
+      "esnext.bigint"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
@@ -24,22 +31,59 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "paths": {
-      "@flaps/common": ["./libs/common/src/index.ts"],
-      "@flaps/core": ["./libs/core/src/index.ts"],
-      "@guillotinaweb/pastanaga-angular": ["./libs/pastanaga-angular/projects/pastanaga-angular/src"],
-      "@guillotinaweb/pastanaga-angular/demo": ["./libs/pastanaga-angular/projects/demo/src/index.ts"],
-      "@nuclia/core": ["./libs/sdk-core/src/index.ts"],
-      "@nuclia/sistema": ["./libs/sistema/src/index.ts"],
-      "@nuclia/sync": ["./libs/sync/src/index.ts"],
-      "@nuclia/user": ["./libs/user/src/index.ts"],
-      "@nuclia/widget": ["./libs/search-widget/src/index.ts"],
-      "libs": ["./libs/src/index.ts"],
-      "*": ["./*"]
+      "@flaps/common": [
+        "./libs/common/src/index.ts"
+      ],
+      "@flaps/core": [
+        "./libs/core/src/index.ts"
+      ],
+      "@guillotinaweb/pastanaga-angular": [
+        "./libs/pastanaga-angular/projects/pastanaga-angular/src"
+      ],
+      "@guillotinaweb/pastanaga-angular/demo": [
+        "./libs/pastanaga-angular/projects/demo/src/index.ts"
+      ],
+      "@nuclia/core": [
+        "./libs/sdk-core/src/index.ts"
+      ],
+      "@nuclia/sistema": [
+        "./libs/sistema/src/index.ts"
+      ],
+      "@nuclia/sync": [
+        "./libs/sync/src/index.ts"
+      ],
+      "@nuclia/user": [
+        "./libs/user/src/index.ts"
+      ],
+      "@nuclia/widget": [
+        "./libs/search-widget/src/index.ts"
+      ],
+      "libs": [
+        "./libs/src/index.ts"
+      ],
+      "*": [
+        "./*"
+      ],
+      "@spartan-ng/helm/accordion": [
+        "./libs/ui/spartan-components/accordion/src/index.ts"
+      ],
+      "@spartan-ng/helm/avatar": [
+        "./libs/ui/spartan-components/avatar/src/index.ts"
+      ],
+      "@spartan-ng/helm/button": [
+        "./libs/ui/spartan-components/button/src/index.ts"
+      ],
+      "@spartan-ng/helm/utils": [
+        "./libs/ui/spartan-components/utils/src/index.ts"
+      ]
     }
   },
   "angularCompilerOptions": {
     "strictTemplates": false,
     "strictInjectionParameters": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }
