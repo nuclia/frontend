@@ -41,6 +41,7 @@ environment.dev.ts
 apps/**/local-stage/*.json
 apps/manager-v2/src/environments_config/local-prod/*.json
 apps/**/local-dev/*.json
+apps/**/local-dev-proxy/*.json
 
 # IDE - VSCode
 .vscode/*
@@ -90,3 +91,8 @@ vitest.config.*.timestamp*
 
 # Metrics
 .VSCodeCounter
+
+# Local server 
+*.pem
+local_server/logs/**
+local_server/nginx.conf

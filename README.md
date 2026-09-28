@@ -179,69 +179,84 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 The auth app supports the OAuth workflow and other auth related features.
 
-As the backend is redirecting to the server, it might be painful to work locally.
+As the backend is redirecting to the server, it might be painful to work locally on features using auth app, like onboarding flow for example.
 
-If needed you can run the auth app on port 4201:
+When we need to test features like onboarding flow, they are two solutions:
 
-```
-nx serve auth --port 4201 -c local-dev --host 127.0.0.1
-```
+- either deploy your branch to the dev cluster to test it in integration (but deployments take time, so that's not always the best)
+- or run both auth and dashboard apps locally with a proxy allowing to let the browser think that real auth/dashboard URL are actually pointing to your local computer.
 
-And proxy auth.gcp-global-dev-1.nuclia.io calls to this local port with the following setup:
+### Setup certificates and nginx server for the apps
 
-```
+Install brew first if you don't already have it https://brew.sh/.
+Then you need to install a few dependencies:
+
+```sh
 brew install nginx mkcert nss
-cd ~/wherever
+```
+
+Create the certificates needed for both auth and dashboard apps. The following commands are for working with dev cluster as a backend, if you want to work with stage, replace `auth.gcp-global-dev-1.nuclia.io` by `auth.stashify.cloud` in all the commands and in the nginx template.
+
+**Note**:
+
+- It's easier to work with dev cluster because with this setup, the URL displayed in your browser won't be `localhost:4200` anymore, it will be the one corresponding to your backend. So using dev allows a better distinction if you have stage open in another tab.
+- We created a new local-stage-proxy configuration for working with a proxy on stage, ask a supervisor to give it to you.
+- Make sure you have a `siteKey` property in your `app-config.json` on local-dev and local-stage in order to have the OAuth working well with local proxy. If you don't, ask a supervisor to provide them to you.
+
+Commands to create the certificates:
+
+```bash
+cd ./local_server
 mkcert -install
 mkcert auth.gcp-global-dev-1.nuclia.io
-mkdir logs
+mkcert rag.gcp-global-dev-1.nuclia.io
+mkcert admin.gcp-global-dev-1.nuclia.io
 ```
 
-In /etc/hosts, add:
+Then copy `local_server/nginx.template.conf` to a `nginx.conf` and use your local certificates in it.
 
-```
-127.0.0.1   localhost auth.gcp-global-dev-1.nuclia.io
-```
+Finally, using sudo, in `/etc/hosts`, add commented proxies for stage and dev clusters:
 
-Note: do not forget to undo that once finished, else you will not be able to access the real auth.gcp-global-dev-1.nuclia.io.
-
-nginx.conf
-
-```
-# Required top-level block (even if empty)
-events {}
-
-http {
-  # Keep logs local to this temp project (optional)
-  access_log logs/access.log;
-  error_log  logs/error.log;
-
-  # Recommended: tighter proxy defaults
-  proxy_http_version 1.1;
-  proxy_set_header Host $host;
-  proxy_set_header X-Forwarded-Proto https;
-  proxy_set_header X-Forwarded-For $remote_addr;
-
-  server {
-    # You'll need sudo to bind to 443 on macOS
-    listen 443 ssl;
-    server_name auth.gcp-global-dev-1.nuclia.io;
-
-    # >>> Replace these with your mkcert outputs <<<
-    ssl_certificate     auth.gcp-global-dev-1.nuclia.io.pem;
-    ssl_certificate_key auth.gcp-global-dev-1.nuclia.io-key.pem;
-
-    # Forward EVERYTHING under this host to your Angular dev server
-    location / {
-      proxy_pass http://127.0.0.1:4201;
-    }
-  }
-}
+```bash
+# ----- Local Auth Proxy -----
+#127.0.0.1   localhost auth.stashify.cloud
+#127.0.0.1   localhost rag.stashify.cloud
+#127.0.0.1   localhost admin.stashify.cloud
+#127.0.0.1   localhost auth.gcp-global-dev-1.nuclia.io
+#127.0.0.1   localhost rag.gcp-global-dev-1.nuclia.io
+#127.0.0.1   localhost admin.gcp-global-dev-1.nuclia.io
 ```
 
-```
+You will uncomment the lines corresponding to the cluster (dev or stage) you want to use whenever you need it.
+
+Those steps need to be done only once.
+
+### Setup a proxy to work locally with auth and dashboard apps
+
+Finally, you should run the apps specifying the host.
+When working with dev cluster as a backend:
+
+- dashboard: `nx run dashboard:serve:local-dev-proxy  --host 127.0.0.1`
+- admin: `nx run admin:serve:local-dev  --host 127.0.0.1`
+- auth: `nx run auth:serve:local-dev --host 127.0.0.1`
+
+When working with stage as a backend:
+
+- dashboard: `nx run dashboard:serve:local-stage-proxy  --host 127.0.0.1`
+- admin: `nx run admin:serve:local-stage-proxy  --host 127.0.0.1`
+- auth: `nx run auth:serve:local-stage-proxy --host 127.0.0.1`
+
+Finally, enable your proxy and launch the nginx local server from `local_server` folder:
+
+```bash
+cd local_server
+sudo nano /etc/hosts  # uncomment the 3 lines corresponding to the environment you're using then save
 sudo nginx -p $(pwd) -c nginx.conf -g 'daemon off;'
 ```
+
+**Notes**:
+Do not forget to comment the lines added in `/etc/hosts` once finished, else you will not be able to access the real cluster.
+In case of trouble accessing the dashboard after the proxy has been removed from `/etc/hosts`, reboot your browser (working on private window is a good way to avoid troubles).
 
 ## Admin app
 
