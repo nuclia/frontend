@@ -39,6 +39,7 @@ node_modules
 # config
 environment.dev.ts
 apps/**/local-stage/*.json
+apps/**/local-stage-proxy/*.json
 apps/manager-v2/src/environments_config/local-prod/*.json
 apps/**/local-dev/*.json
 apps/**/local-dev-proxy/*.json

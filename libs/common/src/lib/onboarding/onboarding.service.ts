@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
-import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
-import { SDKService, UserService, NavigationService, AuthService, FeaturesService } from '@flaps/core';
-import * as Sentry from '@sentry/angular';
-import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
+import { AuthService, FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
 import {
   Account,
   AccountModification,
@@ -13,6 +9,10 @@ import {
   SignUpInfo,
   WorkflowType,
 } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
+import * as Sentry from '@sentry/angular';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 
 const STEPS = [1, 2, 3, 4, 5, 6];
 const CLASSIC_STEPS = [1, 3, 4, 5, 6];
@@ -28,6 +28,9 @@ export class OnboardingService {
     kbCreated: false,
     creationFailed: false,
   });
+
+  readonly contextBoxKbName = 'ContextBox';
+  readonly contextBoxDefaultModel = 'gemma-4-26b-a4b';
 
   onboardingState: Observable<OnboardingStatus> = this._onboardingState.asObservable();
   onboardingStep: Observable<number> = this._onboardingStep.asObservable();
