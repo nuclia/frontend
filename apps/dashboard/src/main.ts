@@ -1,7 +1,12 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { registerLocaleData } from '@angular/common';
 import { HttpBackend, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
-import { enableProdMode, importProvidersFrom, provideAppInitializer } from '@angular/core';
+import {
+  enableProdMode,
+  importProvidersFrom,
+  provideAppInitializer,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -79,5 +84,6 @@ bootstrapApplication(AppComponent, {
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideZonelessChangeDetection(),
   ],
 }).catch((err) => console.error(err));

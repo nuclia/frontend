@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -51,145 +51,142 @@ describe('KnowledgeBoxHomeComponent', () => {
   let component: KnowledgeBoxHomeComponent;
   let fixture: ComponentFixture<KnowledgeBoxHomeComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          KnowledgeBoxHomeComponent,
-          TranslateModule.forRoot({
-            loader: {
-              provide: TranslateLoader,
-              useFactory: createTranslateLoader,
-            },
-            useDefaultLang: true,
-            defaultLanguage: 'en',
-          }),
-          MockModule(PaButtonModule),
-          MockModule(PaDropdownModule),
-          MockModule(PaIconModule),
-          MockModule(PaPopupModule),
-          MockModule(PaTableModule),
-          MockModule(PaTabsModule),
-          MockModule(PaTooltipModule),
-          MockModule(RouterModule),
-          MockModule(UploadModule),
-          STFPipesModule,
-          GenerativeModelPipe,
-          MockComponent(DropdownButtonComponent),
-          MockComponent(AccountStatusComponent),
-          MockComponent(HomeContainerComponent),
-          MockComponent(UsageChartsComponent),
-          MockComponent(KbOnboardingHeaderComponent),
-          MockComponent(ContentPlaceholderComponent),
-          MockComponent(LastResourcesComponent),
-        ],
-        providers: [
-          MockProvider(AppService, {
-            currentLocale: of('en'),
-          }),
-          MockProvider(SDKService, {
-            currentKb: of({
-              id: 'kb-id',
-              slug: 'kb-slug',
-              state: 'PRIVATE',
-              zone: 'test-zone',
-              fullpath: 'http://somewhere/api',
-              getConfiguration: () => of({}),
-              catalog: () => of({ type: 'searchResults' }),
-              counters: () => of({ resources: 0, paragraphs: 0, fields: 0, sentences: 0 }),
-              processingStatus: () => of({ results: [] }),
-            } as unknown as WritableKnowledgeBox),
-            currentAccount: of({
-              id: 'test-id',
-              slug: 'test-account',
-              title: 'Test Account',
-              zone: 'test-zone',
-              type: 'stash-trial',
-              can_manage_account: true,
-              blocked_features: [],
-              max_kbs: 10,
-              max_agents: 5,
-              max_memories: 5,
-              max_arags: 5,
-              max_users: 100,
-              creation_date: '2023-01-01',
-            } as Account),
-            counters: of({ resources: 1, index_size: 1024, paragraphs: 2, fields: 3, sentences: 4 }),
-            refreshCounter: jest.fn(),
-            nuclia: {
-              options: { standalone: false, backend: 'https://nuclia.cloud' },
-              db: {},
-            },
-          } as SDKService),
-          MockProvider(FeaturesService, {
-            isTrial: of(true),
-            isAccountManager: of(true),
-            isKbAdmin: of(true),
-            authorized: {
-              remiMetrics: of(false),
-            },
-          } as FeaturesService),
-          MockProvider(NavigationService, {
-            getKbUrl: () => 'kb-url',
-          }),
-          MockProvider(UploadService, {
-            getResourceStatusCount: () => of({ type: 'searchResults' }),
-          }),
-          {
-            provide: MetricsService,
-            useValue: {
-              getUsageCharts: () => of({}),
-              getSearchCharts: () => of({ search: {}, ask: {} }),
-              getUsageCount: () => of(0),
-              getSearchCount: () => of({ month: { search: 0, chat: 0 }, year: { search: 0, chat: 0 } }),
-              isSubscribedToStripe: of(false),
-              period: of({ start: new Date(), end: new Date() }),
-              getLastMonths: () => [{ start: new Date(), end: new Date() }],
-              getLastStripePeriods: () => [{ start: new Date(), end: new Date() }],
-            },
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        KnowledgeBoxHomeComponent,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useFactory: createTranslateLoader,
           },
-          MockProvider(SisModalService, {
-            openModal: jest.fn(),
-          }),
-          {
-            provide: ZoneService,
-            useValue: {
-              getZones: () =>
-                of([
-                  {
-                    slug: 'test-zone',
-                    title: 'Test Zone',
-                    id: 'test-id',
-                    cloud_provider: 'test',
-                    private: false,
-                    origin: null,
-                  },
-                ]),
-              buildZoneUrl: () => of('https://test-zone.nuclia.cloud'),
-            },
+          useDefaultLang: true,
+          defaultLanguage: 'en',
+        }),
+        MockModule(PaButtonModule),
+        MockModule(PaDropdownModule),
+        MockModule(PaIconModule),
+        MockModule(PaPopupModule),
+        MockModule(PaTableModule),
+        MockModule(PaTabsModule),
+        MockModule(PaTooltipModule),
+        MockModule(RouterModule),
+        MockModule(UploadModule),
+        STFPipesModule,
+        GenerativeModelPipe,
+        MockComponent(DropdownButtonComponent),
+        MockComponent(AccountStatusComponent),
+        MockComponent(HomeContainerComponent),
+        MockComponent(UsageChartsComponent),
+        MockComponent(KbOnboardingHeaderComponent),
+        MockComponent(ContentPlaceholderComponent),
+        MockComponent(LastResourcesComponent),
+      ],
+      providers: [
+        MockProvider(AppService, {
+          currentLocale: of('en'),
+        }),
+        MockProvider(SDKService, {
+          currentKb: of({
+            id: 'kb-id',
+            slug: 'kb-slug',
+            state: 'PRIVATE',
+            zone: 'test-zone',
+            fullpath: 'http://somewhere/api',
+            getConfiguration: () => of({}),
+            catalog: () => of({ type: 'searchResults' }),
+            counters: () => of({ resources: 0, paragraphs: 0, fields: 0, sentences: 0 }),
+            processingStatus: () => of({ results: [] }),
+          } as unknown as WritableKnowledgeBox),
+          currentAccount: of({
+            id: 'test-id',
+            slug: 'test-account',
+            title: 'Test Account',
+            zone: 'test-zone',
+            type: 'stash-trial',
+            can_manage_account: true,
+            blocked_features: [],
+            max_kbs: 10,
+            max_agents: 5,
+            max_memories: 5,
+            max_arags: 5,
+            max_users: 100,
+            creation_date: '2023-01-01',
+          } as Account),
+          counters: of({ resources: 1, index_size: 1024, paragraphs: 2, fields: 3, sentences: 4 }),
+          refreshCounter: jest.fn(),
+          nuclia: {
+            options: { standalone: false, backend: 'https://nuclia.cloud' },
+            db: {},
           },
-          MockProvider(RemiMetricsService, {
-            healthCheckData: of([]),
-            updatePeriod: jest.fn(),
-          }),
-          MockProvider(KbOnboardingStateService, {
-            onboardingState$: of(null),
-            updateState: jest.fn(),
-            skip: jest.fn(),
-            restart: jest.fn(),
-            markDone: jest.fn(),
-          }),
-          MockProvider(UploadEventService, {
-            processingStarted$: of(false),
-            searchPerformed$: of(false),
-            clearProcessingStarted: jest.fn(),
-            clearSearchPerformed: jest.fn(),
-          }),
-        ],
-      }).compileComponents();
-    }),
-    20000,
-  );
+        } as SDKService),
+        MockProvider(FeaturesService, {
+          isTrial: of(true),
+          isAccountManager: of(true),
+          isKbAdmin: of(true),
+          authorized: {
+            remiMetrics: of(false),
+          },
+        } as FeaturesService),
+        MockProvider(NavigationService, {
+          getKbUrl: () => 'kb-url',
+        }),
+        MockProvider(UploadService, {
+          getResourceStatusCount: () => of({ type: 'searchResults' }),
+        }),
+        {
+          provide: MetricsService,
+          useValue: {
+            getUsageCharts: () => of({}),
+            getSearchCharts: () => of({ search: {}, ask: {} }),
+            getUsageCount: () => of(0),
+            getSearchCount: () => of({ month: { search: 0, chat: 0 }, year: { search: 0, chat: 0 } }),
+            isSubscribedToStripe: of(false),
+            period: of({ start: new Date(), end: new Date() }),
+            getLastMonths: () => [{ start: new Date(), end: new Date() }],
+            getLastStripePeriods: () => [{ start: new Date(), end: new Date() }],
+          },
+        },
+        MockProvider(SisModalService, {
+          openModal: jest.fn(),
+        }),
+        {
+          provide: ZoneService,
+          useValue: {
+            getZones: () =>
+              of([
+                {
+                  slug: 'test-zone',
+                  title: 'Test Zone',
+                  id: 'test-id',
+                  cloud_provider: 'test',
+                  private: false,
+                  origin: null,
+                },
+              ]),
+            buildZoneUrl: () => of('https://test-zone.nuclia.cloud'),
+          },
+        },
+        MockProvider(RemiMetricsService, {
+          healthCheckData: of([]),
+          updatePeriod: jest.fn(),
+        }),
+        MockProvider(KbOnboardingStateService, {
+          onboardingState$: of(null),
+          updateState: jest.fn(),
+          skip: jest.fn(),
+          restart: jest.fn(),
+          markDone: jest.fn(),
+        }),
+        MockProvider(UploadEventService, {
+          processingStarted$: of(false),
+          searchPerformed$: of(false),
+          clearProcessingStarted: jest.fn(),
+          clearSearchPerformed: jest.fn(),
+        }),
+      ],
+    }).compileComponents();
+  }, 20000);
 
   beforeEach(() => {
     // `defaultLanguage` alone never sets `currentLang`; the pipe's translation lookup then
