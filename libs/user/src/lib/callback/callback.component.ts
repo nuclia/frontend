@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Inject, OnInit, DOCUMENT, ChangeDetectionStrategy, signal } from '@angular/core';
 
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,7 +29,9 @@ export class CallbackComponent implements OnInit {
     private translate: TranslateService,
   ) {}
 
-  message?: string;
+  // The SDK's auth client subscribes outside Angular's Router/HttpClient-instrumented paths,
+  // so this must be a signal to auto-notify the zoneless CD scheduler on write.
+  message = signal<string | undefined>(undefined);
 
   ngOnInit() {
     const queryParams = this.route.snapshot.queryParams;
@@ -165,13 +167,15 @@ export class CallbackComponent implements OnInit {
             this.restartOAuthFromOriginatingApp('login.error.session_expired', this.decodeCameFrom(state));
           } else if (error.message === 'Invalid state') {
             this.toaster.error('Authentication configuration error. Please contact support if this persists.');
-            this.message = this.translate.instant('login.error.oops');
+            this.message.set(this.translate.instant('login.error.oops'));
           } else {
             // /user/signup doesn't read an `error` query param, so render inline instead of redirecting there.
             const fallback = error.status === 412 ? 'login.error.no_personal_email' : 'login.error.oops';
-            this.message = this.translate.instant(getLoginErrorMessageKey(code, fallback), {
-              provider: this.getProvider(),
-            });
+            this.message.set(
+              this.translate.instant(getLoginErrorMessageKey(code, fallback), {
+                provider: this.getProvider(),
+              }),
+            );
           }
         },
       });

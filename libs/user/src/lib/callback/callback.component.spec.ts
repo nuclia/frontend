@@ -301,7 +301,7 @@ describe('CallbackComponent', () => {
     component.ssoLogin();
 
     expect(translate.instant).toHaveBeenCalledWith('login.error.no_personal_email', { provider: undefined });
-    expect(component.message).toBe('login.error.no_personal_email');
+    expect(component.message()).toBe('login.error.no_personal_email');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
@@ -315,7 +315,7 @@ describe('CallbackComponent', () => {
     expect(toaster.error).toHaveBeenCalledWith(
       'Authentication configuration error. Please contact support if this persists.',
     );
-    expect(component.message).toBe('login.error.oops');
+    expect(component.message()).toBe('login.error.oops');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
@@ -326,7 +326,7 @@ describe('CallbackComponent', () => {
 
     component.ssoLogin();
 
-    expect(component.message).toBe('login.error.oops');
+    expect(component.message()).toBe('login.error.oops');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
@@ -342,7 +342,7 @@ describe('CallbackComponent', () => {
 
     component.ssoLogin();
 
-    expect(component.message).toBe('login.error.user_not_registered');
+    expect(component.message()).toBe('login.error.user_not_registered');
   });
 
   it('should fall back to the legacy detail string when error_code is absent', async () => {
@@ -352,7 +352,7 @@ describe('CallbackComponent', () => {
 
     component.ssoLogin();
 
-    expect(component.message).toBe('login.error.user_not_registered');
+    expect(component.message()).toBe('login.error.user_not_registered');
   });
 
   it('should do nothing in ssoLogin when code or state are missing', async () => {

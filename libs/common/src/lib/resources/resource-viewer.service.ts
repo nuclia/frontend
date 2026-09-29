@@ -1,7 +1,7 @@
 import { combineLatest, filter, fromEvent, map, Observable, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FieldFullId } from '@nuclia/core';
@@ -18,7 +18,6 @@ export class ResourceViewerService {
     private sdk: SDKService,
     private translation: TranslateService,
     private modalService: SisModalService,
-    private zone: NgZone,
     private features: FeaturesService,
     private navigationService: NavigationService,
     private location: Location,
@@ -198,6 +197,6 @@ export class ResourceViewerService {
     );
   }
   private navigateTo(path: string) {
-    this.zone.run(() => this.router.navigate([path]));
+    this.router.navigate([path]);
   }
 }
