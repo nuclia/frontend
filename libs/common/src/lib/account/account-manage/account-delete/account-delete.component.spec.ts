@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { ModalRef, ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { AccountVerificationService, NavigationService, SDKService, UserService } from '@flaps/core';
@@ -135,27 +135,25 @@ describe('AccountDeleteComponent', () => {
         fixture.detectChanges();
       });
 
-      it('sets otpSent to true and otpSending to false on success', fakeAsync(() => {
+      it('sets otpSent to true and otpSending to false on success', () => {
         verificationService.requestEmailOtp.mockReturnValue(of(undefined));
 
         component.requestOtp();
-        tick();
         fixture.detectChanges();
 
         expect(component.otpSent()).toBe(true);
         expect(component.otpSending()).toBe(false);
-      }));
+      });
 
-      it('sets otpError to true and otpSending to false on error', fakeAsync(() => {
+      it('sets otpError to true and otpSending to false on error', () => {
         verificationService.requestEmailOtp.mockReturnValue(throwError(() => new Error('otp failed')));
 
         component.requestOtp();
-        tick();
         fixture.detectChanges();
 
         expect(component.otpError()).toBe(true);
         expect(component.otpSending()).toBe(false);
-      }));
+      });
     });
 
     // ─── delete ────────────────────────────────────────────────────────────────
@@ -166,24 +164,22 @@ describe('AccountDeleteComponent', () => {
         fixture.detectChanges();
       });
 
-      it('calls deleteAccount with the otp code when otpCode is set', fakeAsync(() => {
+      it('calls deleteAccount with the otp code when otpCode is set', () => {
         component.otpCode.set('123456');
 
         component.delete();
-        tick();
 
         expect(deleteAccountMock).toHaveBeenCalledWith(mockAccount.slug, '123456');
-      }));
+      });
 
-      it('sets loading to false on delete error', fakeAsync(() => {
+      it('sets loading to false on delete error', () => {
         deleteAccountMock.mockReturnValue(throwError(() => new Error('delete failed')));
 
         component.delete();
-        tick();
 
         expect(component.loading()).toBe(false);
         expect(TestBed.inject(SisToastService).error).toHaveBeenCalledWith('account.delete.error');
-      }));
+      });
     });
   });
 });
