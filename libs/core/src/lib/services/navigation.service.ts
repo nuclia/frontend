@@ -23,8 +23,8 @@ import {
   of,
   take,
 } from 'rxjs';
-import { isAbsoluteUrl } from '../utils';
 import { BackendConfigurationService } from '../config/backend-config.service';
+import { isAbsoluteUrl } from '../utils';
 
 const IN_ARAG = /at\/[^/]+\/[^/]+\/arag/;
 

@@ -193,7 +193,6 @@ export class OnboardingService {
             const driverIdentifier = `nucliadb-${STFUtils.generateRandomSlugSuffix()}`;
             // Create API key for this agent
             const serviceTitle = `${agentName} key`;
-            console.log(`createContextBox – KB`, kb);
             return kb.createServiceAccount({ title: serviceTitle, role: 'SMEMBER' }).pipe(
               switchMap(() => kb.getServiceAccounts()),
               switchMap((list) => {
