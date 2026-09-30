@@ -10,7 +10,7 @@ import { UsersManageModule, UsersManageService } from '../users-manage';
   selector: 'app-knowledge-box-users',
   template: `
     <div class="knowledge-box-users page-spacing">
-      @if (simpleMode | async) {
+      @if (contextBoxMode | async) {
         <nsi-back-button [link]="backLink | async">{{ 'generic.back_to_home' | translate }}</nsi-back-button>
       }
       <h2 class="display-s">{{ 'navbar.users' | translate }}</h2>
@@ -34,7 +34,7 @@ export class KnowledgeBoxUsersComponent {
 
   kb = this.sdk.currentKb;
   arag = this.sdk.currentArag;
-  simpleMode = this.navigation.simpleMode;
+  contextBoxMode = this.navigation.contextBoxMode;
   backLink = this.navigation.kbUrl.pipe(map((url) => `${url}/simple`));
 
   constructor(

@@ -36,7 +36,7 @@ export class NavigationService {
   inRaoApp = this.environment.client === 'rao';
   inDashboard = this.environment.client === 'dashboard';
 
-  simpleMode = new BehaviorSubject(false);
+  contextBoxMode = new BehaviorSubject(false);
 
   constructor(
     private router: Router,
@@ -60,9 +60,9 @@ export class NavigationService {
     this.sdk.currentAccount,
     this.sdk.currentKb,
     this.sdk.arag,
-    this.simpleMode,
+    this.contextBoxMode,
   ]).pipe(
-    map(([account, kb, arag, simpleMode]) => {
+    map(([account, kb, arag, contextBoxMode]) => {
       if (account && this.inAdminApp) {
         return this.getAccountManageUrl(account.slug);
       } else if (account && arag) {
@@ -70,7 +70,7 @@ export class NavigationService {
       } else if (account && kb) {
         const kbSlug = this.sdk.nuclia.options.standalone ? kb.id : kb.slug;
         const kbUrl = this.getKbUrl(account.slug, kbSlug);
-        return simpleMode ? `${kbUrl}/simple` : kbUrl;
+        return contextBoxMode ? `${kbUrl}/simple` : kbUrl;
       } else if (account) {
         return this.getKbSelectUrl(account.slug);
       } else {
@@ -270,7 +270,7 @@ export class NavigationService {
     this.router.navigate([this.getAccountSelectUrl()]);
   }
 
-  setSimpleMode(value: boolean): void {
-    this.simpleMode.next(value);
+  setContextBoxMode(value: boolean): void {
+    this.contextBoxMode.next(value);
   }
 }

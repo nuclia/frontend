@@ -125,7 +125,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     map(([currentIsCowork, nextIsCowork]) => currentIsCowork || nextIsCowork),
     shareReplay(1),
   );
-  simpleMode = this.navigation.simpleMode;
+  contextBoxMode = this.navigation.contextBoxMode;
   backToSettingsLink = this.sdk.currentAccount.pipe(
     map((account) => `${this.navigation.getAccountManageUrl(account.slug)}/billing`),
   );

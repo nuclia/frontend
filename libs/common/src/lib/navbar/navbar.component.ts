@@ -73,7 +73,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ),
   );
 
-  simpleMode = this.navigationService.simpleMode;
+  contextBoxMode = this.navigationService.contextBoxMode;
   showSettings = false;
   showMetrics = false;
   kbUrl = '';

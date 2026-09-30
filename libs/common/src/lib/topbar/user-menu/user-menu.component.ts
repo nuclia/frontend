@@ -115,7 +115,7 @@ export class UserMenuComponent implements OnInit {
     shareReplay(1),
   );
 
-  private readonly simpleMode = this.navigation.simpleMode;
+  private readonly contextBoxMode = this.navigation.contextBoxMode;
 
   private readonly isKbAdmin = this.features.isKbAdmin;
 
@@ -126,7 +126,7 @@ export class UserMenuComponent implements OnInit {
 
   // True in advanced (non-simple) mode AND user has account-level access
   private readonly showAdvancedAccountSections = combineLatest([
-    this.simpleMode.pipe(map((s) => !s)),
+    this.contextBoxMode.pipe(map((s) => !s)),
     this.showAccountGroup,
   ]).pipe(
     map(([advanced, group]) => advanced && group),
@@ -160,7 +160,7 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'open-notifications',
           action: () => this.showNotifications(),
           count$: this.unreadCount$,
-          visible$: this.simpleMode.pipe(map((simple) => !simple)),
+          visible$: this.contextBoxMode.pipe(map((simple) => !simple)),
         },
         {
           label: 'account.consumption',
@@ -331,7 +331,7 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'delete-account',
           destructive: true,
           action: () => this.openDeleteAccount(),
-          visible$: combineLatest([this.simpleMode, this.isAccountManager]).pipe(
+          visible$: combineLatest([this.contextBoxMode, this.isAccountManager]).pipe(
             map(([simple, manager]) => !!simple && !!manager),
           ),
         },

@@ -1,0 +1,144 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../context-box-page.tokens' as tokens;
+
+$search-view-padding-top: rhythm(3);
+$counters-height: rhythm(6);
+
+.context-box {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  justify-content: center;
+  padding: rhythm(8) rhythm(4);
+  min-height: calc(100vh - var(--app-topbar-height) - tokens.$footer-height);
+
+  &.search-view {
+    justify-content: flex-start;
+    padding-bottom: 0;
+    padding-top: $search-view-padding-top;
+    gap: 0;
+  }
+}
+
+.title {
+  align-items: center;
+  display: flex;
+  gap: rhythm(3);
+  &.hidden {
+    display: none;
+  }
+  nsi-spinner {
+    width: rhythm(4);
+  }
+}
+
+.heading {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.subtitle {
+  color: $color-neutral-regular;
+  &.hidden {
+    display: none;
+  }
+
+  strong {
+    color: $color-dark-stronger;
+    font-size: font-size(l);
+  }
+}
+
+.counters {
+  align-items: center;
+  display: flex;
+  font-size: font-size(m);
+  gap: rhythm(3);
+  height: rhythm(6);
+
+  span {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-regular;
+  }
+
+  strong {
+    color: $color-dark-stronger;
+  }
+}
+
+.footer {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border-top: 1px solid $color-neutral-lighter;
+  display: flex;
+  gap: rhythm(2);
+  height: tokens.$footer-height;
+  justify-content: center;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+
+  // pa-dropdown's host element has no display of its own, so it can still take up
+  // layout space in this centered flex row even while its popup content is hidden.
+  pa-dropdown {
+    display: contents;
+  }
+}
+
+.close-widget {
+  pa-button {
+    position: absolute;
+    padding-right: rhythm(2);
+    right: calc((100vw - #{tokens.$content-width}) / 2);
+  }
+}
+
+.preview {
+  align-items: center;
+  display: flex;
+
+  // Customize chat widget
+  --custom-width-input-container: #{rhythm(80)};
+  --custom-margin-side-input-container: auto;
+  --custom-height-container: auto;
+
+  &.open {
+    ::ng-deep nuclia-chat {
+      width: 100vw !important;
+    }
+    --custom-padding-side-entries-container: calc((100vw - #{tokens.$content-width}) / 2);
+    --custom-height-container: calc(
+      100vh - var(--app-topbar-height) - #{$search-view-padding-top} - #{$counters-height} - #{tokens.$footer-height} -
+        #{rhythm(1)}
+    );
+  }
+}
+
+.dropzone {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border: 2px dashed $color-neutral-regular;
+  color: $color-neutral-regular;
+  font-size: font-size(xl);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  height: rhythm(45);
+  justify-content: center;
+  padding: rhythm(4);
+  width: rhythm(90);
+  &.file-over {
+    border: 2px dashed $color-primary-regular;
+  }
+}
+
+.success {
+  color: tokens.$success-color;
+}
+.error {
+  color: tokens.$error-color;
+}

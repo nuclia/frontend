@@ -1,0 +1,127 @@
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { SDKService } from '@flaps/core';
+import { PaButtonModule, PaDropdownModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  DropdownButtonComponent,
+  NsiSkeletonComponent,
+  SisModalService,
+  SisSearchInputComponent,
+  StickyFooterComponent,
+} from '@nuclia/sistema';
+import { filter, map, switchMap } from 'rxjs';
+import { PAGE_SIZES, ContextBoxService } from '../context-box/context-box.service';
+import { HistoryTableService } from './history-table.service';
+
+interface TableRow {
+  resourceId: string;
+  questionIdent: string;
+  questionIndex: number;
+  question: string;
+  questionShort?: string;
+  answer: string;
+  answerIdent: string;
+  answerShort?: string;
+  created: string;
+  failed: boolean;
+}
+
+@Component({
+  selector: 'app-history-table',
+  templateUrl: './history-table.component.html',
+  styleUrl: './history-table.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [HistoryTableService],
+  imports: [
+    PaTableModule,
+    PaButtonModule,
+    PaIconModule,
+    PaDropdownModule,
+    NsiSkeletonComponent,
+    DatePipe,
+    TranslatePipe,
+    DropdownButtonComponent,
+    StickyFooterComponent,
+    SisSearchInputComponent,
+  ],
+})
+export class HistoryTableComponent {
+  contextBoxService = inject(ContextBoxService);
+  historyTableService = inject(HistoryTableService);
+  sdk = inject(SDKService);
+  modalService = inject(SisModalService);
+
+  openConversation = output<string>();
+
+  columns = ['question', 'answer', 'status', 'date', 'delete'];
+  pageSizes = PAGE_SIZES;
+  expanded = signal<{ [key: string]: boolean }>({});
+
+  skeletonRows = computed(() => new Array(this.historyTableService.pageSize()));
+
+  rows = toSignal(
+    this.historyTableService.conversations.pipe(
+      map((conversations) =>
+        conversations.items.reduce((acc, curr) => {
+          curr.messages.forEach((message, index, all) => {
+            if (index % 2 === 1) {
+              acc.push({
+                resourceId: curr.resource.id,
+                question: all[index - 1].content.text,
+                questionIndex: index - 1,
+                questionIdent: all[index - 1].ident,
+                questionShort: this.getShortText(all[index - 1].content.text, 70),
+                answer: message.content.text,
+                answerIdent: message.ident,
+                answerShort: this.getShortText(message.content.text, 120),
+                created: curr.resource.created + 'Z',
+                failed: message.content.text === '',
+              });
+            }
+          });
+          return acc;
+        }, [] as TableRow[]),
+      ),
+      map((rows) =>
+        rows.sort((a, b) =>
+          a.created === b.created
+            ? b.questionIndex - a.questionIndex
+            : new Date(b.created).getTime() - new Date(a.created).getTime(),
+        ),
+      ),
+    ),
+    { initialValue: [] as TableRow[] },
+  );
+
+  deleteQuestion(row: TableRow, event: MouseEvent) {
+    event.stopPropagation();
+    this.modalService
+      .openConfirm({
+        title: 'context-box.delete-question',
+        description: 'context-box.delete-question-description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((result) => result),
+        switchMap(() => this.contextBoxService.deleteQuestion(row.resourceId, row.questionIdent, row.answerIdent)),
+      )
+      .subscribe(() => {
+        this.historyTableService.refresh();
+      });
+  }
+
+  getShortText(text: string, maxLength: number) {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + '...';
+    }
+    return undefined;
+  }
+
+  toggleExpanded(id: string, event: MouseEvent) {
+    event.stopPropagation();
+    this.expanded.update((expanded) => ({ ...expanded, [id]: !expanded[id] }));
+  }
+}

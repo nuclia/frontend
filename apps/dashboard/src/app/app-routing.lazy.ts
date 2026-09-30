@@ -8,4 +8,4 @@ export {
   WIDGETS_ROUTES,
 } from '@flaps/common';
 export { LabelSetsModule } from '@flaps/core';
-export { SimplePageModule } from './knowledge-box/simple/simple-page.module';
+export { ContextBoxPageModule } from './knowledge-box/context-box/context-box-page.module';

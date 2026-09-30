@@ -1,0 +1,140 @@
+<div
+  class="context-box"
+  [class.search-view]="view() === 'search'">
+  <div class="heading">
+    <h1
+      class="title display-m"
+      [class.hidden]="view() === 'search'"
+      aria-live="polite"
+      aria-atomic="true">
+      @if (step() === 1) {
+        {{ 'context-box.title.first-files' | translate }}
+      } @else if (step() === 2) {
+        <nsi-spinner size="small"></nsi-spinner>
+        {{ 'context-box.title.uploading' | translate }}
+      } @else if (step() === 3) {
+        {{ 'context-box.title.testing' | translate }}
+      }
+    </h1>
+
+    @if (step() === 3) {
+      <p
+        class="subtitle body-m"
+        [class.hidden]="view() === 'search'"
+        [innerHTML]="'context-box.subtitle.testing' | translate: { count: counter()?.processed || 0 }"></p>
+    }
+  </div>
+
+  @if (step() === 2) {
+    <div
+      class="counters"
+      aria-live="polite"
+      aria-atomic="false">
+      <div>
+        <span>{{ 'context-box.ready' | translate }}</span>
+        <strong>: {{ counter()?.processed || 0 }}</strong>
+      </div>
+      <div>
+        <span>{{ 'context-box.in-queue' | translate }}</span>
+        <strong>: {{ counter()?.pending || 0 }}</strong>
+      </div>
+      <div>
+        <span>{{ 'context-box.failed' | translate }}</span>
+        <strong>: {{ counter()?.error || 0 }}</strong>
+      </div>
+    </div>
+  }
+  @if (step() === 3) {
+    @if (widgetPreview | async; as widgetPreview) {
+      @if (view() === 'search') {
+        <div class="close-widget">
+          <pa-button
+            aspect="basic"
+            icon="cross"
+            (click)="changeView('resources')">
+            {{ 'generic.close' | translate }}
+          </pa-button>
+        </div>
+      }
+      <div
+        #preview
+        [class.open]="view() === 'search'"
+        class="preview"
+        [innerHtml]="widgetPreview.preview"></div>
+    }
+  }
+  <div>
+    @if (step() === 1) {
+      <div
+        stfFileDrop
+        class="dropzone"
+        [class.file-over]="fileOver()"
+        (fileOver)="fileOver.set($event)"
+        (atFileDrop)="onFilesSelected($event)">
+        <div>{{ 'context-box.drop-files' | translate }}</div>
+        <div>{{ 'context-box.or' | translate }}</div>
+        <pa-button
+          kind="primary"
+          icon="upload"
+          iconAndText
+          (click)="fileInput.click()">
+          {{ 'upload.files' | translate }}
+        </pa-button>
+      </div>
+    }
+  </div>
+</div>
+@if (step() > 1) {
+  <div class="footer">
+    @if (step() === 2) {
+      <pa-button
+        kind="primary"
+        icon="upload"
+        iconAndText
+        (click)="fileInput.click()">
+        {{ 'context-box.add-more' | translate }}
+      </pa-button>
+    } @else if (step() === 3) {
+      <pa-button
+        kind="primary"
+        icon="upload"
+        iconAndText
+        (click)="fileInput.click()">
+        {{ 'upload.files' | translate }}
+      </pa-button>
+    }
+    <pa-button
+      aspect="basic"
+      kind="primary"
+      icon="folder"
+      iconAndText
+      (click)="showResources()">
+      {{ 'context-box.your-resources' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      icon="clock-dash"
+      iconAndText
+      (click)="showHistory()">
+      {{ 'context-box.history' | translate }}
+    </pa-button>
+    @if (step() === 3) {
+      <pa-button
+        aspect="basic"
+        icon="more-vertical"
+        [paPopup]="moreActionsDropdown"></pa-button>
+      <pa-dropdown #moreActionsDropdown>
+        <pa-option (selectOption)="showMcpEndpoint()">
+          {{ 'context-box.get-mcp-url' | translate }}
+        </pa-option>
+      </pa-dropdown>
+    }
+  </div>
+}
+<input
+  #fileInput
+  type="file"
+  stfFileSelect
+  (atFileSelect)="onFilesSelected($event)"
+  multiple
+  hidden />

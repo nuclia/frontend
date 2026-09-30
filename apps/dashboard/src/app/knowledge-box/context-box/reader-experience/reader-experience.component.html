@@ -1,0 +1,51 @@
+<div class="reader-layout">
+  <div class="reader-header">
+    <div class="reader-title-block">
+      <h1 class="title-with-actions display-m">
+        {{ 'search.title' | translate }}
+        @if (view() === 'search') {
+          <pa-button
+            icon="info"
+            aspect="basic"
+            size="small"
+            [paPopup]="readerInfoDropdown">
+            {{ 'context-box.reader.info.label' | translate }}
+          </pa-button>
+          <pa-dropdown
+            #readerInfoDropdown
+            class="info-dropdown"
+            [ariaLabel]="'context-box.reader.info.label' | translate">
+            <pa-option [readonly]="true">{{ 'context-box.reader.info.text' | translate }}</pa-option>
+          </pa-dropdown>
+        }
+        @if (configOptions().length > 1) {
+          <div class="reader-header-actions">
+            <pa-select
+              [formControl]="readerConfigControl"
+              [options]="configOptions()"
+              (valueChange)="onConfigSelect($event)">
+              {{ 'search.configuration.label' | translate }}
+            </pa-select>
+          </div>
+        }
+      </h1>
+      <div class="body-m reader-subtitle">{{ 'context-box.reader.description' | translate }}</div>
+    </div>
+  </div>
+
+  @if (widgetPreview | async; as widgetPreview) {
+    <div
+      class="preview"
+      [innerHtml]="widgetPreview.preview"></div>
+  }
+
+  @if (view() !== 'search') {
+    <div class="reader-info-block">
+      <pa-icon
+        name="info"
+        size="medium"
+        aria-hidden="true"></pa-icon>
+      <p>{{ 'context-box.reader.info.text' | translate }}</p>
+    </div>
+  }
+</div>

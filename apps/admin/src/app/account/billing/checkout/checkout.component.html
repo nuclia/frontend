@@ -6,7 +6,7 @@
 
   @if (!(isSubscribedToStripe | async)) {
     <nsi-back-button [link]="backToSettingsLink | async">
-      {{ ((simpleMode | async) ? 'generic.back_to_subscription' : 'generic.back') | translate }}
+      {{ ((contextBoxMode | async) ? 'generic.back_to_subscription' : 'generic.back') | translate }}
     </nsi-back-button>
   }
 
@@ -29,9 +29,13 @@
             @if (currency$ | async; as currency) {
               @if ((prices$ | async)?.[account]?.recurring; as prices) {
                 @if (monthly | async) {
-                  {{ $safeNavigationMigration(prices.month?.price) | currency: currency }}/{{ 'billing.month' | translate }}
+                  {{ $safeNavigationMigration(prices.month?.price) | currency: currency }}/{{
+                    'billing.month' | translate
+                  }}
                 } @else {
-                  {{ $safeNavigationMigration(prices.year?.price) | currency: currency }}/{{ 'billing.year' | translate }}
+                  {{ $safeNavigationMigration(prices.year?.price) | currency: currency }}/{{
+                    'billing.year' | translate
+                  }}
                 }
               }
             }

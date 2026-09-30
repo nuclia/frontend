@@ -41,7 +41,7 @@ import {
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
-  simpleModeGuard,
+  contextBoxModeGuard,
   WorkflowsComponent,
   WorkflowsListComponent,
 } from '@flaps/common';
@@ -96,12 +96,12 @@ const routes: Routes = [
               {
                 path: '',
                 component: KnowledgeBoxHomeComponent,
-                canActivate: [simpleModeGuard],
+                canActivate: [contextBoxModeGuard],
                 resolve: {},
               },
               {
                 path: 'simple',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.SimplePageModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.ContextBoxPageModule),
               },
               {
                 path: 'upload',
