@@ -10,7 +10,7 @@
 - [Dependencies Updates](#dependencies-updates)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
-- [Auth app](#auth-app)
+- [Auth app and onboarding flow](#auth-app-and-onboarding-flow)
 - [Admin app](#admin-app)
 - [SDK](#sdk)
 - [Sistema](#sistema)
@@ -175,7 +175,7 @@ When you have some local changes to the widget you'd like to test on the dashboa
 - copy the resulting `nuclia-widget.umd.js` to `assets` folder of dashboard app
 - in `app.init.service.ts`, replace the line `injectWidget(config.backend.cdn);` to `injectWidget('/assets');`
 
-## Auth app
+## Auth app and onboarding flow
 
 The auth app supports the OAuth workflow and other auth related features.
 

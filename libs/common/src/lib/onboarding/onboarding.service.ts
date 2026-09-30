@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
+import { AuthService, FeaturesService, NavigationService, SDKService, STFUtils, UserService } from '@flaps/core';
 import {
   Account,
   AccountModification,
+  AskAgentCreation,
+  DriverCreation,
   KnowledgeBoxCreation,
+  NucliaDBConfig,
   RetrievalAgentCreation,
   SignUpInfo,
   WorkflowType,
+  WritableKnowledgeBox,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import * as Sentry from '@sentry/angular';
+import { addDays } from 'date-fns/addDays';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 
@@ -172,9 +177,70 @@ export class OnboardingService {
       creationFailed: false,
     });
     return this._createKb(accountSlug, accountId, kbConfig, zone).pipe(
-      switchMap((slugs) => {
-        // TODO: create retrieval agent
-        return of(slugs);
+      switchMap((kbAndSlugs) => {
+        // Creation of a new WritableKnowledgeBox to make sure zone is properly provided in all the following calls
+        this.sdk.nuclia.options.zone = kbAndSlugs.kb.zone;
+        const kb = new WritableKnowledgeBox(this.sdk.nuclia, accountId, kbAndSlugs.kb);
+
+        const agentName = `${kbConfig.title}Agent`;
+        const retrievalAgentConfig: RetrievalAgentCreation = {
+          title: agentName,
+          slug: STFUtils.generateSlug(agentName),
+          mode: 'agent_no_memory',
+        };
+        return this.sdk.nuclia.db.createRetrievalAgent(accountId, retrievalAgentConfig, zone).pipe(
+          switchMap((arag) => {
+            const driverIdentifier = `nucliadb-${STFUtils.generateRandomSlugSuffix()}`;
+            // Create API key for this agent
+            const serviceTitle = `${agentName} key`;
+            console.log(`createContextBox – KB`, kb);
+            return kb.createServiceAccount({ title: serviceTitle, role: 'SMEMBER' }).pipe(
+              switchMap(() => kb.getServiceAccounts()),
+              switchMap((list) => {
+                const sa = list.find((service) => service.title === serviceTitle);
+                // using the max expiration date as defined in ExpirationModalComponent
+                const expires = Math.floor(new Date(addDays(new Date(), 1095)).getTime() / 1000).toString();
+                return kb.createKey(sa?.id || '', expires).pipe(map((data) => data.token));
+              }),
+              // Create a NucliaDB driver pointing to the KB
+              switchMap((key) => {
+                const url = kb.fullpath.slice(0, kb.fullpath.indexOf('/api') + 4);
+                const nucliaDbConfig: NucliaDBConfig = {
+                  key,
+                  url,
+                  manager: url,
+                  description: 'Main repository for all the documents',
+                  kbid: kb.id,
+                  filters: [],
+                };
+                const driver: DriverCreation = {
+                  name: agentName,
+                  provider: 'nucliadb',
+                  config: nucliaDbConfig,
+                  identifier: driverIdentifier,
+                };
+                return arag.addDriver(driver);
+              }),
+              // Setup workflow with a retrieval step and a summarize steps
+              switchMap(() => {
+                // Retrieval step: basic ask using the KB as source
+                const contextAgent: AskAgentCreation = {
+                  module: 'ask',
+                  sources: [driverIdentifier],
+                  extra_fields: [],
+                  full_resource: false,
+                  vllm: true,
+                };
+                return arag.addContext(contextAgent);
+              }),
+              switchMap(() => {
+                // Generation step: basic summarize
+                return arag.addGeneration({ module: 'summarize' });
+              }),
+            );
+          }),
+          map(() => ({ accountSlug: kbAndSlugs.accountSlug, kbSlug: kbAndSlugs.kbSlug })),
+        );
       }),
       tap(({ accountSlug, kbSlug }) => this.manageKbCreationSuccess(accountSlug, zone, kbSlug)),
     );
@@ -244,9 +310,9 @@ export class OnboardingService {
     kbConfig: KnowledgeBoxCreation,
     zone: string,
     failCount = 0,
-  ): Observable<{ accountSlug: string; kbSlug: string }> {
+  ): Observable<{ accountSlug: string; kbSlug: string; kb: WritableKnowledgeBox }> {
     return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
-      map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
+      map((kb) => ({ accountSlug, kbSlug: kbConfig.slug, kb })),
       catchError((error) => {
         if (error.status >= 400 && error.status < 500) {
           this.manageCreationError(
