@@ -178,6 +178,49 @@
             }
           ]
         },
+        "local-stage-proxy": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/dashboard/src/favicon.ico",
+            "apps/dashboard/src/assets",
+            "apps/dashboard/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/dashboard/src/environments_config/local-stage-proxy",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
         "local-dev": {
           "aot": false,
           "subresourceIntegrity": false,
@@ -212,6 +255,49 @@
             {
               "glob": "**/*",
               "input": "apps/dashboard/src/environments_config/local-dev",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-dev-proxy": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/dashboard/src/favicon.ico",
+            "apps/dashboard/src/assets",
+            "apps/dashboard/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/dashboard/src/environments_config/local-dev-proxy",
               "output": "assets/deployment"
             },
             {
@@ -271,7 +357,8 @@
       "defaultConfiguration": "local-stage",
       "continuous": true,
       "options": {
-        "buildTarget": "dashboard:build"
+        "buildTarget": "dashboard:build",
+        "allowedHosts": ["rag.stashify.cloud", "rag.gcp-global-dev-1.nuclia.io"]
       },
       "configurations": {
         "production": {
@@ -280,8 +367,14 @@
         "local-stage": {
           "buildTarget": "dashboard:build:local-stage"
         },
+        "local-stage-proxy": {
+          "buildTarget": "dashboard:build:local-stage-proxy"
+        },
         "local-dev": {
           "buildTarget": "dashboard:build:local-dev"
+        },
+        "local-dev-proxy": {
+          "buildTarget": "dashboard:build:local-dev-proxy"
         },
         "local-prod": {
           "buildTarget": "dashboard:build:local-prod"

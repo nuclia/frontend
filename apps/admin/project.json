@@ -272,7 +272,8 @@
       "continuous": true,
       "options": {
         "buildTarget": "admin:build",
-        "port": 4300
+        "port": 4300,
+        "allowedHosts": ["admin.stashify.cloud", "admin.gcp-global-dev-1.nuclia.io"]
       },
       "configurations": {
         "production": {

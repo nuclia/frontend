@@ -228,7 +228,9 @@
       "defaultConfiguration": "local-stage",
       "continuous": true,
       "options": {
-        "buildTarget": "auth:build"
+        "buildTarget": "auth:build",
+        "port": 4201,
+        "allowedHosts": ["auth.stashify.cloud", "auth.gcp-global-dev-1.nuclia.io"]
       },
       "configurations": {
         "production": {
