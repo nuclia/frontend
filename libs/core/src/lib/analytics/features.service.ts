@@ -78,6 +78,7 @@ export class FeaturesService {
     mcpSource: this.featureFlag.isFeatureEnabled('mcp-source'),
     perplexitySource: this.featureFlag.isFeatureEnabled('perplexity-source'),
     googleSource: this.featureFlag.isFeatureEnabled('google-source'),
+    agenticDAGeneration: this.featureFlag.isFeatureEnabled('agentic-da-generation'),
   };
 
   /**

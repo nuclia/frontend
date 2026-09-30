@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { combineLatest, distinctUntilKeyChanged, map, Observable, tap } from 'rxjs';
+import { combineLatest, distinctUntilKeyChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { ResourceViewerService } from '../../resource-viewer.service';
+import { FieldId, Resource } from '@nuclia/core';
 
 const viewerId = 'viewer-widget';
 
@@ -46,5 +47,29 @@ export class PreviewService {
 
   openViewer(fullFieldId: { resourceId: string; field_id: string; field_type: string }): Observable<boolean> {
     return (document.getElementById(viewerId) as unknown as any)?.openPreview(fullFieldId);
+  }
+
+  processAgenticQuestion(
+    resource: Resource | null,
+    fieldId: FieldId,
+    question: string,
+    agentic_config_id: string,
+  ): Observable<string> {
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.ask(question, undefined, undefined, { agentic_config_id, citations: false })),
+      filter((res) => res.type === 'answer' && !res.incomplete),
+      switchMap((result) => {
+        if (resource && result.type === 'answer') {
+          return resource
+            .setField(fieldId.field_type, fieldId.field_id, {
+              body: JSON.stringify({ question, agentic_config_id, answer: result.text }),
+              format: 'JSON',
+            })
+            .pipe(map(() => result.text));
+        } else {
+          return of('');
+        }
+      }),
+    );
   }
 }
