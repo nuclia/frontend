@@ -69,7 +69,15 @@ export class CallbackComponent implements OnInit {
         next: (res) => {
           if (res.success) {
             const successCameFrom = res.state.came_from;
-            if (
+            if (res.state.saml_ref && successCameFrom && isCameFromLegit(successCameFrom, this.config.getAPIOrigin())) {
+              this.authenticate(
+                {
+                  access_token: this.sdk.nuclia.auth.getToken(),
+                  refresh_token: this.sdk.nuclia.auth.getRefreshToken(),
+                },
+                queryParams['state'],
+              );
+            } else if (
               successCameFrom &&
               successCameFrom !== window.location.origin &&
               isCameFromLegit(successCameFrom, this.config.getAPIOrigin())

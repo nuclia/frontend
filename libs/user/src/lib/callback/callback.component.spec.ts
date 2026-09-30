@@ -21,6 +21,8 @@ describe('CallbackComponent', () => {
     nuclia: {
       auth: {
         authenticate: jest.Mock;
+        getToken: jest.Mock;
+        getRefreshToken: jest.Mock;
         processAuthorizationResponse: jest.Mock;
         redirectToOAuth: jest.Mock;
       };
@@ -88,6 +90,8 @@ describe('CallbackComponent', () => {
       nuclia: {
         auth: {
           authenticate: jest.fn(),
+          getToken: jest.fn(() => 'saml-oauth-access'),
+          getRefreshToken: jest.fn(() => 'saml-oauth-refresh'),
           processAuthorizationResponse: jest.fn(() => of({ success: true, state: {} })),
           redirectToOAuth: jest.fn(),
         },
@@ -166,6 +170,22 @@ describe('CallbackComponent', () => {
 
     expect(sdk.nuclia.auth.processAuthorizationResponse).toHaveBeenCalledWith('code-1', 'state-1');
     expect(router.navigate).toHaveBeenCalledWith(['/']);
+  });
+
+  it('should forward tokens to the target app after the SAML OAuth flow', async () => {
+    snapshotQueryParams = { code: 'code-1', state: 'saml-oauth-state' };
+    sdk.nuclia.auth.processAuthorizationResponse.mockReturnValue(
+      of({ success: true, state: { saml_ref: 'single-use-ref', came_from: 'https://app.progress.cloud' } }),
+    );
+    await createComponent();
+    const authenticateSpy = jest.spyOn(component as any, 'authenticate');
+
+    component.ngOnInit();
+
+    expect(authenticateSpy).toHaveBeenCalledWith(
+      { access_token: 'saml-oauth-access', refresh_token: 'saml-oauth-refresh' },
+      'saml-oauth-state',
+    );
   });
 
   it('should handle failed processAuthorizationResponse result', async () => {
