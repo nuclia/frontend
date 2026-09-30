@@ -147,7 +147,6 @@ export class OnboardingService {
     accountId: string,
     kbConfig: KnowledgeBoxCreation,
     zone: string,
-    failCount = 0,
   ): Observable<{ accountSlug: string; kbSlug: string }> {
     this._onboardingState.next({
       creating: true,
@@ -155,34 +154,29 @@ export class OnboardingService {
       kbCreated: false,
       creationFailed: false,
     });
-    return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
-      map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
-      catchError((error) => {
-        if (error.status >= 400 && error.status < 500) {
-          this.manageCreationError(
-            accountSlug,
-            `KB creation failed: ${error.status} ${error.body?.detail || 'Bad request'}`,
-          );
-          throw error;
-        } else {
-          failCount += 1;
-          if (failCount < 5) {
-            return this.createKb(accountSlug, accountId, kbConfig, zone, failCount);
-          } else {
-            this.manageCreationError(accountSlug, `KB creation failed`);
-            throw error;
-          }
-        }
+    return this._createKb(accountSlug, accountId, kbConfig, zone).pipe(
+      tap(({ accountSlug, kbSlug }) => this.manageKbCreationSuccess(accountSlug, zone, kbSlug)),
+    );
+  }
+
+  createContextBox(
+    accountSlug: string,
+    accountId: string,
+    kbConfig: KnowledgeBoxCreation,
+    zone: string,
+  ): Observable<{ accountSlug: string; kbSlug: string }> {
+    this._onboardingState.next({
+      creating: true,
+      accountCreated: true,
+      kbCreated: false,
+      creationFailed: false,
+    });
+    return this._createKb(accountSlug, accountId, kbConfig, zone).pipe(
+      switchMap((slugs) => {
+        // TODO: create retrieval agent
+        return of(slugs);
       }),
-      tap(({ accountSlug, kbSlug }) => {
-        this._onboardingState.next({
-          creating: true,
-          accountCreated: true,
-          kbCreated: true,
-          creationFailed: false,
-        });
-        window.location.href = `${this.sdk.getOriginForApp('rag')}/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
-      }),
+      tap(({ accountSlug, kbSlug }) => this.manageKbCreationSuccess(accountSlug, zone, kbSlug)),
     );
   }
 
@@ -242,5 +236,44 @@ export class OnboardingService {
     // creation failed but account creation worked, so we redirect to account management page to unblock people
     const path = `/at/${accountSlug}`;
     this.router.navigate([path]);
+  }
+
+  private _createKb(
+    accountSlug: string,
+    accountId: string,
+    kbConfig: KnowledgeBoxCreation,
+    zone: string,
+    failCount = 0,
+  ): Observable<{ accountSlug: string; kbSlug: string }> {
+    return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
+      map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
+      catchError((error) => {
+        if (error.status >= 400 && error.status < 500) {
+          this.manageCreationError(
+            accountSlug,
+            `KB creation failed: ${error.status} ${error.body?.detail || 'Bad request'}`,
+          );
+          throw error;
+        } else {
+          failCount += 1;
+          if (failCount < 5) {
+            return this._createKb(accountSlug, accountId, kbConfig, zone, failCount);
+          } else {
+            this.manageCreationError(accountSlug, `KB creation failed`);
+            throw error;
+          }
+        }
+      }),
+    );
+  }
+
+  private manageKbCreationSuccess(accountSlug: string, zone: string, kbSlug: string): void {
+    this._onboardingState.next({
+      creating: true,
+      accountCreated: true,
+      kbCreated: true,
+      creationFailed: false,
+    });
+    window.location.href = `${this.sdk.getOriginForApp('rag')}/at/${accountSlug}/${zone}/${kbSlug}`;
   }
 }

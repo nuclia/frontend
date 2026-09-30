@@ -201,7 +201,7 @@ export class OnboardingComponent {
     };
 
     const contextBoxModel = this.onboardingService.contextBoxDefaultModel;
-    const kbConfigRequest =
+    const kbCreationRequest =
       this.kbName === this.onboardingService.contextBoxKbName
         ? this.learningSchema.pipe(
             map((schema) => {
@@ -214,11 +214,10 @@ export class OnboardingComponent {
               }
               return kbConfig;
             }),
+            switchMap((config) => this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)),
           )
-        : of(kbConfig);
+        : this.onboardingService.createKb(account.slug, account.id, kbConfig, this.zone);
 
-    kbConfigRequest
-      .pipe(switchMap((config) => this.onboardingService.createKb(account.slug, account.id, config, this.zone)))
-      .subscribe(() => this.analytics.logTrialActivation());
+    kbCreationRequest.subscribe(() => this.analytics.logTrialActivation());
   }
 }
