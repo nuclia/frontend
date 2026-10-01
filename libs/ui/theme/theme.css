@@ -72,6 +72,13 @@
   --font-weight-extrabold: 800;
 
   --radius: 0.375rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 2rem;
+  --radius-4xl: 2rem;
 
   --background: #fff;
   --foreground: rgb(34.6 36.2 37.8);
