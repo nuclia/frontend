@@ -1,13 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountEntryContextService, BrandService, NavigationService, SDKService, UserService } from '@flaps/core';
-import { combineLatest, map, of, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, map, of, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 import { KbSwitchComponent } from './kb-switch/kb-switch.component';
 import { PlanStatusComponent } from './plan-status/plan-status.component';
-import { UserMenuComponent } from './user-menu/user-menu.component';
 import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
-import { AsyncPipe } from '@angular/common';
+import { UserMenuComponent } from './user-menu/user-menu.component';
 
 @Component({
   selector: 'app-topbar',
@@ -30,11 +30,7 @@ export class TopbarComponent {
   private entryContext = inject(AccountEntryContextService);
   brandName = this.brandService.brandName;
   contextBoxMode = this.navigationService.contextBoxMode;
-  private isCowork = this.sdk.currentAccount.pipe(
-    map((account) => account.workflow === 'cowork'),
-    shareReplay(1),
-  );
-  logoPath = combineLatest([this.isCowork, this.brandService.logoPath]).pipe(
+  logoPath = combineLatest([this.contextBoxMode, this.brandService.logoPath]).pipe(
     map(([isCowork, logoPath]) => {
       if (isCowork) {
         return 'assets/logos/logo-context-box.svg';

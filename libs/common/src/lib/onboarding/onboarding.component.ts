@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import {
   AnalyticsService,
+  FeaturesService,
   NavigationService,
   SDKService,
   SelectAccountKbService,
@@ -42,6 +43,15 @@ import { Step1Component } from './step1/step1.component';
   ],
 })
 export class OnboardingComponent {
+  private readonly onboardingService = inject(OnboardingService);
+  private readonly sdk = inject(SDKService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly analytics = inject(AnalyticsService);
+  private readonly navigation = inject(NavigationService);
+  private readonly userService = inject(UserService);
+  private readonly selectAccountKbService = inject(SelectAccountKbService);
+  private readonly featuresService = inject(FeaturesService);
+
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
   lastStep = 6;
 
@@ -59,16 +69,6 @@ export class OnboardingComponent {
   enterCompanyName = false;
   inRaoApp = this.navigation.inRaoApp;
   showLogout = false;
-
-  constructor(
-    private onboardingService: OnboardingService,
-    private sdk: SDKService,
-    private cdr: ChangeDetectorRef,
-    private analytics: AnalyticsService,
-    private navigation: NavigationService,
-    private userService: UserService,
-    private selectAccountKbService: SelectAccountKbService,
-  ) {}
 
   goBack(): void {
     this.onboardingService.previousStep();
@@ -201,7 +201,7 @@ export class OnboardingComponent {
     };
 
     const contextBoxModel = this.onboardingService.contextBoxDefaultModel;
-    const kbConfigRequest =
+    const kbCreationRequest =
       this.kbName === this.onboardingService.contextBoxKbName
         ? this.learningSchema.pipe(
             map((schema) => {
@@ -214,11 +214,18 @@ export class OnboardingComponent {
               }
               return kbConfig;
             }),
+            switchMap((config) =>
+              this.featuresService.unstable.shareFileInContextBox.pipe(
+                switchMap((enabled) =>
+                  enabled
+                    ? this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)
+                    : this.onboardingService.createKb(account.slug, account.id, config, this.zone),
+                ),
+              ),
+            ),
           )
-        : of(kbConfig);
+        : this.onboardingService.createKb(account.slug, account.id, kbConfig, this.zone);
 
-    kbConfigRequest
-      .pipe(switchMap((config) => this.onboardingService.createKb(account.slug, account.id, config, this.zone)))
-      .subscribe(() => this.analytics.logTrialActivation());
+    kbCreationRequest.subscribe(() => this.analytics.logTrialActivation());
   }
 }

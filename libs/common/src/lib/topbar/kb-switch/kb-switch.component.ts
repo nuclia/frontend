@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, OnDestroy, Output } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
 import { PaDropdownModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -16,25 +16,24 @@ import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
 })
 export class KbSwitchComponent implements OnDestroy {
   private readonly unsubscribeAll = new Subject<void>();
+  private readonly sdk = inject(SDKService);
+  private readonly navigation = inject(NavigationService);
 
   @Output() switchClose = new EventEmitter<void>();
 
   readonly kb$ = this.sdk.currentKb;
   readonly account: Observable<Account> = this.sdk.currentAccount;
-  readonly isCowork = this.account.pipe(map((account) => account.workflow === 'cowork'));
+  readonly isCowork = this.navigation.contextBoxMode;
 
   readonly standalone: boolean = this.sdk.nuclia.options.standalone || false;
   readonly knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
   readonly arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
   readonly showKbSelector: Observable<boolean> = this.standalone
     ? of(true)
-    : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length + arags.length > 1));
+    : combineLatest([this.knowledgeBoxes, this.arags, this.isCowork]).pipe(
+        map(([kbs, arags, isCowork]) => !isCowork && kbs.length + arags.length > 1),
+      );
   readonly inRaoApp = this.navigation.inRaoApp;
-
-  constructor(
-    private readonly sdk: SDKService,
-    private readonly navigation: NavigationService,
-  ) {}
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();

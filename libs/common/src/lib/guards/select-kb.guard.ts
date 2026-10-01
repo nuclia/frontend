@@ -1,8 +1,9 @@
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { NavigationService, SDKService, ZoneService, SelectAccountKbService } from '@flaps/core';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { NavigationService, SDKService, SelectAccountKbService, ZoneService } from '@flaps/core';
 import { combineLatest, filter, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { OnboardingService } from '../onboarding';
 
 export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
@@ -10,6 +11,7 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   const sdk: SDKService = inject(SDKService);
   const router: Router = inject(Router);
   const zoneService: ZoneService = inject(ZoneService);
+  const onboardingService = inject(OnboardingService);
 
   const accountSlug = route.paramMap.get('account');
 
@@ -33,7 +35,7 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
             switchMap(() => combineLatest([sdk.kbList, aragList]).pipe(map(([kbs, arags]) => ({ kbs, arags, zones })))),
           ),
         ),
-        switchMap(({ kbs, arags, zones }) => {
+        switchMap(({ kbs, arags }) => {
           const total = kbs.length + arags.length;
           if (total === 0) {
             return selectService.standalone
@@ -49,12 +51,12 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
                 );
           } else if (
             !navigation.inRaoApp &&
-            total === 1 &&
             kbs.length === 1 &&
+            (total === 1 || kbs[0].title === onboardingService.contextBoxKbName) &&
             !selectService.standalone &&
             !!kbs[0].role_on_kb
           ) {
-            // if there's only one KB, and we're not in NucliaDB admin app or RAO app, then we automatically select the KB
+            // if there's only one KB (or a Context box), and we're not in NucliaDB admin app or RAO app, then we automatically select the KB
             sdk.nuclia.options.zone = kbs[0].zone;
 
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));
