@@ -82,6 +82,7 @@
     "zone.js": "0.16.3"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^22.1.8",
     "@angular-devkit/core": "22.1.7",
     "@angular-devkit/schematics": "22.1.7",
     "@angular-eslint/eslint-plugin": "22.3.0",
@@ -111,6 +112,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@schematics/angular": "22.1.7",
     "@spartan-ng/cli": "^1.4.1",
+    "@storybook/angular": "^10.5.0",
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/package": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
