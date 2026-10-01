@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ExpandableTextareaComponent,
@@ -11,12 +11,14 @@ import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component'
 import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { KVSchema, KVSchemaField, TaskApplyTo, TaskName } from '@nuclia/core';
-import { filter, map, take } from 'rxjs';
+import { AgenticConfig, KVSchema, KVSchemaField, TaskApplyTo, TaskName } from '@nuclia/core';
+import { catchError, filter, map, of, switchMap, take } from 'rxjs';
 import { KvSchemasService } from '../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 import { JSONSchema4, JSONSchema4TypeName } from 'json-schema';
-import { NavigationService, STFUtils } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { RouterModule } from '@angular/router';
+
+const AGENTIC_SCHEMA_NAME = 'agentic-da-generation';
 
 @Component({
   imports: [
@@ -37,8 +39,14 @@ import { RouterModule } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AskComponent extends TaskRouteDirective {
+  features = inject(FeaturesService);
+  sdk = inject(SDKService);
+  hasAgenticDAGeneration = this.features.unstable.agenticDAGeneration;
   askForm = new FormGroup({
     json: new FormControl<boolean>(false, { nonNullable: true }),
+    agenticGeneration: new FormControl<boolean>(false, { nonNullable: true }),
+    agenticContext: new FormControl<string>('', { nonNullable: true }),
+    agenticConfig: new FormControl<string>('', { nonNullable: true }),
     question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     destination: new FormControl<string>('', {
       nonNullable: true,
@@ -87,8 +95,16 @@ export class AskComponent extends TaskRouteDirective {
     },
   };
 
+  agenticConfigOptions = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.listAgenticConfigs().pipe(catchError(() => of({} as AgenticConfig)))),
+    map((configs) => Object.keys(configs).map((id) => new OptionModel({ id, label: id, value: id }))),
+  );
+
   get isJSON() {
     return this.askForm.controls.json.value;
+  }
+  get isAgenticGeneration() {
+    return this.askForm.controls.agenticGeneration.value;
   }
   get customPrompt() {
     return this.askForm.controls.customPrompt.value;
@@ -125,12 +141,37 @@ export class AskComponent extends TaskRouteDirective {
       )
       .subscribe((operation) => {
         const customPrompt = !!operation.user_prompt && !operation.json;
-        this.askForm.patchValue({
-          ...operation,
-          question: customPrompt ? operation.user_prompt : operation.question,
-          customPrompt,
-          fieldType: operation.store_as_key_value ? 'keyValue' : 'json',
-        });
+        let isAgenticGeneration = false;
+        let agenticConfig = '';
+        if (operation.json && operation.question) {
+          try {
+            const schema = JSON.parse(operation.question);
+            isAgenticGeneration = schema.name === AGENTIC_SCHEMA_NAME;
+            agenticConfig = (schema?.parameters?.properties?.agentic_config_id?.description || '').match(/'(.*)'/)?.[1];
+          } catch {
+            isAgenticGeneration = false;
+          }
+        }
+        if (isAgenticGeneration) {
+          const context = (operation.question || '').match(/<TARGET>(.*)<\/TARGET>/)?.[1];
+          const question = (operation.question || '').match(/<QUESTION>(.*)<\/QUESTION>/)?.[1];
+          this.askForm.patchValue({
+            ...operation,
+            agenticGeneration: true,
+            agenticConfig,
+            json: false,
+            agenticContext: context || '',
+            question: question || '',
+            fieldType: 'json',
+          });
+        } else {
+          this.askForm.patchValue({
+            ...operation,
+            question: customPrompt ? operation.user_prompt : operation.question,
+            customPrompt,
+            fieldType: operation.store_as_key_value ? 'keyValue' : 'json',
+          });
+        }
       });
   }
 
@@ -143,6 +184,31 @@ export class AskComponent extends TaskRouteDirective {
         return;
       }
     }
+    const isJSONorAgentic = this.isJSON || this.isAgenticGeneration;
+    const isCustomPrompt = this.customPrompt && !isJSONorAgentic;
+    let question = '';
+    if (this.isJSON) {
+      question = this.askForm.get('question')?.value || '';
+    } else if (this.isAgenticGeneration) {
+      question = JSON.stringify({
+        name: AGENTIC_SCHEMA_NAME,
+        description: 'Generate a question for an agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            question: {
+              type: 'string',
+              description: `The targeted text is defined as follow:\n<TARGET>${this.askForm.get('agenticContext')?.value || 'the entire text of the resource'}</TARGET>\n\n.The QUESTION is:\n<QUESTION>${this.askForm.get('question')?.value || ''}</QUESTION>\n\nExtract the TARGET from the entire text, and then return the TARGET and the QUESTION.\n Use the following layout:\nCONTEXT:\n{TARGET}\n\nQUESTION:\n{QUESTION}`,
+            },
+            agentic_config_id: {
+              type: 'string',
+              description: `The following value: '${this.askForm.get('agenticConfig')?.value || ''}' (without quotes)`,
+            },
+          },
+          required: ['question', 'agentic_config_id'],
+        },
+      });
+    }
     const parameters = {
       name: commonConfig.name,
       filter: commonConfig.filter,
@@ -152,9 +218,9 @@ export class AskComponent extends TaskRouteDirective {
       operations: [
         {
           ask: {
-            json: this.isJSON,
-            question: this.customPrompt && !this.isJSON ? '' : this.askForm.get('question')?.value,
-            user_prompt: this.customPrompt && !this.isJSON ? this.askForm.get('question')?.value : undefined,
+            json: isJSONorAgentic,
+            question,
+            user_prompt: isCustomPrompt ? this.askForm.get('question')?.value : undefined,
             destination: this.askForm.get('destination')?.value,
             store_as_key_value: this.isJSON ? this.storeAsKeyValue : undefined,
             kv_schema_id: this.isJSON && this.storeAsKeyValue ? this.kvSchemaId : undefined,
