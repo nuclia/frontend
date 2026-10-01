@@ -183,6 +183,10 @@
   --error-border: rgb(117.12 25.92 36.48);
 }
 
+:root :is(h1, h2, h3, h4, .display-s, .display-s-mobile, .display-m, .display-m-mobile) {
+  font-family: 'Progress Sans Display', sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
