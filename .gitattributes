@@ -3,3 +3,6 @@
 # API spec snapshots — large generated files, suppress line diffs
 .github/skills/product-knowledge/references/api-specs/*.yaml binary
 
+# BabelEdit project files — managed via the BabelEdit GUI, not meant to be text-diffed/merged
+*.babel binary
+

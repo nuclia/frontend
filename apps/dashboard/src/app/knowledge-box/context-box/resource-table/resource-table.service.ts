@@ -116,8 +116,6 @@ export class ResourceTableService {
       sort: { field: SortField.created, order: 'desc' },
     };
     return this.sdk.currentKb.pipe(
-      // `take(1)` is required so this observable actually completes once the catalog call
-      // resolves; without it `currentKb` never completes and the `finalize()` above never fires.
       take(1),
       switchMap((kb) => kb.catalog(this._query(), options)),
       tap((result) => {

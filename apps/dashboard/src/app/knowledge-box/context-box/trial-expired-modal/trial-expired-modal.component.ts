@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
@@ -18,7 +17,6 @@ export class TrialExpiredModalComponent {
   modal = inject(ModalRef);
   private sdk = inject(SDKService);
   private navigationService = inject(NavigationService);
-  private router = inject(Router);
   private window = inject(WINDOW);
 
   contactSales(): void {
@@ -33,7 +31,7 @@ export class TrialExpiredModalComponent {
       )
       .subscribe((upgradeUrl) => {
         this.modal.close();
-        this.router.navigate([upgradeUrl]);
+        this.navigationService.navigateExternal(upgradeUrl, { withFromApp: true });
       });
   }
 }

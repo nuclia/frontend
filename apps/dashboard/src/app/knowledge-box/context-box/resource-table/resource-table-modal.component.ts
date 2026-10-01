@@ -10,7 +10,5 @@ import { ResourceTableComponent } from './resource-table.component';
   imports: [PaModalModule, TranslatePipe, ResourceTableComponent],
 })
 export class ResourceTableModalComponent {
-  // ModalService.closeModal() looks up open modals via `instance.modal`; without this property
-  // it can never find/remove this component from its internal list, so the backdrop never closes.
   private modal = inject(ModalRef);
 }

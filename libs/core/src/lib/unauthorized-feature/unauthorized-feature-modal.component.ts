@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { NavigationService, SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 @Component({
   imports: [PaModalModule, TranslateModule, PaModalModule, PaButtonModule, BadgeComponent, PaIconModule],
@@ -31,7 +30,6 @@ export class UnauthorizedFeatureModalComponent {
     public modal: ModalRef<{ feature: string }>,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private router: Router,
   ) {
     this.currentFeature = modal.config.data?.['feature'] || '';
   }
@@ -42,8 +40,7 @@ export class UnauthorizedFeatureModalComponent {
       .pipe(
         take(1),
         map((account) => this.navigationService.getUpgradeUrl(account.slug)),
-        switchMap((upgradePath) => this.router.navigate([upgradePath])),
       )
-      .subscribe();
+      .subscribe((upgradePath) => this.navigationService.navigateExternal(upgradePath, { withFromApp: true }));
   }
 }
