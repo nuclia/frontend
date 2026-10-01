@@ -1,0 +1,57 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../context-box-page.tokens' as tokens;
+
+pa-table {
+  display: block;
+  width: 100%;
+
+  ::ng-deep .pa-table-grid--cell {
+    min-width: 0;
+  }
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  margin-bottom: rhythm(3);
+  padding-top: rhythm(1);
+  max-width: rhythm(60);
+
+  nsi-search-input {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    min-width: 0;
+    max-width: none;
+  }
+
+  pa-button {
+    flex: 0 0 auto;
+  }
+}
+
+nsi-search-input {
+  display: block;
+  margin-bottom: rhythm(3);
+  max-width: rhythm(50);
+}
+
+.extension {
+  margin-left: rhythm(1);
+}
+
+stf-table-pagination {
+  width: 100%;
+}
+
+.rank {
+  color: $color-primary-regular;
+}
+
+.success {
+  color: tokens.$success-color;
+}
+
+.error {
+  color: tokens.$error-color;
+}

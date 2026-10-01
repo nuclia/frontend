@@ -29,7 +29,7 @@ export class TopbarComponent {
   private brandService = inject(BrandService);
   private entryContext = inject(AccountEntryContextService);
   brandName = this.brandService.brandName;
-  simpleMode = this.navigationService.simpleMode;
+  contextBoxMode = this.navigationService.contextBoxMode;
   private isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
     shareReplay(1),
@@ -60,14 +60,14 @@ export class TopbarComponent {
       return;
     }
 
-    const simpleHomeUrl$ = this.sdk.isKbLoaded
+    const contextBoxHomeUrl$ = this.sdk.isKbLoaded
       ? this.navigationService.kbUrl
       : of(this.navigationService.getAccountSelectUrl());
 
-    this.simpleMode
+    this.contextBoxMode
       .pipe(
         take(1),
-        switchMap((simpleMode) => (simpleMode ? simpleHomeUrl$ : this.navigationService.homeUrl)),
+        switchMap((contextBoxMode) => (contextBoxMode ? contextBoxHomeUrl$ : this.navigationService.homeUrl)),
         take(1),
       )
       .subscribe((url) => this.router.navigate([url]));

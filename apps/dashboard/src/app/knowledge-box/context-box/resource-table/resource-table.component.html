@@ -1,0 +1,149 @@
+<div class="search-bar">
+  <nsi-search-input
+    icon="search"
+    [value]="resourceTableService.query()"
+    (valueChange)="resourceTableService.onQueryChange($event)"
+    (keyup.enter)="resourceTableService.search()">
+    {{ 'context-box.search-by-title' | translate }}
+  </nsi-search-input>
+  <pa-button
+    aspect="basic"
+    icon="search"
+    iconAndText
+    (click)="resourceTableService.search()">
+    {{ 'generic.search' | translate }}
+  </pa-button>
+</div>
+<pa-table
+  border
+  columns="2fr 140px 1.5fr 140px 70px">
+  <pa-table-header role="presentation">
+    @for (column of columns; track column) {
+      <pa-table-cell header>
+        <span class="title-s">{{ 'context-box.column.' + column | translate }}</span>
+      </pa-table-cell>
+    }
+  </pa-table-header>
+  @if (resourceTableService.loading()) {
+    @for (_ of skeletonRows(); track $index) {
+      <pa-table-row>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="220px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="70px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="90px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="90px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="50px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  } @else {
+    @for (row of rows(); track row.id || (row.title || '') + (row.created || '')) {
+      <pa-table-row>
+        <pa-table-cell>
+          <span
+            class="body-m"
+            paEllipsisTooltip>
+            {{ row.title }}
+          </span>
+        </pa-table-cell>
+        <pa-table-cell>
+          <span class="body-s">
+            @if (row.icon | mimeIcon; as icon) {
+              <pa-icon
+                [name]="icon"
+                aria-hidden="true"></pa-icon>
+            }
+            @if (row.extension) {
+              <span class="extension">.{{ row.extension.toLowerCase() }}</span>
+            }
+          </span>
+        </pa-table-cell>
+        <pa-table-cell>
+          @if (row.status === RESOURCE_STATUS.PROCESSED) {
+            <span class="title-xxs success">
+              {{ 'context-box.ready' | translate }}
+              <pa-icon
+                name="check"
+                size="small"
+                aria-hidden="true"></pa-icon>
+            </span>
+          } @else if (row.status === RESOURCE_STATUS.PENDING) {
+            <span class="body-s">
+              @if (row.rank) {
+                {{ 'context-box.position-in-queue' | translate }}:
+                <strong class="rank">{{ row.rank }}</strong>
+              } @else {
+                {{ 'context-box.processing' | translate }}
+              }
+            </span>
+          } @else if (row.status === RESOURCE_STATUS.ERROR) {
+            <span class="error">
+              <span class="title-xxs">{{ 'context-box.failed' | translate }}</span>
+              @if (row.errorMessage) {
+                <span class="body-s">
+                  <span>:</span>
+                  @if (row.errorMessage.length > 120) {
+                    {{ row.errorMessage.substring(0, 120) }}…
+                  } @else {
+                    {{ row.errorMessage | translate }}
+                  }
+                </span>
+              }
+            </span>
+          } @else if (row.status === 'uploading') {
+            <span class="body-s">{{ 'context-box.uploading' | translate }}</span>
+          }
+        </pa-table-cell>
+        <pa-table-cell>
+          <span class="body-s">{{ (row.created | date: 'mediumDate') || '-' }}</span>
+        </pa-table-cell>
+        <pa-table-cell>
+          @if (row.id) {
+            <pa-button
+              aspect="basic"
+              icon="trash"
+              (click)="deleteResource(row.id)"
+              size="small">
+              {{ 'context-box.delete' | translate }}
+            </pa-button>
+          }
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  }
+</pa-table>
+<nsi-sticky-footer>
+  <stf-table-pagination
+    [noDownload]="true"
+    [totalKbResources]="resourceTableService.totalItems()"
+    [page]="resourceTableService.page()"
+    [totalPages]="resourceTableService.totalPages()"
+    [totalItems]="resourceTableService.totalItems()"
+    [pageSize]="resourceTableService.pageSize()"
+    [pageSizes]="pageSizes"
+    (pageChange)="resourceTableService.loadPage($event)"
+    (pageSizeChange)="resourceTableService.setPageSize($event)"></stf-table-pagination>
+</nsi-sticky-footer>

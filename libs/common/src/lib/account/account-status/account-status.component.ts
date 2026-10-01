@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Output } from
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { differenceInDays } from 'date-fns';
 import { SisModalService } from '@nuclia/sistema';
@@ -50,7 +50,6 @@ export class AccountStatusComponent {
     private sdk: SDKService,
     private navigation: NavigationService,
     private modalService: SisModalService,
-    private router: Router,
     private features: FeaturesService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -68,7 +67,7 @@ export class AccountStatusComponent {
     }
 
     this.upgradeUrl.pipe(take(1)).subscribe((upgradeUrl) => {
-      this.router.navigate([upgradeUrl]);
+      this.navigation.navigateExternal(upgradeUrl, { withFromApp: true });
     });
   }
 
@@ -107,7 +106,7 @@ export class AccountStatusComponent {
       )
       .subscribe(({ result, upgradeUrl }) => {
         if (result === true) {
-          this.router.navigate([upgradeUrl]);
+          this.navigation.navigateExternal(upgradeUrl, { withFromApp: true });
         } else if (result === false) {
           this.contact();
         }

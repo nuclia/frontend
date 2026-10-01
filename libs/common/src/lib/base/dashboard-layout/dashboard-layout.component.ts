@@ -44,7 +44,7 @@ export class DashboardLayoutComponent {
   collapsedNav = this.layoutService.collapsedNav;
   // Hidden in simple mode outside ARAG, or anywhere under /manage (account-management routes
   // are full-width).
-  noNavBar = combineLatest([this.navigationService.simpleMode, this.navigationService.inArag()]).pipe(
+  noNavBar = combineLatest([this.navigationService.contextBoxMode, this.navigationService.inArag()]).pipe(
     map(([simple, inArag]) => (simple && !inArag) || this.navigationService.inAdminApp),
   );
 

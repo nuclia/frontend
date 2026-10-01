@@ -69,7 +69,7 @@ export class UploadFilesComponent {
   @Output() upload = new EventEmitter<void>();
 
   navigationService = inject(NavigationService);
-  simpleMode = this.navigationService.simpleMode;
+  contextBoxMode = this.navigationService.contextBoxMode;
 
   files: { file: FileWithMetadata; aboveLimit: boolean }[] = [];
   selectedLabels: Classification[] = [];

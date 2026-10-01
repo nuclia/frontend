@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BillingService, CancellationFeedback, NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -30,7 +30,6 @@ export class FeedbackComponent {
     private sdk: SDKService,
     private toaster: SisToastService,
     private billingService: BillingService,
-    private router: Router,
     private route: ActivatedRoute,
     private navigation: NavigationService,
     private cdr: ChangeDetectorRef,
@@ -55,7 +54,9 @@ export class FeedbackComponent {
       )
       .subscribe({
         next: (account) => {
-          this.router.navigate([`${this.navigation.getBillingUrl(account.slug)}/my-subscription`]);
+          this.navigation.navigateExternal(`${this.navigation.getBillingUrl(account.slug)}/my-subscription`, {
+            withFromApp: true,
+          });
           this.toaster.success('billing.subscription-ended');
         },
         error: () => {

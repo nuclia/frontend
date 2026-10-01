@@ -20,7 +20,7 @@ import {
   UsersManageModule,
   accountOwnerGuard,
   agentFeatureEnabledGuard,
-  canMatchSimpleMode,
+  canMatchContextBoxMode,
 } from '@flaps/common';
 import { LowerCaseInputDirective, UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
 import {
@@ -44,7 +44,7 @@ import { AccountConfigurationComponent } from './account-configuration/account-c
 import { AccountConsumptionComponent } from './account-home/account-consumption.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountSettingsComponent } from './account-home/account-settings.component';
-import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
+import { ContextBoxAccountHomeComponent } from './account-home/context-box-account-home.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
 import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
@@ -76,11 +76,11 @@ const routes: Routes = [
     path: 'settings',
     redirectTo: 'home/account-settings',
   },
-  // Simple home (matches when simpleMode is true)
+  // Context Box home (matches when contextBoxMode is true)
   {
     path: 'home',
-    canMatch: [canMatchSimpleMode],
-    component: SimpleAccountHomeComponent,
+    canMatch: [canMatchContextBoxMode],
+    component: ContextBoxAccountHomeComponent,
     canActivate: [accountOwnerGuard],
   },
   // Home page — tab shell with child routes
@@ -206,8 +206,8 @@ const routes: Routes = [
     ClientDialogComponent,
     AccountUsersComponent,
     NuaActivityComponent,
-    SimpleAccountHomeComponent,
+    ContextBoxAccountHomeComponent,
   ],
-  exports: [AccountHomeComponent, AccountSettingsComponent, AccountManageComponent, SimpleAccountHomeComponent],
+  exports: [AccountHomeComponent, AccountSettingsComponent, AccountManageComponent, ContextBoxAccountHomeComponent],
 })
 export class AccountModule {}
