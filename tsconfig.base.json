@@ -35,7 +35,10 @@
       "@nuclia/widget": ["./libs/search-widget/src/index.ts"],
       "@nuclia/ui": ["./libs/ui/src/index.ts"],
       "libs": ["./libs/src/index.ts"],
-      "*": ["./*"]
+      "*": ["./*"],
+      "@nuclia/ui/avatar": ["./libs/ui/src/lib/spartan-components/avatar/src/index.ts"],
+      "@nuclia/ui/button": ["./libs/ui/src/lib/spartan-components/button/src/index.ts"],
+      "@nuclia/ui/utils": ["./libs/ui/src/lib/spartan-components/utils/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
