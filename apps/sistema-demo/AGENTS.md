@@ -4,7 +4,7 @@
 
 `sistema-demo` is a **live interactive showcase** for `libs/sistema`. It demonstrates every UI component, token, and theme customisation that Sistema provides. Not a production app — purely a developer/designer reference tool.
 
-Tech stack: **Angular 21** (NgModule-based with some standalone) · `@guillotinaweb/pastanaga-angular` · `PaDemoModule` · `PaTranslateModule`.
+Tech stack: **Angular 22** (NgModule-based with some standalone) · `@guillotinaweb/pastanaga-angular` · `PaDemoModule` · `PaTranslateModule`.
 
 ---
 

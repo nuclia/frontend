@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 
 import { StandaloneService } from './standalone.service';
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { Nuclia } from '@nuclia/core';
 import { of, take } from 'rxjs';
 
@@ -33,7 +33,7 @@ describe('Standalone service', () => {
   });
 
   describe('checkVersions', () => {
-    it('should set version with what the backend is sending', waitForAsync(() => {
+    it('should set version with what the backend is sending', () => {
       const versionReceived = {
         nucliadb: { installed: '2.43.1.post240', latest: '2.43.1.post240' },
         'nucliadb-admin-assets': { installed: '1.0.0.post1341', latest: '1.0.0.post1341' },
@@ -41,7 +41,7 @@ describe('Standalone service', () => {
       mockGet.mockReturnValueOnce(of(versionReceived));
       service.version.pipe(take(1)).subscribe((version) => expect(version).toBe(versionReceived));
       service.checkVersions();
-    }));
+    });
 
     it('should not display a toast when the installed and latest versions are the same', () => {
       mockGet.mockReturnValueOnce(

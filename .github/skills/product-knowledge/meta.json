@@ -1,37 +1,37 @@
 {
   "docs_repo": {
     "path": "../docs",
-    "last_commit": "c321f53",
-    "updated_at": "2026-09-09T10:48:55Z"
+    "last_commit": "922725e",
+    "updated_at": "2026-09-25T09:41:00Z"
   },
   "api_specs": {
     "global": {
       "url": "https://cdn.rag.progress.cloud/api/global/v1/api.yaml",
-      "etag": "\"c9de8ae003b99e7a452880ba49369e25\"",
+      "etag": "\"12a2ae7ab46a8648faa23632b0262a80\"",
       "last_modified": null,
       "version": "v1",
-      "updated_at": "2026-09-08T00:00:00Z"
+      "updated_at": "2026-09-25T09:41:00Z"
     },
     "nua": {
       "url": "https://cdn.rag.progress.cloud/api/nua/v1/api.yaml",
-      "etag": "\"fd19acc50dafbdfcbd659098b78ae501\"",
+      "etag": "\"c0c22f3627388e8dd3590bf4d90ac7a9\"",
       "last_modified": null,
       "version": "v1",
-      "updated_at": "2026-09-08T00:00:00Z"
+      "updated_at": "2026-09-25T09:41:00Z"
     },
     "nucliadb": {
       "url": "https://cdn.rag.progress.cloud/api/nucliadb/v1/api.yaml",
-      "etag": "\"a71e61eb31c53c3f8ccc28a17285f127\"",
+      "etag": "\"4b9c103ede7fad66c66c616d5584dd68\"",
       "last_modified": null,
       "version": "v1",
-      "updated_at": "2026-09-08T00:00:00Z"
+      "updated_at": "2026-09-25T09:41:00Z"
     },
     "zone": {
       "url": "https://cdn.rag.progress.cloud/api/zone/v1/api.yaml",
-      "etag": "\"d39ad31bfb19f78a876f512e7d3fb736\"",
+      "etag": "\"3b00309ab72bbeb47647d579df4be25e\"",
       "last_modified": null,
       "version": "v1",
-      "updated_at": "2026-09-08T00:00:00Z"
+      "updated_at": "2026-09-25T09:41:00Z"
     }
   }
 }

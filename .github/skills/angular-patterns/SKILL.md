@@ -1,20 +1,20 @@
 ---
 name: angular-patterns
 description: >
-  Angular 21 patterns as used in the Nuclia frontend monorepo — covering OnPush change detection,
-  inject() dependency injection, NgModule-based components (default), signal-based state,
-  RxJS↔Signal bridges, functional guards, and lazy routing. Activate this skill for ANY Angular
-  task in this repo: creating or modifying components, writing services, managing state, adding
-  routes or guards, refactoring legacy code to modern patterns, debugging change detection issues,
-  or deciding which state management tier to use. Do not wait to be asked about "Angular patterns"
-  specifically — if the task involves TypeScript files in apps/ or Angular libs/, this skill
-  applies. Also use when migrating from @Input/@Output decorators or constructor injection to the
-  modern Angular 21 style.
+  Angular 22 patterns as used in the Nuclia frontend monorepo — covering OnPush change detection,
+  inject() dependency injection, standalone components (default; NgModules for legacy code only),
+  signal-based state, RxJS↔Signal bridges, functional guards, and lazy routing. Activate this
+  skill for ANY Angular task in this repo: creating or modifying components, writing services,
+  managing state, adding routes or guards, refactoring legacy code to modern patterns, debugging
+  change detection issues, or deciding which state management tier to use. Do not wait to be
+  asked about "Angular patterns" specifically — if the task involves TypeScript files in apps/ or
+  Angular libs/, this skill applies. Also use when migrating from @Input/@Output decorators,
+  constructor injection, or NgModules to the modern Angular 22 style.
 ---
 
 # Angular Patterns — Nuclia Frontend Monorepo
 
-This skill encodes patterns as they are **actually used** in this codebase. Angular 21 has
+This skill encodes patterns as they are **actually used** in this codebase. Angular 22 has
 many features; this covers only what the team has adopted. When in doubt, match existing code.
 
 ---
@@ -22,32 +22,46 @@ many features; this covers only what the team has adopted. When in doubt, match 
 ## Non-Negotiable Rules
 
 1. **`ChangeDetectionStrategy.OnPush` on every component** — enforced by `nx.json` generator defaults. Never omit it.
-2. **`inject()` instead of constructor injection** — all new services and components use `inject()` as property initializers. Constructor injection is legacy only.
-3. **NgModule-based components by default** — always add new components to the nearest existing NgModule using `standalone: false`. Only leave a component standalone (no `standalone` property) when it is genuinely reusable across multiple NgModules that cannot all share a single NgModule, or when there is no NgModule context at all (e.g. bootstrapped app root).
-4. **Do NOT write `standalone: true`** — in Angular 19+ standalone defaults to `true`. Writing it explicitly is redundant noise. Omit it. When you want a standalone component, simply omit the `standalone` property entirely.
-5. **`@Input()`/`@Output()` decorators are legacy** — use `input()` / `output()` signal APIs for new components.
-6. **`styleUrl` (singular string), not `styleUrls` (array)** — since Angular 17 the shorthand `styleUrl: './foo.component.scss'` replaces `styleUrls: ['./foo.component.scss']`. Always use the singular form in new code.
-7. **No NgRx `signalStore`** — this codebase does not use `@ngrx/signals`. See state management section below.
-8. **Access modifiers on component class members:** Angular's template type-checker cannot access `private` members from the component's own template (compile error), so `protected`/`private` are chosen by usage, not by inheritance:
+2. **Zoneless change detection — no `zone.js`.** All 7 first-party apps (`auth`, `dashboard`, `rao`,
+   `admin`, `manager-v2`, `nucliadb-admin`, `sistema-demo`) bootstrap with
+   `provideZonelessChangeDetection()` and have `zone.js` fully removed. This means:
+   - Native event listeners (`document.addEventListener`), `setTimeout`/`setInterval`, raw
+     Promises, and third-party async callbacks do **not** trigger change detection on their own.
+     Every state mutation reachable from one of these must go through a signal write,
+     `ChangeDetectorRef.markForCheck()`, or `ApplicationRef.tick()`.
+   - Tests: `waitForAsync()` and `fakeAsync()`/`tick()` require `zone.js` and will throw under
+     `setupZonelessTestEnv()` (used by every app + `libs/core`, `libs/user`, `libs/sistema`,
+     `libs/sync`, `libs/common`). Use plain `async`/`await` for async `TestBed` setup, and
+     `jest.useFakeTimers()`/`jest.advanceTimersByTime()` for tests that need to control real timers.
+   - `libs/pastanaga-angular` is the **only** exception — it intentionally keeps `zone.js` and
+     `setup-env/zone` (slated for replacement, not migrated). Watch for zoneless-related
+     rendering bugs originating from its `pa-*` components when auditing new code.
+3. **`inject()` instead of constructor injection** — all new services and components use `inject()` as property initializers. Constructor injection is legacy only.
+4. **Standalone components by default** — new components simply omit the `standalone` property (defaults to `true` in Angular 19+); do not add them to an NgModule. Only use `standalone: false` (declaring a component in an existing NgModule) when maintaining or extending genuinely legacy NgModule-based code — never for new features.
+5. **Do NOT write `standalone: true`** — writing it explicitly is redundant noise. Omit it. When you want a standalone component, simply omit the `standalone` property entirely.
+6. **`@Input()`/`@Output()` decorators are legacy** — use `input()` / `output()` signal APIs for new components.
+7. **`styleUrl` (singular string), not `styleUrls` (array)** — since Angular 17 the shorthand `styleUrl: './foo.component.scss'` replaces `styleUrls: ['./foo.component.scss']`. Always use the singular form in new code.
+8. **No NgRx `signalStore`** — this codebase does not use `@ngrx/signals`. See state management section below.
+9. **Access modifiers on component class members:** Angular's template type-checker cannot access `private` members from the component's own template (compile error), so `protected`/`private` are chosen by usage, not by inheritance:
    - **`protected`** — referenced in the template (`{{ foo }}`, `(click)="bar()"`, etc.). This is the default for template-bound properties/methods, even when the component has no subclasses — it just means "not part of this component's public API."
    - **`private`** — used only internally in the class, never referenced in the template.
    - **public (no modifier)** — only for members that must be accessed from outside the class itself (e.g. via `@ViewChild` from a parent, or genuine public API of a reusable component/service).
-9. **Early-return guard clauses go on one line, but only if the whole statement fits on one line** —
-   prefer `if (condition) return value;` over a 3-line braced block when it stays within the
-   120-char print width. Braces are still required as soon as the body needs more than the return
-   itself, or the line would wrap.
+10. **Early-return guard clauses go on one line, but only if the whole statement fits on one line** —
+    prefer `if (condition) return value;` over a 3-line braced block when it stays within the
+    120-char print width. Braces are still required as soon as the body needs more than the return
+    itself, or the line would wrap.
 
-   ```ts
-   // ✅ fits on one line
-   if (!columnKey) return null;
-   if (fb === null) return null;
+```ts
+// ✅ fits on one line
+if (!columnKey) return null;
+if (fb === null) return null;
 
-   // ✅ still needs braces — body has more than the bare return, or it would wrap past 120 chars
-   if (!resource) {
-     this.toaster.error('resource.memory.delete.error');
-     return;
-   }
-   ```
+// ✅ still needs braces — body has more than the bare return, or it would wrap past 120 chars
+if (!resource) {
+  this.toaster.error('resource.memory.delete.error');
+  return;
+}
+```
 
 ---
 
@@ -242,8 +256,7 @@ import { SomeService } from './some.service';
 
 @Component({
   selector: 'app-my-feature', // app components always use app- prefix; libs use their lib prefix (nsi-, stf-, etc.)
-  standalone: false, // declared in the nearest NgModule (default for app components)
-  templateUrl: './my-feature.component.html',
+  templateUrl: './my-feature.component.html', // standalone by default — omit the `standalone` property entirely
   styleUrl: './my-feature.component.scss', // singular string, NOT styleUrls: [...]
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

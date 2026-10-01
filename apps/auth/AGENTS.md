@@ -1,6 +1,6 @@
 # AGENTS.md — `auth` app
 
-Angular 21 app that owns the entire authentication flow for the Nuclia platform.  
+Angular 22 app that owns the entire authentication flow for the Nuclia platform.  
 Nx project name: **auth**. Selector prefix: **app-**.
 
 ---

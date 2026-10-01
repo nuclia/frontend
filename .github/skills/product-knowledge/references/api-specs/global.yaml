@@ -98,6 +98,7 @@ paths:
   /api/manage/@zone/{zone_id}/accounts/{account_id}: {}
   /api/manage/@zone/{zone_id}/key: {}
   /api/manage/@zones: {}
+  /api/manage/email: {}
   /api/marketplace/aws/callback: {}
   /api/marketplace/aws/login: {}
   /api/marketplace/aws/setup_account: {}
@@ -217,7 +218,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-08-27T13:51:35.428832'
+          default: '2026-09-21T13:38:31.848266'
           title: To
       responses:
         '200':
@@ -830,2518 +831,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  accounting:
-    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
-    last_updated: '2026-08-27T13:51:36.015164'
-  zone_hub:
-    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
-    last_updated: '2026-08-27T13:51:59.808304'
   idp:
-    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
-    last_updated: '2026-08-27T13:56:58.868495'
+    commit: ec8a4de2debaf3878db3981aad61883d9347cb87
+    last_updated: '2026-09-21T13:54:08.494666'
+  zone_hub:
+    commit: cbe35db1b947c302a2e1fc47b8d56b55b31e6d21
+    last_updated: '2026-09-16T13:49:14.615898'
+  accounting:
+    commit: 42ef47260cd853496bc0d4db9304e6f37d985638
+    last_updated: '2026-09-21T13:38:32.311461'
 components:
   schemas:
-    AWSMarketplaceCustomerData:
-      properties:
-        first_name:
-          type: string
-          title: First Name
-        last_name:
-          type: string
-          title: Last Name
-        owner_email_address:
-          type: string
-          title: Owner Email Address
-        phone:
-          type: string
-          title: Phone
-        company:
-          type: string
-          title: Company
-        country:
-          type: string
-          title: Country
-        use_case:
-          type: string
-          title: Use Case
-        organization_size:
-          type: string
-          title: Organization Size
-        role:
-          type: string
-          title: Role
-        receive_updates:
-          type: boolean
-          title: Receive Updates
-      type: object
-      required:
-      - first_name
-      - last_name
-      - owner_email_address
-      - phone
-      - company
-      - country
-      - use_case
-      - organization_size
-      - role
-      - receive_updates
-      title: AWSMarketplaceCustomerData
-    AWSMarketplaceLoginRequest:
-      properties:
-        customer_token:
-          type: string
-          title: Customer Token
-      type: object
-      required:
-      - customer_token
-      title: AWSMarketplaceLoginRequest
-    AWSMarketplaceLoginResponse:
-      properties:
-        access_token:
-          type: string
-          title: Access Token
-        refresh_token:
-          type: string
-          title: Refresh Token
-      type: object
-      required:
-      - access_token
-      - refresh_token
-      title: AWSMarketplaceLoginResponse
-    AWSMarketplaceSetupAccountResponse:
-      properties:
-        account_id:
-          type: string
-          format: uuid4
-          title: Account Id
-        access_token:
-          type: string
-          title: Access Token
-        refresh_token:
-          type: string
-          title: Refresh Token
-      type: object
-      required:
-      - account_id
-      - access_token
-      - refresh_token
-      title: AWSMarketplaceSetupAccountResponse
-    AWSMarketplaceSetupRequest:
-      properties:
-        customer_token:
-          type: string
-          title: Customer Token
-        account_slug:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Account Slug
-        customer_data:
-          anyOf:
-          - $ref: '#/components/schemas/AWSMarketplaceCustomerData'
-          - type: 'null'
-      type: object
-      required:
-      - customer_token
-      title: AWSMarketplaceSetupRequest
-    AWSMarketplaceSubscriptionStatus:
-      type: string
-      enum:
-      - no_subscription
-      - active
-      - failed
-      - cancel_scheduled
-      - canceled
-      title: AWSMarketplaceSubscriptionStatus
-    AccountAWSMarketplaceSubscriptionInfo:
-      properties:
-        status:
-          $ref: '#/components/schemas/AWSMarketplaceSubscriptionStatus'
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        aws_product_code:
-          type: string
-          title: Aws Product Code
-        aws_product_id:
-          type: string
-          title: Aws Product Id
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-      type: object
-      required:
-      - status
-      - aws_product_code
-      - aws_product_id
-      - free_tokens_per_billing_cycle
-      - billing_formula_id
-      title: AccountAWSMarketplaceSubscriptionInfo
-    AccountBillingConfig:
-      properties:
-        account_id:
-          type: string
-          title: Account Id
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-      type: object
-      required:
-      - account_id
-      - billing_formula_id
-      title: AccountBillingConfig
-    AccountBlockingState:
-      type: string
-      enum:
-      - unblocked
-      - quota
-      - manager
-      - trial_expired
-      - budget
-      - subscription_canceled
-      - subscription_unpaid
-      title: AccountBlockingState
-    AccountMeteredUsage:
-      properties:
-        budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Budget
-        currency:
-          $ref: '#/components/schemas/Currency'
-        invoice_items:
-          $ref: '#/components/schemas/InvoiceItems'
-        start_billing_date:
-          type: string
-          format: date-time
-          title: Start Billing Date
-        end_billing_date:
-          type: string
-          format: date-time
-          title: End Billing Date
-      type: object
-      required:
-      - currency
-      - invoice_items
-      - start_billing_date
-      - end_billing_date
-      title: AccountMeteredUsage
-    AccountNucliaCustomerTableSubscriptionInfo:
-      properties:
-        status:
-          $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-        nuclia_tokens_price:
-          type: number
-          title: Nuclia Tokens Price
-      type: object
-      required:
-      - status
-      - free_tokens_per_billing_cycle
-      - billing_formula_id
-      - nuclia_tokens_price
-      title: AccountNucliaCustomerTableSubscriptionInfo
-    AccountStripeCustomer:
-      properties:
-        customer_id:
-          type: string
-          title: Customer Id
-        billing_details:
-          $ref: '#/components/schemas/BillingDetails'
-      type: object
-      required:
-      - customer_id
-      - billing_details
-      title: AccountStripeCustomer
-    AccountStripeSubscription:
-      properties:
-        subscription_id:
-          type: string
-          title: Subscription Id
-        payment_method_id:
-          type: string
-          title: Payment Method Id
-        currency:
-          $ref: '#/components/schemas/Currency'
-        status:
-          type: string
-          title: Status
-        requires_action:
-          type: boolean
-          title: Requires Action
-        client_secret:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Client Secret
-        error:
-          anyOf:
-          - $ref: '#/components/schemas/PaymentError'
-          - type: 'null'
-      type: object
-      required:
-      - subscription_id
-      - payment_method_id
-      - currency
-      - status
-      - requires_action
-      title: AccountStripeSubscription
-    AccountStripeSubscriptionInfo:
-      properties:
-        status:
-          $ref: '#/components/schemas/SubscriptionStatus'
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        billing_interval:
-          anyOf:
-          - $ref: '#/components/schemas/IntervalType'
-          - type: 'null'
-          default: month
-        start_billing_period:
-          type: string
-          format: date-time
-          title: Start Billing Period
-        end_billing_period:
-          type: string
-          format: date-time
-          title: End Billing Period
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-      type: object
-      required:
-      - status
-      - start_billing_period
-      - end_billing_period
-      - free_tokens_per_billing_cycle
-      - billing_formula_id
-      title: AccountStripeSubscriptionInfo
-    AccountSubscription:
-      properties:
-        provider:
-          $ref: '#/components/schemas/SubscriptionProvider'
-        subscription:
-          anyOf:
-          - $ref: '#/components/schemas/AccountStripeSubscriptionInfo'
-          - $ref: '#/components/schemas/AccountAWSMarketplaceSubscriptionInfo'
-          - $ref: '#/components/schemas/AccountNucliaCustomerTableSubscriptionInfo'
-          title: Subscription
-      type: object
-      required:
-      - provider
-      - subscription
-      title: AccountSubscription
-    AccountType:
-      type: string
-      enum:
-      - stash-trial
-      - v3starter
-      - v3pro
-      - v3enterprise
-      - cowork
-      - v3fly
-      - v3growth
-      title: AccountType
-    AccountingTarget:
-      type: string
-      enum:
-      - media
-      - training
-      - paragraphs_processed
-      - predict
-      - generative
-      - ai-tokens-used
-      - nuclia-tokens
-      - paragraphs
-      - searches
-      - qa
-      - self-hosted-qa
-      - self-hosted-predict
-      - self-hosted-processed-paragraphs
-      - self-hosted-processed-documents
-      title: AccountingTarget
-      description: 'Accounting target identifies a specific method of calculating
-        a value for a
-
-        stripe price from accounting metrics, but uncoupled from both price and metrics
-
-        concepts.
-
-
-        Originally, the purpose of target was intended to be filled in
-
-        by the value of a specific metric in accounting. Given that accounting
-
-        metrics have their lifecycle and, plan & pricing definition another one
-
-        this targets will link together the two concepts, but uncoupled, so we''ll
-
-        have, e.g:
-
-
-        PRO account type -> price with target SEARCHES - accounting implementation
-        for SEARCHES
-
-
-        This way the pricing config does not need to know about the implementation
-
-        of how searches accounting data is stored, and accounting does not rely in
-
-        prices details'
-    ActionOnBudgetExhausted:
-      type: string
-      enum:
-      - WARN_ACCOUNT_OWNER
-      - BLOCK_ACCOUNT
-      title: ActionOnBudgetExhausted
-    Aggregation:
-      type: string
-      enum:
-      - hour
-      - day
-      - week
-      - month
-      - quarter
-      - year
-      - millennium
-      title: Aggregation
-    Agreement-Input:
-      properties:
-        id:
-          type: string
-          title: Id
-        status:
-          type: string
-          title: Status
-        start_time:
-          type: string
-          title: Start Time
-        expiration_date:
-          type: string
-          title: Expiration Date
-        offer:
-          $ref: '#/components/schemas/Offer'
-        entitlement_terms:
-          additionalProperties:
-            $ref: '#/components/schemas/EntitlementTerm-Input'
-          type: object
-          title: Entitlement Terms
-          default: {}
-        metered_terms:
-          additionalProperties:
-            $ref: '#/components/schemas/MeteredTerm-Input'
-          type: object
-          title: Metered Terms
-          default: {}
-      type: object
-      required:
-      - id
-      - status
-      - start_time
-      - expiration_date
-      - offer
-      title: Agreement
-    Agreement-Output:
-      properties:
-        id:
-          type: string
-          title: Id
-        status:
-          type: string
-          title: Status
-        start_time:
-          type: string
-          title: Start Time
-        expiration_date:
-          type: string
-          title: Expiration Date
-        offer:
-          $ref: '#/components/schemas/Offer'
-        entitlement_terms:
-          additionalProperties:
-            $ref: '#/components/schemas/EntitlementTerm-Output'
-          type: object
-          title: Entitlement Terms
-          default: {}
-        metered_terms:
-          additionalProperties:
-            $ref: '#/components/schemas/MeteredTerm-Output'
-          type: object
-          title: Metered Terms
-          default: {}
-      type: object
-      required:
-      - id
-      - status
-      - start_time
-      - expiration_date
-      - offer
-      title: Agreement
-    BillCurrentPeriodResponse:
-      properties:
-        budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Budget
-        nuclia_tokens:
-          type: number
-          title: Nuclia Tokens
-        start_billing_date:
-          type: string
-          format: date-time
-          title: Start Billing Date
-        end_billing_date:
-          type: string
-          format: date-time
-          title: End Billing Date
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-        nuclia_tokens_price:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Nuclia Tokens Price
-      type: object
-      required:
-      - nuclia_tokens
-      - start_billing_date
-      - end_billing_date
-      - free_storage_nuclia_tokens
-      - free_tokens_per_billing_cycle
-      - nuclia_tokens_price
-      title: BillCurrentPeriodResponse
-    BillingDetails:
-      properties:
-        name:
-          type: string
-          title: Name
-        email:
-          type: string
-          format: email
-          title: Email
-        address:
-          type: string
-          title: Address
-        country:
-          $ref: '#/components/schemas/Country'
-        state:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: State
-        city:
-          type: string
-          title: City
-        postal_code:
-          type: string
-          title: Postal Code
-        phone:
-          type: string
-          title: Phone
-        is_company:
-          type: boolean
-          title: Is Company
-        company:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Company
-        vat:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Vat
-      type: object
-      required:
-      - name
-      - email
-      - address
-      - country
-      - city
-      - postal_code
-      - phone
-      - is_company
-      title: BillingDetails
-    BillingDetailsModified:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        email:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email
-        address:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Address
-        state:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: State
-        city:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: City
-        postal_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Postal Code
-        phone:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Phone
-        is_company:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Company
-        company:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Company
-        vat:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Vat
-      type: object
-      title: BillingDetailsModified
-    BillingFormulaCreate:
-      properties:
-        title:
-          type: string
-          title: Title
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        formula:
-          items:
-            type: string
-          type: array
-          title: Formula
-          default: []
-        absolute_formula:
-          items:
-            type: string
-          type: array
-          title: Absolute Formula
-          default: []
-      type: object
-      required:
-      - title
-      title: BillingFormulaCreate
-    BillingFormulaResponse:
-      properties:
-        id:
-          type: string
-          format: uuid4
-          title: Id
-        created:
-          type: string
-          format: date-time
-          title: Created
-        title:
-          type: string
-          title: Title
-        description:
-          type: string
-          title: Description
-        formula:
-          items:
-            type: string
-          type: array
-          title: Formula
-        absolute_formula:
-          items:
-            type: string
-          type: array
-          title: Absolute Formula
-      type: object
-      required:
-      - id
-      - created
-      - title
-      - description
-      - formula
-      - absolute_formula
-      title: BillingFormulaResponse
-    Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post:
-      properties:
-        x-amzn-marketplace-token:
-          type: string
-          title: X-Amzn-Marketplace-Token
-      type: object
-      required:
-      - x-amzn-marketplace-token
-      title: Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post
-    BudgetCreate:
-      properties:
-        budget_value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Budget Value
-          description: Set to null for unlimited, or a positive number for the token
-            limit.
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-      type: object
-      required:
-      - budget_value
-      title: BudgetCreate
-    BudgetPatch:
-      properties:
-        budget_value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Budget Value
-          description: Set to null for unlimited, or a positive number for the token
-            limit.
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: BudgetPatch
-    BudgetResponse:
-      properties:
-        account_id:
-          type: string
-          title: Account Id
-        budget_value:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Budget Value
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-      type: object
-      required:
-      - account_id
-      - budget_value
-      - action_on_budget_exhausted
-      title: BudgetResponse
-    CalculatorConfig:
-      properties:
-        version:
-          type: string
-          title: Version
-        models:
-          additionalProperties:
-            anyOf:
-            - $ref: '#/components/schemas/RawFactor'
-            - $ref: '#/components/schemas/ModelFactor'
-          type: object
-          title: Models
-        storage:
-          additionalProperties:
-            $ref: '#/components/schemas/RawFactor'
-          type: object
-          title: Storage
-      type: object
-      required:
-      - version
-      - models
-      - storage
-      title: CalculatorConfig
-    CancelStripeSubscription:
-      properties:
-        feedback:
-          anyOf:
-          - $ref: '#/components/schemas/StripeSubscriptionCancellationFeedback'
-          - type: 'null'
-        comment:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Comment
-      type: object
-      title: CancelStripeSubscription
-    CloudZeroCustomerData:
-      properties:
-        account_id:
-          type: string
-          format: uuid4
-          title: Account Id
-        created:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created
-        modified:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Modified
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-          default: 00000000-0000-4000-8000-000000000001
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-          default: 0
-        nuclia_tokens_price:
-          type: number
-          title: Nuclia Tokens Price
-        subscription_status:
-          anyOf:
-          - $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
-          - type: 'null'
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        billing_history:
-          additionalProperties: true
-          type: object
-          title: Billing History
-        last_notifications:
-          $ref: '#/components/schemas/LastNotifications'
-        product:
-          type: string
-          title: Product
-        product_line:
-          type: string
-          title: Product Line
-        business_unit:
-          type: string
-          title: Business Unit
-      type: object
-      required:
-      - account_id
-      - nuclia_tokens_price
-      - product
-      - product_line
-      - business_unit
-      title: CloudZeroCustomerData
-    CloudZeroSubscriptionCreate:
-      properties:
-        nuclia_tokens_price:
-          type: number
-          title: Nuclia Tokens Price
-        billing_formula_id:
-          type: string
-          title: Billing Formula Id
-          default: 00000000-0000-4000-8000-000000000002
-        free_storage_nuclia_tokens:
-          type: integer
-          title: Free Storage Nuclia Tokens
-          default: 0
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-          default: 0
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        product:
-          type: string
-          title: Product
-        product_line:
-          type: string
-          title: Product Line
-        business_unit:
-          type: string
-          title: Business Unit
-      type: object
-      required:
-      - nuclia_tokens_price
-      - product
-      - product_line
-      - business_unit
-      title: CloudZeroSubscriptionCreate
-    CloudZeroSubscriptionUpdate:
-      properties:
-        billing_formula_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Billing Formula Id
-        nuclia_tokens_price:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Nuclia Tokens Price
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        free_tokens_per_billing_cycle:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Tokens Per Billing Cycle
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-      type: object
-      title: CloudZeroSubscriptionUpdate
-    Country:
-      type: string
-      enum:
-      - AF
-      - AX
-      - AL
-      - DZ
-      - AD
-      - AO
-      - AI
-      - AQ
-      - AG
-      - AR
-      - AM
-      - AW
-      - AC
-      - AU
-      - AT
-      - AZ
-      - BS
-      - BH
-      - BD
-      - BB
-      - BY
-      - BE
-      - BZ
-      - BJ
-      - BM
-      - BT
-      - BO
-      - BA
-      - BW
-      - BV
-      - BR
-      - IO
-      - VG
-      - BN
-      - BG
-      - BF
-      - BI
-      - KH
-      - CM
-      - CA
-      - CV
-      - BQ
-      - KY
-      - CF
-      - TD
-      - CL
-      - CN
-      - CO
-      - KM
-      - CG
-      - CD
-      - CK
-      - CR
-      - CI
-      - HR
-      - CW
-      - CY
-      - CZ
-      - DK
-      - DJ
-      - DM
-      - DO
-      - EC
-      - EG
-      - SV
-      - GQ
-      - ER
-      - EE
-      - SZ
-      - ET
-      - FK
-      - FO
-      - FJ
-      - FI
-      - FR
-      - GF
-      - PF
-      - TF
-      - GA
-      - GM
-      - GE
-      - DE
-      - GH
-      - GI
-      - GR
-      - GL
-      - GD
-      - GP
-      - GU
-      - GT
-      - GG
-      - GN
-      - GW
-      - GY
-      - HT
-      - HN
-      - HK
-      - HU
-      - IS
-      - IN
-      - ID
-      - IQ
-      - IE
-      - IM
-      - IL
-      - IT
-      - JM
-      - JP
-      - JE
-      - JO
-      - KZ
-      - KE
-      - KI
-      - XK
-      - KW
-      - KG
-      - LA
-      - LV
-      - LB
-      - LS
-      - LR
-      - LY
-      - LI
-      - LT
-      - LU
-      - MO
-      - MG
-      - MW
-      - MY
-      - MV
-      - ML
-      - MT
-      - MQ
-      - MR
-      - MU
-      - YT
-      - MX
-      - MD
-      - MC
-      - MN
-      - ME
-      - MS
-      - MA
-      - MZ
-      - MM
-      - NA
-      - NR
-      - NP
-      - NL
-      - NC
-      - NZ
-      - NI
-      - NE
-      - NG
-      - NU
-      - MK
-      - 'NO'
-      - OM
-      - PK
-      - PS
-      - PA
-      - PG
-      - PY
-      - PE
-      - PH
-      - PN
-      - PL
-      - PT
-      - PR
-      - QA
-      - RE
-      - RO
-      - RU
-      - RW
-      - WS
-      - SM
-      - ST
-      - SA
-      - SN
-      - RS
-      - SC
-      - SL
-      - SG
-      - SX
-      - SK
-      - SI
-      - SB
-      - SO
-      - ZA
-      - GS
-      - KR
-      - SS
-      - ES
-      - LK
-      - BL
-      - SH
-      - KN
-      - LC
-      - MF
-      - PM
-      - VC
-      - SR
-      - SJ
-      - SE
-      - CH
-      - TW
-      - TJ
-      - TZ
-      - TH
-      - TL
-      - TG
-      - TK
-      - TO
-      - TT
-      - TA
-      - TN
-      - TR
-      - TM
-      - TC
-      - TV
-      - UG
-      - UA
-      - AE
-      - GB
-      - US
-      - UY
-      - UZ
-      - VU
-      - VA
-      - VE
-      - VN
-      - WF
-      - EH
-      - YE
-      - ZM
-      - ZW
-      title: Country
-    CountryCurrency:
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-      type: object
-      required:
-      - currency
-      title: CountryCurrency
-    CreatePaymentMethod:
-      properties:
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - token
-      title: CreatePaymentMethod
-    CreateStripeCustomer:
-      properties:
-        billing_details:
-          $ref: '#/components/schemas/BillingDetails'
-      type: object
-      required:
-      - billing_details
-      title: CreateStripeCustomer
-    CreateStripePaymentLink:
-      properties:
-        account_id:
-          type: string
-          format: uuid4
-          title: Account Id
-        account_type:
-          $ref: '#/components/schemas/AccountType'
-        price_ids:
-          items:
-            type: string
-          type: array
-          title: Price Ids
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-        allow_promotion_codes:
-          type: boolean
-          title: Allow Promotion Codes
-          default: false
-        currency:
-          $ref: '#/components/schemas/Currency'
-          default: usd
-      type: object
-      required:
-      - account_id
-      - account_type
-      - price_ids
-      - billing_formula_id
-      title: CreateStripePaymentLink
-    CreateStripeSubscription:
-      properties:
-        payment_method_id:
-          type: string
-          title: Payment Method Id
-        on_demand_budget:
-          anyOf:
-          - type: number
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        billing_interval:
-          anyOf:
-          - $ref: '#/components/schemas/IntervalType'
-          - type: 'null'
-          default: month
-        account_type:
-          $ref: '#/components/schemas/AccountType'
-      type: object
-      required:
-      - payment_method_id
-      - account_type
-      title: CreateStripeSubscription
-    Currency:
-      type: string
-      enum:
-      - eur
-      - usd
-      title: Currency
-    EntitlementTerm-Input:
-      properties:
-        price:
-          anyOf:
-          - type: number
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Price
-        duration:
-          type: string
-          title: Duration
-        trial:
-          type: boolean
-          title: Trial
-          default: false
-      type: object
-      required:
-      - duration
-      title: EntitlementTerm
-    EntitlementTerm-Output:
-      properties:
-        price:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Price
-        duration:
-          type: string
-          title: Duration
-        trial:
-          type: boolean
-          title: Trial
-          default: false
-      type: object
-      required:
-      - duration
-      title: EntitlementTerm
-    FlatIdentifier:
-      properties:
-        type:
-          type: string
-          title: Type
-        service:
-          type: string
-          title: Service
-        model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Model
-        version:
-          type: string
-          title: Version
-      type: object
-      required:
-      - type
-      - service
-      - version
-      title: FlatIdentifier
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    IntervalType:
-      type: string
-      enum:
-      - month
-      - year
-      title: IntervalType
-    InvoiceItems:
-      properties:
-        media:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        training:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        paragraphs_processed:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        predict:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        generative:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        searches:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        paragraphs:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        ai-tokens-used:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        nuclia-tokens:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        qa:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        self-hosted-qa:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        self-hosted-predict:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        self-hosted-processed-paragraphs:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-        self-hosted-processed-documents:
-          anyOf:
-          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
-          - type: 'null'
-      type: object
-      title: InvoiceItems
-    InvoicesList:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/nuclia_accounting__api__models__InvoiceItem'
-          type: array
-          title: Items
-        pagination:
-          $ref: '#/components/schemas/InvoicesListPagination'
-      type: object
-      required:
-      - items
-      - pagination
-      title: InvoicesList
-    InvoicesListPagination:
-      properties:
-        starting_after:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Starting After
-        limit:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Limit
-        has_more:
-          type: boolean
-          title: Has More
-      type: object
-      required:
-      - has_more
-      title: InvoicesListPagination
-    KbUsageDashboard:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        metrics:
-          items:
-            $ref: '#/components/schemas/Metric'
-          type: array
-          title: Metrics
-      type: object
-      required:
-      - timestamp
-      - metrics
-      title: KbUsageDashboard
-    LastNotifications:
-      properties:
-        notified_approaching_budget:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Notified Approaching Budget
-        notified_budget_exhausted:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Notified Budget Exhausted
-      type: object
-      title: LastNotifications
-    ManualAgreementRequest:
-      properties:
-        agreement:
-          $ref: '#/components/schemas/Agreement-Input'
-      type: object
-      required:
-      - agreement
-      title: ManualAgreementRequest
-      description: Request body for setting manual agreement data for CPPO customers.
-    ManualSubscriptionCreate:
-      properties:
-        nuclia_tokens_price:
-          type: number
-          title: Nuclia Tokens Price
-        billing_formula_id:
-          type: string
-          title: Billing Formula Id
-          default: 00000000-0000-4000-8000-000000000001
-        free_storage_nuclia_tokens:
-          type: integer
-          title: Free Storage Nuclia Tokens
-          default: 0
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-          default: 0
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-      type: object
-      required:
-      - nuclia_tokens_price
-      title: ManualSubscriptionCreate
-    ManualSubscriptionUpdate:
-      properties:
-        billing_formula_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Billing Formula Id
-        nuclia_tokens_price:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Nuclia Tokens Price
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        free_tokens_per_billing_cycle:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Tokens Per Billing Cycle
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-      type: object
-      title: ManualSubscriptionUpdate
-    MarketplaceSubscriptionState:
-      properties:
-        account_type:
-          $ref: '#/components/schemas/AccountType'
-        is_trial:
-          type: boolean
-          title: Is Trial
-        trial_expiration_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Trial Expiration Date
-        active:
-          type: boolean
-          title: Active
-          default: true
-        blocking_state:
-          anyOf:
-          - $ref: '#/components/schemas/AccountBlockingState'
-          - type: 'null'
-      type: object
-      required:
-      - account_type
-      - is_trial
-      title: MarketplaceSubscriptionState
-    MarketplaceSubscriptionUpdateAction:
-      type: string
-      enum:
-      - change_account_type
-      - remove_trial
-      - unblock_account
-      - activate_subscription
-      - deactivate_subscription
-      - block_account_canceled
-      title: MarketplaceSubscriptionUpdateAction
-    MeteredTerm-Input:
-      properties:
-        price:
-          anyOf:
-          - type: number
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Price
-      type: object
-      required:
-      - price
-      title: MeteredTerm
-    MeteredTerm-Output:
-      properties:
-        price:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Price
-      type: object
-      required:
-      - price
-      title: MeteredTerm
-    Metric:
-      properties:
-        name:
-          $ref: '#/components/schemas/MetricNames'
-        value:
-          type: number
-          title: Value
-        details:
-          items:
-            $ref: '#/components/schemas/NucliaTokenDetails'
-          type: array
-          title: Details
-          default: []
-      type: object
-      required:
-      - name
-      - value
-      title: Metric
-    MetricNames:
-      type: string
-      enum:
-      - pre_processing_time
-      - slow_processing_time
-      - resources_processed
-      - bytes_processed
-      - chars_processed
-      - media_seconds_processed
-      - pages_processed
-      - paragraphs_processed
-      - searches_performed
-      - suggestions_performed
-      - predictions_performed
-      - docs_no_media
-      - ai_tokens_used
-      - nuclia_tokens
-      - nuclia_tokens_billed
-      title: MetricNames
-    ModelFactor:
-      properties:
-        input:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Input
-        output:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Output
-        image:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Image
-        model:
-          type: string
-          title: Model
-      type: object
-      required:
-      - model
-      title: ModelFactor
-    NucliaCustomerData:
-      properties:
-        account_id:
-          type: string
-          format: uuid4
-          title: Account Id
-        created:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Created
-        modified:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Modified
-        billing_formula_id:
-          type: string
-          format: uuid4
-          title: Billing Formula Id
-          default: 00000000-0000-4000-8000-000000000001
-        free_storage_nuclia_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Storage Nuclia Tokens
-        free_tokens_per_billing_cycle:
-          type: integer
-          title: Free Tokens Per Billing Cycle
-          default: 0
-        nuclia_tokens_price:
-          type: number
-          title: Nuclia Tokens Price
-        subscription_status:
-          anyOf:
-          - $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
-          - type: 'null'
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        on_demand_budget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: On Demand Budget
-        billing_history:
-          additionalProperties: true
-          type: object
-          title: Billing History
-        last_notifications:
-          $ref: '#/components/schemas/LastNotifications'
-      type: object
-      required:
-      - account_id
-      - nuclia_tokens_price
-      title: NucliaCustomerData
-    NucliaCustomerTableSubscriptionStatus:
-      type: string
-      enum:
-      - active
-      - pending
-      - canceled
-      title: NucliaCustomerTableSubscriptionStatus
-    NucliaTokenDetails:
-      properties:
-        identifier:
-          $ref: '#/components/schemas/FlatIdentifier'
-        nuclia_tokens:
-          $ref: '#/components/schemas/Tokens'
-        nuclia_tokens_billed:
-          $ref: '#/components/schemas/Tokens'
-        raw_usage:
-          $ref: '#/components/schemas/Tokens'
-        requests:
-          $ref: '#/components/schemas/Requests'
-      type: object
-      required:
-      - identifier
-      - nuclia_tokens
-      - nuclia_tokens_billed
-      - raw_usage
-      - requests
-      title: NucliaTokenDetails
-    Offer:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        is_trial:
-          type: boolean
-          title: Is Trial
-          default: false
-        trial_duration:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Trial Duration
-      type: object
-      required:
-      - id
-      - name
-      title: Offer
-    PaymentError:
-      properties:
-        code:
-          type: string
-          title: Code
-        decline_code:
-          type: string
-          title: Decline Code
-      type: object
-      required:
-      - code
-      - decline_code
-      title: PaymentError
-    PaymentMethod:
-      properties:
-        payment_method_id:
-          type: string
-          title: Payment Method Id
-        payment_method_type:
-          type: string
-          title: Payment Method Type
-      type: object
-      required:
-      - payment_method_id
-      - payment_method_type
-      title: PaymentMethod
-    RawFactor:
-      properties:
-        factor:
-          type: number
-          title: Factor
-        source:
-          type: string
-          title: Source
-      type: object
-      required:
-      - factor
-      - source
-      title: RawFactor
-    Requests:
-      properties:
-        api:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Api
-        web:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Web
-        widget:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Widget
-        desktop:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Desktop
-        dashboard:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Dashboard
-        chrome_extension:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Chrome Extension
-        internal:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Internal
-      type: object
-      title: Requests
-    StripeCharge:
-      properties:
-        id:
-          type: string
-          title: Id
-        object:
-          type: string
-          const: charge
-          title: Object
-        customer:
-          type: string
-          title: Customer
-        status:
-          $ref: '#/components/schemas/StripeChargeStatus'
-        amount:
-          type: integer
-          title: Amount
-        currency:
-          type: string
-          title: Currency
-        description:
-          type: string
-          title: Description
-        invoice:
-          type: string
-          title: Invoice
-        failure_code:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Failure Code
-        failure_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Failure Message
-        paid:
-          type: boolean
-          title: Paid
-        created:
-          type: integer
-          title: Created
-        outcome:
-          anyOf:
-          - $ref: '#/components/schemas/StripeChargeOutcome'
-          - type: 'null'
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          default: {}
-      type: object
-      required:
-      - id
-      - object
-      - customer
-      - status
-      - amount
-      - currency
-      - description
-      - invoice
-      - paid
-      - created
-      title: StripeCharge
-    StripeChargeOutcome:
-      properties:
-        network_status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Network Status
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-        risk_level:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Risk Level
-        risk_score:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Risk Score
-        rule:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Rule
-        seller_message:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Seller Message
-        type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Type
-      type: object
-      title: StripeChargeOutcome
-    StripeChargeStatus:
-      type: string
-      enum:
-      - succeeded
-      - pending
-      - failed
-      title: StripeChargeStatus
-    StripeChargesList:
-      properties:
-        object:
-          type: string
-          const: list
-          title: Object
-        data:
-          items:
-            $ref: '#/components/schemas/StripeCharge'
-          type: array
-          title: Data
-      type: object
-      required:
-      - object
-      - data
-      title: StripeChargesList
-    StripeCheckoutSession:
-      properties:
-        id:
-          type: string
-          title: Id
-        object:
-          type: string
-          const: checkout.session
-          title: Object
-        customer:
-          type: string
-          title: Customer
-        payment_link:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Payment Link
-        subscription:
-          type: string
-          title: Subscription
-        mode:
-          type: string
-          title: Mode
-        status:
-          type: string
-          title: Status
-      type: object
-      required:
-      - id
-      - object
-      - customer
-      - payment_link
-      - subscription
-      - mode
-      - status
-      title: StripeCheckoutSession
-    StripeEvent:
-      properties:
-        object:
-          type: string
-          title: Object
-        data:
-          $ref: '#/components/schemas/StripeObject'
-        type:
-          type: string
-          title: Type
-      type: object
-      required:
-      - object
-      - data
-      - type
-      title: StripeEvent
-    StripeObject:
-      properties:
-        object:
-          anyOf:
-          - $ref: '#/components/schemas/StripeSubscription'
-          - $ref: '#/components/schemas/StripePaymentIntent'
-          - $ref: '#/components/schemas/StripeCheckoutSession'
-          title: Object
-        previous_attributes:
-          additionalProperties: true
-          type: object
-          title: Previous Attributes
-          default: {}
-      type: object
-      required:
-      - object
-      title: StripeObject
-    StripePaymentIntent:
-      properties:
-        id:
-          type: string
-          title: Id
-        object:
-          type: string
-          const: payment_intent
-          title: Object
-        customer:
-          type: string
-          title: Customer
-        status:
-          $ref: '#/components/schemas/StripePaymentIntentStatus'
-        amount:
-          type: integer
-          title: Amount
-        currency:
-          type: string
-          title: Currency
-        description:
-          type: string
-          title: Description
-        charges:
-          anyOf:
-          - $ref: '#/components/schemas/StripeChargesList'
-          - type: 'null'
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          default: {}
-      type: object
-      required:
-      - id
-      - object
-      - customer
-      - status
-      - amount
-      - currency
-      - description
-      title: StripePaymentIntent
-    StripePaymentIntentStatus:
-      type: string
-      enum:
-      - requires_payment_method
-      - requires_confirmation
-      - requires_action
-      - processing
-      - requires_capture
-      - canceled
-      - succeeded
-      title: StripePaymentIntentStatus
-    StripePaymentLinkInfo:
-      properties:
-        id:
-          type: string
-          title: Id
-        url:
-          type: string
-          title: Url
-      type: object
-      required:
-      - id
-      - url
-      title: StripePaymentLinkInfo
-    StripePriceInfo:
-      properties:
-        id:
-          type: string
-          title: Id
-        nickname:
-          type: string
-          title: Nickname
-        product:
-          type: string
-          title: Product
-      type: object
-      required:
-      - id
-      - nickname
-      - product
-      title: StripePriceInfo
-    StripePublicKey:
-      properties:
-        public_key:
-          type: string
-          title: Public Key
-      type: object
-      required:
-      - public_key
-      title: StripePublicKey
-    StripeSubscription:
-      properties:
-        id:
-          type: string
-          title: Id
-        object:
-          type: string
-          const: subscription
-          title: Object
-        billing_cycle_anchor:
-          type: integer
-          title: Billing Cycle Anchor
-        customer:
-          type: string
-          title: Customer
-        default_payment_method:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Payment Method
-        status:
-          $ref: '#/components/schemas/StripeSubscriptionStatus'
-        items:
-          $ref: '#/components/schemas/StripeSubscriptionItemsList'
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          default: {}
-      type: object
-      required:
-      - id
-      - object
-      - billing_cycle_anchor
-      - customer
-      - status
-      - items
-      title: StripeSubscription
-    StripeSubscriptionCancellationFeedback:
-      type: string
-      enum:
-      - too_expensive
-      - missing_features
-      - switched_service
-      - unused
-      - customer_service
-      - too_complex
-      - low_quality
-      - other
-      title: StripeSubscriptionCancellationFeedback
-    StripeSubscriptionItemsList:
-      properties:
-        object:
-          type: string
-          const: list
-          title: Object
-        data:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Data
-      type: object
-      required:
-      - object
-      - data
-      title: StripeSubscriptionItemsList
-    StripeSubscriptionStatus:
-      type: string
-      enum:
-      - incomplete
-      - incomplete_expired
-      - trialing
-      - active
-      - past_due
-      - canceled
-      - unpaid
-      title: StripeSubscriptionStatus
-    StripeUsageType:
-      type: string
-      enum:
-      - metered
-      - licensed
-      title: StripeUsageType
-    SubscriptionProvider:
-      type: string
-      enum:
-      - NO_SUBSCRIPTION
-      - STRIPE
-      - AWS_MARKETPLACE
-      - MANUAL
-      - CLOUD_ZERO
-      title: SubscriptionProvider
-    SubscriptionStatus:
-      type: string
-      enum:
-      - no_subscription
-      - pending
-      - active
-      - payment_issues
-      - cancel_scheduled
-      - canceled
-      title: SubscriptionStatus
-    SubscriptionSyncExecutionResponse:
-      properties:
-        previous_state:
-          $ref: '#/components/schemas/MarketplaceSubscriptionState'
-        current_state:
-          $ref: '#/components/schemas/MarketplaceSubscriptionState'
-        actions:
-          items:
-            $ref: '#/components/schemas/MarketplaceSubscriptionUpdateAction'
-          type: array
-          title: Actions
-      type: object
-      required:
-      - previous_state
-      - current_state
-      - actions
-      title: SubscriptionSyncExecutionResponse
-    SubscriptionSyncStateResponse:
-      properties:
-        current_state:
-          $ref: '#/components/schemas/MarketplaceSubscriptionState'
-        desired_state:
-          $ref: '#/components/schemas/MarketplaceSubscriptionState'
-        actions:
-          items:
-            $ref: '#/components/schemas/MarketplaceSubscriptionUpdateAction'
-          type: array
-          title: Actions
-      type: object
-      required:
-      - current_state
-      - desired_state
-      - actions
-      title: SubscriptionSyncStateResponse
-    Tier:
-      properties:
-        recurring:
-          anyOf:
-          - additionalProperties:
-              $ref: '#/components/schemas/TierRecurringBillingItem'
-            propertyNames:
-              $ref: '#/components/schemas/IntervalType'
-            type: object
-          - type: 'null'
-          title: Recurring
-        usage:
-          additionalProperties:
-            $ref: '#/components/schemas/TierUsageBillingItem'
-          propertyNames:
-            $ref: '#/components/schemas/AccountingTarget'
-          type: object
-          title: Usage
-      type: object
-      required:
-      - recurring
-      - usage
-      title: Tier
-    TierRecurringBillingItem:
-      properties:
-        price:
-          type: number
-          title: Price
-      type: object
-      required:
-      - price
-      title: TierRecurringBillingItem
-    TierUsageBillingItem:
-      properties:
-        threshold:
-          type: integer
-          title: Threshold
-        price:
-          type: number
-          title: Price
-      type: object
-      required:
-      - threshold
-      - price
-      title: TierUsageBillingItem
-    Tokens:
-      properties:
-        input:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Input
-        output:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Output
-        image:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Image
-        search:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Search
-        storage:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Storage
-      type: object
-      title: Tokens
-    UpdateAWSMarketplaceSubscription:
-      properties:
-        on_demand_budget:
-          anyOf:
-          - type: number
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        free_tokens_per_billing_cycle:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Tokens Per Billing Cycle
-      type: object
-      title: UpdateAWSMarketplaceSubscription
-    UpdateStripeCustomer:
-      properties:
-        billing_details:
-          $ref: '#/components/schemas/BillingDetailsModified'
-      type: object
-      required:
-      - billing_details
-      title: UpdateStripeCustomer
-    UpdateStripeSubscription:
-      properties:
-        on_demand_budget:
-          anyOf:
-          - type: number
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: On Demand Budget
-        action_on_budget_exhausted:
-          anyOf:
-          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
-          - type: 'null'
-        free_tokens_per_billing_cycle:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Free Tokens Per Billing Cycle
-      type: object
-      title: UpdateStripeSubscription
-    UpdateStripeSubscriptionMeteredPrices:
-      properties:
-        price_nicknames:
-          items:
-            type: string
-          type: array
-          title: Price Nicknames
-      type: object
-      required:
-      - price_nicknames
-      title: UpdateStripeSubscriptionMeteredPrices
-    UpgradeStripeSubscription:
-      properties:
-        billing_interval:
-          anyOf:
-          - $ref: '#/components/schemas/IntervalType'
-          - type: 'null'
-          default: month
-        account_type:
-          $ref: '#/components/schemas/AccountType'
-      type: object
-      required:
-      - account_type
-      title: UpgradeStripeSubscription
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    nuclia_accounting__api__models__InvoiceItem:
-      properties:
-        id:
-          type: string
-          title: Id
-        period_start:
-          type: string
-          format: date-time
-          title: Period Start
-        period_end:
-          type: string
-          format: date-time
-          title: Period End
-        order_number:
-          type: string
-          title: Order Number
-        account_type:
-          $ref: '#/components/schemas/AccountType'
-        amount:
-          type: number
-          title: Amount
-        pdf:
-          type: string
-          title: Pdf
-      type: object
-      required:
-      - id
-      - period_start
-      - period_end
-      - order_number
-      - account_type
-      - amount
-      - pdf
-      title: InvoiceItem
-    nuclia_accounting__models__models__InvoiceItem:
-      properties:
-        threshold:
-          type: integer
-          title: Threshold
-        current_usage:
-          type: integer
-          title: Current Usage
-        price:
-          type: number
-          title: Price
-        over_usage:
-          type: integer
-          title: Over Usage
-        over_cost:
-          type: number
-          title: Over Cost
-      type: object
-      required:
-      - threshold
-      - current_usage
-      - price
-      - over_usage
-      - over_cost
-      title: InvoiceItem
     Account:
       properties:
         id:
@@ -3476,6 +976,17 @@ components:
       - current_arags
       - creation_date
       title: Account
+    AccountBlockingState:
+      type: string
+      enum:
+      - unblocked
+      - quota
+      - manager
+      - trial_expired
+      - budget
+      - subscription_canceled
+      - subscription_unpaid
+      title: AccountBlockingState
     AccountCreated:
       properties:
         id:
@@ -4031,6 +1542,17 @@ components:
       required:
       - available
       title: AccountStatusAvailable
+    AccountType:
+      type: string
+      enum:
+      - stash-trial
+      - v3starter
+      - v3pro
+      - v3enterprise
+      - cowork
+      - v3fly
+      - v3growth
+      title: AccountType
     AccountTypeDefaults:
       properties:
         max_kbs:
@@ -4426,6 +1948,82 @@ components:
       required:
       - file
       title: Body_upload_account_logo_api_v1_account__account_slug__logo_png_patch
+    BroadcastEmailFailure:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        error:
+          type: string
+          title: Error
+      type: object
+      required:
+      - user_id
+      - error
+      title: BroadcastEmailFailure
+    BroadcastEmailRequest:
+      properties:
+        user_ids:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+          title: User Ids
+        subject:
+          type: string
+          minLength: 1
+          title: Subject
+        body_content:
+          type: string
+          minLength: 1
+          title: Body Content
+        is_dry_run:
+          type: boolean
+          title: Is Dry Run
+          default: false
+      type: object
+      required:
+      - subject
+      - body_content
+      title: BroadcastEmailRequest
+    BroadcastEmailResponse:
+      properties:
+        dry_run:
+          type: boolean
+          title: Dry Run
+        requested_count:
+          type: integer
+          title: Requested Count
+        queued_count:
+          type: integer
+          title: Queued Count
+        failed_count:
+          type: integer
+          title: Failed Count
+        queued_user_ids:
+          items:
+            type: string
+          type: array
+          title: Queued User Ids
+        failed:
+          items:
+            $ref: '#/components/schemas/BroadcastEmailFailure'
+          type: array
+          title: Failed
+        preview_recipient:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Preview Recipient
+      type: object
+      required:
+      - dry_run
+      - requested_count
+      - queued_count
+      - failed_count
+      - queued_user_ids
+      - failed
+      title: BroadcastEmailResponse
     CloudProvider:
       type: string
       enum:
@@ -4472,6 +2070,11 @@ components:
           - type: string
           - type: 'null'
           title: Name
+        needs_initial_setpassword:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Needs Initial Setpassword
       type: object
       required:
       - user_id
@@ -4485,6 +2088,15 @@ components:
       required:
       - token
       title: GlobalMagicToken
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     InvitePayload:
       properties:
         email:
@@ -5439,6 +3051,32 @@ components:
       - MANAGER
       - SALES
       title: UserType
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     Welcome:
       properties:
         preferences:
@@ -5631,3 +3269,2459 @@ components:
       - email
       - type
       title: User
+    AWSMarketplaceCustomerData:
+      properties:
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        owner_email_address:
+          type: string
+          title: Owner Email Address
+        phone:
+          type: string
+          title: Phone
+        company:
+          type: string
+          title: Company
+        country:
+          type: string
+          title: Country
+        use_case:
+          type: string
+          title: Use Case
+        organization_size:
+          type: string
+          title: Organization Size
+        role:
+          type: string
+          title: Role
+        receive_updates:
+          type: boolean
+          title: Receive Updates
+      type: object
+      required:
+      - first_name
+      - last_name
+      - owner_email_address
+      - phone
+      - company
+      - country
+      - use_case
+      - organization_size
+      - role
+      - receive_updates
+      title: AWSMarketplaceCustomerData
+    AWSMarketplaceLoginRequest:
+      properties:
+        customer_token:
+          type: string
+          title: Customer Token
+      type: object
+      required:
+      - customer_token
+      title: AWSMarketplaceLoginRequest
+    AWSMarketplaceLoginResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      title: AWSMarketplaceLoginResponse
+    AWSMarketplaceSetupAccountResponse:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - account_id
+      - access_token
+      - refresh_token
+      title: AWSMarketplaceSetupAccountResponse
+    AWSMarketplaceSetupRequest:
+      properties:
+        customer_token:
+          type: string
+          title: Customer Token
+        account_slug:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Slug
+        customer_data:
+          anyOf:
+          - $ref: '#/components/schemas/AWSMarketplaceCustomerData'
+          - type: 'null'
+      type: object
+      required:
+      - customer_token
+      title: AWSMarketplaceSetupRequest
+    AWSMarketplaceSubscriptionStatus:
+      type: string
+      enum:
+      - no_subscription
+      - active
+      - failed
+      - cancel_scheduled
+      - canceled
+      title: AWSMarketplaceSubscriptionStatus
+    AccountAWSMarketplaceSubscriptionInfo:
+      properties:
+        status:
+          $ref: '#/components/schemas/AWSMarketplaceSubscriptionStatus'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        aws_product_code:
+          type: string
+          title: Aws Product Code
+        aws_product_id:
+          type: string
+          title: Aws Product Id
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+      type: object
+      required:
+      - status
+      - aws_product_code
+      - aws_product_id
+      - free_tokens_per_billing_cycle
+      - billing_formula_id
+      title: AccountAWSMarketplaceSubscriptionInfo
+    AccountBillingConfig:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+      type: object
+      required:
+      - account_id
+      - billing_formula_id
+      title: AccountBillingConfig
+    AccountMeteredUsage:
+      properties:
+        budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget
+        currency:
+          $ref: '#/components/schemas/Currency'
+        invoice_items:
+          $ref: '#/components/schemas/InvoiceItems'
+        start_billing_date:
+          type: string
+          format: date-time
+          title: Start Billing Date
+        end_billing_date:
+          type: string
+          format: date-time
+          title: End Billing Date
+      type: object
+      required:
+      - currency
+      - invoice_items
+      - start_billing_date
+      - end_billing_date
+      title: AccountMeteredUsage
+    AccountNucliaCustomerTableSubscriptionInfo:
+      properties:
+        status:
+          $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+      type: object
+      required:
+      - status
+      - free_tokens_per_billing_cycle
+      - billing_formula_id
+      - nuclia_tokens_price
+      title: AccountNucliaCustomerTableSubscriptionInfo
+    AccountStripeCustomer:
+      properties:
+        customer_id:
+          type: string
+          title: Customer Id
+        billing_details:
+          $ref: '#/components/schemas/BillingDetails'
+      type: object
+      required:
+      - customer_id
+      - billing_details
+      title: AccountStripeCustomer
+    AccountStripeSubscription:
+      properties:
+        subscription_id:
+          type: string
+          title: Subscription Id
+        payment_method_id:
+          type: string
+          title: Payment Method Id
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          type: string
+          title: Status
+        requires_action:
+          type: boolean
+          title: Requires Action
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+        error:
+          anyOf:
+          - $ref: '#/components/schemas/PaymentError'
+          - type: 'null'
+      type: object
+      required:
+      - subscription_id
+      - payment_method_id
+      - currency
+      - status
+      - requires_action
+      title: AccountStripeSubscription
+    AccountStripeSubscriptionInfo:
+      properties:
+        status:
+          $ref: '#/components/schemas/SubscriptionStatus'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        billing_interval:
+          anyOf:
+          - $ref: '#/components/schemas/IntervalType'
+          - type: 'null'
+          default: month
+        start_billing_period:
+          type: string
+          format: date-time
+          title: Start Billing Period
+        end_billing_period:
+          type: string
+          format: date-time
+          title: End Billing Period
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+      type: object
+      required:
+      - status
+      - start_billing_period
+      - end_billing_period
+      - free_tokens_per_billing_cycle
+      - billing_formula_id
+      title: AccountStripeSubscriptionInfo
+    AccountSubscription:
+      properties:
+        provider:
+          $ref: '#/components/schemas/SubscriptionProvider'
+        subscription:
+          anyOf:
+          - $ref: '#/components/schemas/AccountStripeSubscriptionInfo'
+          - $ref: '#/components/schemas/AccountAWSMarketplaceSubscriptionInfo'
+          - $ref: '#/components/schemas/AccountNucliaCustomerTableSubscriptionInfo'
+          title: Subscription
+      type: object
+      required:
+      - provider
+      - subscription
+      title: AccountSubscription
+    AccountingTarget:
+      type: string
+      enum:
+      - media
+      - training
+      - paragraphs_processed
+      - predict
+      - generative
+      - ai-tokens-used
+      - nuclia-tokens
+      - paragraphs
+      - searches
+      - qa
+      - self-hosted-qa
+      - self-hosted-predict
+      - self-hosted-processed-paragraphs
+      - self-hosted-processed-documents
+      title: AccountingTarget
+      description: 'Accounting target identifies a specific method of calculating
+        a value for a
+
+        stripe price from accounting metrics, but uncoupled from both price and metrics
+
+        concepts.
+
+
+        Originally, the purpose of target was intended to be filled in
+
+        by the value of a specific metric in accounting. Given that accounting
+
+        metrics have their lifecycle and, plan & pricing definition another one
+
+        this targets will link together the two concepts, but uncoupled, so we''ll
+
+        have, e.g:
+
+
+        PRO account type -> price with target SEARCHES - accounting implementation
+        for SEARCHES
+
+
+        This way the pricing config does not need to know about the implementation
+
+        of how searches accounting data is stored, and accounting does not rely in
+
+        prices details'
+    ActionOnBudgetExhausted:
+      type: string
+      enum:
+      - WARN_ACCOUNT_OWNER
+      - BLOCK_ACCOUNT
+      title: ActionOnBudgetExhausted
+    Aggregation:
+      type: string
+      enum:
+      - hour
+      - day
+      - week
+      - month
+      - quarter
+      - year
+      - millennium
+      title: Aggregation
+    Agreement-Input:
+      properties:
+        id:
+          type: string
+          title: Id
+        status:
+          type: string
+          title: Status
+        start_time:
+          type: string
+          title: Start Time
+        expiration_date:
+          type: string
+          title: Expiration Date
+        offer:
+          $ref: '#/components/schemas/Offer'
+        entitlement_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/EntitlementTerm-Input'
+          type: object
+          title: Entitlement Terms
+          default: {}
+        metered_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/MeteredTerm-Input'
+          type: object
+          title: Metered Terms
+          default: {}
+      type: object
+      required:
+      - id
+      - status
+      - start_time
+      - expiration_date
+      - offer
+      title: Agreement
+    Agreement-Output:
+      properties:
+        id:
+          type: string
+          title: Id
+        status:
+          type: string
+          title: Status
+        start_time:
+          type: string
+          title: Start Time
+        expiration_date:
+          type: string
+          title: Expiration Date
+        offer:
+          $ref: '#/components/schemas/Offer'
+        entitlement_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/EntitlementTerm-Output'
+          type: object
+          title: Entitlement Terms
+          default: {}
+        metered_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/MeteredTerm-Output'
+          type: object
+          title: Metered Terms
+          default: {}
+      type: object
+      required:
+      - id
+      - status
+      - start_time
+      - expiration_date
+      - offer
+      title: Agreement
+    BillCurrentPeriodResponse:
+      properties:
+        budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget
+        nuclia_tokens:
+          type: number
+          title: Nuclia Tokens
+        start_billing_date:
+          type: string
+          format: date-time
+          title: Start Billing Date
+        end_billing_date:
+          type: string
+          format: date-time
+          title: End Billing Date
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+        nuclia_tokens_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Nuclia Tokens Price
+      type: object
+      required:
+      - nuclia_tokens
+      - start_billing_date
+      - end_billing_date
+      - free_storage_nuclia_tokens
+      - free_tokens_per_billing_cycle
+      - nuclia_tokens_price
+      title: BillCurrentPeriodResponse
+    BillingDetails:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        email:
+          type: string
+          format: email
+          title: Email
+        address:
+          type: string
+          title: Address
+        country:
+          $ref: '#/components/schemas/Country'
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        city:
+          type: string
+          title: City
+        postal_code:
+          type: string
+          title: Postal Code
+        phone:
+          type: string
+          title: Phone
+        is_company:
+          type: boolean
+          title: Is Company
+        company:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company
+        vat:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vat
+      type: object
+      required:
+      - name
+      - email
+      - address
+      - country
+      - city
+      - postal_code
+      - phone
+      - is_company
+      title: BillingDetails
+    BillingDetailsModified:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Address
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        city:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: City
+        postal_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Postal Code
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        is_company:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Company
+        company:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company
+        vat:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vat
+      type: object
+      title: BillingDetailsModified
+    BillingFormulaCreate:
+      properties:
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        formula:
+          items:
+            type: string
+          type: array
+          title: Formula
+          default: []
+        absolute_formula:
+          items:
+            type: string
+          type: array
+          title: Absolute Formula
+          default: []
+      type: object
+      required:
+      - title
+      title: BillingFormulaCreate
+    BillingFormulaResponse:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+        created:
+          type: string
+          format: date-time
+          title: Created
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        formula:
+          items:
+            type: string
+          type: array
+          title: Formula
+        absolute_formula:
+          items:
+            type: string
+          type: array
+          title: Absolute Formula
+      type: object
+      required:
+      - id
+      - created
+      - title
+      - description
+      - formula
+      - absolute_formula
+      title: BillingFormulaResponse
+    Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post:
+      properties:
+        x-amzn-marketplace-token:
+          type: string
+          title: X-Amzn-Marketplace-Token
+      type: object
+      required:
+      - x-amzn-marketplace-token
+      title: Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post
+    BudgetCreate:
+      properties:
+        budget_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget Value
+          description: Set to null for unlimited, or a positive number for the token
+            limit.
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      required:
+      - budget_value
+      title: BudgetCreate
+    BudgetPatch:
+      properties:
+        budget_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget Value
+          description: Set to null for unlimited, or a positive number for the token
+            limit.
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: BudgetPatch
+    BudgetResponse:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+        budget_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget Value
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      required:
+      - account_id
+      - budget_value
+      - action_on_budget_exhausted
+      title: BudgetResponse
+    CalculatorConfig:
+      properties:
+        version:
+          type: string
+          title: Version
+        models:
+          additionalProperties:
+            anyOf:
+            - $ref: '#/components/schemas/RawFactor'
+            - $ref: '#/components/schemas/ModelFactor'
+          type: object
+          title: Models
+        storage:
+          additionalProperties:
+            $ref: '#/components/schemas/RawFactor'
+          type: object
+          title: Storage
+      type: object
+      required:
+      - version
+      - models
+      - storage
+      title: CalculatorConfig
+    CancelStripeSubscription:
+      properties:
+        feedback:
+          anyOf:
+          - $ref: '#/components/schemas/StripeSubscriptionCancellationFeedback'
+          - type: 'null'
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      title: CancelStripeSubscription
+    CloudZeroCustomerData:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000003
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        subscription_status:
+          anyOf:
+          - $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
+          - type: 'null'
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        billing_history:
+          additionalProperties: true
+          type: object
+          title: Billing History
+        last_notifications:
+          $ref: '#/components/schemas/LastNotifications'
+        product:
+          type: string
+          title: Product
+        product_line:
+          type: string
+          title: Product Line
+        business_unit:
+          type: string
+          title: Business Unit
+      type: object
+      required:
+      - account_id
+      - nuclia_tokens_price
+      - product
+      - product_line
+      - business_unit
+      title: CloudZeroCustomerData
+    CloudZeroSubscriptionCreate:
+      properties:
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        billing_formula_id:
+          type: string
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000002
+        free_storage_nuclia_tokens:
+          type: integer
+          title: Free Storage Nuclia Tokens
+          default: 0
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        product:
+          type: string
+          title: Product
+        product_line:
+          type: string
+          title: Product Line
+        business_unit:
+          type: string
+          title: Business Unit
+      type: object
+      required:
+      - nuclia_tokens_price
+      - product
+      - product_line
+      - business_unit
+      title: CloudZeroSubscriptionCreate
+    CloudZeroSubscriptionUpdate:
+      properties:
+        billing_formula_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Billing Formula Id
+        nuclia_tokens_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Nuclia Tokens Price
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      title: CloudZeroSubscriptionUpdate
+    Country:
+      type: string
+      enum:
+      - AF
+      - AX
+      - AL
+      - DZ
+      - AD
+      - AO
+      - AI
+      - AQ
+      - AG
+      - AR
+      - AM
+      - AW
+      - AC
+      - AU
+      - AT
+      - AZ
+      - BS
+      - BH
+      - BD
+      - BB
+      - BY
+      - BE
+      - BZ
+      - BJ
+      - BM
+      - BT
+      - BO
+      - BA
+      - BW
+      - BV
+      - BR
+      - IO
+      - VG
+      - BN
+      - BG
+      - BF
+      - BI
+      - KH
+      - CM
+      - CA
+      - CV
+      - BQ
+      - KY
+      - CF
+      - TD
+      - CL
+      - CN
+      - CO
+      - KM
+      - CG
+      - CD
+      - CK
+      - CR
+      - CI
+      - HR
+      - CW
+      - CY
+      - CZ
+      - DK
+      - DJ
+      - DM
+      - DO
+      - EC
+      - EG
+      - SV
+      - GQ
+      - ER
+      - EE
+      - SZ
+      - ET
+      - FK
+      - FO
+      - FJ
+      - FI
+      - FR
+      - GF
+      - PF
+      - TF
+      - GA
+      - GM
+      - GE
+      - DE
+      - GH
+      - GI
+      - GR
+      - GL
+      - GD
+      - GP
+      - GU
+      - GT
+      - GG
+      - GN
+      - GW
+      - GY
+      - HT
+      - HN
+      - HK
+      - HU
+      - IS
+      - IN
+      - ID
+      - IQ
+      - IE
+      - IM
+      - IL
+      - IT
+      - JM
+      - JP
+      - JE
+      - JO
+      - KZ
+      - KE
+      - KI
+      - XK
+      - KW
+      - KG
+      - LA
+      - LV
+      - LB
+      - LS
+      - LR
+      - LY
+      - LI
+      - LT
+      - LU
+      - MO
+      - MG
+      - MW
+      - MY
+      - MV
+      - ML
+      - MT
+      - MQ
+      - MR
+      - MU
+      - YT
+      - MX
+      - MD
+      - MC
+      - MN
+      - ME
+      - MS
+      - MA
+      - MZ
+      - MM
+      - NA
+      - NR
+      - NP
+      - NL
+      - NC
+      - NZ
+      - NI
+      - NE
+      - NG
+      - NU
+      - MK
+      - 'NO'
+      - OM
+      - PK
+      - PS
+      - PA
+      - PG
+      - PY
+      - PE
+      - PH
+      - PN
+      - PL
+      - PT
+      - PR
+      - QA
+      - RE
+      - RO
+      - RU
+      - RW
+      - WS
+      - SM
+      - ST
+      - SA
+      - SN
+      - RS
+      - SC
+      - SL
+      - SG
+      - SX
+      - SK
+      - SI
+      - SB
+      - SO
+      - ZA
+      - GS
+      - KR
+      - SS
+      - ES
+      - LK
+      - BL
+      - SH
+      - KN
+      - LC
+      - MF
+      - PM
+      - VC
+      - SR
+      - SJ
+      - SE
+      - CH
+      - TW
+      - TJ
+      - TZ
+      - TH
+      - TL
+      - TG
+      - TK
+      - TO
+      - TT
+      - TA
+      - TN
+      - TR
+      - TM
+      - TC
+      - TV
+      - UG
+      - UA
+      - AE
+      - GB
+      - US
+      - UY
+      - UZ
+      - VU
+      - VA
+      - VE
+      - VN
+      - WF
+      - EH
+      - YE
+      - ZM
+      - ZW
+      title: Country
+    CountryCurrency:
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+      type: object
+      required:
+      - currency
+      title: CountryCurrency
+    CreatePaymentMethod:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: CreatePaymentMethod
+    CreateStripeCustomer:
+      properties:
+        billing_details:
+          $ref: '#/components/schemas/BillingDetails'
+      type: object
+      required:
+      - billing_details
+      title: CreateStripeCustomer
+    CreateStripePaymentLink:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        price_ids:
+          items:
+            type: string
+          type: array
+          title: Price Ids
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+        allow_promotion_codes:
+          type: boolean
+          title: Allow Promotion Codes
+          default: false
+        currency:
+          $ref: '#/components/schemas/Currency'
+          default: usd
+      type: object
+      required:
+      - account_id
+      - account_type
+      - price_ids
+      - billing_formula_id
+      title: CreateStripePaymentLink
+    CreateStripeSubscription:
+      properties:
+        payment_method_id:
+          type: string
+          title: Payment Method Id
+        on_demand_budget:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        billing_interval:
+          anyOf:
+          - $ref: '#/components/schemas/IntervalType'
+          - type: 'null'
+          default: month
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+      type: object
+      required:
+      - payment_method_id
+      - account_type
+      title: CreateStripeSubscription
+    Currency:
+      type: string
+      enum:
+      - eur
+      - usd
+      title: Currency
+    EntitlementTerm-Input:
+      properties:
+        price:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Price
+        duration:
+          type: string
+          title: Duration
+        trial:
+          type: boolean
+          title: Trial
+          default: false
+      type: object
+      required:
+      - duration
+      title: EntitlementTerm
+    EntitlementTerm-Output:
+      properties:
+        price:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Price
+        duration:
+          type: string
+          title: Duration
+        trial:
+          type: boolean
+          title: Trial
+          default: false
+      type: object
+      required:
+      - duration
+      title: EntitlementTerm
+    FlatIdentifier:
+      properties:
+        type:
+          type: string
+          title: Type
+        service:
+          type: string
+          title: Service
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        version:
+          type: string
+          title: Version
+      type: object
+      required:
+      - type
+      - service
+      - version
+      title: FlatIdentifier
+    IntervalType:
+      type: string
+      enum:
+      - month
+      - year
+      title: IntervalType
+    InvoiceItems:
+      properties:
+        media:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        training:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        paragraphs_processed:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        predict:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        generative:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        searches:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        paragraphs:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        ai-tokens-used:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        nuclia-tokens:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        qa:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-qa:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-predict:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-processed-paragraphs:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-processed-documents:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+      type: object
+      title: InvoiceItems
+    InvoicesList:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/nuclia_accounting__api__models__InvoiceItem'
+          type: array
+          title: Items
+        pagination:
+          $ref: '#/components/schemas/InvoicesListPagination'
+      type: object
+      required:
+      - items
+      - pagination
+      title: InvoicesList
+    InvoicesListPagination:
+      properties:
+        starting_after:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Starting After
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - has_more
+      title: InvoicesListPagination
+    KbUsageDashboard:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        metrics:
+          items:
+            $ref: '#/components/schemas/Metric'
+          type: array
+          title: Metrics
+      type: object
+      required:
+      - timestamp
+      - metrics
+      title: KbUsageDashboard
+    LastNotifications:
+      properties:
+        notified_approaching_budget:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Notified Approaching Budget
+        notified_budget_exhausted:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Notified Budget Exhausted
+      type: object
+      title: LastNotifications
+    ManualAgreementRequest:
+      properties:
+        agreement:
+          $ref: '#/components/schemas/Agreement-Input'
+      type: object
+      required:
+      - agreement
+      title: ManualAgreementRequest
+      description: Request body for setting manual agreement data for CPPO customers.
+    ManualSubscriptionCreate:
+      properties:
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        billing_formula_id:
+          type: string
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000003
+        free_storage_nuclia_tokens:
+          type: integer
+          title: Free Storage Nuclia Tokens
+          default: 0
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      required:
+      - nuclia_tokens_price
+      title: ManualSubscriptionCreate
+    ManualSubscriptionUpdate:
+      properties:
+        billing_formula_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Billing Formula Id
+        nuclia_tokens_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Nuclia Tokens Price
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      title: ManualSubscriptionUpdate
+    MarketplaceSubscriptionState:
+      properties:
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        is_trial:
+          type: boolean
+          title: Is Trial
+        trial_expiration_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trial Expiration Date
+        active:
+          type: boolean
+          title: Active
+          default: true
+        blocking_state:
+          anyOf:
+          - $ref: '#/components/schemas/AccountBlockingState'
+          - type: 'null'
+      type: object
+      required:
+      - account_type
+      - is_trial
+      title: MarketplaceSubscriptionState
+    MarketplaceSubscriptionUpdateAction:
+      type: string
+      enum:
+      - change_account_type
+      - remove_trial
+      - unblock_account
+      - activate_subscription
+      - deactivate_subscription
+      - block_account_canceled
+      title: MarketplaceSubscriptionUpdateAction
+    MeteredTerm-Input:
+      properties:
+        price:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Price
+      type: object
+      required:
+      - price
+      title: MeteredTerm
+    MeteredTerm-Output:
+      properties:
+        price:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Price
+      type: object
+      required:
+      - price
+      title: MeteredTerm
+    Metric:
+      properties:
+        name:
+          $ref: '#/components/schemas/MetricNames'
+        value:
+          type: number
+          title: Value
+        details:
+          items:
+            $ref: '#/components/schemas/NucliaTokenDetails'
+          type: array
+          title: Details
+          default: []
+      type: object
+      required:
+      - name
+      - value
+      title: Metric
+    MetricNames:
+      type: string
+      enum:
+      - pre_processing_time
+      - slow_processing_time
+      - resources_processed
+      - bytes_processed
+      - chars_processed
+      - media_seconds_processed
+      - pages_processed
+      - paragraphs_processed
+      - searches_performed
+      - suggestions_performed
+      - predictions_performed
+      - docs_no_media
+      - ai_tokens_used
+      - nuclia_tokens
+      - nuclia_tokens_billed
+      title: MetricNames
+    ModelFactor:
+      properties:
+        input:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Input
+        output:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Output
+        image:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Image
+        external_requests:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: External Requests
+        model:
+          type: string
+          title: Model
+      type: object
+      required:
+      - model
+      title: ModelFactor
+    NucliaCustomerData:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000003
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        subscription_status:
+          anyOf:
+          - $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
+          - type: 'null'
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        billing_history:
+          additionalProperties: true
+          type: object
+          title: Billing History
+        last_notifications:
+          $ref: '#/components/schemas/LastNotifications'
+      type: object
+      required:
+      - account_id
+      - nuclia_tokens_price
+      title: NucliaCustomerData
+    NucliaCustomerTableSubscriptionStatus:
+      type: string
+      enum:
+      - active
+      - pending
+      - canceled
+      title: NucliaCustomerTableSubscriptionStatus
+    NucliaTokenDetails:
+      properties:
+        identifier:
+          $ref: '#/components/schemas/FlatIdentifier'
+        nuclia_tokens:
+          $ref: '#/components/schemas/Tokens'
+        nuclia_tokens_billed:
+          $ref: '#/components/schemas/Tokens'
+        raw_usage:
+          $ref: '#/components/schemas/Tokens'
+        requests:
+          $ref: '#/components/schemas/Requests'
+      type: object
+      required:
+      - identifier
+      - nuclia_tokens
+      - nuclia_tokens_billed
+      - raw_usage
+      - requests
+      title: NucliaTokenDetails
+    Offer:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        is_trial:
+          type: boolean
+          title: Is Trial
+          default: false
+        trial_duration:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trial Duration
+      type: object
+      required:
+      - id
+      - name
+      title: Offer
+    PaymentError:
+      properties:
+        code:
+          type: string
+          title: Code
+        decline_code:
+          type: string
+          title: Decline Code
+      type: object
+      required:
+      - code
+      - decline_code
+      title: PaymentError
+    PaymentMethod:
+      properties:
+        payment_method_id:
+          type: string
+          title: Payment Method Id
+        payment_method_type:
+          type: string
+          title: Payment Method Type
+      type: object
+      required:
+      - payment_method_id
+      - payment_method_type
+      title: PaymentMethod
+    RawFactor:
+      properties:
+        factor:
+          type: number
+          title: Factor
+        source:
+          type: string
+          title: Source
+      type: object
+      required:
+      - factor
+      - source
+      title: RawFactor
+    Requests:
+      properties:
+        api:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Api
+        web:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Web
+        widget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Widget
+        desktop:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Desktop
+        dashboard:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Dashboard
+        chrome_extension:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Chrome Extension
+        internal:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Internal
+      type: object
+      title: Requests
+    StripeCharge:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: charge
+          title: Object
+        customer:
+          type: string
+          title: Customer
+        status:
+          $ref: '#/components/schemas/StripeChargeStatus'
+        amount:
+          type: integer
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+        description:
+          type: string
+          title: Description
+        invoice:
+          type: string
+          title: Invoice
+        failure_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Failure Code
+        failure_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Failure Message
+        paid:
+          type: boolean
+          title: Paid
+        created:
+          type: integer
+          title: Created
+        outcome:
+          anyOf:
+          - $ref: '#/components/schemas/StripeChargeOutcome'
+          - type: 'null'
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          default: {}
+      type: object
+      required:
+      - id
+      - object
+      - customer
+      - status
+      - amount
+      - currency
+      - description
+      - invoice
+      - paid
+      - created
+      title: StripeCharge
+    StripeChargeOutcome:
+      properties:
+        network_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Network Status
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        risk_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Risk Level
+        risk_score:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Risk Score
+        rule:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rule
+        seller_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Seller Message
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+      type: object
+      title: StripeChargeOutcome
+    StripeChargeStatus:
+      type: string
+      enum:
+      - succeeded
+      - pending
+      - failed
+      title: StripeChargeStatus
+    StripeChargesList:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+        data:
+          items:
+            $ref: '#/components/schemas/StripeCharge'
+          type: array
+          title: Data
+      type: object
+      required:
+      - object
+      - data
+      title: StripeChargesList
+    StripeCheckoutSession:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: checkout.session
+          title: Object
+        customer:
+          type: string
+          title: Customer
+        payment_link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Payment Link
+        subscription:
+          type: string
+          title: Subscription
+        mode:
+          type: string
+          title: Mode
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - id
+      - object
+      - customer
+      - payment_link
+      - subscription
+      - mode
+      - status
+      title: StripeCheckoutSession
+    StripeEvent:
+      properties:
+        object:
+          type: string
+          title: Object
+        data:
+          $ref: '#/components/schemas/StripeObject'
+        type:
+          type: string
+          title: Type
+      type: object
+      required:
+      - object
+      - data
+      - type
+      title: StripeEvent
+    StripeObject:
+      properties:
+        object:
+          anyOf:
+          - $ref: '#/components/schemas/StripeSubscription'
+          - $ref: '#/components/schemas/StripePaymentIntent'
+          - $ref: '#/components/schemas/StripeCheckoutSession'
+          title: Object
+        previous_attributes:
+          additionalProperties: true
+          type: object
+          title: Previous Attributes
+          default: {}
+      type: object
+      required:
+      - object
+      title: StripeObject
+    StripePaymentIntent:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: payment_intent
+          title: Object
+        customer:
+          type: string
+          title: Customer
+        status:
+          $ref: '#/components/schemas/StripePaymentIntentStatus'
+        amount:
+          type: integer
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+        description:
+          type: string
+          title: Description
+        charges:
+          anyOf:
+          - $ref: '#/components/schemas/StripeChargesList'
+          - type: 'null'
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          default: {}
+      type: object
+      required:
+      - id
+      - object
+      - customer
+      - status
+      - amount
+      - currency
+      - description
+      title: StripePaymentIntent
+    StripePaymentIntentStatus:
+      type: string
+      enum:
+      - requires_payment_method
+      - requires_confirmation
+      - requires_action
+      - processing
+      - requires_capture
+      - canceled
+      - succeeded
+      title: StripePaymentIntentStatus
+    StripePaymentLinkInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - id
+      - url
+      title: StripePaymentLinkInfo
+    StripePriceInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        nickname:
+          type: string
+          title: Nickname
+        product:
+          type: string
+          title: Product
+      type: object
+      required:
+      - id
+      - nickname
+      - product
+      title: StripePriceInfo
+    StripePublicKey:
+      properties:
+        public_key:
+          type: string
+          title: Public Key
+      type: object
+      required:
+      - public_key
+      title: StripePublicKey
+    StripeSubscription:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: subscription
+          title: Object
+        billing_cycle_anchor:
+          type: integer
+          title: Billing Cycle Anchor
+        customer:
+          type: string
+          title: Customer
+        default_payment_method:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Payment Method
+        status:
+          $ref: '#/components/schemas/StripeSubscriptionStatus'
+        items:
+          $ref: '#/components/schemas/StripeSubscriptionItemsList'
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          default: {}
+      type: object
+      required:
+      - id
+      - object
+      - billing_cycle_anchor
+      - customer
+      - status
+      - items
+      title: StripeSubscription
+    StripeSubscriptionCancellationFeedback:
+      type: string
+      enum:
+      - too_expensive
+      - missing_features
+      - switched_service
+      - unused
+      - customer_service
+      - too_complex
+      - low_quality
+      - other
+      title: StripeSubscriptionCancellationFeedback
+    StripeSubscriptionItemsList:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - object
+      - data
+      title: StripeSubscriptionItemsList
+    StripeSubscriptionStatus:
+      type: string
+      enum:
+      - incomplete
+      - incomplete_expired
+      - trialing
+      - active
+      - past_due
+      - canceled
+      - unpaid
+      title: StripeSubscriptionStatus
+    StripeUsageType:
+      type: string
+      enum:
+      - metered
+      - licensed
+      title: StripeUsageType
+    SubscriptionProvider:
+      type: string
+      enum:
+      - NO_SUBSCRIPTION
+      - STRIPE
+      - AWS_MARKETPLACE
+      - MANUAL
+      - CLOUD_ZERO
+      title: SubscriptionProvider
+    SubscriptionStatus:
+      type: string
+      enum:
+      - no_subscription
+      - pending
+      - active
+      - payment_issues
+      - cancel_scheduled
+      - canceled
+      title: SubscriptionStatus
+    SubscriptionSyncExecutionResponse:
+      properties:
+        previous_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        current_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        actions:
+          items:
+            $ref: '#/components/schemas/MarketplaceSubscriptionUpdateAction'
+          type: array
+          title: Actions
+      type: object
+      required:
+      - previous_state
+      - current_state
+      - actions
+      title: SubscriptionSyncExecutionResponse
+    SubscriptionSyncStateResponse:
+      properties:
+        current_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        desired_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        actions:
+          items:
+            $ref: '#/components/schemas/MarketplaceSubscriptionUpdateAction'
+          type: array
+          title: Actions
+      type: object
+      required:
+      - current_state
+      - desired_state
+      - actions
+      title: SubscriptionSyncStateResponse
+    Tier:
+      properties:
+        recurring:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/TierRecurringBillingItem'
+            propertyNames:
+              $ref: '#/components/schemas/IntervalType'
+            type: object
+          - type: 'null'
+          title: Recurring
+        usage:
+          additionalProperties:
+            $ref: '#/components/schemas/TierUsageBillingItem'
+          propertyNames:
+            $ref: '#/components/schemas/AccountingTarget'
+          type: object
+          title: Usage
+      type: object
+      required:
+      - recurring
+      - usage
+      title: Tier
+    TierRecurringBillingItem:
+      properties:
+        price:
+          type: number
+          title: Price
+      type: object
+      required:
+      - price
+      title: TierRecurringBillingItem
+    TierUsageBillingItem:
+      properties:
+        threshold:
+          type: integer
+          title: Threshold
+        price:
+          type: number
+          title: Price
+      type: object
+      required:
+      - threshold
+      - price
+      title: TierUsageBillingItem
+    Tokens:
+      properties:
+        input:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Input
+        output:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Output
+        image:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Image
+        external_requests:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: External Requests
+        search:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Search
+        storage:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage
+      type: object
+      title: Tokens
+    UpdateAWSMarketplaceSubscription:
+      properties:
+        on_demand_budget:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+      type: object
+      title: UpdateAWSMarketplaceSubscription
+    UpdateStripeCustomer:
+      properties:
+        billing_details:
+          $ref: '#/components/schemas/BillingDetailsModified'
+      type: object
+      required:
+      - billing_details
+      title: UpdateStripeCustomer
+    UpdateStripeSubscription:
+      properties:
+        on_demand_budget:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+      type: object
+      title: UpdateStripeSubscription
+    UpdateStripeSubscriptionMeteredPrices:
+      properties:
+        price_nicknames:
+          items:
+            type: string
+          type: array
+          title: Price Nicknames
+      type: object
+      required:
+      - price_nicknames
+      title: UpdateStripeSubscriptionMeteredPrices
+    UpgradeStripeSubscription:
+      properties:
+        billing_interval:
+          anyOf:
+          - $ref: '#/components/schemas/IntervalType'
+          - type: 'null'
+          default: month
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+      type: object
+      required:
+      - account_type
+      title: UpgradeStripeSubscription
+    nuclia_accounting__api__models__InvoiceItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        period_start:
+          type: string
+          format: date-time
+          title: Period Start
+        period_end:
+          type: string
+          format: date-time
+          title: Period End
+        order_number:
+          type: string
+          title: Order Number
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        amount:
+          type: number
+          title: Amount
+        pdf:
+          type: string
+          title: Pdf
+      type: object
+      required:
+      - id
+      - period_start
+      - period_end
+      - order_number
+      - account_type
+      - amount
+      - pdf
+      title: InvoiceItem
+    nuclia_accounting__models__models__InvoiceItem:
+      properties:
+        threshold:
+          type: integer
+          title: Threshold
+        current_usage:
+          type: integer
+          title: Current Usage
+        price:
+          type: number
+          title: Price
+        over_usage:
+          type: integer
+          title: Over Usage
+        over_cost:
+          type: number
+          title: Over Cost
+      type: object
+      required:
+      - threshold
+      - current_usage
+      - price
+      - over_usage
+      - over_cost
+      title: InvoiceItem

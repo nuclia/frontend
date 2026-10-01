@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, NgZone, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { SDKService } from '@flaps/core';
@@ -86,7 +86,6 @@ export class RagAdviceModalComponent {
   private adviceService = inject(RagAdviceService);
   private sdk = inject(SDKService);
   private searchWidgetService = inject(SearchWidgetService);
-  private ngZone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly state = signal<ModalState>('input');
@@ -356,28 +355,26 @@ export class RagAdviceModalComponent {
       )
       .subscribe((match) => {
         const typed = match as RemiQueryResponseItem | null;
-        this.ngZone.run(() => {
-          this.iterations.update((arr) =>
-            arr.map((rec, idx) => {
-              if (idx !== iterationIndex) return rec;
-              if (!typed?.remi) {
-                return { ...rec, remiPending: false };
-              }
-              const avgContext =
-                typed.remi.context_relevance.length > 0
-                  ? typed.remi.context_relevance.reduce((a, b) => a + b, 0) / typed.remi.context_relevance.length
-                  : null;
-              const maxGroundedness = typed.remi.groundedness.length > 0 ? Math.max(...typed.remi.groundedness) : null;
-              return {
-                ...rec,
-                remiPending: false,
-                remiAnswerRelevance: typed.remi.answer_relevance?.score ?? null,
-                remiContentRelevance: avgContext,
-                remiGroundedness: maxGroundedness,
-              };
-            }),
-          );
-        });
+        this.iterations.update((arr) =>
+          arr.map((rec, idx) => {
+            if (idx !== iterationIndex) return rec;
+            if (!typed?.remi) {
+              return { ...rec, remiPending: false };
+            }
+            const avgContext =
+              typed.remi.context_relevance.length > 0
+                ? typed.remi.context_relevance.reduce((a, b) => a + b, 0) / typed.remi.context_relevance.length
+                : null;
+            const maxGroundedness = typed.remi.groundedness.length > 0 ? Math.max(...typed.remi.groundedness) : null;
+            return {
+              ...rec,
+              remiPending: false,
+              remiAnswerRelevance: typed.remi.answer_relevance?.score ?? null,
+              remiContentRelevance: avgContext,
+              remiGroundedness: maxGroundedness,
+            };
+          }),
+        );
       });
   }
 

@@ -48,7 +48,6 @@
           "browser": ""
         },
         "index": "apps/sistema-demo/src/index.html",
-        "polyfills": ["apps/sistema-demo/src/polyfills.ts"],
         "tsConfig": "apps/sistema-demo/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [

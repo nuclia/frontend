@@ -1,4 +1,4 @@
-import { importProvidersFrom } from '@angular/core';
+import { importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 
 import { registerLocaleData } from '@angular/common';
 import { HttpBackend } from '@angular/common/http';
@@ -48,5 +48,6 @@ bootstrapApplication(AppComponent, {
     ),
     TranslatePipe,
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideZonelessChangeDetection(),
   ],
 }).catch((err) => console.error(err));

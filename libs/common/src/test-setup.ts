@@ -1,6 +1,6 @@
-import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
+import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
 
-setupZoneTestEnv();
+setupZonelessTestEnv();
 
 // Standalone components now pull in real Pastanaga directives (textarea, tooltip, modal)
 // that use ResizeObserver, which jsdom doesn't implement.

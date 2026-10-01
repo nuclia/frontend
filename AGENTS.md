@@ -15,16 +15,16 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 
 ### Apps
 
-| Project              | Stack           | Purpose                                                                                                                                                           |
-| -------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth                                                                                                        |
-| `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                                                                                                                     |
-| `rao`                | Angular 21      | RAO white-label (agents only, no KB management)                                                                                                                   |
-| `admin`              | Angular 21      | Standalone account-management app (billing, members, API keys, `/at/:account/**`) — extracted out of `dashboard`; reused by `rao` and future white-label surfaces |
-| `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                                                                                                                     |
-| `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                                                                                                                          |
-| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                                                                                                                        |
-| `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                                                                                                                           |
+| Project              | Stack           | Purpose                                                                                                                  |
+| -------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `auth`               | Angular 22      | Dedicated auth app — login, signup, magic link, SSO, OAuth                                                               |
+| `dashboard`          | Angular 22      | Primary ARAG platform UI (KBs, agents, usage)                                                                            |
+| `rao`                | Angular 22      | RAO white-label (agents only, no KB management)                                                                          |
+| `admin`              | Angular 22      | Account-management app (billing, members, API keys, `/at/:account/**`) — reused by `rao` and future white-label surfaces |
+| `manager-v2`         | Angular 22      | Internal back-office (accounts, users, zones)                                                                            |
+| `nucliadb-admin`     | Angular 22      | NucliaDB admin (hash routing)                                                                                            |
+| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                                                                               |
+| `sistema-demo`       | Angular 22      | Interactive showcase for `libs/sistema`                                                                                  |
 
 ### Libraries
 
@@ -83,10 +83,21 @@ Test files are co-located alongside source as `*.spec.ts`.
 
 ### Angular components
 
-- **Change detection:** `OnPush` everywhere — enforced via `nx.json` generator defaults.
+- **Change detection:** zoneless (`provideZonelessChangeDetection()`) — no `zone.js` in any of
+  the 7 first-party apps (`auth`, `dashboard`, `rao`, `admin`, `manager-v2`, `nucliadb-admin`,
+  `sistema-demo`). `OnPush` is still required everywhere, but CD is now purely
+  signal/`markForCheck()`/`ApplicationRef.tick()`-driven — never assume a native event listener,
+  `setTimeout`, or unpatched async callback will trigger a re-render on its own.
 - **Selector prefixes:** declared in each lib's `project.json` (`nsi-`, `nus-`, `nsy-`, `stf-`, `nma-`).
 - **New components:** standalone by default; NgModules kept only for legacy compatibility.
 - **State files:** `*.state.ts` = Angular signal store. Older services use RxJS `BehaviorSubject`.
+- **Testing:** `nx test <app>` uses `jest-preset-angular/setup-env/zoneless` (`setupZonelessTestEnv`)
+  for all 7 apps and for `libs/core`, `libs/user`, `libs/sistema`, `libs/sync`, `libs/common`.
+  `waitForAsync()` and `fakeAsync()`/`tick()` **do not work** without `zone.js` — use
+  `async`/`await` for async `beforeEach`/`compileComponents()`, and `jest.useFakeTimers()` /
+  `jest.advanceTimersByTime()` for tests that need to control real timers.
+  `libs/pastanaga-angular` is the sole exception — it keeps `zone.js` and `setup-env/zone`
+  intentionally (slated for replacement, not worth migrating).
 
 ### Code comments
 

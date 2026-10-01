@@ -1,9 +1,9 @@
-@if (message) {
+@if (message()) {
   <nus-user-container>
     <div class="main-container with-gap">
       <div
         class="body-m"
-        [innerHTML]="message"></div>
+        [innerHTML]="message()"></div>
     </div>
   </nus-user-container>
 } @else {

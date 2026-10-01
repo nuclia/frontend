@@ -2,7 +2,7 @@
 
 ## Overview
 
-`nucliadb-admin` is an Angular 21 admin UI for **self-hosted NucliaDB** instances. Key characteristics:
+`nucliadb-admin` is an Angular 22 admin UI for **self-hosted NucliaDB** instances. Key characteristics:
 
 - Deployed at `/admin/` with **hash-based routing** (`useHash: true`).
 - OAuth post-redirect URL repair: `AppComponent` rewrites `/admin/admin/` → `/admin/#/admin/`.
@@ -21,12 +21,11 @@ apps/nucliadb-admin/src/
 ├── environments/           # standalone: true in both
 ├── environments_config/    # production/ only (Docker substitution)
 └── app/
-    ├── app.module.ts           # Root NgModule
     ├── app-routing.ts          # Hash routing with paramsInheritanceStrategy: 'always'
     ├── app.component.ts        # Root: i18n init, OAuth repair, toast block
     ├── app-title.strategy.ts   # "NucliaDB – <title>"
     └── home/
-        ├── home-page.component.ts  # Not standalone: NUA key validity + version status
+        ├── home-page.component.ts  # Standalone: NUA key validity + version status
         └── main-container/         # Standalone: thin router-outlet wrapper
 ```
 

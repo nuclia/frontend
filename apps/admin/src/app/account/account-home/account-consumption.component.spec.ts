@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
 import { IKnowledgeBoxItem, NUAClient, UsagePoint } from '@nuclia/core';
@@ -141,14 +141,13 @@ describe('AccountConsumptionComponent', () => {
   });
 
   describe('usage map (via ngOnInit)', () => {
-    it('fetches usage incrementally per kb/nua-key/account without refetching already-seen items', fakeAsync(() => {
+    it('fetches usage incrementally per kb/nua-key/account without refetching already-seen items', () => {
       zonesForAccount['acc-1'] = [mockZone('zone-a')];
       const kbs$ = new Subject<IKnowledgeBoxItem[]>();
       getKnowledgeBoxesForZone.mockReturnValue(kbs$);
       getNUAClientsForZone.mockReturnValue(of([] as NUAClient[]));
 
       component.ngOnInit();
-      tick();
 
       // Account-level usage is fetched immediately, kb usage waits for the kb list.
       expect(getUsage).toHaveBeenCalledWith(
@@ -170,7 +169,6 @@ describe('AccountConsumptionComponent', () => {
       );
 
       kbs$.next([mockKb('kb-a')]);
-      tick();
 
       expect(getUsage).toHaveBeenCalledWith(
         'acc-1',
@@ -186,7 +184,6 @@ describe('AccountConsumptionComponent', () => {
 
       // A second zone resolves adding a new kb; only the *new* kb should trigger a usage fetch.
       kbs$.next([mockKb('kb-a'), mockKb('kb-b')]);
-      tick();
 
       expect(getUsage).toHaveBeenCalledWith(
         'acc-1',
@@ -197,19 +194,17 @@ describe('AccountConsumptionComponent', () => {
         undefined,
       );
       expect(getUsage.mock.calls.length).toBe(callCountAfterFirstKb + 1);
-    }));
+    });
 
-    it('fetches usage for new nua keys as they resolve', fakeAsync(() => {
+    it('fetches usage for new nua keys as they resolve', () => {
       zonesForAccount['acc-1'] = [mockZone('zone-a')];
       getKnowledgeBoxesForZone.mockReturnValue(of([] as IKnowledgeBoxItem[]));
       const nuaKeys$ = new Subject<NUAClient[]>();
       getNUAClientsForZone.mockReturnValue(nuaKeys$);
 
       component.ngOnInit();
-      tick();
 
       nuaKeys$.next([mockNuaKey('nua-a')]);
-      tick();
 
       expect(getUsage).toHaveBeenCalledWith(
         'acc-1',
@@ -220,6 +215,6 @@ describe('AccountConsumptionComponent', () => {
         'nua-a',
       );
       expect(component.usage?.['nua-a']).toBeDefined();
-    }));
+    });
   });
 });

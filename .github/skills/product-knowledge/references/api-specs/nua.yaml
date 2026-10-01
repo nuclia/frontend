@@ -4167,6 +4167,14 @@ paths:
           type: boolean
           default: false
           title: X-Show-Consumption
+      - name: x-nua-max-output-tokens
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Nua-Max-Output-Tokens
       requestBody:
         required: true
         content:
@@ -4260,6 +4268,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ModelInfo'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /predict/guardrail:
+    post:
+      tags:
+      - Predict
+      summary: Guardrail
+      description: Evaluate content against a NuaGuard policy
+      operationId: guardrail_api_v1_predict_guardrail_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuardrailRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuardrailResponse'
         '422':
           description: Validation Error
           content:
@@ -5819,777 +5853,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  processing:
-    commit: 9f2da09
-    last_updated: '2026-08-20T08:37:04.512498'
   workers:
-    commit: 9f2da09
-    last_updated: '2026-08-20T08:50:33.127654'
+    commit: e4bf43f
+    last_updated: '2026-09-21T08:44:51.268654'
   collector:
     commit: d8651a6
     last_updated: '2024-11-06T11:20:18.210121'
-  predict:
-    commit: a3812d2
-    last_updated: '2026-08-28T13:55:49.949041'
   learning:
-    commit: a3812d2
-    last_updated: '2026-08-28T13:48:56.405851'
+    commit: 3ccf0b7
+    last_updated: '2026-09-21T12:58:37.322883'
+  predict:
+    commit: 41972dd
+    last_updated: '2026-09-18T08:56:29.429361'
   arag:
     commit: 4c5c9af
     last_updated: '2026-07-27T15:07:07.343019'
+  processing:
+    commit: 3ccf0b7
+    last_updated: '2026-09-21T13:03:36.524725'
 components:
   schemas:
-    AITablesConfig:
-      properties:
-        generative_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Model
-        generative_provider:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Provider
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-          default: []
-        merge_pages:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Merge Pages
-        max_pages_to_merge:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Pages To Merge
-      type: object
-      title: AITablesConfig
-    ClassificationLabel:
-      properties:
-        label:
-          type: string
-          title: Label
-        labelset:
-          type: string
-          title: Labelset
-      type: object
-      required:
-      - label
-      - labelset
-      title: ClassificationLabel
-    CustomSplitStrategy:
-      type: integer
-      enum:
-      - 0
-      - 1
-      - 2
-      title: CustomSplitStrategy
-      description: Keeping this open to add more strategies
-    ExtractConfig:
-      properties:
-        name:
-          type: string
-          title: Name
-        vllm_config:
-          anyOf:
-          - $ref: '#/components/schemas/VLLMExtractionConfig'
-          - type: 'null'
-        ai_tables:
-          anyOf:
-          - $ref: '#/components/schemas/AITablesConfig'
-          - type: 'null'
-      type: object
-      required:
-      - name
-      title: ExtractConfig
-    Format:
-      type: integer
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-      title: Format
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    LLMSplitConfig:
-      properties:
-        generative_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Model
-        generative_provider:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Provider
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-          default: []
-      type: object
-      title: LLMSplitConfig
-    LayoutFormat:
-      type: integer
-      enum:
-      - 0
-      title: LayoutFormat
-    LearningConfig:
-      properties:
-        semantic_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Semantic Models
-        generative_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Model
-        ner_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ner Model
-        anonymization_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Anonymization Model
-        visual_labeling:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Visual Labeling
-        split_configs:
-          anyOf:
-          - additionalProperties:
-              $ref: '#/components/schemas/SplitConfiguration'
-            type: object
-          - type: 'null'
-          title: Split Configs
-        extract_configs:
-          anyOf:
-          - additionalProperties:
-              $ref: '#/components/schemas/ExtractConfig'
-            type: object
-          - type: 'null'
-          title: Extract Configs
-      type: object
-      title: LearningConfig
-    LinkUpload:
-      properties:
-        link:
-          type: string
-          title: Link
-        headers:
-          additionalProperties:
-            type: string
-          type: object
-          title: Headers
-        cookies:
-          additionalProperties:
-            type: string
-          type: object
-          title: Cookies
-        localstorage:
-          additionalProperties:
-            type: string
-          type: object
-          title: Localstorage
-        css_selector:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Css Selector
-        xpath:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Xpath
-        extract_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Extract Strategy
-        split_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Split Strategy
-        classification_labels:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ClassificationLabel'
-            type: array
-          - type: 'null'
-          title: Classification Labels
-      type: object
-      required:
-      - link
-      - headers
-      - cookies
-      - localstorage
-      title: LinkUpload
-    ManualSplitConfig:
-      properties:
-        splitter:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Splitter
-          default: ''
-      type: object
-      title: ManualSplitConfig
-    ProcessRequestStatus:
-      properties:
-        processing_id:
-          type: string
-          title: Processing Id
-        resource_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resource Id
-        kbid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Kbid
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        labels:
-          items:
-            type: string
-          type: array
-          title: Labels
-        completed:
-          type: boolean
-          title: Completed
-        scheduled:
-          type: boolean
-          title: Scheduled
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        completed_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Completed At
-        scheduled_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Scheduled At
-        failed:
-          type: boolean
-          title: Failed
-          default: false
-        retries:
-          type: integer
-          title: Retries
-          default: 0
-        schedule_eta:
-          type: number
-          title: Schedule Eta
-          default: 0.0
-        schedule_order:
-          type: integer
-          title: Schedule Order
-          default: 0
-        request:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Request
-        response:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Response
-      type: object
-      required:
-      - processing_id
-      - resource_id
-      - kbid
-      - title
-      - labels
-      - completed
-      - scheduled
-      - timestamp
-      - completed_at
-      - scheduled_at
-      title: ProcessRequestStatus
-    ProcessRequestStatusResults:
-      properties:
-        results:
-          items:
-            $ref: '#/components/schemas/ProcessRequestStatus'
-          type: array
-          title: Results
-        cursor:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cursor
-      type: object
-      required:
-      - results
-      - cursor
-      title: ProcessRequestStatusResults
-    ProcessingBlock:
-      properties:
-        x:
-          type: integer
-          title: X
-        y:
-          type: integer
-          title: Y
-        cols:
-          type: integer
-          title: Cols
-        rows:
-          type: integer
-          title: Rows
-        type:
-          $ref: '#/components/schemas/TypeBlock'
-        ident:
-          type: string
-          title: Ident
-        payload:
-          type: string
-          title: Payload
-      type: object
-      required:
-      - x
-      - y
-      - cols
-      - rows
-      - type
-      - ident
-      - payload
-      title: ProcessingBlock
-    ProcessingConversation:
-      properties:
-        messages:
-          items:
-            $ref: '#/components/schemas/ProcessingMessage'
-          type: array
-          title: Messages
-        extract_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Extract Strategy
-        split_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Split Strategy
-        classification_labels:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ClassificationLabel'
-            type: array
-          - type: 'null'
-          title: Classification Labels
-      type: object
-      required:
-      - messages
-      title: ProcessingConversation
-    ProcessingGeneratedConversation:
-      properties:
-        source_field_id:
-          type: string
-          title: Source Field Id
-        conversationfield:
-          $ref: '#/components/schemas/ProcessingConversation'
-      type: object
-      required:
-      - source_field_id
-      - conversationfield
-      title: ProcessingGeneratedConversation
-    ProcessingLayoutDiff:
-      properties:
-        format:
-          $ref: '#/components/schemas/LayoutFormat'
-        blocks:
-          additionalProperties:
-            $ref: '#/components/schemas/ProcessingBlock'
-          type: object
-          title: Blocks
-      type: object
-      required:
-      - format
-      - blocks
-      title: ProcessingLayoutDiff
-    ProcessingMessage:
-      properties:
-        timestamp:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Timestamp
-        who:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Who
-        to:
-          items:
-            type: string
-          type: array
-          title: To
-          default: []
-        content:
-          $ref: '#/components/schemas/ProcessingMessageContent'
-        ident:
-          type: string
-          title: Ident
-      type: object
-      required:
-      - content
-      - ident
-      title: ProcessingMessage
-    ProcessingMessageContent:
-      properties:
-        text:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Text
-        format:
-          $ref: '#/components/schemas/Format'
-      type: object
-      required:
-      - format
-      title: ProcessingMessageContent
-    ProcessingQueueType:
-      type: string
-      enum:
-      - shared
-      - private
-      title: ProcessingQueueType
-    PushPayload:
-      properties:
-        kbid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Kbid
-        uuid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Uuid
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-        labels:
-          items:
-            type: string
-          type: array
-          title: Labels
-          default: []
-        slug:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Slug
-        source:
-          anyOf:
-          - $ref: '#/components/schemas/Source'
-          - type: 'null'
-        userid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Userid
-        genericfield:
-          additionalProperties:
-            $ref: '#/components/schemas/Text'
-          type: object
-          title: Genericfield
-          default: {}
-        filefield:
-          additionalProperties:
-            type: string
-          type: object
-          title: Filefield
-          default: {}
-        linkfield:
-          additionalProperties:
-            $ref: '#/components/schemas/LinkUpload'
-          type: object
-          title: Linkfield
-          default: {}
-        textfield:
-          additionalProperties:
-            $ref: '#/components/schemas/Text'
-          type: object
-          title: Textfield
-          default: {}
-        layoutfield:
-          additionalProperties:
-            $ref: '#/components/schemas/ProcessingLayoutDiff'
-          type: object
-          title: Layoutfield
-          default: {}
-        conversationfield:
-          additionalProperties:
-            $ref: '#/components/schemas/ProcessingConversation'
-          type: object
-          title: Conversationfield
-          default: {}
-        generated_conversationfield:
-          additionalProperties:
-            $ref: '#/components/schemas/ProcessingGeneratedConversation'
-          type: object
-          title: Generated Conversationfield
-          default: {}
-        processing_options:
-          anyOf:
-          - $ref: '#/components/schemas/PushProcessingOptions'
-          - type: 'null'
-        learning_config:
-          anyOf:
-          - $ref: '#/components/schemas/LearningConfig'
-          - type: 'null'
-        webhook_config:
-          anyOf:
-          - $ref: '#/components/schemas/WebhookConfig'
-          - type: 'null'
-      type: object
-      title: PushPayload
-    PushProcessingOptions:
-      properties:
-        ml_text:
-          type: boolean
-          title: Ml Text
-          default: true
-        extract_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Extract Strategy
-        split_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Split Strategy
-      type: object
-      title: PushProcessingOptions
-    PushResponse:
-      properties:
-        seqid:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Seqid
-        account_seq:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Account Seq
-        queue:
-          anyOf:
-          - $ref: '#/components/schemas/ProcessingQueueType'
-          - type: 'null'
-        uuid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Uuid
-        processing_id:
-          type: string
-          title: Processing Id
-      type: object
-      required:
-      - processing_id
-      title: PushResponse
-    SortFields:
-      type: string
-      enum:
-      - timestamp
-      - scheduled_at
-      - completed_at
-      title: SortFields
-    SortOrder:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: SortOrder
-    Source:
-      type: string
-      enum:
-      - WEB
-      - DESKTOP
-      - API
-      - PYSDK
-      title: Source
-    SplitConfiguration:
-      properties:
-        name:
-          type: string
-          title: Name
-        max_paragraph:
-          type: integer
-          title: Max Paragraph
-          default: 0
-        custom_split:
-          $ref: '#/components/schemas/CustomSplitStrategy'
-          default: NONE
-        llm_split:
-          anyOf:
-          - $ref: '#/components/schemas/LLMSplitConfig'
-          - type: 'null'
-        manual_split:
-          anyOf:
-          - $ref: '#/components/schemas/ManualSplitConfig'
-          - type: 'null'
-      type: object
-      required:
-      - name
-      title: SplitConfiguration
-    StreamDataTypes:
-      type: string
-      enum:
-      - FullText
-      - Chunk
-      - Metadata
-      - FilePreview
-      - FileThumbnail
-      - GeneratedFile
-      - Links
-      title: StreamDataTypes
-    Text:
-      properties:
-        body:
-          type: string
-          title: Body
-        format:
-          $ref: '#/components/schemas/Format'
-        extract_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Extract Strategy
-        split_strategy:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Split Strategy
-        classification_labels:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ClassificationLabel'
-            type: array
-          - type: 'null'
-          title: Classification Labels
-      type: object
-      required:
-      - body
-      - format
-      title: Text
-    TypeBlock:
-      type: integer
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      title: TypeBlock
-    VLLMExtractionConfig:
-      properties:
-        generative_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Model
-        generative_provider:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Generative Provider
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-          default: []
-      type: object
-      title: VLLMExtractionConfig
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    WebhookConfig:
-      properties:
-        uri:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Uri
-        headers:
-          additionalProperties:
-            type: string
-          type: object
-          title: Headers
-          default: {}
-      type: object
-      title: WebhookConfig
     AnthropicBedrockKey:
       properties:
         access_key:
@@ -6641,13 +5924,11 @@ components:
           title: JSON Credentials
           description: Service Account Key credentials in JSON format for Vertex AI
             access
-          widget: textarea
         location:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Vertex AI Location
           description: GCP region where the model will be accessed from. E.g. us-central1
+          default: ''
       type: object
       required:
       - credentials
@@ -6837,20 +6118,21 @@ components:
         key:
           type: string
           title: Key
-          default: ''
         url:
           type: string
           title: Url
-          default: ''
         deployment:
           type: string
           title: Deployment
-          default: ''
         model:
           type: string
           title: Model
-          default: ''
       type: object
+      required:
+      - key
+      - url
+      - deployment
+      - model
       title: AzureOpenAIKey
     AzureUserPrompt:
       properties:
@@ -7110,21 +6392,16 @@ components:
       - prompt
       title: DeepSeekUserPrompt
     Effort:
-      type: integer
+      type: string
       enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
+      - none
+      - minimal
+      - low
+      - medium
+      - high
+      - xhigh
+      - max
       title: Effort
-      description: "    Discrete reasoning effort levels. Used both as the request-side\
-        \ reasoning\nparameter (`LLMReasoningConfig.effort`) and as the model capability\
-        \ descriptor\n(`ReasoningFeatures.available_efforts`/`default_effort`). `EFFORT_MINIMAL`\
-        \ (0)\ndoubles as the default when no effort is specified. `EFFORT_NONE` represents\n\
-        no reasoning.\n   "
     EntityDefinition:
       properties:
         label:
@@ -7334,46 +6611,66 @@ components:
       properties:
         url:
           type: string
-          title: Url
-          default: ''
+          title: Huggingface Endpoint URL
+          description: URL of the Huggingface embedding model endpoint
         key:
           type: string
-          title: Key
+          title: Huggingface API Key
+          description: API Key with access the desired Huggingface endpoint
           default: ''
         matryoshka:
-          items:
-            type: integer
-          type: array
-          title: Matryoshka
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Matryoshka Dimensions
+          description: List of matryoshka dimensions to use for the embedding, in
+            descending order. If unknown, leave it empty
+          examples:
+          - - 768
+            - 512
+            - 256
         similarity:
           type: string
-          title: Similarity
-          default: ''
+          title: Similarity Function
+          description: Similarity function to use. It can be DOT or COSINE, leave
+            it as DOT if unknown
+          default: DOT
+          examples:
+          - DOT
+          - COSINE
         size:
           type: integer
-          title: Size
-          default: 0
+          title: Embedding Vector Size
+          description: Size of the embeddings generated by the model. Must be set
+            to the correct value for the specific model hosted in the endpoint
         threshold:
           type: number
-          title: Threshold
-          default: 0.0
+          title: Semantic Threshold
+          description: Threshold to use for semantic similarity
+          default: 0.4
         passage_prompt:
           type: string
           title: Passage Prompt
-          default: ''
+          description: Prompt to use for passage embedding, only set this value if
+            your embedding model requires it
+          default: '{}'
+          examples:
+          - 'Passage: {}'
         query_prompt:
           type: string
           title: Query Prompt
-          default: ''
+          description: Prompt to use for query embedding, only set this value if your
+            embedding model requires it
+          default: '{}'
+          examples:
+          - 'Represent this sentence for searching relevant passages: {}'
       type: object
+      required:
+      - url
+      - size
       title: HFEmbeddingKey
-      description: "     Some models require a specific template (including prefix)\
-        \ to work correctly in each task\nFor example Snowflake's Arctic-embed requires\
-        \ a specific prefix to work correctly.\nIn that case, the query prompt will\
-        \ be\n```\npassage_prompt: \"\"\nquery_prompt: \"Represent this sentence for\
-        \ searching relevant passages: {}\"\n````\nwhere {} will be replaced by the\
-        \ actual sentence.\n`passage_prompt` is empty because the model does not require\
-        \ alterations to the sentence to embed is as a passage.\n    "
     HFLLMKey:
       properties:
         url:
@@ -7387,6 +6684,15 @@ components:
       - url
       - key
       title: HFLLMKey
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     JobStatus:
       type: string
       enum:
@@ -7511,6 +6817,15 @@ components:
             $ref: '#/components/schemas/Trigger'
           type: array
           title: Triggers to execute when the operation is executed
+        paragraph_filter_expression_json:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Paragraph Filter Expression Json
+          description: JSON representation of a ParagraphFilterExpression. When set
+            and the agent runs on text blocks, only paragraphs matching the expression
+            are labelled
+          default: ''
       type: object
       required:
       - ident
@@ -8044,27 +7359,23 @@ components:
     PalmKey:
       properties:
         credentials:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: JSON Credentials
           description: If using Vertex AI, this should contain the Service Account
             Key credentials
-          widget: textarea
+          default: ''
         location:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Vertex AI Location
           description: If using Vertex AI, this is the GCP region where the model
             will be accessed from. E.g. us-central1
+          default: ''
         gemini_key:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Gemini API Key
           description: If using Gemini API, only an API key for the Gemini Developer
             API is required
+          default: ''
       type: object
       title: PalmKey
     PalmUserPrompt:
@@ -8391,7 +7702,7 @@ components:
             valid semantic model id available for the account
         hf_embedding_key:
           anyOf:
-          - $ref: '#/components/schemas/workers_api__models__HFEmbeddingKey'
+          - $ref: '#/components/schemas/HFEmbeddingKey'
           - type: 'null'
           description: The HuggingFace embedding key to use. This is only required
             if the semantic model is `hf_embedding`
@@ -8905,7 +8216,7 @@ components:
           - type: 'null'
         hf_embedding:
           anyOf:
-          - $ref: '#/components/schemas/HFEmbeddingKey'
+          - $ref: '#/components/schemas/learning_protos__config_p2p__HFEmbeddingKey'
           - type: 'null'
         azure_aii:
           anyOf:
@@ -8965,7 +8276,7 @@ components:
           - type: 'null'
         hf_embedding:
           anyOf:
-          - $ref: '#/components/schemas/HFEmbeddingKey'
+          - $ref: '#/components/schemas/learning_protos__config_p2p__HFEmbeddingKey'
           - type: 'null'
         azure_aii:
           anyOf:
@@ -9045,45 +8356,2222 @@ components:
           - type: 'null'
       type: object
       title: UserPrompts
-    workers_api__models__HFEmbeddingKey:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    learning_protos__config_p2p__HFEmbeddingKey:
       properties:
         url:
           type: string
           title: Url
+          default: ''
         key:
           type: string
           title: Key
+          default: ''
         matryoshka:
           items:
             type: integer
           type: array
           title: Matryoshka
-          default: []
         similarity:
           type: string
           title: Similarity
+          default: ''
+        size:
+          type: integer
+          title: Size
+          default: 0
+        threshold:
+          type: number
+          title: Threshold
+          default: 0.0
+        passage_prompt:
+          type: string
+          title: Passage Prompt
+          default: ''
+        query_prompt:
+          type: string
+          title: Query Prompt
+          default: ''
+      type: object
+      title: HFEmbeddingKey
+      description: "     Some models require a specific template (including prefix)\
+        \ to work correctly in each task\nFor example Snowflake's Arctic-embed requires\
+        \ a specific prefix to work correctly.\nIn that case, the query prompt will\
+        \ be\n```\npassage_prompt: \"\"\nquery_prompt: \"Represent this sentence for\
+        \ searching relevant passages: {}\"\n````\nwhere {} will be replaced by the\
+        \ actual sentence.\n`passage_prompt` is empty because the model does not require\
+        \ alterations to the sentence to embed is as a passage.\n    "
+    AITables-Input:
+      properties:
+        llm:
+          anyOf:
+          - $ref: '#/components/schemas/LLMConfig-Input'
+          - type: 'null'
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+        merge_pages:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Merge Pages
+          default: false
+        max_pages_to_merge:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Pages To Merge
+          default: 0
+      type: object
+      title: AITables
+    AITables-Output:
+      properties:
+        llm:
+          anyOf:
+          - $ref: '#/components/schemas/LLMConfig-Output'
+          - type: 'null'
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+        merge_pages:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Merge Pages
+          default: false
+        max_pages_to_merge:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Pages To Merge
+          default: 0
+      type: object
+      title: AITables
+    AnonymizationModel:
+      type: string
+      enum:
+      - disabled
+      - multilingual
+      title: AnonymizationModel
+    AssumeRoleType:
+      type: integer
+      enum:
+      - 0
+      - 1
+      title: AssumeRoleType
+    BaseConfig:
+      properties: {}
+      type: object
+      title: BaseConfig
+    BedrockAssumeRoleFinishRequest:
+      properties:
+        role_arn:
+          type: string
+          title: Role Arn
+          description: ARN of the role created in AWS IAM
+      type: object
+      required:
+      - role_arn
+      title: BedrockAssumeRoleFinishRequest
+    BedrockAssumeRoleStartResponse:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+          description: External ID for assuming role
+        aws_account_id:
+          type: string
+          title: Aws Account Id
+          description: AWS Account ID to assume role into
+        role_name:
+          type: string
+          title: Role Name
+          description: Name of the role to be created in AWS IAM
+      type: object
+      required:
+      - external_id
+      - aws_account_id
+      - role_name
+      title: BedrockAssumeRoleStartResponse
+    ConfigSchema:
+      properties:
+        semantic_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+          deprecated: true
+        semantic_models:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        default_semantic_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        anonymization_model:
+          $ref: '#/components/schemas/ConfigSchemaOptions'
+        visual_labeling:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        generative_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        ner_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        relation_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        summary_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        summary:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaElements'
+          - type: 'null'
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaElements'
+          - type: 'null'
+        summary_prompt:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaElements'
+          - type: 'null'
+        prefer_markdown_generative_response:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaElements'
+          - type: 'null'
+        semantic_graph_node_models:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        default_semantic_graph_node_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        semantic_graph_edge_models:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+        default_semantic_graph_edge_model:
+          anyOf:
+          - $ref: '#/components/schemas/ConfigSchemaOptions'
+          - type: 'null'
+      type: object
+      required:
+      - anonymization_model
+      title: ConfigSchema
+    ConfigSchemaElements:
+      properties:
+        schemas:
+          additionalProperties: true
+          type: object
+          title: Schemas
+        create:
+          type: boolean
+          title: Create
+          default: false
+        update:
+          type: boolean
+          title: Update
+          default: false
+      type: object
+      required:
+      - schemas
+      title: ConfigSchemaElements
+    ConfigSchemaOptions:
+      properties:
+        options:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/GenerativeOption'
+            type: array
+          - items:
+              $ref: '#/components/schemas/Option'
+            type: array
+          title: Options
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default
+        create:
+          type: boolean
+          title: Create
+          default: false
+        update:
+          type: boolean
+          title: Update
+          default: false
+        multiple:
+          type: boolean
+          title: Multiple
+          default: false
+      type: object
+      required:
+      - options
+      title: ConfigSchemaOptions
+    CreateAccountCustomModel:
+      properties:
+        model_types:
+          items:
+            $ref: '#/components/schemas/StringModelTypes'
+          type: array
+          minItems: 1
+          title: Model Types
+        location:
+          type: string
+          title: Location
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        trained_date:
+          type: string
+          format: date-time
+          title: Trained Date
+          default: '2026-09-21T12:58:36.281725'
+        trained_kbid:
+          type: string
+          title: Trained Kbid
+          default: ''
+        openai_compat:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAICompatModel-Input'
+          - type: 'null'
+      type: object
+      required:
+      - model_types
+      - location
+      title: CreateAccountCustomModel
+    CreateDefaultModelConfig:
+      properties:
+        default_model_id:
+          type: string
+          title: Default Model Id
+          description: 'Identifier of the public model to add to the account. e.g:
+            ''chatgpt-azure-4-turbo'' or ''claude-3'''
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description for the model config
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/UserLearningKeys'
+          - type: 'null'
+          description: Custom user keys for the model. If not set, Nuclia keys will
+            be used.
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/UserPrompts'
+          - type: 'null'
+          description: Custom user prompts for the model. If not set, Nuclia prompts
+            will be used.
+        assume_role:
+          anyOf:
+          - $ref: '#/components/schemas/AssumeRoleType'
+          - type: 'null'
+          description: Assume role type for models that require it (e.g., AWS Bedrock)
+        kbids:
+          items:
+            type: string
+          type: array
+          maxItems: 5000
+          title: Kbids
+          description: List of KB IDs where this default model config is allowed.
+            Empty list means it is allowed in all KBs (default).
+        nua_client_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 5000
+          title: Nua Client Ids
+          description: List of NUA client IDs allowed to use this default model config.
+            Empty list means it is allowed for all NUA clients (default).
+      type: object
+      required:
+      - default_model_id
+      title: CreateDefaultModelConfig
+    CustomAccountModel:
+      properties:
+        model_id:
+          type: string
+          title: Model Id
+        account:
+          type: string
+          title: Account
+        model_type:
+          anyOf:
+          - $ref: '#/components/schemas/StringModelTypes'
+          - type: 'null'
+        trained_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trained Date
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        trained_kbid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trained Kbid
+        model_types:
+          items:
+            $ref: '#/components/schemas/StringModelTypes'
+          type: array
+          title: Model Types
+          default: []
+        log:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Log
+        kbids:
+          items:
+            type: string
+          type: array
+          title: Kbids
+        openai_compat:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAICompatModel-Output'
+          - type: 'null'
+      type: object
+      required:
+      - model_id
+      - account
+      - model_type
+      - trained_date
+      - location
+      - trained_kbid
+      - log
+      - kbids
+      title: CustomAccountModel
+      description: This is the pydantic model for the model details in the account.
+    CustomAccountModelListItem:
+      properties:
+        model_id:
+          type: string
+          title: Model Id
+        account:
+          type: string
+          title: Account
+        model_type:
+          anyOf:
+          - $ref: '#/components/schemas/StringModelTypes'
+          - type: 'null'
+        trained_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trained Date
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        trained_kbid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trained Kbid
+        model_types:
+          items:
+            $ref: '#/components/schemas/StringModelTypes'
+          type: array
+          title: Model Types
+          default: []
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+      type: object
+      required:
+      - model_id
+      - account
+      - model_type
+      - trained_date
+      - location
+      - trained_kbid
+      - title
+      title: CustomAccountModelListItem
+      description: This is the pydantic model for the listing of models in the account.
+    CustomSplitStrategy:
+      type: string
+      enum:
+      - NONE
+      - MANUAL
+      - LLM
+      title: CustomSplitStrategy
+    DataResidencyStatus:
+      type: string
+      enum:
+      - unknown
+      - guaranteed
+      - not_guaranteed
+      title: DataResidencyStatus
+    DefaultModelConfig:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: 'Unique identifier of the default model configuration (UUID
+            format). e.g: ''3fa85f64-5717-4562-b3fc-2c963f66afa6'''
+        default_model_id:
+          type: string
+          title: Default Model Id
+          description: 'Identifier of the default model to add to the account. e.g:
+            ''chatgpt-azure-4-turbo'' or ''claude-3'''
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description for the model config
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/UserLearningKeys'
+          - type: 'null'
+          description: Custom user keys for the model. If not set, Nuclia keys will
+            be used.
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/UserPrompts'
+          - type: 'null'
+          description: Custom user prompts for the model. If not set, Nuclia prompts
+            will be used.
+        assume_role:
+          anyOf:
+          - $ref: '#/components/schemas/AssumeRoleType'
+          - type: 'null'
+          description: Assume role type for models that require it (e.g., AWS Bedrock)
+        kbids:
+          items:
+            type: string
+          type: array
+          title: Kbids
+          description: List of KB IDs where this default model config is allowed.
+            Empty list means it is allowed in all KBs.
+        nua_client_ids:
+          items:
+            type: string
+          type: array
+          title: Nua Client Ids
+          description: List of NUA client IDs allowed to use this default model config.
+            Empty list means it is allowed for all NUA clients.
+      type: object
+      required:
+      - id
+      - default_model_id
+      title: DefaultModelConfig
+    DefaultModelConfigListItem:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: 'Unique identifier of the default model configuration (UUID
+            format). e.g: ''3fa85f64-5717-4562-b3fc-2c963f66afa6'''
+        default_model_id:
+          type: string
+          title: Default Model Id
+          description: 'Identifier of the default model to add to the account. e.g:
+            ''chatgpt-azure-4-turbo'' or ''claude-3'''
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description for the model config
+        assume_role:
+          anyOf:
+          - $ref: '#/components/schemas/AssumeRoleType'
+          - type: 'null'
+          description: Assume role type for models that require it (e.g., AWS Bedrock)
+        kbids:
+          items:
+            type: string
+          type: array
+          title: Kbids
+          description: List of KB IDs where this default model config is allowed.
+            Empty list means it is allowed in all KBs.
+        nua_client_ids:
+          items:
+            type: string
+          type: array
+          title: Nua Client Ids
+          description: List of NUA client IDs allowed to use this default model config.
+            Empty list means it is allowed for all NUA clients.
+      type: object
+      required:
+      - id
+      - default_model_id
+      title: DefaultModelConfigListItem
+    EdgeEmbeddingModel:
+      type: string
+      enum:
+      - multilingual-graph-v1
+      title: EdgeEmbeddingModel
+    Effort-Input:
+      type: integer
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      title: Effort
+      description: "    Discrete reasoning effort levels. Used both as the request-side\
+        \ reasoning\nparameter (`LLMReasoningConfig.effort`) and as the model capability\
+        \ descriptor\n(`ReasoningFeatures.available_efforts`/`default_effort`). `EFFORT_MINIMAL`\
+        \ (0)\ndoubles as the default when no effort is specified. `EFFORT_NONE` represents\n\
+        no reasoning.\n   "
+    ExtractConfig-Input:
+      properties:
+        name:
+          type: string
+          title: Name
+          default: ''
+        vllm_config:
+          anyOf:
+          - $ref: '#/components/schemas/VLLMExtractionConfig-Input'
+          - type: 'null'
+        ai_tables:
+          anyOf:
+          - $ref: '#/components/schemas/AITables-Input'
+          - type: 'null'
+        split:
+          anyOf:
+          - $ref: '#/components/schemas/SplitConfig'
+          - type: 'null'
+        max_parallel_llm_calls:
+          type: integer
+          title: Max Parallel Llm Calls
+          default: 0
+      type: object
+      title: ExtractConfig
+      description: Hey, developer! Keep this in sync with corresponding pydantic model
+        in learning_config.models
+    ExtractConfig-Output:
+      properties:
+        name:
+          type: string
+          title: Name
+          default: ''
+        vllm_config:
+          anyOf:
+          - $ref: '#/components/schemas/VLLMExtractionConfig-Output'
+          - type: 'null'
+        ai_tables:
+          anyOf:
+          - $ref: '#/components/schemas/AITables-Output'
+          - type: 'null'
+        split:
+          anyOf:
+          - $ref: '#/components/schemas/SplitConfig'
+          - type: 'null'
+        max_parallel_llm_calls:
+          type: integer
+          title: Max Parallel Llm Calls
+          default: 0
+      type: object
+      title: ExtractConfig
+      description: Hey, developer! Keep this in sync with corresponding pydantic model
+        in learning_config.models
+    Features:
+      properties:
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/ReasoningConfig'
+          - type: 'null'
+        tools:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        structured_output:
+          anyOf:
+          - $ref: '#/components/schemas/StructuredOutputConfig'
+          - type: 'null'
+        vision:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        streaming:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        system_message:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        text_extraction:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        custom_keys:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        file_input:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+        image_generation:
+          anyOf:
+          - $ref: '#/components/schemas/BaseConfig'
+          - type: 'null'
+      type: object
+      title: Features
+    GenerativeDrivers:
+      type: string
+      enum:
+      - microsoft
+      - google
+      - nuclia
+      - hf
+      - mistral
+      - claude3
+      - microsoft_mistral
+      - openai
+      - huggingface
+      - vertex
+      - azure_aii
+      - openai_compat
+      - bedrock
+      - none
+      - custom
+      - dummy
+      title: GenerativeDrivers
+    GenerativeOption:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        value:
+          type: string
+          title: Value
+        provider:
+          type: string
+          title: Provider
+        user_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Prompt
+        user_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Key
+      type: object
+      required:
+      - name
+      - value
+      - provider
+      title: GenerativeOption
+    HFUserPrompt:
+      properties:
+        system:
+          type: string
+          title: System
+          default: ''
+          examples: []
+          info: Input here the behaviour you want the model to have
+        prompt:
+          type: string
+          title: Prompt
+          examples: []
+          info: "Input here your prompt with the words {context} and {question} in\
+            \ brackets where you want those fields to be placed, in case you want\
+            \ them in your prompt.\n For this generative model {chat_history} is not\
+            \ available to modify in the prompt"
+      type: object
+      required:
+      - prompt
+      title: HFUserPrompt
+    LLMReasoningConfig-Input:
+      properties:
+        effort:
+          anyOf:
+          - $ref: '#/components/schemas/Effort-Input'
+          - type: 'null'
+          default: 0
+        budget_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Budget Tokens
+          default: 0
+      type: object
+      title: LLMReasoningConfig
+      description: Keep this in sync with learning_generative.models.Reasoning
+    LLMReasoningConfig-Output:
+      properties:
+        effort:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__Effort'
+          - type: 'null'
+          default: 0
+        budget_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Budget Tokens
+          default: 0
+      type: object
+      title: LLMReasoningConfig
+      description: Keep this in sync with learning_generative.models.Reasoning
+    LLMSplitConfig-Input:
+      properties:
+        llm:
+          anyOf:
+          - $ref: '#/components/schemas/LLMConfig-Input'
+          - type: 'null'
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+      type: object
+      title: LLMSplitConfig
+    LLMSplitConfig-Output:
+      properties:
+        llm:
+          anyOf:
+          - $ref: '#/components/schemas/LLMConfig-Output'
+          - type: 'null'
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+      type: object
+      title: LLMSplitConfig
+    LearningConfiguration:
+      properties:
+        resource_labelers_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Resource Labelers Models
+        paragraph_labelers_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Paragraph Labelers Models
+        intent_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Intent Models
+        visual_labeling:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Visual Labeling
+          default: disabled
+        ner_model:
+          type: string
+          title: Ner Model
+          default: multilingual
+        relation_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Relation Model
+          default: base
+        anonymization_model:
+          type: string
+          title: Anonymization Model
+          default: disabled
+        semantic_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Semantic Model
+          deprecated: true
+        semantic_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Semantic Models
+        default_semantic_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Model
+        semantic_graph_node_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Semantic Graph Node Models
+        default_semantic_graph_node_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Graph Node Model
+        semantic_graph_edge_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Semantic Graph Edge Models
+        default_semantic_graph_edge_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Graph Edge Model
+        semantic_vector_similarity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Semantic Vector Similarity
+          default: DOT
+          deprecated: true
+        semantic_vector_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Semantic Vector Size
+          default: 1024
+          deprecated: true
+        semantic_matryoshka_dims:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Semantic Matryoshka Dims
+          default: []
+          deprecated: true
+        semantic_threshold:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Semantic Threshold
+          default: 0.4
+          deprecated: true
+        generative_model:
+          type: string
+          title: Generative Model
+          default: chatgpt-azure-4o
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/UserLearningKeys'
+          - type: 'null'
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/UserPrompts'
+          - type: 'null'
+        summary:
+          $ref: '#/components/schemas/Summary'
+          default: simple
+        summary_model:
+          type: string
+          title: Summary Model
+          default: chatgpt-azure-4o
+        summary_prompt:
+          anyOf:
+          - $ref: '#/components/schemas/SummaryPrompt'
+          - type: 'null'
+        prefer_markdown_generative_response:
+          type: boolean
+          title: Prefer Markdown Generative Response
+          default: false
+        semantic_model_configs:
+          additionalProperties:
+            $ref: '#/components/schemas/SemanticConfig'
+          type: object
+          title: Semantic Model Configs
+          default: {}
+        semantic_graph_node_model_configs:
+          additionalProperties:
+            $ref: '#/components/schemas/SemanticConfig'
+          type: object
+          title: Semantic Graph Node Model Configs
+          default: {}
+        semantic_graph_edge_model_configs:
+          additionalProperties:
+            $ref: '#/components/schemas/SemanticConfig'
+          type: object
+          title: Semantic Graph Edge Model Configs
+          default: {}
+      type: object
+      title: LearningConfiguration
+      description: 'This model is to add the fields that are computed dynamically
+        and not stored in the db, it also serves as a bridge
+
+        between the stored config and what we want to send through the APIs'
+    LearningConfigurationCreation:
+      properties:
+        anonymization_model:
+          anyOf:
+          - $ref: '#/components/schemas/AnonymizationModel'
+          - type: string
+          title: Anonymization Model
+          default: disabled
+        visual_labeling:
+          anyOf:
+          - $ref: '#/components/schemas/VisualLabeling'
+          - type: string
+          title: Visual Labeling
+          default: disabled
+        generative_model:
+          type: string
+          title: Generative Model
+          default: chatgpt-azure-4o
+        ner_model:
+          anyOf:
+          - $ref: '#/components/schemas/NERModel'
+          - type: string
+          title: Ner Model
+          default: multilingual
+        relation_model:
+          anyOf:
+          - $ref: '#/components/schemas/RelationModel'
+          - type: string
+          title: Relation Model
+          default: base
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/UserLearningKeys'
+          - type: 'null'
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/UserPrompts'
+          - type: 'null'
+        summary:
+          anyOf:
+          - $ref: '#/components/schemas/Summary'
+          - type: 'null'
+          default: simple
+        summary_model:
+          type: string
+          title: Summary Model
+          default: chatgpt-azure-4o
+        summary_prompt:
+          anyOf:
+          - $ref: '#/components/schemas/SummaryPrompt'
+          - type: 'null'
+        prefer_markdown_generative_response:
+          type: boolean
+          title: Prefer Markdown Generative Response
+          default: false
+        default_semantic_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Model
+          description: The default vector set / semantic model to use. Must be one
+            of the models defined in the `semantic_models` field. If not provided,
+            the first model in the list will be used.
+        semantic_model:
+          anyOf:
+          - $ref: '#/components/schemas/ParagraphEmbeddingModel'
+          - type: 'null'
+          deprecated: true
+        semantic_models:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ParagraphEmbeddingModel'
+            type: array
+          - type: 'null'
+          title: Semantic Models
+        semantic_graph_node_models:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/NodeEmbeddingModel'
+            type: array
+          - type: 'null'
+          title: Semantic Graph Node Models
+        default_semantic_graph_node_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Graph Node Model
+        semantic_graph_edge_models:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EdgeEmbeddingModel'
+            type: array
+          - type: 'null'
+          title: Semantic Graph Edge Models
+        default_semantic_graph_edge_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Graph Edge Model
+      type: object
+      title: LearningConfigurationCreation
+    LearningConfigurationUpdate:
+      properties:
+        anonymization_model:
+          anyOf:
+          - $ref: '#/components/schemas/AnonymizationModel'
+          - type: string
+          title: Anonymization Model
+          default: disabled
+        visual_labeling:
+          anyOf:
+          - $ref: '#/components/schemas/VisualLabeling'
+          - type: string
+          title: Visual Labeling
+          default: disabled
+        generative_model:
+          type: string
+          title: Generative Model
+          default: chatgpt-azure-4o
+        ner_model:
+          anyOf:
+          - $ref: '#/components/schemas/NERModel'
+          - type: string
+          title: Ner Model
+          default: multilingual
+        relation_model:
+          anyOf:
+          - $ref: '#/components/schemas/RelationModel'
+          - type: string
+          title: Relation Model
+          default: base
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/UserLearningKeys'
+          - type: 'null'
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/UserPrompts'
+          - type: 'null'
+        summary:
+          anyOf:
+          - $ref: '#/components/schemas/Summary'
+          - type: 'null'
+          default: simple
+        summary_model:
+          type: string
+          title: Summary Model
+          default: chatgpt-azure-4o
+        summary_prompt:
+          anyOf:
+          - $ref: '#/components/schemas/SummaryPrompt'
+          - type: 'null'
+        prefer_markdown_generative_response:
+          type: boolean
+          title: Prefer Markdown Generative Response
+          default: false
+        default_semantic_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Semantic Model
+          description: The default vector set / semantic model to use. Must be one
+            of the models defined in the `semantic_models` field. If not provided,
+            the first model in the list will be used.
+      additionalProperties: false
+      type: object
+      title: LearningConfigurationUpdate
+    ManualSplitConfig:
+      properties:
+        splitter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Splitter
+      type: object
+      title: ManualSplitConfig
+    Metadata:
+      properties:
+        metadata:
+          additionalProperties:
+            type: string
+          type: object
+          title: Metadata
+          default: {}
+        language:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Language
+        languages:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 1024
+          - type: 'null'
+          title: Languages
+        status:
+          $ref: '#/components/schemas/ResourceProcessingStatus'
+      type: object
+      required:
+      - status
+      title: Metadata
+    ModelConfig:
+      properties:
+        input_tokens:
+          $ref: '#/components/schemas/TokenValues'
+        output_tokens:
+          $ref: '#/components/schemas/OutputTokenValues'
+        prompt_id:
+          type: string
+          title: Prompt Id
+        driver:
+          $ref: '#/components/schemas/GenerativeDrivers'
+        max_images:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Images
+        assume_role:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Assume Role
+      type: object
+      required:
+      - input_tokens
+      - output_tokens
+      - prompt_id
+      - driver
+      title: ModelConfig
+    ModelID:
+      properties:
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - id
+      title: ModelID
+    ModelInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        created:
+          type: integer
+          title: Created
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        model_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Type
+        max_input_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Input Tokens
+        max_output_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Output Tokens
+      type: object
+      required:
+      - id
+      - name
+      - created
+      title: ModelInfo
+    NERModel:
+      type: string
+      enum:
+      - multilingual
+      title: NERModel
+    NodeEmbeddingModel:
+      type: string
+      enum:
+      - multilingual-graph-v1
+      title: NodeEmbeddingModel
+    OpenAICompatUserPrompt:
+      properties:
+        system:
+          type: string
+          title: System
+          default: ''
+          examples:
+          - You are a medical assistant, use medical terminology
+          - You are an IT expert, express yourself like one
+          - You are a very friendly customer service assistant, be polite
+          - You are a financial expert, use correct terms
+          info: Input here the behaviour you want the model to have
+        prompt:
+          type: string
+          title: Prompt
+          examples:
+          - "Taking into account this provided context: <Context> {context} </Context>\n\
+            \    Can you answer this question in a clear, concise way: <Question>\
+            \ {question} </Question>"
+          - "Taking into account this provided context.\n    Context:\n    {context}\n\
+            \    Answer this QUESTION: \"{question}\" like an economy expert."
+          - "Taking into account this provided context: <Context> {context} </Context>\n\
+            \    Answer this question: <Question> {question} </Question>\n    If you\
+            \ do not find an answer in the context, say that you don't have enough\
+            \ data."
+          info: Input here your prompt with the words {context} and {question} in
+            brackets where you want those fields to be placed, in case you want them
+            in your prompt.
+      type: object
+      required:
+      - prompt
+      title: OpenAICompatUserPrompt
+    Option:
+      properties:
+        name:
+          type: string
+          title: Name
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - name
+      - value
+      title: Option
+    OutputTokenValues:
+      properties:
+        min:
+          type: integer
+          title: Min
+          default: 0
+        max:
+          type: integer
+          title: Max
+        default_max:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Default Max
+      type: object
+      required:
+      - max
+      title: OutputTokenValues
+    ParagraphEmbeddingModel:
+      type: string
+      enum:
+      - en-2024-04-24
+      - multilingual-2024-05-06
+      - multilingual-2023-08-16
+      - multilingual-2024-10-07
+      - text-embedding-3-small
+      - text-embedding-3-large
+      - gecko-embeddings-multi
+      - gemini-embedding-2
+      - hf_embedding
+      title: ParagraphEmbeddingModel
+    PatchAccountCustomModel:
+      properties:
+        model_types:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StringModelTypes'
+            type: array
+            minItems: 1
+          - type: 'null'
+          title: Model Types
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        trained_date:
+          type: string
+          format: date-time
+          title: Trained Date
+          default: '2026-09-21T12:58:36.282494'
+        trained_kbid:
+          type: string
+          title: Trained Kbid
+          default: ''
+        openai_compat:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAICompatModel-Input'
+          - type: 'null'
+      type: object
+      title: PatchAccountCustomModel
+    PatchDefaultModelConfig:
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Description for the default model config
+        user_keys:
+          anyOf:
+          - $ref: '#/components/schemas/UserLearningKeys'
+          - type: 'null'
+          description: Custom user keys for the default model. If not set, Nuclia
+            keys will be used.
+        user_prompts:
+          anyOf:
+          - $ref: '#/components/schemas/UserPrompts'
+          - type: 'null'
+          description: Custom user prompts for the default model. If not set, Nuclia
+            prompts will be used.
+        assume_role:
+          anyOf:
+          - $ref: '#/components/schemas/AssumeRoleType'
+          - type: 'null'
+          description: Assume role type for models that require it (e.g., AWS Bedrock)
+        kbids:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 5000
+          - type: 'null'
+          title: Kbids
+          description: List of KB IDs where this default model config is allowed.
+            Empty list means it is allowed in all KBs. If not set, the previous value
+            will be kept.
+        nua_client_ids:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 5000
+          - type: 'null'
+          title: Nua Client Ids
+          description: List of NUA client IDs allowed to use this default model config.
+            Empty list means it is allowed for all NUA clients. If not set, the previous
+            value will be kept.
+      type: object
+      title: PatchDefaultModelConfig
+    PriorityConfig:
+      properties:
+        supported:
+          type: boolean
+          title: Supported
+          default: false
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+      type: object
+      title: PriorityConfig
+    Provider:
+      properties:
+        title:
+          type: string
+          title: Title
+        enterprise_readiness:
+          type: boolean
+          title: Enterprise Readiness
+        models:
+          additionalProperties:
+            $ref: '#/components/schemas/ModelInfo'
+          type: object
+          title: Models
+      type: object
+      required:
+      - title
+      - enterprise_readiness
+      - models
+      title: Provider
+    ProviderName:
+      type: string
+      enum:
+      - anthropic
+      - anthropic-vertexai
+      - anthropic-bedrock
+      - microsoft
+      - google
+      - google-priority
+      - openai
+      - openai_compat
+      - huggingface
+      - vertex
+      - amazon
+      - default
+      - onprem
+      - progress-agentic-rag
+      - none
+      - dummy
+      title: ProviderName
+    ProvidersResponse:
+      properties:
+        providers:
+          additionalProperties:
+            $ref: '#/components/schemas/Provider'
+          propertyNames:
+            $ref: '#/components/schemas/ProviderName'
+          type: object
+          title: Providers
+      type: object
+      required:
+      - providers
+      title: ProvidersResponse
+    ReasoningConfig:
+      properties:
+        default:
+          anyOf:
+          - type: integer
+          - $ref: '#/components/schemas/Effort'
+          title: Default
+        available_efforts:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Effort'
+            type: array
+            uniqueItems: true
+          - type: 'null'
+          title: Available Efforts
+        supports_disabling:
+          type: boolean
+          title: Supports Disabling
+          default: true
+        chat_template_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chat Template Key
+        effort_chat_template_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Effort Chat Template Key
+      type: object
+      required:
+      - default
+      title: ReasoningConfig
+    ReasoningFeatures-Input:
+      properties:
+        dispatch:
+          $ref: '#/components/schemas/ReasoningType'
+          title: Reasoning type
+          description: How reasoning is exposed on the wire for this model. Defaults
+            to Unspecified, which means the legacy `reasoning`/`reasoning_chat_template_key`
+            fields are used.
+          default: 0
+        think_key:
+          type: string
+          title: Thinking chat template key
+          description: Key in `chat_template_kwargs` that toggles thinking on/off
+            (e.g. `thinking`, `enable_thinking`). Only used for chat-template dispatches.
+          default: ''
+        effort_key:
+          type: string
+          title: Effort chat template key
+          description: Key in `chat_template_kwargs` that carries the effort level.
+            When empty/None, effort is sent at the request top level as `reasoning_effort`.
+          default: ''
+        available_efforts:
+          items:
+            $ref: '#/components/schemas/Effort-Input'
+          type: array
+          title: Available efforts
+          description: The closed, user-defined set of accepted effort levels. Empty
+            means all effort levels are accepted.
+        default_effort:
+          $ref: '#/components/schemas/Effort-Input'
+          title: Default effort
+          description: The default effort level used when the user does not specify
+            one. Resolved to the lowest supported effort when not set.
+          default: 0
+      type: object
+      title: ReasoningFeatures
+      description: "    Structured reasoning capability/shape for a model. When set,\
+        \ it is the source of\ntruth and takes precedence over the legacy `reasoning`/`reasoning_chat_template_key`\
+        \ fields.\n   "
+    ReasoningFeatures-Output:
+      properties:
+        dispatch:
+          $ref: '#/components/schemas/ReasoningType'
+          title: Reasoning type
+          description: How reasoning is exposed on the wire for this model. Defaults
+            to Unspecified, which means the legacy `reasoning`/`reasoning_chat_template_key`
+            fields are used.
+          default: 0
+        think_key:
+          type: string
+          title: Thinking chat template key
+          description: Key in `chat_template_kwargs` that toggles thinking on/off
+            (e.g. `thinking`, `enable_thinking`). Only used for chat-template dispatches.
+          default: ''
+        effort_key:
+          type: string
+          title: Effort chat template key
+          description: Key in `chat_template_kwargs` that carries the effort level.
+            When empty/None, effort is sent at the request top level as `reasoning_effort`.
+          default: ''
+        available_efforts:
+          items:
+            $ref: '#/components/schemas/learning_protos__config_p2p__Effort'
+          type: array
+          title: Available efforts
+          description: The closed, user-defined set of accepted effort levels. Empty
+            means all effort levels are accepted.
+        default_effort:
+          $ref: '#/components/schemas/learning_protos__config_p2p__Effort'
+          title: Default effort
+          description: The default effort level used when the user does not specify
+            one. Resolved to the lowest supported effort when not set.
+          default: 0
+      type: object
+      title: ReasoningFeatures
+      description: "    Structured reasoning capability/shape for a model. When set,\
+        \ it is the source of\ntruth and takes precedence over the legacy `reasoning`/`reasoning_chat_template_key`\
+        \ fields.\n   "
+    ReasoningTags:
+      properties:
+        start:
+          type: string
+          title: Start
+        end:
+          type: string
+          title: End
+      type: object
+      required:
+      - start
+      - end
+      title: ReasoningTags
+      description: For detecting reasoning blocks
+    RelationModel:
+      type: string
+      enum:
+      - base
+      title: RelationModel
+    RephraseConfig:
+      properties:
+        max_output_tokens:
+          type: integer
+          title: Max Output Tokens
+          default: 1025
+        fallback_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Fallback Model
+      type: object
+      title: RephraseConfig
+    SeedConfig:
+      properties:
+        min:
+          type: integer
+          title: Min
+          default: 0
+        max:
+          type: integer
+          title: Max
+          default: 2147483647
+        default:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Default
+      type: object
+      title: SeedConfig
+    SemanticConfig:
+      properties:
+        similarity:
+          $ref: '#/components/schemas/SimilarityFunction'
         size:
           type: integer
           title: Size
         threshold:
           type: number
           title: Threshold
-        passage_prompt:
-          type: string
-          title: Passage Prompt
-        query_prompt:
-          type: string
-          title: Query Prompt
+        max_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Tokens
+        matryoshka_dims:
+          items:
+            type: integer
+          type: array
+          title: Matryoshka Dims
+          default: []
+        external:
+          type: boolean
+          title: External
+          default: false
       type: object
       required:
-      - url
-      - key
       - similarity
       - size
       - threshold
-      - passage_prompt
-      - query_prompt
-      title: HFEmbeddingKey
+      title: SemanticConfig
+    SimilarityFunction:
+      type: integer
+      enum:
+      - 0
+      - 1
+      title: SimilarityFunction
+    SplitConfig:
+      properties:
+        max_paragraph:
+          type: integer
+          title: Max Paragraph
+          default: 0
+        custom_split:
+          anyOf:
+          - $ref: '#/components/schemas/CustomSplitStrategy'
+          - type: 'null'
+          default: 0
+      type: object
+      title: SplitConfig
+    SplitConfiguration-Input:
+      properties:
+        name:
+          type: string
+          title: Name
+          default: ''
+        max_paragraph:
+          type: integer
+          title: Max Paragraph
+          default: 0
+        custom_split:
+          anyOf:
+          - $ref: '#/components/schemas/CustomSplitStrategy'
+          - type: 'null'
+          default: 0
+        llm_split:
+          anyOf:
+          - $ref: '#/components/schemas/LLMSplitConfig-Input'
+          - type: 'null'
+        manual_split:
+          anyOf:
+          - $ref: '#/components/schemas/ManualSplitConfig'
+          - type: 'null'
+      type: object
+      title: SplitConfiguration
+    SplitConfiguration-Output:
+      properties:
+        name:
+          type: string
+          title: Name
+          default: ''
+        max_paragraph:
+          type: integer
+          title: Max Paragraph
+          default: 0
+        custom_split:
+          anyOf:
+          - $ref: '#/components/schemas/CustomSplitStrategy'
+          - type: 'null'
+          default: 0
+        llm_split:
+          anyOf:
+          - $ref: '#/components/schemas/LLMSplitConfig-Output'
+          - type: 'null'
+        manual_split:
+          anyOf:
+          - $ref: '#/components/schemas/ManualSplitConfig'
+          - type: 'null'
+      type: object
+      title: SplitConfiguration
+    Stability:
+      type: string
+      enum:
+      - stable
+      - preview
+      title: Stability
+    StreamPostprocessor:
+      type: string
+      enum:
+      - deduplicate_llm_citations
+      title: StreamPostprocessor
+      description: Postprocessors applied to streaming generative responses.
+    StringModelTypes:
+      type: string
+      enum:
+      - GENERATIVE
+      - NER
+      - RESOURCE_LABELER
+      - CLASSIFIER
+      - ANONYMIZER
+      - VISUAL_LABELER
+      - SUMMARY
+      - DUMMY
+      - PARAGRAPH_LABELER
+      - EMBEDDINGS
+      - RELATIONS
+      title: StringModelTypes
+    StructuredOutputConfig:
+      properties:
+        use_tool_calling:
+          type: boolean
+          title: Use Tool Calling
+          default: true
+      type: object
+      title: StructuredOutputConfig
+    Summary:
+      type: string
+      enum:
+      - extended
+      - simple
+      title: Summary
+    SummaryPrompt:
+      properties:
+        prompt:
+          type: string
+          title: Prompt
+          examples:
+          - 'Make a bullet point summary of the following content: {text}'
+          - 'Make a thorough summary of the following news article: {text}'
+          info: Input here your prompt with the word {text} in brackets where you
+            want the content to summarize to be placed
+      type: object
+      required:
+      - prompt
+      title: SummaryPrompt
+    TemperatureConfig:
+      properties:
+        min:
+          type: number
+          title: Min
+          default: 0.0
+        max:
+          type: number
+          title: Max
+        default:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Default
+      type: object
+      required:
+      - max
+      - default
+      title: TemperatureConfig
+    TokenValues:
+      properties:
+        min:
+          type: integer
+          title: Min
+          default: 0
+        max:
+          type: integer
+          title: Max
+      type: object
+      required:
+      - max
+      title: TokenValues
+    TokenizerConfig:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        extra_kwargs:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra Kwargs
+      type: object
+      title: TokenizerConfig
+    UserLearningKeys:
+      properties:
+        openai:
+          anyOf:
+          - $ref: '#/components/schemas/learning_config__models__OpenAIKey'
+          - type: 'null'
+        azure_openai:
+          anyOf:
+          - $ref: '#/components/schemas/AzureOpenAIKey'
+          - type: 'null'
+        mistral:
+          anyOf:
+          - $ref: '#/components/schemas/MistralKey'
+          - type: 'null'
+        palm:
+          anyOf:
+          - $ref: '#/components/schemas/learning_config__models__PalmKey'
+          - type: 'null'
+        anthropic:
+          anyOf:
+          - $ref: '#/components/schemas/AnthropicKey'
+          - type: 'null'
+        claude3:
+          anyOf:
+          - $ref: '#/components/schemas/AnthropicKey'
+          - type: 'null'
+        anthropic_vertex:
+          anyOf:
+          - $ref: '#/components/schemas/learning_config__models__AnthropicVertexKey'
+          - type: 'null'
+        azure_mistral:
+          anyOf:
+          - $ref: '#/components/schemas/MistralKey'
+          - type: 'null'
+        hf_llm:
+          anyOf:
+          - $ref: '#/components/schemas/HFLLMKey'
+          - type: 'null'
+        hf_embedding:
+          anyOf:
+          - $ref: '#/components/schemas/HFEmbeddingKey'
+          - type: 'null'
+        azure_aii:
+          anyOf:
+          - $ref: '#/components/schemas/AzureAIIKey'
+          - type: 'null'
+        openai_compat:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAICompatModel-Output'
+          - type: 'null'
+      type: object
+      title: UserLearningKeys
+    VLLMExtractionConfig-Input:
+      properties:
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+        llm:
+          anyOf:
+          - $ref: '#/components/schemas/LLMConfig-Input'
+          - type: 'null'
+      type: object
+      title: VLLMExtractionConfig
+    VLLMExtractionConfig-Output:
+      properties:
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+        llm:
+          anyOf:
+          - $ref: '#/components/schemas/LLMConfig-Output'
+          - type: 'null'
+      type: object
+      title: VLLMExtractionConfig
+    VisualLabeling:
+      type: string
+      enum:
+      - disabled
+      - enabled
+      title: VisualLabeling
+    learning_config__models__AnthropicVertexKey:
+      properties:
+        credentials:
+          type: string
+          title: JSON Credentials
+          description: Service Account Key credentials in JSON format for Vertex AI
+            access
+          widget: textarea
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vertex AI Location
+          description: GCP region where the model will be accessed from. E.g. us-central1
+      type: object
+      required:
+      - credentials
+      title: AnthropicVertexKey
+    learning_config__models__OpenAIKey:
+      properties:
+        key:
+          type: string
+          title: Key
+        org:
+          type: string
+          title: Org
+      type: object
+      required:
+      - key
+      - org
+      title: OpenAIKey
+    learning_config__models__PalmKey:
+      properties:
+        credentials:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: JSON Credentials
+          description: If using Vertex AI, this should contain the Service Account
+            Key credentials
+          widget: textarea
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vertex AI Location
+          description: If using Vertex AI, this is the GCP region where the model
+            will be accessed from. E.g. us-central1
+        gemini_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gemini API Key
+          description: If using Gemini API, only an API key for the Gemini Developer
+            API is required
+      type: object
+      title: PalmKey
+    learning_protos__config_p2p__AnthropicKey:
+      properties:
+        key:
+          type: string
+          title: Key
+          default: ''
+      type: object
+      title: AnthropicKey
+    learning_protos__config_p2p__AzureOpenAIKey:
+      properties:
+        key:
+          type: string
+          title: Key
+          default: ''
+        url:
+          type: string
+          title: Url
+          default: ''
+        deployment:
+          type: string
+          title: Deployment
+          default: ''
+        model:
+          type: string
+          title: Model
+          default: ''
+      type: object
+      title: AzureOpenAIKey
+    learning_protos__config_p2p__Effort:
+      type: integer
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      title: Effort
+      description: "    Discrete reasoning effort levels. Used both as the request-side\
+        \ reasoning\nparameter (`LLMReasoningConfig.effort`) and as the model capability\
+        \ descriptor\n(`ReasoningFeatures.available_efforts`/`default_effort`). `EFFORT_MINIMAL`\
+        \ (0)\ndoubles as the default when no effort is specified. `EFFORT_NONE` represents\n\
+        no reasoning.\n   "
+    learning_protos__config_p2p__HFLLMKey:
+      properties:
+        key:
+          type: string
+          title: Key
+          default: ''
+        url:
+          type: string
+          title: Url
+          default: ''
+        model:
+          $ref: '#/components/schemas/ModelType'
+          default: 0
+      type: object
+      title: HFLLMKey
+    learning_protos__config_p2p__MistralKey:
+      properties:
+        key:
+          type: string
+          title: Key
+          default: ''
+      type: object
+      title: MistralKey
+    learning_protos__config_p2p__UserLearningKeys-Input:
+      properties:
+        openai:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAIKey'
+          - type: 'null'
+        azure_openai:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__AzureOpenAIKey'
+          - type: 'null'
+        palm:
+          anyOf:
+          - $ref: '#/components/schemas/PalmKey'
+          - type: 'null'
+        anthropic:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
+          - type: 'null'
+        claude3:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
+          - type: 'null'
+        anthropic_vertex:
+          anyOf:
+          - $ref: '#/components/schemas/AnthropicVertexKey'
+          - type: 'null'
+        anthropic_bedrock:
+          anyOf:
+          - $ref: '#/components/schemas/AnthropicBedrockKey'
+          - type: 'null'
+        text_generation:
+          anyOf:
+          - $ref: '#/components/schemas/TextGenerationKey'
+          - type: 'null'
+        mistral:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__MistralKey'
+          - type: 'null'
+        azure_mistral:
+          anyOf:
+          - $ref: '#/components/schemas/AzureMistralKey'
+          - type: 'null'
+        hf_llm:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__HFLLMKey'
+          - type: 'null'
+        hf_embedding:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__HFEmbeddingKey'
+          - type: 'null'
+        azure_aii:
+          anyOf:
+          - $ref: '#/components/schemas/AzureAIIKey'
+          - type: 'null'
+        openai_compat:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAICompatModel-Input'
+          - type: 'null'
+      type: object
+      title: UserLearningKeys
+    learning_protos__config_p2p__UserLearningKeys-Output:
+      properties:
+        openai:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAIKey'
+          - type: 'null'
+        azure_openai:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__AzureOpenAIKey'
+          - type: 'null'
+        palm:
+          anyOf:
+          - $ref: '#/components/schemas/PalmKey'
+          - type: 'null'
+        anthropic:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
+          - type: 'null'
+        claude3:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
+          - type: 'null'
+        anthropic_vertex:
+          anyOf:
+          - $ref: '#/components/schemas/AnthropicVertexKey'
+          - type: 'null'
+        anthropic_bedrock:
+          anyOf:
+          - $ref: '#/components/schemas/AnthropicBedrockKey'
+          - type: 'null'
+        text_generation:
+          anyOf:
+          - $ref: '#/components/schemas/TextGenerationKey'
+          - type: 'null'
+        mistral:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__MistralKey'
+          - type: 'null'
+        azure_mistral:
+          anyOf:
+          - $ref: '#/components/schemas/AzureMistralKey'
+          - type: 'null'
+        hf_llm:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__HFLLMKey'
+          - type: 'null'
+        hf_embedding:
+          anyOf:
+          - $ref: '#/components/schemas/learning_protos__config_p2p__HFEmbeddingKey'
+          - type: 'null'
+        azure_aii:
+          anyOf:
+          - $ref: '#/components/schemas/AzureAIIKey'
+          - type: 'null'
+        openai_compat:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAICompatModel-Output'
+          - type: 'null'
+      type: object
+      title: UserLearningKeys
     AccountTypes:
       type: string
       enum:
@@ -9944,6 +11432,54 @@ components:
       - vectors
       - timings
       title: GraphNodeSearch
+    GuardrailRequest:
+      properties:
+        content:
+          type: string
+          maxLength: 20000
+          minLength: 1
+          title: Content
+        policy_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Id
+        policy:
+          anyOf:
+          - $ref: '#/components/schemas/InlineGuardrailPolicy'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      required:
+      - content
+      title: GuardrailRequest
+    GuardrailResponse:
+      properties:
+        flagged:
+          type: boolean
+          title: Flagged
+        score:
+          type: number
+          title: Score
+        threshold:
+          type: number
+          title: Threshold
+          default: 0.5
+        policy_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Id
+      type: object
+      required:
+      - flagged
+      - score
+      title: GuardrailResponse
+    GuardrailTarget:
+      type: string
+      enum:
+      - QUERY
+      title: GuardrailTarget
     Image:
       properties:
         content_type:
@@ -9974,6 +11510,27 @@ components:
       required:
       - url
       title: ImageURL
+    InlineGuardrailPolicy:
+      properties:
+        instruction:
+          type: string
+          maxLength: 20000
+          minLength: 1
+          title: Instruction
+        query:
+          type: string
+          maxLength: 1000
+          minLength: 1
+          title: Query
+        target:
+          $ref: '#/components/schemas/GuardrailTarget'
+          default: QUERY
+      additionalProperties: false
+      type: object
+      required:
+      - instruction
+      - query
+      title: InlineGuardrailPolicy
     InputAudio:
       properties:
         data:
@@ -10078,33 +11635,6 @@ components:
       required:
       - name
       title: MessageToolFunction
-    ModelInfo:
-      properties:
-        name:
-          type: string
-          title: Name
-        title:
-          type: string
-          title: Title
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        config:
-          $ref: '#/components/schemas/ModelConfig'
-        features:
-          $ref: '#/components/schemas/Features'
-        metadata:
-          $ref: '#/components/schemas/Metadata'
-      type: object
-      required:
-      - name
-      - title
-      - config
-      - features
-      - metadata
-      title: ModelInfo
     Ner:
       properties:
         text:
@@ -10153,6 +11683,11 @@ components:
           - type: integer
           - type: 'null'
           title: Max Tokens
+        max_completion_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Completion Tokens
         seed:
           anyOf:
           - type: integer
@@ -11201,2120 +12736,6 @@ components:
       required:
       - name
       title: Function
-    AITables-Input:
-      properties:
-        llm:
-          anyOf:
-          - $ref: '#/components/schemas/LLMConfig-Input'
-          - type: 'null'
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-        merge_pages:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Merge Pages
-          default: false
-        max_pages_to_merge:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Pages To Merge
-          default: 0
-      type: object
-      title: AITables
-    AITables-Output:
-      properties:
-        llm:
-          anyOf:
-          - $ref: '#/components/schemas/LLMConfig-Output'
-          - type: 'null'
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-        merge_pages:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Merge Pages
-          default: false
-        max_pages_to_merge:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Pages To Merge
-          default: 0
-      type: object
-      title: AITables
-    AnonymizationModel:
-      type: string
-      enum:
-      - disabled
-      - multilingual
-      title: AnonymizationModel
-    AssumeRoleType:
-      type: integer
-      enum:
-      - 0
-      - 1
-      title: AssumeRoleType
-    BaseConfig:
-      properties: {}
-      type: object
-      title: BaseConfig
-    BedrockAssumeRoleFinishRequest:
-      properties:
-        role_arn:
-          type: string
-          title: Role Arn
-          description: ARN of the role created in AWS IAM
-      type: object
-      required:
-      - role_arn
-      title: BedrockAssumeRoleFinishRequest
-    BedrockAssumeRoleStartResponse:
-      properties:
-        external_id:
-          type: string
-          title: External Id
-          description: External ID for assuming role
-        aws_account_id:
-          type: string
-          title: Aws Account Id
-          description: AWS Account ID to assume role into
-        role_name:
-          type: string
-          title: Role Name
-          description: Name of the role to be created in AWS IAM
-      type: object
-      required:
-      - external_id
-      - aws_account_id
-      - role_name
-      title: BedrockAssumeRoleStartResponse
-    ConfigSchema:
-      properties:
-        semantic_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-          deprecated: true
-        semantic_models:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        default_semantic_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        anonymization_model:
-          $ref: '#/components/schemas/ConfigSchemaOptions'
-        visual_labeling:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        generative_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        ner_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        relation_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        summary_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        summary:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaElements'
-          - type: 'null'
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaElements'
-          - type: 'null'
-        summary_prompt:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaElements'
-          - type: 'null'
-        prefer_markdown_generative_response:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaElements'
-          - type: 'null'
-        semantic_graph_node_models:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        default_semantic_graph_node_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        semantic_graph_edge_models:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-        default_semantic_graph_edge_model:
-          anyOf:
-          - $ref: '#/components/schemas/ConfigSchemaOptions'
-          - type: 'null'
-      type: object
-      required:
-      - anonymization_model
-      title: ConfigSchema
-    ConfigSchemaElements:
-      properties:
-        schemas:
-          additionalProperties: true
-          type: object
-          title: Schemas
-        create:
-          type: boolean
-          title: Create
-          default: false
-        update:
-          type: boolean
-          title: Update
-          default: false
-      type: object
-      required:
-      - schemas
-      title: ConfigSchemaElements
-    ConfigSchemaOptions:
-      properties:
-        options:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/GenerativeOption'
-            type: array
-          - items:
-              $ref: '#/components/schemas/Option'
-            type: array
-          title: Options
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default
-        create:
-          type: boolean
-          title: Create
-          default: false
-        update:
-          type: boolean
-          title: Update
-          default: false
-        multiple:
-          type: boolean
-          title: Multiple
-          default: false
-      type: object
-      required:
-      - options
-      title: ConfigSchemaOptions
-    CreateAccountCustomModel:
-      properties:
-        model_types:
-          items:
-            $ref: '#/components/schemas/StringModelTypes'
-          type: array
-          minItems: 1
-          title: Model Types
-        location:
-          type: string
-          title: Location
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        trained_date:
-          type: string
-          format: date-time
-          title: Trained Date
-          default: '2026-08-28T13:48:55.183219'
-        trained_kbid:
-          type: string
-          title: Trained Kbid
-          default: ''
-        openai_compat:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAICompatModel-Input'
-          - type: 'null'
-      type: object
-      required:
-      - model_types
-      - location
-      title: CreateAccountCustomModel
-    CreateDefaultModelConfig:
-      properties:
-        default_model_id:
-          type: string
-          title: Default Model Id
-          description: 'Identifier of the public model to add to the account. e.g:
-            ''chatgpt-azure-4-turbo'' or ''claude-3'''
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Description for the model config
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/UserLearningKeys'
-          - type: 'null'
-          description: Custom user keys for the model. If not set, Nuclia keys will
-            be used.
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/UserPrompts'
-          - type: 'null'
-          description: Custom user prompts for the model. If not set, Nuclia prompts
-            will be used.
-        assume_role:
-          anyOf:
-          - $ref: '#/components/schemas/AssumeRoleType'
-          - type: 'null'
-          description: Assume role type for models that require it (e.g., AWS Bedrock)
-        kbids:
-          items:
-            type: string
-          type: array
-          maxItems: 5000
-          title: Kbids
-          description: List of KB IDs where this default model config is allowed.
-            Empty list means it is allowed in all KBs (default).
-      type: object
-      required:
-      - default_model_id
-      title: CreateDefaultModelConfig
-    CustomAccountModel:
-      properties:
-        model_id:
-          type: string
-          title: Model Id
-        account:
-          type: string
-          title: Account
-        model_type:
-          anyOf:
-          - $ref: '#/components/schemas/StringModelTypes'
-          - type: 'null'
-        trained_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Trained Date
-        location:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Location
-        trained_kbid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Trained Kbid
-        model_types:
-          items:
-            $ref: '#/components/schemas/StringModelTypes'
-          type: array
-          title: Model Types
-          default: []
-        log:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Log
-        kbids:
-          items:
-            type: string
-          type: array
-          title: Kbids
-        openai_compat:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAICompatModel-Output'
-          - type: 'null'
-      type: object
-      required:
-      - model_id
-      - account
-      - model_type
-      - trained_date
-      - location
-      - trained_kbid
-      - log
-      - kbids
-      title: CustomAccountModel
-      description: This is the pydantic model for the model details in the account.
-    CustomAccountModelListItem:
-      properties:
-        model_id:
-          type: string
-          title: Model Id
-        account:
-          type: string
-          title: Account
-        model_type:
-          anyOf:
-          - $ref: '#/components/schemas/StringModelTypes'
-          - type: 'null'
-        trained_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Trained Date
-        location:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Location
-        trained_kbid:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Trained Kbid
-        model_types:
-          items:
-            $ref: '#/components/schemas/StringModelTypes'
-          type: array
-          title: Model Types
-          default: []
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-      type: object
-      required:
-      - model_id
-      - account
-      - model_type
-      - trained_date
-      - location
-      - trained_kbid
-      - title
-      title: CustomAccountModelListItem
-      description: This is the pydantic model for the listing of models in the account.
-    DataResidencyStatus:
-      type: string
-      enum:
-      - unknown
-      - guaranteed
-      - not_guaranteed
-      title: DataResidencyStatus
-    DefaultModelConfig:
-      properties:
-        id:
-          type: string
-          title: Id
-          description: 'Unique identifier of the default model configuration (UUID
-            format). e.g: ''3fa85f64-5717-4562-b3fc-2c963f66afa6'''
-        default_model_id:
-          type: string
-          title: Default Model Id
-          description: 'Identifier of the default model to add to the account. e.g:
-            ''chatgpt-azure-4-turbo'' or ''claude-3'''
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Description for the model config
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/UserLearningKeys'
-          - type: 'null'
-          description: Custom user keys for the model. If not set, Nuclia keys will
-            be used.
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/UserPrompts'
-          - type: 'null'
-          description: Custom user prompts for the model. If not set, Nuclia prompts
-            will be used.
-        assume_role:
-          anyOf:
-          - $ref: '#/components/schemas/AssumeRoleType'
-          - type: 'null'
-          description: Assume role type for models that require it (e.g., AWS Bedrock)
-        kbids:
-          items:
-            type: string
-          type: array
-          title: Kbids
-          description: List of KB IDs where this default model config is allowed.
-            Empty list means it is allowed in all KBs.
-      type: object
-      required:
-      - id
-      - default_model_id
-      title: DefaultModelConfig
-    DefaultModelConfigListItem:
-      properties:
-        id:
-          type: string
-          title: Id
-          description: 'Unique identifier of the default model configuration (UUID
-            format). e.g: ''3fa85f64-5717-4562-b3fc-2c963f66afa6'''
-        default_model_id:
-          type: string
-          title: Default Model Id
-          description: 'Identifier of the default model to add to the account. e.g:
-            ''chatgpt-azure-4-turbo'' or ''claude-3'''
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Description for the model config
-        assume_role:
-          anyOf:
-          - $ref: '#/components/schemas/AssumeRoleType'
-          - type: 'null'
-          description: Assume role type for models that require it (e.g., AWS Bedrock)
-        kbids:
-          items:
-            type: string
-          type: array
-          title: Kbids
-          description: List of KB IDs where this default model config is allowed.
-            Empty list means it is allowed in all KBs.
-      type: object
-      required:
-      - id
-      - default_model_id
-      title: DefaultModelConfigListItem
-    EdgeEmbeddingModel:
-      type: string
-      enum:
-      - multilingual-graph-v1
-      title: EdgeEmbeddingModel
-    Effort-Input:
-      type: integer
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      title: Effort
-      description: "    Discrete reasoning effort levels. Used both as the request-side\
-        \ reasoning\nparameter (`LLMReasoningConfig.effort`) and as the model capability\
-        \ descriptor\n(`ReasoningFeatures.available_efforts`/`default_effort`). `EFFORT_MINIMAL`\
-        \ (0)\ndoubles as the default when no effort is specified. `EFFORT_NONE` represents\n\
-        no reasoning.\n   "
-    ExtractConfig-Input:
-      properties:
-        name:
-          type: string
-          title: Name
-          default: ''
-        vllm_config:
-          anyOf:
-          - $ref: '#/components/schemas/VLLMExtractionConfig-Input'
-          - type: 'null'
-        ai_tables:
-          anyOf:
-          - $ref: '#/components/schemas/AITables-Input'
-          - type: 'null'
-        split:
-          anyOf:
-          - $ref: '#/components/schemas/SplitConfig'
-          - type: 'null'
-        max_parallel_llm_calls:
-          type: integer
-          title: Max Parallel Llm Calls
-          default: 0
-      type: object
-      title: ExtractConfig
-      description: Hey, developer! Keep this in sync with corresponding pydantic model
-        in learning_config.models
-    ExtractConfig-Output:
-      properties:
-        name:
-          type: string
-          title: Name
-          default: ''
-        vllm_config:
-          anyOf:
-          - $ref: '#/components/schemas/VLLMExtractionConfig-Output'
-          - type: 'null'
-        ai_tables:
-          anyOf:
-          - $ref: '#/components/schemas/AITables-Output'
-          - type: 'null'
-        split:
-          anyOf:
-          - $ref: '#/components/schemas/SplitConfig'
-          - type: 'null'
-        max_parallel_llm_calls:
-          type: integer
-          title: Max Parallel Llm Calls
-          default: 0
-      type: object
-      title: ExtractConfig
-      description: Hey, developer! Keep this in sync with corresponding pydantic model
-        in learning_config.models
-    Features:
-      properties:
-        reasoning:
-          anyOf:
-          - $ref: '#/components/schemas/ReasoningConfig'
-          - type: 'null'
-        tools:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        structured_output:
-          anyOf:
-          - $ref: '#/components/schemas/StructuredOutputConfig'
-          - type: 'null'
-        vision:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        streaming:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        system_message:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        text_extraction:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        custom_keys:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        file_input:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-        image_generation:
-          anyOf:
-          - $ref: '#/components/schemas/BaseConfig'
-          - type: 'null'
-      type: object
-      title: Features
-    GenerativeDrivers:
-      type: string
-      enum:
-      - microsoft
-      - google
-      - nuclia
-      - hf
-      - mistral
-      - claude3
-      - microsoft_mistral
-      - openai
-      - huggingface
-      - vertex
-      - azure_aii
-      - openai_compat
-      - bedrock
-      - none
-      - custom
-      - dummy
-      title: GenerativeDrivers
-    GenerativeOption:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        value:
-          type: string
-          title: Value
-        provider:
-          type: string
-          title: Provider
-        user_prompt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Prompt
-        user_key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: User Key
-      type: object
-      required:
-      - name
-      - value
-      - provider
-      title: GenerativeOption
-    HFUserPrompt:
-      properties:
-        system:
-          type: string
-          title: System
-          default: ''
-          examples: []
-          info: Input here the behaviour you want the model to have
-        prompt:
-          type: string
-          title: Prompt
-          examples: []
-          info: "Input here your prompt with the words {context} and {question} in\
-            \ brackets where you want those fields to be placed, in case you want\
-            \ them in your prompt.\n For this generative model {chat_history} is not\
-            \ available to modify in the prompt"
-      type: object
-      required:
-      - prompt
-      title: HFUserPrompt
-    LLMReasoningConfig-Input:
-      properties:
-        effort:
-          anyOf:
-          - $ref: '#/components/schemas/Effort-Input'
-          - type: 'null'
-          default: 0
-        budget_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Budget Tokens
-          default: 0
-      type: object
-      title: LLMReasoningConfig
-      description: Keep this in sync with learning_generative.models.Reasoning
-    LLMReasoningConfig-Output:
-      properties:
-        effort:
-          anyOf:
-          - $ref: '#/components/schemas/Effort'
-          - type: 'null'
-          default: 0
-        budget_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Budget Tokens
-          default: 0
-      type: object
-      title: LLMReasoningConfig
-      description: Keep this in sync with learning_generative.models.Reasoning
-    LLMSplitConfig-Input:
-      properties:
-        llm:
-          anyOf:
-          - $ref: '#/components/schemas/LLMConfig-Input'
-          - type: 'null'
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-      type: object
-      title: LLMSplitConfig
-    LLMSplitConfig-Output:
-      properties:
-        llm:
-          anyOf:
-          - $ref: '#/components/schemas/LLMConfig-Output'
-          - type: 'null'
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-      type: object
-      title: LLMSplitConfig
-    LearningConfiguration:
-      properties:
-        resource_labelers_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Resource Labelers Models
-        paragraph_labelers_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Paragraph Labelers Models
-        intent_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Intent Models
-        visual_labeling:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Visual Labeling
-          default: disabled
-        ner_model:
-          type: string
-          title: Ner Model
-          default: multilingual
-        relation_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Relation Model
-          default: base
-        anonymization_model:
-          type: string
-          title: Anonymization Model
-          default: disabled
-        semantic_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Semantic Model
-          deprecated: true
-        semantic_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Semantic Models
-        default_semantic_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Model
-        semantic_graph_node_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Semantic Graph Node Models
-        default_semantic_graph_node_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Graph Node Model
-        semantic_graph_edge_models:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Semantic Graph Edge Models
-        default_semantic_graph_edge_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Graph Edge Model
-        semantic_vector_similarity:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Semantic Vector Similarity
-          default: DOT
-          deprecated: true
-        semantic_vector_size:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Semantic Vector Size
-          default: 1024
-          deprecated: true
-        semantic_matryoshka_dims:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Semantic Matryoshka Dims
-          default: []
-          deprecated: true
-        semantic_threshold:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Semantic Threshold
-          default: 0.4
-          deprecated: true
-        generative_model:
-          type: string
-          title: Generative Model
-          default: chatgpt-azure-4o
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/UserLearningKeys'
-          - type: 'null'
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/UserPrompts'
-          - type: 'null'
-        summary:
-          $ref: '#/components/schemas/Summary'
-          default: simple
-        summary_model:
-          type: string
-          title: Summary Model
-          default: chatgpt-azure-4o
-        summary_prompt:
-          anyOf:
-          - $ref: '#/components/schemas/SummaryPrompt'
-          - type: 'null'
-        prefer_markdown_generative_response:
-          type: boolean
-          title: Prefer Markdown Generative Response
-          default: false
-        semantic_model_configs:
-          additionalProperties:
-            $ref: '#/components/schemas/SemanticConfig'
-          type: object
-          title: Semantic Model Configs
-          default: {}
-        semantic_graph_node_model_configs:
-          additionalProperties:
-            $ref: '#/components/schemas/SemanticConfig'
-          type: object
-          title: Semantic Graph Node Model Configs
-          default: {}
-        semantic_graph_edge_model_configs:
-          additionalProperties:
-            $ref: '#/components/schemas/SemanticConfig'
-          type: object
-          title: Semantic Graph Edge Model Configs
-          default: {}
-      type: object
-      title: LearningConfiguration
-      description: 'This model is to add the fields that are computed dynamically
-        and not stored in the db, it also serves as a bridge
-
-        between the stored config and what we want to send through the APIs'
-    LearningConfigurationCreation:
-      properties:
-        anonymization_model:
-          anyOf:
-          - $ref: '#/components/schemas/AnonymizationModel'
-          - type: string
-          title: Anonymization Model
-          default: disabled
-        visual_labeling:
-          anyOf:
-          - $ref: '#/components/schemas/VisualLabeling'
-          - type: string
-          title: Visual Labeling
-          default: disabled
-        generative_model:
-          type: string
-          title: Generative Model
-          default: chatgpt-azure-4o
-        ner_model:
-          anyOf:
-          - $ref: '#/components/schemas/NERModel'
-          - type: string
-          title: Ner Model
-          default: multilingual
-        relation_model:
-          anyOf:
-          - $ref: '#/components/schemas/RelationModel'
-          - type: string
-          title: Relation Model
-          default: base
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/UserLearningKeys'
-          - type: 'null'
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/UserPrompts'
-          - type: 'null'
-        summary:
-          anyOf:
-          - $ref: '#/components/schemas/Summary'
-          - type: 'null'
-          default: simple
-        summary_model:
-          type: string
-          title: Summary Model
-          default: chatgpt-azure-4o
-        summary_prompt:
-          anyOf:
-          - $ref: '#/components/schemas/SummaryPrompt'
-          - type: 'null'
-        prefer_markdown_generative_response:
-          type: boolean
-          title: Prefer Markdown Generative Response
-          default: false
-        default_semantic_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Model
-          description: The default vector set / semantic model to use. Must be one
-            of the models defined in the `semantic_models` field. If not provided,
-            the first model in the list will be used.
-        semantic_model:
-          anyOf:
-          - $ref: '#/components/schemas/ParagraphEmbeddingModel'
-          - type: 'null'
-          deprecated: true
-        semantic_models:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ParagraphEmbeddingModel'
-            type: array
-          - type: 'null'
-          title: Semantic Models
-        semantic_graph_node_models:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/NodeEmbeddingModel'
-            type: array
-          - type: 'null'
-          title: Semantic Graph Node Models
-        default_semantic_graph_node_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Graph Node Model
-        semantic_graph_edge_models:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/EdgeEmbeddingModel'
-            type: array
-          - type: 'null'
-          title: Semantic Graph Edge Models
-        default_semantic_graph_edge_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Graph Edge Model
-      type: object
-      title: LearningConfigurationCreation
-    LearningConfigurationUpdate:
-      properties:
-        anonymization_model:
-          anyOf:
-          - $ref: '#/components/schemas/AnonymizationModel'
-          - type: string
-          title: Anonymization Model
-          default: disabled
-        visual_labeling:
-          anyOf:
-          - $ref: '#/components/schemas/VisualLabeling'
-          - type: string
-          title: Visual Labeling
-          default: disabled
-        generative_model:
-          type: string
-          title: Generative Model
-          default: chatgpt-azure-4o
-        ner_model:
-          anyOf:
-          - $ref: '#/components/schemas/NERModel'
-          - type: string
-          title: Ner Model
-          default: multilingual
-        relation_model:
-          anyOf:
-          - $ref: '#/components/schemas/RelationModel'
-          - type: string
-          title: Relation Model
-          default: base
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/UserLearningKeys'
-          - type: 'null'
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/UserPrompts'
-          - type: 'null'
-        summary:
-          anyOf:
-          - $ref: '#/components/schemas/Summary'
-          - type: 'null'
-          default: simple
-        summary_model:
-          type: string
-          title: Summary Model
-          default: chatgpt-azure-4o
-        summary_prompt:
-          anyOf:
-          - $ref: '#/components/schemas/SummaryPrompt'
-          - type: 'null'
-        prefer_markdown_generative_response:
-          type: boolean
-          title: Prefer Markdown Generative Response
-          default: false
-        default_semantic_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Default Semantic Model
-          description: The default vector set / semantic model to use. Must be one
-            of the models defined in the `semantic_models` field. If not provided,
-            the first model in the list will be used.
-      additionalProperties: false
-      type: object
-      title: LearningConfigurationUpdate
-    Metadata:
-      properties:
-        metadata:
-          additionalProperties:
-            type: string
-          type: object
-          title: Metadata
-          default: {}
-        language:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Language
-        languages:
-          anyOf:
-          - items:
-              type: string
-            type: array
-            maxItems: 1024
-          - type: 'null'
-          title: Languages
-        status:
-          $ref: '#/components/schemas/ResourceProcessingStatus'
-      type: object
-      required:
-      - status
-      title: Metadata
-    ModelConfig:
-      properties:
-        input_tokens:
-          $ref: '#/components/schemas/TokenValues'
-        output_tokens:
-          $ref: '#/components/schemas/OutputTokenValues'
-        prompt_id:
-          type: string
-          title: Prompt Id
-        driver:
-          $ref: '#/components/schemas/GenerativeDrivers'
-        max_images:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Images
-        assume_role:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Assume Role
-      type: object
-      required:
-      - input_tokens
-      - output_tokens
-      - prompt_id
-      - driver
-      title: ModelConfig
-    ModelID:
-      properties:
-        id:
-          type: string
-          title: Id
-      type: object
-      required:
-      - id
-      title: ModelID
-    NERModel:
-      type: string
-      enum:
-      - multilingual
-      title: NERModel
-    NodeEmbeddingModel:
-      type: string
-      enum:
-      - multilingual-graph-v1
-      title: NodeEmbeddingModel
-    OpenAICompatUserPrompt:
-      properties:
-        system:
-          type: string
-          title: System
-          default: ''
-          examples:
-          - You are a medical assistant, use medical terminology
-          - You are an IT expert, express yourself like one
-          - You are a very friendly customer service assistant, be polite
-          - You are a financial expert, use correct terms
-          info: Input here the behaviour you want the model to have
-        prompt:
-          type: string
-          title: Prompt
-          examples:
-          - "Taking into account this provided context: <Context> {context} </Context>\n\
-            \    Can you answer this question in a clear, concise way: <Question>\
-            \ {question} </Question>"
-          - "Taking into account this provided context.\n    Context:\n    {context}\n\
-            \    Answer this QUESTION: \"{question}\" like an economy expert."
-          - "Taking into account this provided context: <Context> {context} </Context>\n\
-            \    Answer this question: <Question> {question} </Question>\n    If you\
-            \ do not find an answer in the context, say that you don't have enough\
-            \ data."
-          info: Input here your prompt with the words {context} and {question} in
-            brackets where you want those fields to be placed, in case you want them
-            in your prompt.
-      type: object
-      required:
-      - prompt
-      title: OpenAICompatUserPrompt
-    Option:
-      properties:
-        name:
-          type: string
-          title: Name
-        value:
-          type: string
-          title: Value
-      type: object
-      required:
-      - name
-      - value
-      title: Option
-    OutputTokenValues:
-      properties:
-        min:
-          type: integer
-          title: Min
-          default: 0
-        max:
-          type: integer
-          title: Max
-        default_max:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Default Max
-      type: object
-      required:
-      - max
-      title: OutputTokenValues
-    ParagraphEmbeddingModel:
-      type: string
-      enum:
-      - en-2024-04-24
-      - multilingual-2024-05-06
-      - multilingual-2023-08-16
-      - multilingual-2024-10-07
-      - text-embedding-3-small
-      - text-embedding-3-large
-      - gecko-embeddings-multi
-      - gemini-embedding-2
-      - hf_embedding
-      title: ParagraphEmbeddingModel
-    PatchAccountCustomModel:
-      properties:
-        model_types:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StringModelTypes'
-            type: array
-            minItems: 1
-          - type: 'null'
-          title: Model Types
-        location:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Location
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        trained_date:
-          type: string
-          format: date-time
-          title: Trained Date
-          default: '2026-08-28T13:48:55.184122'
-        trained_kbid:
-          type: string
-          title: Trained Kbid
-          default: ''
-        openai_compat:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAICompatModel-Input'
-          - type: 'null'
-      type: object
-      title: PatchAccountCustomModel
-    PatchDefaultModelConfig:
-      properties:
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Description for the default model config
-        user_keys:
-          anyOf:
-          - $ref: '#/components/schemas/UserLearningKeys'
-          - type: 'null'
-          description: Custom user keys for the default model. If not set, Nuclia
-            keys will be used.
-        user_prompts:
-          anyOf:
-          - $ref: '#/components/schemas/UserPrompts'
-          - type: 'null'
-          description: Custom user prompts for the default model. If not set, Nuclia
-            prompts will be used.
-        assume_role:
-          anyOf:
-          - $ref: '#/components/schemas/AssumeRoleType'
-          - type: 'null'
-          description: Assume role type for models that require it (e.g., AWS Bedrock)
-        kbids:
-          anyOf:
-          - items:
-              type: string
-            type: array
-            maxItems: 5000
-          - type: 'null'
-          title: Kbids
-          description: List of KB IDs where this default model config is allowed.
-            Empty list means it is allowed in all KBs. If not set, the previous value
-            will be kept.
-      type: object
-      title: PatchDefaultModelConfig
-    PriorityConfig:
-      properties:
-        supported:
-          type: boolean
-          title: Supported
-          default: false
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-      type: object
-      title: PriorityConfig
-    Provider:
-      properties:
-        title:
-          type: string
-          title: Title
-        enterprise_readiness:
-          type: boolean
-          title: Enterprise Readiness
-        models:
-          additionalProperties:
-            $ref: '#/components/schemas/ModelInfo'
-          type: object
-          title: Models
-      type: object
-      required:
-      - title
-      - enterprise_readiness
-      - models
-      title: Provider
-    ProviderName:
-      type: string
-      enum:
-      - anthropic
-      - anthropic-vertexai
-      - anthropic-bedrock
-      - microsoft
-      - google
-      - google-priority
-      - openai
-      - openai_compat
-      - huggingface
-      - vertex
-      - amazon
-      - default
-      - onprem
-      - progress-agentic-rag
-      - none
-      - dummy
-      title: ProviderName
-    ProvidersResponse:
-      properties:
-        providers:
-          additionalProperties:
-            $ref: '#/components/schemas/Provider'
-          propertyNames:
-            $ref: '#/components/schemas/ProviderName'
-          type: object
-          title: Providers
-      type: object
-      required:
-      - providers
-      title: ProvidersResponse
-    ReasoningConfig:
-      properties:
-        default:
-          anyOf:
-          - type: integer
-          - $ref: '#/components/schemas/learning_models__providers__models__Effort'
-          title: Default
-        available_efforts:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/learning_models__providers__models__Effort'
-            type: array
-            uniqueItems: true
-          - type: 'null'
-          title: Available Efforts
-        supports_disabling:
-          type: boolean
-          title: Supports Disabling
-          default: true
-        chat_template_key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Chat Template Key
-        effort_chat_template_key:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Effort Chat Template Key
-      type: object
-      required:
-      - default
-      title: ReasoningConfig
-    ReasoningFeatures-Input:
-      properties:
-        dispatch:
-          $ref: '#/components/schemas/ReasoningType'
-          title: Reasoning type
-          description: How reasoning is exposed on the wire for this model. Defaults
-            to Unspecified, which means the legacy `reasoning`/`reasoning_chat_template_key`
-            fields are used.
-          default: 0
-        think_key:
-          type: string
-          title: Thinking chat template key
-          description: Key in `chat_template_kwargs` that toggles thinking on/off
-            (e.g. `thinking`, `enable_thinking`). Only used for chat-template dispatches.
-          default: ''
-        effort_key:
-          type: string
-          title: Effort chat template key
-          description: Key in `chat_template_kwargs` that carries the effort level.
-            When empty/None, effort is sent at the request top level as `reasoning_effort`.
-          default: ''
-        available_efforts:
-          items:
-            $ref: '#/components/schemas/Effort-Input'
-          type: array
-          title: Available efforts
-          description: The closed, user-defined set of accepted effort levels. Empty
-            means all effort levels are accepted.
-        default_effort:
-          $ref: '#/components/schemas/Effort-Input'
-          title: Default effort
-          description: The default effort level used when the user does not specify
-            one. Resolved to the lowest supported effort when not set.
-          default: 0
-      type: object
-      title: ReasoningFeatures
-      description: "    Structured reasoning capability/shape for a model. When set,\
-        \ it is the source of\ntruth and takes precedence over the legacy `reasoning`/`reasoning_chat_template_key`\
-        \ fields.\n   "
-    ReasoningFeatures-Output:
-      properties:
-        dispatch:
-          $ref: '#/components/schemas/ReasoningType'
-          title: Reasoning type
-          description: How reasoning is exposed on the wire for this model. Defaults
-            to Unspecified, which means the legacy `reasoning`/`reasoning_chat_template_key`
-            fields are used.
-          default: 0
-        think_key:
-          type: string
-          title: Thinking chat template key
-          description: Key in `chat_template_kwargs` that toggles thinking on/off
-            (e.g. `thinking`, `enable_thinking`). Only used for chat-template dispatches.
-          default: ''
-        effort_key:
-          type: string
-          title: Effort chat template key
-          description: Key in `chat_template_kwargs` that carries the effort level.
-            When empty/None, effort is sent at the request top level as `reasoning_effort`.
-          default: ''
-        available_efforts:
-          items:
-            $ref: '#/components/schemas/Effort'
-          type: array
-          title: Available efforts
-          description: The closed, user-defined set of accepted effort levels. Empty
-            means all effort levels are accepted.
-        default_effort:
-          $ref: '#/components/schemas/Effort'
-          title: Default effort
-          description: The default effort level used when the user does not specify
-            one. Resolved to the lowest supported effort when not set.
-          default: 0
-      type: object
-      title: ReasoningFeatures
-      description: "    Structured reasoning capability/shape for a model. When set,\
-        \ it is the source of\ntruth and takes precedence over the legacy `reasoning`/`reasoning_chat_template_key`\
-        \ fields.\n   "
-    ReasoningTags:
-      properties:
-        start:
-          type: string
-          title: Start
-        end:
-          type: string
-          title: End
-      type: object
-      required:
-      - start
-      - end
-      title: ReasoningTags
-      description: For detecting reasoning blocks
-    RelationModel:
-      type: string
-      enum:
-      - base
-      title: RelationModel
-    RephraseConfig:
-      properties:
-        max_output_tokens:
-          type: integer
-          title: Max Output Tokens
-          default: 1025
-        fallback_model:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Fallback Model
-      type: object
-      title: RephraseConfig
-    SeedConfig:
-      properties:
-        min:
-          type: integer
-          title: Min
-          default: 0
-        max:
-          type: integer
-          title: Max
-          default: 2147483647
-        default:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Default
-      type: object
-      title: SeedConfig
-    SemanticConfig:
-      properties:
-        similarity:
-          $ref: '#/components/schemas/SimilarityFunction'
-        size:
-          type: integer
-          title: Size
-        threshold:
-          type: number
-          title: Threshold
-        max_tokens:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Tokens
-        matryoshka_dims:
-          items:
-            type: integer
-          type: array
-          title: Matryoshka Dims
-          default: []
-        external:
-          type: boolean
-          title: External
-          default: false
-      type: object
-      required:
-      - similarity
-      - size
-      - threshold
-      title: SemanticConfig
-    SimilarityFunction:
-      type: integer
-      enum:
-      - 0
-      - 1
-      title: SimilarityFunction
-    SplitConfig:
-      properties:
-        max_paragraph:
-          type: integer
-          title: Max Paragraph
-          default: 0
-        custom_split:
-          anyOf:
-          - $ref: '#/components/schemas/CustomSplitStrategy'
-          - type: 'null'
-          default: 0
-      type: object
-      title: SplitConfig
-    SplitConfiguration-Input:
-      properties:
-        name:
-          type: string
-          title: Name
-          default: ''
-        max_paragraph:
-          type: integer
-          title: Max Paragraph
-          default: 0
-        custom_split:
-          anyOf:
-          - $ref: '#/components/schemas/CustomSplitStrategy'
-          - type: 'null'
-          default: 0
-        llm_split:
-          anyOf:
-          - $ref: '#/components/schemas/LLMSplitConfig-Input'
-          - type: 'null'
-        manual_split:
-          anyOf:
-          - $ref: '#/components/schemas/ManualSplitConfig'
-          - type: 'null'
-      type: object
-      title: SplitConfiguration
-    SplitConfiguration-Output:
-      properties:
-        name:
-          type: string
-          title: Name
-          default: ''
-        max_paragraph:
-          type: integer
-          title: Max Paragraph
-          default: 0
-        custom_split:
-          anyOf:
-          - $ref: '#/components/schemas/CustomSplitStrategy'
-          - type: 'null'
-          default: 0
-        llm_split:
-          anyOf:
-          - $ref: '#/components/schemas/LLMSplitConfig-Output'
-          - type: 'null'
-        manual_split:
-          anyOf:
-          - $ref: '#/components/schemas/ManualSplitConfig'
-          - type: 'null'
-      type: object
-      title: SplitConfiguration
-    Stability:
-      type: string
-      enum:
-      - stable
-      - preview
-      title: Stability
-    StreamPostprocessor:
-      type: string
-      enum:
-      - deduplicate_llm_citations
-      title: StreamPostprocessor
-      description: Postprocessors applied to streaming generative responses.
-    StringModelTypes:
-      type: string
-      enum:
-      - GENERATIVE
-      - NER
-      - RESOURCE_LABELER
-      - CLASSIFIER
-      - ANONYMIZER
-      - VISUAL_LABELER
-      - SUMMARY
-      - DUMMY
-      - PARAGRAPH_LABELER
-      - EMBEDDINGS
-      - RELATIONS
-      title: StringModelTypes
-    StructuredOutputConfig:
-      properties:
-        use_tool_calling:
-          type: boolean
-          title: Use Tool Calling
-          default: true
-      type: object
-      title: StructuredOutputConfig
-    Summary:
-      type: string
-      enum:
-      - extended
-      - simple
-      title: Summary
-    SummaryPrompt:
-      properties:
-        prompt:
-          type: string
-          title: Prompt
-          examples:
-          - 'Make a bullet point summary of the following content: {text}'
-          - 'Make a thorough summary of the following news article: {text}'
-          info: Input here your prompt with the word {text} in brackets where you
-            want the content to summarize to be placed
-      type: object
-      required:
-      - prompt
-      title: SummaryPrompt
-    TemperatureConfig:
-      properties:
-        min:
-          type: number
-          title: Min
-          default: 0.0
-        max:
-          type: number
-          title: Max
-        default:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Default
-      type: object
-      required:
-      - max
-      - default
-      title: TemperatureConfig
-    TokenValues:
-      properties:
-        min:
-          type: integer
-          title: Min
-          default: 0
-        max:
-          type: integer
-          title: Max
-      type: object
-      required:
-      - max
-      title: TokenValues
-    TokenizerConfig:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Path
-        extra_kwargs:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Extra Kwargs
-      type: object
-      title: TokenizerConfig
-    UserLearningKeys:
-      properties:
-        openai:
-          anyOf:
-          - $ref: '#/components/schemas/learning_config__models__OpenAIKey'
-          - type: 'null'
-        azure_openai:
-          anyOf:
-          - $ref: '#/components/schemas/learning_config__models__AzureOpenAIKey'
-          - type: 'null'
-        mistral:
-          anyOf:
-          - $ref: '#/components/schemas/MistralKey'
-          - type: 'null'
-        palm:
-          anyOf:
-          - $ref: '#/components/schemas/PalmKey'
-          - type: 'null'
-        anthropic:
-          anyOf:
-          - $ref: '#/components/schemas/AnthropicKey'
-          - type: 'null'
-        claude3:
-          anyOf:
-          - $ref: '#/components/schemas/AnthropicKey'
-          - type: 'null'
-        anthropic_vertex:
-          anyOf:
-          - $ref: '#/components/schemas/AnthropicVertexKey'
-          - type: 'null'
-        azure_mistral:
-          anyOf:
-          - $ref: '#/components/schemas/MistralKey'
-          - type: 'null'
-        hf_llm:
-          anyOf:
-          - $ref: '#/components/schemas/HFLLMKey'
-          - type: 'null'
-        hf_embedding:
-          anyOf:
-          - $ref: '#/components/schemas/learning_config__models__HFEmbeddingKey'
-          - type: 'null'
-        azure_aii:
-          anyOf:
-          - $ref: '#/components/schemas/AzureAIIKey'
-          - type: 'null'
-        openai_compat:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAICompatModel-Output'
-          - type: 'null'
-      type: object
-      title: UserLearningKeys
-    VLLMExtractionConfig-Input:
-      properties:
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-        llm:
-          anyOf:
-          - $ref: '#/components/schemas/LLMConfig-Input'
-          - type: 'null'
-      type: object
-      title: VLLMExtractionConfig
-    VLLMExtractionConfig-Output:
-      properties:
-        rules:
-          items:
-            type: string
-          type: array
-          title: Rules
-        llm:
-          anyOf:
-          - $ref: '#/components/schemas/LLMConfig-Output'
-          - type: 'null'
-      type: object
-      title: VLLMExtractionConfig
-    VisualLabeling:
-      type: string
-      enum:
-      - disabled
-      - enabled
-      title: VisualLabeling
-    learning_config__models__AzureOpenAIKey:
-      properties:
-        key:
-          type: string
-          title: Key
-        url:
-          type: string
-          title: Url
-        deployment:
-          type: string
-          title: Deployment
-        model:
-          type: string
-          title: Model
-      type: object
-      required:
-      - key
-      - url
-      - deployment
-      - model
-      title: AzureOpenAIKey
-    learning_config__models__HFEmbeddingKey:
-      properties:
-        url:
-          type: string
-          title: Huggingface Endpoint URL
-          description: URL of the Huggingface embedding model endpoint
-        key:
-          type: string
-          title: Huggingface API Key
-          description: API Key with access the desired Huggingface endpoint
-          default: ''
-        matryoshka:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Matryoshka Dimensions
-          description: List of matryoshka dimensions to use for the embedding, in
-            descending order. If unknown, leave it empty
-          examples:
-          - - 768
-            - 512
-            - 256
-        similarity:
-          type: string
-          title: Similarity Function
-          description: Similarity function to use. It can be DOT or COSINE, leave
-            it as DOT if unknown
-          default: DOT
-          examples:
-          - DOT
-          - COSINE
-        size:
-          type: integer
-          title: Embedding Vector Size
-          description: Size of the embeddings generated by the model. Must be set
-            to the correct value for the specific model hosted in the endpoint
-        threshold:
-          type: number
-          title: Semantic Threshold
-          description: Threshold to use for semantic similarity
-          default: 0.4
-        passage_prompt:
-          type: string
-          title: Passage Prompt
-          description: Prompt to use for passage embedding, only set this value if
-            your embedding model requires it
-          default: '{}'
-          examples:
-          - 'Passage: {}'
-        query_prompt:
-          type: string
-          title: Query Prompt
-          description: Prompt to use for query embedding, only set this value if your
-            embedding model requires it
-          default: '{}'
-          examples:
-          - 'Represent this sentence for searching relevant passages: {}'
-      type: object
-      required:
-      - url
-      - size
-      title: HFEmbeddingKey
-    learning_config__models__OpenAIKey:
-      properties:
-        key:
-          type: string
-          title: Key
-        org:
-          type: string
-          title: Org
-      type: object
-      required:
-      - key
-      - org
-      title: OpenAIKey
-    learning_models__providers__models__Effort:
-      type: string
-      enum:
-      - none
-      - minimal
-      - low
-      - medium
-      - high
-      - xhigh
-      - max
-      title: Effort
-    learning_protos__config_p2p__AnthropicKey:
-      properties:
-        key:
-          type: string
-          title: Key
-          default: ''
-      type: object
-      title: AnthropicKey
-    learning_protos__config_p2p__AnthropicVertexKey:
-      properties:
-        credentials:
-          type: string
-          title: JSON Credentials
-          description: Service Account Key credentials in JSON format for Vertex AI
-            access
-        location:
-          type: string
-          title: Vertex AI Location
-          description: GCP region where the model will be accessed from. E.g. us-central1
-          default: ''
-      type: object
-      required:
-      - credentials
-      title: AnthropicVertexKey
-    learning_protos__config_p2p__HFLLMKey:
-      properties:
-        key:
-          type: string
-          title: Key
-          default: ''
-        url:
-          type: string
-          title: Url
-          default: ''
-        model:
-          $ref: '#/components/schemas/ModelType'
-          default: 0
-      type: object
-      title: HFLLMKey
-    learning_protos__config_p2p__MistralKey:
-      properties:
-        key:
-          type: string
-          title: Key
-          default: ''
-      type: object
-      title: MistralKey
-    learning_protos__config_p2p__PalmKey:
-      properties:
-        credentials:
-          type: string
-          title: JSON Credentials
-          description: If using Vertex AI, this should contain the Service Account
-            Key credentials
-          default: ''
-        location:
-          type: string
-          title: Vertex AI Location
-          description: If using Vertex AI, this is the GCP region where the model
-            will be accessed from. E.g. us-central1
-          default: ''
-        gemini_key:
-          type: string
-          title: Gemini API Key
-          description: If using Gemini API, only an API key for the Gemini Developer
-            API is required
-          default: ''
-      type: object
-      title: PalmKey
-    learning_protos__config_p2p__UserLearningKeys-Input:
-      properties:
-        openai:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAIKey'
-          - type: 'null'
-        azure_openai:
-          anyOf:
-          - $ref: '#/components/schemas/AzureOpenAIKey'
-          - type: 'null'
-        palm:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__PalmKey'
-          - type: 'null'
-        anthropic:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
-          - type: 'null'
-        claude3:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
-          - type: 'null'
-        anthropic_vertex:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicVertexKey'
-          - type: 'null'
-        anthropic_bedrock:
-          anyOf:
-          - $ref: '#/components/schemas/AnthropicBedrockKey'
-          - type: 'null'
-        text_generation:
-          anyOf:
-          - $ref: '#/components/schemas/TextGenerationKey'
-          - type: 'null'
-        mistral:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__MistralKey'
-          - type: 'null'
-        azure_mistral:
-          anyOf:
-          - $ref: '#/components/schemas/AzureMistralKey'
-          - type: 'null'
-        hf_llm:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__HFLLMKey'
-          - type: 'null'
-        hf_embedding:
-          anyOf:
-          - $ref: '#/components/schemas/HFEmbeddingKey'
-          - type: 'null'
-        azure_aii:
-          anyOf:
-          - $ref: '#/components/schemas/AzureAIIKey'
-          - type: 'null'
-        openai_compat:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAICompatModel-Input'
-          - type: 'null'
-      type: object
-      title: UserLearningKeys
-    learning_protos__config_p2p__UserLearningKeys-Output:
-      properties:
-        openai:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAIKey'
-          - type: 'null'
-        azure_openai:
-          anyOf:
-          - $ref: '#/components/schemas/AzureOpenAIKey'
-          - type: 'null'
-        palm:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__PalmKey'
-          - type: 'null'
-        anthropic:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
-          - type: 'null'
-        claude3:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicKey'
-          - type: 'null'
-        anthropic_vertex:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__AnthropicVertexKey'
-          - type: 'null'
-        anthropic_bedrock:
-          anyOf:
-          - $ref: '#/components/schemas/AnthropicBedrockKey'
-          - type: 'null'
-        text_generation:
-          anyOf:
-          - $ref: '#/components/schemas/TextGenerationKey'
-          - type: 'null'
-        mistral:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__MistralKey'
-          - type: 'null'
-        azure_mistral:
-          anyOf:
-          - $ref: '#/components/schemas/AzureMistralKey'
-          - type: 'null'
-        hf_llm:
-          anyOf:
-          - $ref: '#/components/schemas/learning_protos__config_p2p__HFLLMKey'
-          - type: 'null'
-        hf_embedding:
-          anyOf:
-          - $ref: '#/components/schemas/HFEmbeddingKey'
-          - type: 'null'
-        azure_aii:
-          anyOf:
-          - $ref: '#/components/schemas/AzureAIIKey'
-          - type: 'null'
-        openai_compat:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAICompatModel-Output'
-          - type: 'null'
-      type: object
-      title: UserLearningKeys
     AgentID:
       properties:
         id:
@@ -18485,6 +17906,12 @@ components:
           title: Rows
       type: object
       title: Sheet
+    Source:
+      type: integer
+      enum:
+      - 0
+      - 1
+      title: Source
     SourceNode:
       properties:
         prop:
@@ -19064,3 +18491,698 @@ components:
       - by
       title: Generated
       description: Matches if the relation was generated by the given source
+    AITablesConfig:
+      properties:
+        generative_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Model
+        generative_provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Provider
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+          default: []
+        merge_pages:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Merge Pages
+        max_pages_to_merge:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Pages To Merge
+      type: object
+      title: AITablesConfig
+    ClassificationLabel:
+      properties:
+        label:
+          type: string
+          title: Label
+        labelset:
+          type: string
+          title: Labelset
+      type: object
+      required:
+      - label
+      - labelset
+      title: ClassificationLabel
+    ExtractConfig:
+      properties:
+        name:
+          type: string
+          title: Name
+        vllm_config:
+          anyOf:
+          - $ref: '#/components/schemas/VLLMExtractionConfig'
+          - type: 'null'
+        ai_tables:
+          anyOf:
+          - $ref: '#/components/schemas/AITablesConfig'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      title: ExtractConfig
+    Format:
+      type: integer
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      title: Format
+    LLMSplitConfig:
+      properties:
+        generative_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Model
+        generative_provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Provider
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+          default: []
+      type: object
+      title: LLMSplitConfig
+    LayoutFormat:
+      type: integer
+      enum:
+      - 0
+      title: LayoutFormat
+    LearningConfig:
+      properties:
+        semantic_models:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Semantic Models
+        generative_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Model
+        ner_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ner Model
+        anonymization_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Anonymization Model
+        visual_labeling:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Visual Labeling
+        split_configs:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/SplitConfiguration'
+            type: object
+          - type: 'null'
+          title: Split Configs
+        extract_configs:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/ExtractConfig'
+            type: object
+          - type: 'null'
+          title: Extract Configs
+      type: object
+      title: LearningConfig
+    LinkUpload:
+      properties:
+        link:
+          type: string
+          title: Link
+        headers:
+          additionalProperties:
+            type: string
+          type: object
+          title: Headers
+        cookies:
+          additionalProperties:
+            type: string
+          type: object
+          title: Cookies
+        localstorage:
+          additionalProperties:
+            type: string
+          type: object
+          title: Localstorage
+        css_selector:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Css Selector
+        xpath:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Xpath
+        extract_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extract Strategy
+        split_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Split Strategy
+        classification_labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClassificationLabel'
+            type: array
+          - type: 'null'
+          title: Classification Labels
+      type: object
+      required:
+      - link
+      - headers
+      - cookies
+      - localstorage
+      title: LinkUpload
+    ProcessRequestStatus:
+      properties:
+        processing_id:
+          type: string
+          title: Processing Id
+        resource_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Id
+        kbid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Kbid
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+        completed:
+          type: boolean
+          title: Completed
+        scheduled:
+          type: boolean
+          title: Scheduled
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        completed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completed At
+        scheduled_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Scheduled At
+        failed:
+          type: boolean
+          title: Failed
+          default: false
+        retries:
+          type: integer
+          title: Retries
+          default: 0
+        schedule_eta:
+          type: number
+          title: Schedule Eta
+          default: 0.0
+        schedule_order:
+          type: integer
+          title: Schedule Order
+          default: 0
+        request:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request
+        response:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Response
+      type: object
+      required:
+      - processing_id
+      - resource_id
+      - kbid
+      - title
+      - labels
+      - completed
+      - scheduled
+      - timestamp
+      - completed_at
+      - scheduled_at
+      title: ProcessRequestStatus
+    ProcessRequestStatusResults:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/ProcessRequestStatus'
+          type: array
+          title: Results
+        cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      type: object
+      required:
+      - results
+      - cursor
+      title: ProcessRequestStatusResults
+    ProcessingBlock:
+      properties:
+        x:
+          type: integer
+          title: X
+        y:
+          type: integer
+          title: Y
+        cols:
+          type: integer
+          title: Cols
+        rows:
+          type: integer
+          title: Rows
+        type:
+          $ref: '#/components/schemas/TypeBlock'
+        ident:
+          type: string
+          title: Ident
+        payload:
+          type: string
+          title: Payload
+      type: object
+      required:
+      - x
+      - y
+      - cols
+      - rows
+      - type
+      - ident
+      - payload
+      title: ProcessingBlock
+    ProcessingConversation:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/ProcessingMessage'
+          type: array
+          title: Messages
+        extract_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extract Strategy
+        split_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Split Strategy
+        classification_labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClassificationLabel'
+            type: array
+          - type: 'null'
+          title: Classification Labels
+      type: object
+      required:
+      - messages
+      title: ProcessingConversation
+    ProcessingGeneratedConversation:
+      properties:
+        source_field_id:
+          type: string
+          title: Source Field Id
+        conversationfield:
+          $ref: '#/components/schemas/ProcessingConversation'
+      type: object
+      required:
+      - source_field_id
+      - conversationfield
+      title: ProcessingGeneratedConversation
+    ProcessingLayoutDiff:
+      properties:
+        format:
+          $ref: '#/components/schemas/LayoutFormat'
+        blocks:
+          additionalProperties:
+            $ref: '#/components/schemas/ProcessingBlock'
+          type: object
+          title: Blocks
+      type: object
+      required:
+      - format
+      - blocks
+      title: ProcessingLayoutDiff
+    ProcessingMessage:
+      properties:
+        timestamp:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Timestamp
+        who:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Who
+        to:
+          items:
+            type: string
+          type: array
+          title: To
+          default: []
+        content:
+          $ref: '#/components/schemas/ProcessingMessageContent'
+        ident:
+          type: string
+          title: Ident
+      type: object
+      required:
+      - content
+      - ident
+      title: ProcessingMessage
+    ProcessingMessageContent:
+      properties:
+        text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text
+        format:
+          $ref: '#/components/schemas/Format'
+      type: object
+      required:
+      - format
+      title: ProcessingMessageContent
+    ProcessingQueueType:
+      type: string
+      enum:
+      - shared
+      - private
+      title: ProcessingQueueType
+    PushPayload:
+      properties:
+        kbid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Kbid
+        uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uuid
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        labels:
+          items:
+            type: string
+          type: array
+          title: Labels
+          default: []
+        slug:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Slug
+        source:
+          anyOf:
+          - $ref: '#/components/schemas/Source'
+          - type: 'null'
+        userid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Userid
+        genericfield:
+          additionalProperties:
+            $ref: '#/components/schemas/Text'
+          type: object
+          title: Genericfield
+          default: {}
+        filefield:
+          additionalProperties:
+            type: string
+          type: object
+          title: Filefield
+          default: {}
+        linkfield:
+          additionalProperties:
+            $ref: '#/components/schemas/LinkUpload'
+          type: object
+          title: Linkfield
+          default: {}
+        textfield:
+          additionalProperties:
+            $ref: '#/components/schemas/Text'
+          type: object
+          title: Textfield
+          default: {}
+        layoutfield:
+          additionalProperties:
+            $ref: '#/components/schemas/ProcessingLayoutDiff'
+          type: object
+          title: Layoutfield
+          default: {}
+        conversationfield:
+          additionalProperties:
+            $ref: '#/components/schemas/ProcessingConversation'
+          type: object
+          title: Conversationfield
+          default: {}
+        generated_conversationfield:
+          additionalProperties:
+            $ref: '#/components/schemas/ProcessingGeneratedConversation'
+          type: object
+          title: Generated Conversationfield
+          default: {}
+        processing_options:
+          anyOf:
+          - $ref: '#/components/schemas/PushProcessingOptions'
+          - type: 'null'
+        learning_config:
+          anyOf:
+          - $ref: '#/components/schemas/LearningConfig'
+          - type: 'null'
+        webhook_config:
+          anyOf:
+          - $ref: '#/components/schemas/WebhookConfig'
+          - type: 'null'
+      type: object
+      title: PushPayload
+    PushProcessingOptions:
+      properties:
+        ml_text:
+          type: boolean
+          title: Ml Text
+          default: true
+        extract_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extract Strategy
+        split_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Split Strategy
+      type: object
+      title: PushProcessingOptions
+    PushResponse:
+      properties:
+        seqid:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Seqid
+        account_seq:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Account Seq
+        queue:
+          anyOf:
+          - $ref: '#/components/schemas/ProcessingQueueType'
+          - type: 'null'
+        uuid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uuid
+        processing_id:
+          type: string
+          title: Processing Id
+      type: object
+      required:
+      - processing_id
+      title: PushResponse
+    SortFields:
+      type: string
+      enum:
+      - timestamp
+      - scheduled_at
+      - completed_at
+      title: SortFields
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+    SplitConfiguration:
+      properties:
+        name:
+          type: string
+          title: Name
+        max_paragraph:
+          type: integer
+          title: Max Paragraph
+          default: 0
+        custom_split:
+          $ref: '#/components/schemas/CustomSplitStrategy'
+          default: NONE
+        llm_split:
+          anyOf:
+          - $ref: '#/components/schemas/LLMSplitConfig'
+          - type: 'null'
+        manual_split:
+          anyOf:
+          - $ref: '#/components/schemas/ManualSplitConfig'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      title: SplitConfiguration
+    StreamDataTypes:
+      type: string
+      enum:
+      - FullText
+      - Chunk
+      - Metadata
+      - FilePreview
+      - FileThumbnail
+      - GeneratedFile
+      - Links
+      title: StreamDataTypes
+    Text:
+      properties:
+        body:
+          type: string
+          title: Body
+        format:
+          $ref: '#/components/schemas/Format'
+        extract_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extract Strategy
+        split_strategy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Split Strategy
+        classification_labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClassificationLabel'
+            type: array
+          - type: 'null'
+          title: Classification Labels
+      type: object
+      required:
+      - body
+      - format
+      title: Text
+    TypeBlock:
+      type: integer
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      title: TypeBlock
+    VLLMExtractionConfig:
+      properties:
+        generative_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Model
+        generative_provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generative Provider
+        rules:
+          items:
+            type: string
+          type: array
+          title: Rules
+          default: []
+      type: object
+      title: VLLMExtractionConfig
+    WebhookConfig:
+      properties:
+        uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uri
+        headers:
+          additionalProperties:
+            type: string
+          type: object
+          title: Headers
+          default: {}
+      type: object
+      title: WebhookConfig

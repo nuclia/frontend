@@ -24,7 +24,6 @@
         "subresourceIntegrity": true,
         "baseHref": "/admin/",
         "index": "apps/nucliadb-admin/src/index.html",
-        "polyfills": ["apps/nucliadb-admin/src/polyfills.ts"],
         "tsConfig": "apps/nucliadb-admin/tsconfig.app.json",
         "allowedCommonJsDependencies": [],
         "inlineStyleLanguage": "scss",
