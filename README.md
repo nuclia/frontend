@@ -199,9 +199,8 @@ Create the certificates needed for both auth and dashboard apps. The following c
 
 **Note**:
 
-- It's easier to work with dev cluster because with this setup, the URL displayed in your browser won't be `localhost:4200` anymore, it will be the one corresponding to your backend. So using dev allows a better distinction if you have stage open in another tab.
-- We created a new local-stage-proxy configuration for working with a proxy on stage, ask a supervisor to give it to you.
-- Make sure you have a `siteKey` property in your `app-config.json` on local-dev and local-stage in order to have the OAuth working well with local proxy. If you don't, ask a supervisor to provide them to you.
+- We created new local-stage-proxy and local-dev-proxy configurations for dashboard app, ask a supervisor to give it to you.
+- Make sure you have a `siteKey` property in your `app-config.json` on local-dev and local-stage of all your apps in order to have the OAuth working well with local proxy. If you don't have `siteKey`, ask a supervisor to provide them to you.
 
 Commands to create the certificates:
 
@@ -243,8 +242,8 @@ When working with dev cluster as a backend:
 When working with stage as a backend:
 
 - dashboard: `nx run dashboard:serve:local-stage-proxy  --host 127.0.0.1`
-- admin: `nx run admin:serve:local-stage-proxy  --host 127.0.0.1`
-- auth: `nx run auth:serve:local-stage-proxy --host 127.0.0.1`
+- admin: `nx run admin:serve:local-stage  --host 127.0.0.1`
+- auth: `nx run auth:serve:local-stage --host 127.0.0.1`
 
 Finally, enable your proxy and launch the nginx local server from `local_server` folder:
 
