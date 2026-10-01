@@ -23,7 +23,7 @@ export class KbSwitchComponent implements OnDestroy {
 
   readonly kb$ = this.sdk.currentKb;
   readonly account: Observable<Account> = this.sdk.currentAccount;
-  readonly isCowork = this.navigation.simpleMode;
+  readonly isCowork = this.navigation.contextBoxMode;
 
   readonly standalone: boolean = this.sdk.nuclia.options.standalone || false;
   readonly knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
