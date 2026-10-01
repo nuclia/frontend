@@ -6,14 +6,6 @@
     @case (1) {
       <app-step1-budget (next)="setupBudget($event)"></app-step1-budget>
     }
-    @case (3) {
-      <div class="main-container">
-        <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
-        <nus-kb-name-step
-          [data]="kbName"
-          (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
-      </div>
-    }
     @case (4) {
       <div class="main-container">
         <h1>{{ 'onboarding.step4.title' | translate }}</h1>

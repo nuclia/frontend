@@ -17,7 +17,7 @@ import { catchError, map, Observable, of, ReplaySubject, switchMap, take, tap } 
 import { AccountWorkflowComponent } from './account-workflow/account-workflow.component';
 import { CompanyNameComponent } from './company-name/company-name.component';
 import { LearningConfigurationForm } from './embeddings-model-form';
-import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './kb-creation-steps';
+import { EmbeddingModelStepComponent, ZoneStepComponent } from './kb-creation-steps';
 import { OnboardingPayload } from './onboarding.models';
 import { OnboardingService } from './onboarding.service';
 import { SettingUpComponent } from './setting-up/setting-up.component';
@@ -34,7 +34,6 @@ import { Step1Component } from './step1/step1.component';
     UserContainerComponent,
     TranslateModule,
     Step1Component,
-    KbNameStepComponent,
     SettingUpComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
@@ -53,10 +52,9 @@ export class OnboardingComponent {
   private readonly featuresService = inject(FeaturesService);
 
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
-  lastStep = 6;
+  lastStep = 5;
 
   onboardingInquiryPayload?: OnboardingPayload;
-  kbName = '';
   zone = '';
   isCowork = false;
 
@@ -117,7 +115,6 @@ export class OnboardingComponent {
         // Register the new account in SDKService so zone-scoped API calls (e.g. zone list) work
         this.sdk.setCurrentAccount(account.slug).pipe(take(1)).subscribe();
         if (this.account.workflow === 'cowork') {
-          this.kbName = this.onboardingService.contextBoxKbName;
           this.isCowork = true;
         }
         this.onboardingService.nextStep();
@@ -145,14 +142,8 @@ export class OnboardingComponent {
       .subscribe();
   }
 
-  storeKbNameAndGoNext($event: string) {
-    this.kbName = $event;
-    this.onboardingService.nextStep();
-  }
-
   storeWorkflowAndGoNext(workflow: WorkflowType) {
     if (workflow === 'cowork') {
-      this.kbName = this.onboardingService.contextBoxKbName;
       this.isCowork = true;
     }
     this.onboardingService.setSteps(workflow);
@@ -192,39 +183,39 @@ export class OnboardingComponent {
     }
 
     const account = this.account;
+    const kbName = this.isCowork ? this.onboardingService.contextBoxKbName : this.onboardingService.knowledgeBoxKbName;
     const kbConfig: KnowledgeBoxCreation = {
-      slug: STFUtils.generateSlug(this.kbName),
-      title: this.kbName,
+      slug: STFUtils.generateSlug(kbName),
+      title: kbName,
       learning_configuration: this.learningConfig,
       zone: this.zone,
       enforce_security: true,
     };
 
     const contextBoxModel = this.onboardingService.contextBoxDefaultModel;
-    const kbCreationRequest =
-      this.kbName === this.onboardingService.contextBoxKbName
-        ? this.learningSchema.pipe(
-            map((schema) => {
-              if (schema['generative_model'].options?.find((model) => model.value === contextBoxModel)) {
-                if (kbConfig.learning_configuration) {
-                  kbConfig.learning_configuration['generative_model'] = contextBoxModel;
-                } else {
-                  kbConfig.learning_configuration = { generative_model: contextBoxModel };
-                }
+    const kbCreationRequest = this.isCowork
+      ? this.learningSchema.pipe(
+          map((schema) => {
+            if (schema['generative_model'].options?.find((model) => model.value === contextBoxModel)) {
+              if (kbConfig.learning_configuration) {
+                kbConfig.learning_configuration['generative_model'] = contextBoxModel;
+              } else {
+                kbConfig.learning_configuration = { generative_model: contextBoxModel };
               }
-              return kbConfig;
-            }),
-            switchMap((config) =>
-              this.featuresService.unstable.shareFileInContextBox.pipe(
-                switchMap((enabled) =>
-                  enabled
-                    ? this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)
-                    : this.onboardingService.createKb(account.slug, account.id, config, this.zone),
-                ),
+            }
+            return kbConfig;
+          }),
+          switchMap((config) =>
+            this.featuresService.unstable.shareFileInContextBox.pipe(
+              switchMap((enabled) =>
+                enabled
+                  ? this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)
+                  : this.onboardingService.createKb(account.slug, account.id, config, this.zone),
               ),
             ),
-          )
-        : this.onboardingService.createKb(account.slug, account.id, kbConfig, this.zone);
+          ),
+        )
+      : this.onboardingService.createKb(account.slug, account.id, kbConfig, this.zone);
 
     kbCreationRequest.subscribe(() => this.analytics.logTrialActivation());
   }

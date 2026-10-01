@@ -19,9 +19,9 @@ import { addDays } from 'date-fns/addDays';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 
-const STEPS = [1, 2, 3, 4, 5, 6];
-const CLASSIC_STEPS = [1, 3, 4, 5, 6];
-const COWORK_STEPS = [1, 4, 5, 6];
+const STEPS = [1, 2, 3, 4, 5];
+const CLASSIC_STEPS = [1, 3, 4, 5];
+const COWORK_STEPS = [1, 3, 4, 5];
 @Injectable({
   providedIn: 'root',
 })
@@ -34,6 +34,7 @@ export class OnboardingService {
     creationFailed: false,
   });
 
+  readonly knowledgeBoxKbName = 'Default';
   readonly contextBoxKbName = 'ContextBox';
   readonly contextBoxDefaultModel = 'gemma-4-26b-a4b';
 
@@ -43,7 +44,7 @@ export class OnboardingService {
   dashboardSteps = this.features.unstable.coworkAccount.pipe(
     map((canChooseWorkflow) => (canChooseWorkflow ? STEPS : CLASSIC_STEPS)),
   );
-  raoSteps = of([1, 3, 5, 6]);
+  raoSteps = of([1, 4, 5]);
 
   constructor(
     private sdk: SDKService,

@@ -1482,7 +1482,6 @@
 	"notification.type.modification-failed": "Resource edition failed",
 	"notification.type.sync-server-down": "Sync server is down",
 	"onboarding.aws.contact": "If you experience any issues, contact us at <a href=\"mailto:{{email}}\">{{email}}</a>",
-	"onboarding.aws.create-kb.title": "Create a Knowledge Box",
 	"onboarding.aws.email-error": "The selected email cannot be used to create a new account. Please choose a different one.",
 	"onboarding.aws.monthly-budget.help": "You can set a monthly spending limit. You can always change it later in the Subscription page.",
 	"onboarding.aws.monthly-budget.question": "Would you like to set a monthly budget for consumption?",

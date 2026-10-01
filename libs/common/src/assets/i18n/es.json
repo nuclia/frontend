@@ -1482,7 +1482,6 @@
 	"notification.type.modification-failed": "Edición de recursos fallada",
 	"notification.type.sync-server-down": "El servidor de sincronización está inactivo",
 	"onboarding.aws.contact": "Si tiene algún problema, contáctenos al <a href=\"mailto:{{email}}\">{{email}}</a>",
-	"onboarding.aws.create-kb.title": "Crear una Knowledge Box",
 	"onboarding.aws.email-error": "El correo electrónico seleccionado no se puede usar para crear una cuenta nueva. Por favor, elije uno diferente.",
 	"onboarding.aws.monthly-budget.help": "Puede establecer un límite de gasto mensual. Siempre puedes cambiarlo más adelante en la página de Suscripción.",
 	"onboarding.aws.monthly-budget.question": "¿Quieres establecer un presupuesto mensual de consumo?",
