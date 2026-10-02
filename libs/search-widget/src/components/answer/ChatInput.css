@@ -12,7 +12,7 @@
   }
 
   .input-container {
-    align-items: flex-start;
+    align-items: var(--custom-chat-input-align-items, flex-start);
     box-sizing: border-box;
     display: flex;
     flex: 1 0 auto;
@@ -30,8 +30,10 @@
     padding: var(--rhythm-0_5) var(--rhythm-1_5);
   }
   .buttons {
+    align-self: var(--custom-chat-buttons-align-self, auto);
     display: flex;
-    margin: 0 var(--rhythm-1);
+    flex-shrink: 0;
+    margin: var(--custom-chat-buttons-margin, 0 var(--rhythm-1));
   }
   .filters-container {
     padding: var(--rhythm-1) 0;

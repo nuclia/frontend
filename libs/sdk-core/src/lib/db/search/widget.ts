@@ -179,6 +179,7 @@ export namespace Widget {
     hideLogo: boolean;
     permalink: boolean;
     displaySearchButton: boolean;
+    chatSubmitButton?: boolean;
     navigateToLink: boolean;
     navigateToFile: boolean;
     navigateToOriginURL: boolean;
@@ -265,6 +266,7 @@ export namespace Widget {
     expandTextBlocks?: boolean;
     collapseTextBlocks?: boolean;
     displaySearchButton?: boolean;
+    chatSubmitButton?: boolean;
     hideDownload?: boolean;
     disableRAG?: boolean;
     persistChatHistory?: boolean;
@@ -673,6 +675,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     hideLogo: widgetOptions.hideLogo,
     permalink: widgetOptions.permalink,
     displaySearchButton: widgetOptions.displaySearchButton,
+    chatSubmitButton: widgetOptions.chatSubmitButton,
     navigateToLink: widgetOptions.navigateToLink,
     navigateToFile: widgetOptions.navigateToFile,
     navigateToOriginURL: widgetOptions.navigateToOriginURL,
