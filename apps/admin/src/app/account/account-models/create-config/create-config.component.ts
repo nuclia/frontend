@@ -123,6 +123,13 @@ export class CreateConfigComponent implements OnInit {
     this.currentZone,
   ]).pipe(map(([kbs, arags, zone]) => kbs.concat(arags).filter((item) => item.zone === zone?.slug)));
 
+  isNuaRestricted = false;
+  selectedNuaKeys: { [key: string]: boolean } = {};
+  nuaKeyList = combineLatest([this.sdk.currentAccount, this.currentZone]).pipe(
+    switchMap(([account, zone]) => (zone ? this.sdk.nuclia.db.getNUAClientsForZone(account.id, zone.slug) : of([]))),
+    shareReplay(1),
+  );
+
   get invalid() {
     return this.configForm.invalid || this.userKeysForm?.invalid;
   }
@@ -144,6 +151,14 @@ export class CreateConfigComponent implements OnInit {
 
       this.isRestricted = (this.config.kbids || []).length > 0;
       this.selectedKbs = (this.config.kbids || []).reduce(
+        (acc, curr) => {
+          acc[curr] = true;
+          return acc;
+        },
+        {} as { [key: string]: boolean },
+      );
+      this.isNuaRestricted = (this.config.nua_client_ids || []).length > 0;
+      this.selectedNuaKeys = (this.config.nua_client_ids || []).reduce(
         (acc, curr) => {
           acc[curr] = true;
           return acc;
@@ -187,7 +202,8 @@ export class CreateConfigComponent implements OnInit {
       this.userPrompt.pipe(take(1)),
       this.systemPrompt.pipe(take(1)),
       this.kbList.pipe(take(1)),
-    ]).subscribe(([model, userPrompt, systemPrompt, kbList]) => {
+      this.nuaKeyList.pipe(take(1)),
+    ]).subscribe(([model, userPrompt, systemPrompt, kbList, nuaKeyList]) => {
       const { useBedrock, ...values } = this.configForm.getRawValue();
       const userKeys = this.userKeysForm?.getRawValue();
       const prompts = {
@@ -199,12 +215,18 @@ export class CreateConfigComponent implements OnInit {
             .filter(([id, value]) => !!value && kbList.some((kb) => kb.id === id))
             .map(([id]) => id)
         : [];
+      const nua_client_ids = this.isNuaRestricted
+        ? Object.entries(this.selectedNuaKeys)
+            .filter(([id, value]) => !!value && nuaKeyList.some((key) => key.internal_id === id))
+            .map(([id]) => id)
+        : [];
       this.modal.close({
         ...values,
         user_keys: userKeys?.enabled ? { [model.user_key || '']: userKeys?.user_keys } : null,
         user_prompts: prompts.prompt || prompts.system ? { [model.user_prompt || '']: prompts } : null,
         assume_role: useBedrock ? AssumeRole.BEDROCK : undefined,
         kbids,
+        nua_client_ids,
       });
     });
   }
