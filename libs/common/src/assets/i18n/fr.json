@@ -720,7 +720,7 @@
 	"context-box.ready": "Prêt",
 	"context-box.search-by-question": "Recherche par mot dans la question ou la réponse",
 	"context-box.search-by-title": "Recherche par mot dans le nom de fichier",
-	"context-box.search-placeholder": "Tapez votre question ici",
+	"context-box.search-placeholder": "Discutez avec Context Box",
 	"context-box.subtitle.testing": "Posez toutes vos questions concernant vos fichiers <strong>{{count}}</strong> ",
 	"context-box.successful": "Réussi",
 	"context-box.title.first-files": "Commençons par télécharger vos fichiers :",

@@ -720,7 +720,7 @@
 	"context-box.ready": "Ready",
 	"context-box.search-by-question": "Search by word in question or answer",
 	"context-box.search-by-title": "Search by word in filename",
-	"context-box.search-placeholder": "Type your question here",
+	"context-box.search-placeholder": "Chat with Context Box",
 	"context-box.subtitle.testing": "Ask anything about your <strong>{{count}}</strong> files",
 	"context-box.successful": "Successful",
 	"context-box.title.first-files": "Let’s upload your files first:",
