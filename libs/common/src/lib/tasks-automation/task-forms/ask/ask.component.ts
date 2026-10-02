@@ -186,10 +186,8 @@ export class AskComponent extends TaskRouteDirective {
     }
     const isJSONorAgentic = this.isJSON || this.isAgenticGeneration;
     const isCustomPrompt = this.customPrompt && !isJSONorAgentic;
-    let question = '';
-    if (this.isJSON) {
-      question = this.askForm.get('question')?.value || '';
-    } else if (this.isAgenticGeneration) {
+    let question = isCustomPrompt ? '' : this.askForm.get('question')?.value;
+    if (this.isAgenticGeneration) {
       question = JSON.stringify({
         name: AGENTIC_SCHEMA_NAME,
         description: 'Generate a question for an agent',
