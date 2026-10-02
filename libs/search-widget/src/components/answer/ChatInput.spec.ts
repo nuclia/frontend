@@ -111,4 +111,26 @@ describe('Chat composer submit', () => {
     input().dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter' }));
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  it('preserves the existing empty-button and whitespace submission behavior without opt-in', async () => {
+    widgetFeatures.set({ displaySearchButton: true });
+    await tick();
+    expect(submitButton().disabled).toBe(false);
+    submitButton().click();
+    await tick();
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('');
+    onChange.mockClear();
+    const textarea = await type(' ');
+    textarea.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter', isComposing: true }));
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(' ');
+  });
+
+  it('preserves empty Enter behavior without opt-in', async () => {
+    widgetFeatures.set({ displaySearchButton: true });
+    await tick();
+    const event = new KeyboardEvent('keypress', { key: 'Enter', cancelable: true });
+    input().dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(false);
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

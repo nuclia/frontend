@@ -51,12 +51,12 @@
     flex-direction: column;
     height: var(--height-container);
     max-width: var(--max-width-container);
-    min-width: 0;
+    min-width: var(--custom-chat-container-min-width, auto);
 
     .entries-container {
-      box-sizing: border-box;
+      box-sizing: var(--custom-chat-entries-box-sizing, content-box);
       width: var(--custom-width-entries-container, auto);
-      max-width: var(--custom-max-width-entries-container, 100%);
+      max-width: var(--custom-max-width-entries-container, none);
       margin-inline: var(--custom-margin-side-entries-container, 0);
       max-height: var(--max-height-entries);
       overflow: auto;
@@ -87,11 +87,11 @@
           gap: var(--rhythm-2);
 
           .chat-icon {
-            flex: 0 0 auto;
+            flex: var(--custom-chat-question-icon-flex, 0 1 auto);
           }
 
           .title-m {
-            min-width: 0;
+            min-width: var(--custom-chat-question-min-width, auto);
             overflow-wrap: var(--custom-chat-message-overflow-wrap, normal);
             white-space: var(--custom-chat-question-white-space, normal);
           }

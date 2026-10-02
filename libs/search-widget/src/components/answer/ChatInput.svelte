@@ -74,7 +74,7 @@
   });
 
   const askQuestion = () => {
-    if (!canSubmit) {
+    if ($hasChatSubmitButton && !canSubmit) {
       return;
     }
     onChange(question);
@@ -86,7 +86,10 @@
   };
 
   const onKeyPress = (event: { detail: KeyboardEvent }) => {
-    if (event.detail.key === 'Enter' && !event.detail.isComposing) {
+    if (
+      event.detail.key === 'Enter' &&
+      ($hasChatSubmitButton ? canSubmit && !event.detail.isComposing : !!question)
+    ) {
       event.detail.preventDefault();
       askQuestion();
     }
@@ -162,7 +165,7 @@
               aspect={$hasChatSubmitButton ? 'solid' : 'basic'}
               kind={$hasChatSubmitButton ? 'primary' : 'secondary'}
               size={$hasChatSubmitButton ? 'small' : 'medium'}
-              disabled={!canSubmit}
+              disabled={$hasChatSubmitButton && !canSubmit}
               ariaLabel={$_('input.search')}
               on:click={askQuestion} />
           </div>
