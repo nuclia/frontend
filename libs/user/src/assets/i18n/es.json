@@ -98,8 +98,8 @@
 	"onboarding.step3.coming-soon": "(disponible pronto)",
 	"onboarding.step3.subtitle": "Seleccione una región para alojar sus recursos y datos de búsqueda.",
 	"onboarding.step3.title": "¿Dónde desea que se almacenen los datos de su Knowledge Box?",
-	"onboarding.step4.subtitle": "Las incrustaciones son como huellas dactilares de palabras o datos. Ayudan a las computadoras a comprender las similitudes y diferencias entre ellas, lo que facilita a las máquinas tareas como comprender el lenguaje o reconocer patrones.",
-	"onboarding.step4.title": "Elige el modelo de incrustaciones para tu Knowledge Box",
+	"onboarding.step4.subtitle": "Tu selección de idioma nos ayuda a elegir el modelo semántico más adecuado para sus datos.",
+	"onboarding.step4.title": "¿Qué idiomas se utilizan en tus datos?",
 	"recover.description": "Escribe tu dirección de correo electrónico y sigue las indicaciones para recuperar la contraseña",
 	"recover.gologin": "Ir a la pagina de login.",
 	"recover.gologin_help": "¿Ya te acuerdas de tu contraseña?",
@@ -163,5 +163,9 @@
 	"validation.required": "Campo requerido",
 	"validation.required_short": "Necesario",
 	"login.error.user_not_registered": "No pudimos encontrar una cuenta vinculada a esta cuenta de {{provider}}. Puedes <a href=\"https://www.progress.com/agentic-rag/free-trial-sign-up\" rel=\"noopener noreferrer\">registrarte</a> para comenzar.",
-	"user.kb.creation-form.models.form-description": "Se pueden añadir modelos adicionales en la página de Modelos de IA."
+	"user.kb.creation-form.models.form-description": "Se pueden añadir modelos adicionales en la página de Modelos de IA.",
+	"onboarding.language.options.ENGLISH": "Solo inglés",
+	"onboarding.language.options.MULTILINGUAL": "Inglés o idiomas comunes",
+	"onboarding.language.options.MULTILINGUAL_ALPHA": "Otros idiomas",
+	"onboarding.language.other-languages": "Elija esta opción si el idioma principal de sus datos no está incluido en la siguiente lista: <br>- Árabe <br>- Chino <br>- Danés <br>- Inglés <br>- Finlandés <br>- Francés <br>- Alemán <br>- Italiano <br>- Japonés <br>- Noruego <br>- Portugués <br>- Español <br>- Sueco"
 }

@@ -98,8 +98,8 @@
 	"onboarding.step3.coming-soon": "(bientôt disponible)",
 	"onboarding.step3.subtitle": "Sélectionnez une région pour héberger vos ressources et vos données de recherche.",
 	"onboarding.step3.title": "Où souhaitez-vous que les données de votre Knowledge Box soient stockées ?",
-	"onboarding.step4.subtitle": "Les intégrations sont comme des empreintes digitales pour des mots ou des données. Ils aident les ordinateurs à comprendre les similitudes et les différences entre eux, facilitant ainsi les tâches telles que la compréhension du langage ou la reconnaissance de modèles pour les machines.",
-	"onboarding.step4.title": "Choisissez le modèle d'intégration pour votre Knowledge Box",
+	"onboarding.step4.subtitle": "Votre choix de langue nous aide à sélectionner le modèle sémantique le plus approprié pour vos données.",
+	"onboarding.step4.title": "Quelles langues sont utilisées dans vos données ?",
 	"recover.description": "Vous avez perdu votre mot de passe ? Nous allons y remédier. Saisissez l'adresse électronique avec laquelle vous vous êtes enregistré et nous lancerons la procédure de récupération.",
 	"recover.gologin": "Aller à la page de connexion",
 	"recover.gologin_help": "Vous vous rappelez de votre mot de passe ?",
@@ -163,5 +163,9 @@
 	"validation.required": "Champs requis",
 	"validation.required_short": "Requis",
 	"login.error.user_not_registered": "Nous n'avons trouvé aucun compte lié à ce compte {{provider}}. Vous pouvez <a href=\"https://www.progress.com/agentic-rag/free-trial-sign-up\" rel=\"noopener noreferrer\">vous inscrire</a> pour commencer.",
-	"user.kb.creation-form.models.form-description": "Des modèles supplémentaires peuvent être ajoutés sur la page Modèles d'IA."
+	"user.kb.creation-form.models.form-description": "Des modèles supplémentaires peuvent être ajoutés sur la page Modèles d'IA.",
+	"onboarding.language.options.ENGLISH": "Anglais uniquement",
+	"onboarding.language.options.MULTILINGUAL": "Anglais ou langues courantes",
+	"onboarding.language.options.MULTILINGUAL_ALPHA": "Autres langues",
+	"onboarding.language.other-languages": "Choisissez cette option si la langue principale de vos données ne figure pas dans la liste ci-dessous : <br>- Arabe <br>- Chinois <br>- Danois <br>- Anglais <br>- Finlandais <br>- Français <br>- Allemand <br>- Italien <br>- Japonais <br>- Norvégien <br>- Portugais <br>- Espagnol <br>- Suédois"
 }
