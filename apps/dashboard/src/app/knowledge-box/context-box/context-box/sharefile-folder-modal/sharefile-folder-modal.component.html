@@ -1,0 +1,23 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>{{ 'context-box.sharefile.select-folder-title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    @if (externalConnection) {
+      <nsy-cloud-folder
+        [externalConnection]="externalConnection"
+        (selection)="onSelection($event)"></nsy-cloud-folder>
+    }
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="!selection"
+      (click)="confirm()">
+      {{ 'context-box.sharefile.select-folder-confirm' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
