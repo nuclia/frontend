@@ -490,6 +490,7 @@ export interface ModelConfigurationItem {
   description?: string;
   assume_role?: AssumeRole;
   kbids?: string[];
+  nua_client_ids?: string[];
 }
 
 export interface ModelConfiguration extends ModelConfigurationItem {
