@@ -720,7 +720,7 @@
 	"context-box.ready": "Llest",
 	"context-box.search-by-question": "Cerca per paraula en la pregunta o resposta",
 	"context-box.search-by-title": "Cerca per paraula al nom del fitxer",
-	"context-box.search-placeholder": "Escriviu la vostra pregunta aquí",
+	"context-box.search-placeholder": "Xateja amb Context Box",
 	"context-box.subtitle.testing": "Pregunta qualsevol cosa sobre els teus fitxers <strong>{{count}}</strong> ",
 	"context-box.successful": "Reeixit",
 	"context-box.title.first-files": "Primerament, pugem els fitxers:",
