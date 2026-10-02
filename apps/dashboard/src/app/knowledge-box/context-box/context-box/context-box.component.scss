@@ -134,7 +134,7 @@ $chat-wrapper-padding: rhythm(1.5);
   --custom-textarea-min-width: 0;
   --custom-chat-input-padding-block: #{rhythm(1)};
   --custom-chat-input-align-items: center;
-  --custom-chat-buttons-align-self: center;
+  --custom-chat-buttons-align-self: flex-end;
   --custom-chat-buttons-flex-shrink: 0;
   --custom-chat-buttons-margin: 0 0 0 #{rhythm(1)};
   --custom-color-primary-regular: #{$color-primary-regular};
