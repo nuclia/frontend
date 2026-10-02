@@ -34,9 +34,10 @@ export class UserService {
   updateWelcome(): Observable<void> {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
+        this.authService.setNextParams(this.route.snapshot.queryParams);
+        this.authService.setNextUrl(new URL(window.location.href).pathname);
         if (error?.status === 401) {
-          this.authService.setNextParams(this.route.snapshot.queryParams);
-          this.authService.setNextUrl(new URL(window.location.href).pathname);
+          // TODO: This code is unreachable because CORS headers are missing in 401 responses
           this.sdk.nuclia.auth.logout();
         }
         return EMPTY;
