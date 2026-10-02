@@ -1,12 +1,13 @@
 .sw-textarea {
   position: relative;
   width: 100%;
+  min-width: 0;
 
   textarea,
   pre {
     background-color: inherit;
     border: 0;
-    margin: var(--rhythm-0_5) 0;
+    margin: var(--custom-textarea-margin, var(--rhythm-0_5) 0);
     padding: 0;
     box-sizing: border-box;
     color: inherit;
@@ -29,8 +30,12 @@
     resize: none;
   }
   pre {
-    white-space: preserve;
+    white-space: var(--custom-textarea-white-space, preserve);
+    overflow-wrap: var(--custom-textarea-overflow-wrap, normal);
     visibility: hidden;
+  }
+  textarea {
+    overflow-wrap: var(--custom-textarea-overflow-wrap, normal);
   }
   textarea::placeholder {
     color: var(--search-bar-placeholder-color);

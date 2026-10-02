@@ -720,7 +720,7 @@
 	"context-box.ready": "Prêt",
 	"context-box.search-by-question": "Recherche par mot dans la question ou la réponse",
 	"context-box.search-by-title": "Recherche par mot dans le nom de fichier",
-	"context-box.search-placeholder": "Tapez votre question ici",
+	"context-box.search-placeholder": "Discutez avec Context Box",
 	"context-box.sharefile.connect-error": "Une erreur s'est produite lors de la connexion à ShareFile. Veuillez réessayer.",
 	"context-box.sharefile.connect-success": "Connexion à ShareFile réussie.",
 	"context-box.sharefile.disconnect-confirm-description": "Rien ne sera supprimé : vos fichiers restent dans cette zone de contenu. Seule la connexion à ShareFile sera supprimée.",
