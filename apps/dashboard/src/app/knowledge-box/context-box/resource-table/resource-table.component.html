@@ -71,6 +71,12 @@
         </pa-table-cell>
         <pa-table-cell>
           <span class="body-s">
+            @if (row.sourceConnector === 'sharefile') {
+              <pa-icon
+                name="upload-cloud"
+                [attr.aria-label]="'context-box.sharefile-badge-tooltip' | translate"
+                [paTooltip]="'context-box.sharefile-badge-tooltip' | translate"></pa-icon>
+            }
             @if (row.icon | mimeIcon; as icon) {
               <pa-icon
                 [name]="icon"

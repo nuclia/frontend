@@ -7,6 +7,10 @@ const routes = [
     path: '',
     component: ContextBoxPageComponent,
   },
+  {
+    path: ':externalConnectionId',
+    component: ContextBoxPageComponent,
+  },
 ];
 
 @NgModule({
