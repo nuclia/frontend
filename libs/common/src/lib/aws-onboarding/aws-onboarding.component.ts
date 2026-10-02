@@ -8,8 +8,8 @@ import { UserContainerComponent } from '@nuclia/user';
 import { of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import {
   EmbeddingModelStepComponent,
-  KbNameStepComponent,
   LearningConfigurationForm,
+  OnboardingService,
   ZoneStepComponent,
 } from '../onboarding';
 import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
@@ -20,7 +20,6 @@ import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
     CommonModule,
     Step1BudgetComponent,
     UserContainerComponent,
-    KbNameStepComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
     TranslateModule,
@@ -36,7 +35,6 @@ export class AwsOnboardingComponent {
   step = -1;
 
   account = this.sdk.currentAccount;
-  kbName = '';
   zone = '';
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
@@ -48,6 +46,7 @@ export class AwsOnboardingComponent {
     private billing: BillingService,
     private toast: SisToastService,
     private navigation: NavigationService,
+    private onboardingService: OnboardingService,
   ) {}
 
   goBack() {
@@ -64,20 +63,15 @@ export class AwsOnboardingComponent {
   setupBudget(data: Partial<AccountBudget>) {
     this.billing.modifySubscription(data, true).subscribe({
       next: () => {
-        this.step = 3;
+        this.step = 4;
         this.cdr.markForCheck();
       },
       error: () => {
         this.toast.warning('onboarding.aws.monthly-budget.set-up-error');
-        this.step = 3;
+        this.step = 4;
         this.cdr.markForCheck();
       },
     });
-  }
-
-  storeKbNameAndGoNext($event: string) {
-    this.kbName = $event;
-    this.step++;
   }
 
   storeZoneAndGoNext(zone: string) {
@@ -114,9 +108,10 @@ export class AwsOnboardingComponent {
       .pipe(
         take(1),
         switchMap((account) => {
+          const kbName = this.onboardingService.knowledgeBoxKbName;
           const kbConfig: KnowledgeBoxCreation = {
-            slug: STFUtils.generateSlug(this.kbName),
-            title: this.kbName,
+            slug: STFUtils.generateSlug(kbName),
+            title: kbName,
             learning_configuration: this.learningConfig,
             enforce_security: true,
           };

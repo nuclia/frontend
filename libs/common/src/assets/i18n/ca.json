@@ -1482,7 +1482,6 @@
 	"notification.type.modification-failed": "Edició del recurs fallida",
 	"notification.type.sync-server-down": "El servidor de sincronització està inactiu",
 	"onboarding.aws.contact": "Si teniu algun problema, poseu-vos en contacte amb nosaltres a <a href=\"mailto:{{email}}\">{{email}}</a>",
-	"onboarding.aws.create-kb.title": "Crear una Knowledge Box",
 	"onboarding.aws.email-error": "El correu electrònic seleccionat no es pot utilitzar per crear un compte nou. Si us plau trie'n un de diferent.",
 	"onboarding.aws.monthly-budget.help": "Podeu establir un límit de despesa mensual. Sempre el podeu canviar més endavant a la pàgina de subscripció.",
 	"onboarding.aws.monthly-budget.question": "T’agradaria establir un pressupost mensual per al consum?",
