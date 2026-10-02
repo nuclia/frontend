@@ -15,6 +15,9 @@ preserve the standard composer appearance.
 | `--custom-chat-input-leading-display`    | Existing display value    | Set to `none` to hide both the leading chat icon and its clear-button replacement |
 | `--custom-chat-input-padding-inline`     | `0`                       | Horizontal padding inside the composer                                            |
 | `--custom-chat-input-padding-block`      | `0`                       | Vertical padding inside the composer                                              |
+| `--custom-chat-input-align-items`        | `flex-start`              | Vertical alignment of the textarea and composer actions                           |
+| `--custom-chat-buttons-align-self`       | `auto`                    | Vertical alignment of composer actions                                            |
+| `--custom-chat-buttons-margin`           | `0 var(--rhythm-1)`       | Space around composer actions                                                     |
 | `--custom-textarea-white-space`          | `preserve`                | Sizing mirror wrapping; use `pre-wrap` for multiline growth                       |
 | `--custom-textarea-overflow-wrap`        | `normal`                  | Long-word wrapping in the textarea and sizing mirror                              |
 | `--custom-textarea-margin`               | Existing vertical margin  | Textarea and sizing mirror margin                                                 |
@@ -30,8 +33,15 @@ preserve the standard composer appearance.
 | `--custom-padding-side-input-container`  | Existing chat padding     | Horizontal padding around the composer                                            |
 
 The search/submit icon is controlled separately by the existing `displaySearchButton`
-configuration option. Without that button, Enter submits a question; modified Enter
-keeps the existing multiline behavior.
+configuration option. When shown, the button is disabled while the composer is disabled
+or contains only whitespace. Enter submits a non-empty question; modified Enter keeps
+the existing multiline behavior.
+
+Add the opt-in `chatSubmitButton` feature (or set `chatSubmitButton: true` in widget
+configuration) alongside `displaySearchButton` for the standard small, solid primary
+icon button with an up arrow. Other chat widgets retain their basic search icon button.
+The variant uses the existing button's hover, pressed, focus-visible and disabled states;
+its primary palette can be themed through the existing `--custom-color-primary-*` properties.
 
 ## Usage as a web component
 
