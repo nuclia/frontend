@@ -90,7 +90,7 @@ Version metadata is tracked in: `.github/skills/product-knowledge/meta.json`
 
 **Base URL:** `https://[zone-id].dp.progress.cloud/` (paths start with `/kb/`)
 **Auth:** Service account key or user token (`X-NUCLIA-SERVICEACCOUNT`)
-**Purpose:** Low-level NucliaDB operations — direct resource and field management, search. Used by `nucliadb-admin` and `@nuclia/core` SDK.
+**Purpose:** Low-level NucliaDB operations — direct resource and field management, search. Used by the `@nuclia/core` SDK.
 
 **Key routes — KB & Search:**
 

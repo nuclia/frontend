@@ -27,10 +27,10 @@ when they decide the feature is stable enough. Agents must follow these rules:
 
 Two separate test stacks live in this repo. Match the stack to the project:
 
-| Projects                                                                                                                                   | Runner                              | Config                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- | ----------------------------------------------- |
-| Angular apps & libs (`dashboard`, `rao`, `manager-v2`, `nucliadb-admin`, `core`, `common`, `sistema`, `user`, `sync`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
-| `libs/search-widget` (Svelte 5)                                                                                                            | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
+| Projects                                                                                                                 | Runner                              | Config                                          |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- | ----------------------------------------------- |
+| Angular apps & libs (`dashboard`, `rao`, `manager-v2`, `core`, `common`, `sistema`, `user`, `sync`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
+| `libs/search-widget` (Svelte 5)                                                                                          | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
 
 Run with `nx test <project-name>` in all cases.
 
@@ -305,7 +305,6 @@ describe('Button', () => {
 - `firstValueFrom(store$)` to await a store value asynchronously
 
 ---
-
 
 ---
 

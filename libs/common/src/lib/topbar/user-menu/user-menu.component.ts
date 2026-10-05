@@ -64,7 +64,7 @@ export class UserMenuComponent implements OnInit {
   @Input() set userInfo(userInfo: Welcome | undefined | null) {
     if (userInfo) {
       this.accounts = userInfo.accounts || [];
-      this.showSwitchAccount$.next(this.accounts.length > 1 || !!this.standalone);
+      this.showSwitchAccount$.next(this.accounts.length > 1);
       if (userInfo.preferences) {
         this.avatar = {
           userName: userInfo.preferences.name,
@@ -101,7 +101,6 @@ export class UserMenuComponent implements OnInit {
     ),
   );
 
-  private readonly standalone = this.sdk.nuclia.options.standalone;
   private readonly noStripe = this.backendConfig.noStripe();
 
   private readonly isAccountManager = this.features.isAccountManager;
@@ -119,10 +118,7 @@ export class UserMenuComponent implements OnInit {
 
   private readonly isKbAdmin = this.features.isKbAdmin;
 
-  private readonly showAccountGroup = this.isAccountManager.pipe(
-    map((isAccountManager) => !this.standalone && !!isAccountManager),
-    shareReplay(1),
-  );
+  private readonly showAccountGroup = this.isAccountManager.pipe(shareReplay(1));
 
   // True in advanced (non-simple) mode AND user has account-level access
   private readonly showAdvancedAccountSections = combineLatest([
@@ -133,10 +129,10 @@ export class UserMenuComponent implements OnInit {
     shareReplay(1),
   );
 
-  private readonly showSwitchAccount$ = new BehaviorSubject<boolean>(!!this.standalone);
+  private readonly showSwitchAccount$ = new BehaviorSubject<boolean>(false);
 
   private readonly showBillingGroup = combineLatest([this.isAccountManager, this.billing.isSubscribedToStripe]).pipe(
-    map(([manager, subscribed]) => !this.standalone && !!manager && (subscribed || !this.noStripe)),
+    map(([manager, subscribed]) => !!manager && (subscribed || !this.noStripe)),
     shareReplay(1),
   );
 
@@ -167,7 +163,7 @@ export class UserMenuComponent implements OnInit {
           icon: 'chart',
           dataCy: 'go-to-consumption',
           action: () => this.go('home/consumption'),
-          visible$: this.isAccountManager.pipe(map((m) => !this.standalone && !!m)),
+          visible$: this.isAccountManager,
         },
         {
           label: 'account.manage',
@@ -175,7 +171,7 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'go-to-account-settings',
           action: () => this.go('home/account-settings'),
           visible$: combineLatest([this.isAccountManager, this.isCowork]).pipe(
-            map(([manager, cowork]) => !this.standalone && !!manager && !cowork),
+            map(([manager, cowork]) => !!manager && !cowork),
           ),
         },
       ],

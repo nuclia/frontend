@@ -138,7 +138,7 @@ Dependency hierarchy (general):
 
 ```
 apps/
-  dashboard, rao, manager-v2, nucliadb-admin
+  dashboard, rao, manager-v2
       ↓ imports
   libs/common, libs/core, libs/sistema, libs/user, libs/sync
       ↓ imports

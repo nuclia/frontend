@@ -7,7 +7,7 @@ description: >
   adding translatable strings, wiring up routes, or refactoring legacy Angular code to modern
   Angular 22 patterns (signals, inject(), OnPush). Also use for i18n tasks — adding translation
   keys via BabelEdit, using the translate pipe, calling TranslateService, or working with locale
-  files. This agent covers dashboard, rao, manager-v2, nucliadb-admin, and Angular libs.
+   files. This agent covers dashboard, rao, manager-v2, admin, and Angular libs.
 ---
 
 You are the UI Builder agent for the Nuclia frontend monorepo. Your expertise spans Angular 22

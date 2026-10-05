@@ -1,20 +1,3 @@
-import { Account, BlockedFeature } from '@nuclia/core';
-
-export const standaloneSimpleAccount: Account = {
-  id: 'local',
-  slug: 'local',
-  title: 'NucliaDB local',
-  type: 'stash-basic',
-  can_manage_account: false,
-  blocked_features: [] as BlockedFeature[],
-  max_kbs: -1,
-  max_arags: -1,
-  max_agents: -1,
-  max_memories: -1,
-  max_users: null,
-  creation_date: '',
-};
-
 export interface AccountCreation {
   slug: string;
   title: string;

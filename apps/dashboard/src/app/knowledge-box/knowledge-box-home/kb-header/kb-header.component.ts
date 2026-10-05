@@ -1,12 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AppService, UploadDialogService, UploadType } from '@flaps/common';
+import { NavigationService, SDKService, STFPipesModule } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Counters } from '@nuclia/core';
-import { NavigationService, SDKService, STFPipesModule } from '@flaps/core';
-import { AppService, UploadDialogService, UploadType } from '@flaps/common';
 import { combineLatest, map } from 'rxjs';
 import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 
@@ -52,8 +52,7 @@ export class KbHeaderComponent {
   kbUrl = toSignal(
     combineLatest([this.sdk.currentAccount, this.currentKb]).pipe(
       map(([account, kb]) => {
-        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-        return this.navigationService.getKbUrl(account.slug, kbSlug);
+        return this.navigationService.getKbUrl(account.slug, kb.slug);
       }),
     ),
     { initialValue: '' },

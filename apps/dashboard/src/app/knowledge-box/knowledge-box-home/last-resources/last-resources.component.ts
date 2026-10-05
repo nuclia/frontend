@@ -48,8 +48,7 @@ export class LastResourcesComponent implements OnInit {
   currentKb = this.sdk.currentKb;
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
     map(([account, kb]) => {
-      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      const url = this.navigationService.getKbUrl(account.slug, kbSlug);
+      const url = this.navigationService.getKbUrl(account.slug, kb.slug);
       return url;
     }),
   );

@@ -1,14 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 
-import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import {
-  InfoCardComponent,
-  ProgressBarComponent,
-  SisModalService,
-  StickyFooterComponent,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -17,9 +9,16 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { LearningConfigurationOption, SemanticModelMigration, TaskOnBatch } from '@nuclia/core';
-import { StandaloneService } from '../../services';
+import {
+  InfoCardComponent,
+  ProgressBarComponent,
+  SisModalService,
+  StickyFooterComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
+import { catchError, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { LearningConfigurationDirective } from '../learning-configuration.directive';
 
 interface SemanticModelMigrationTask extends TaskOnBatch {
   parameters: SemanticModelMigration;
@@ -56,7 +55,6 @@ export class SemanticModelComponent extends LearningConfigurationDirective imple
   otherModels: LearningConfigurationOption[] = [];
   activeMigration?: SemanticModelMigrationTask;
   updateModelsSubject = new Subject<void>();
-  standalone = this.standaloneService.standalone;
   unsubscribeAll = new Subject<void>();
 
   get defaultModelControl() {
@@ -71,10 +69,7 @@ export class SemanticModelComponent extends LearningConfigurationDirective imple
     return this.kbConfigBackup?.['default_semantic_model'];
   }
 
-  constructor(
-    private standaloneService: StandaloneService,
-    private modalService: SisModalService,
-  ) {
+  constructor(private modalService: SisModalService) {
     super();
     this.updateModelsSubject
       .pipe(
@@ -192,9 +187,6 @@ export class SemanticModelComponent extends LearningConfigurationDirective imple
   }
 
   getActiveMigration() {
-    if (this.standalone) {
-      return of(undefined);
-    }
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.taskManager.getTasks()),

@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Account } from '@nuclia/core';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SDKService } from '../api';
 import { StaticEnvironmentConfiguration } from '../config';
-import { standaloneSimpleAccount } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +11,6 @@ export class SelectAccountKbService {
   private readonly accountsSubject = new BehaviorSubject<Account[] | null>(null);
 
   readonly accounts = this.accountsSubject.asObservable();
-  readonly standalone = this.environment.standalone;
 
   constructor(
     private sdk: SDKService,
@@ -20,9 +18,7 @@ export class SelectAccountKbService {
   ) {}
 
   loadAccounts(): Observable<Account[]> {
-    const loadAccountRequest: Observable<Account[]> = this.standalone
-      ? of([standaloneSimpleAccount])
-      : this.sdk.nuclia.db.getAccounts();
+    const loadAccountRequest: Observable<Account[]> = this.sdk.nuclia.db.getAccounts();
     return loadAccountRequest.pipe(tap((accounts) => this.accountsSubject.next(accounts)));
   }
 

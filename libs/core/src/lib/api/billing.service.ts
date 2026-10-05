@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from './sdk.service';
+import { AccountTypes, UsageType } from '@nuclia/core';
 import {
   BehaviorSubject,
   catchError,
@@ -12,7 +12,6 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { AccountTypes, UsageType } from '@nuclia/core';
 import {
   AccountBudget,
   AccountSubscription,
@@ -31,6 +30,7 @@ import {
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from '../models/billing.model';
+import { SDKService } from './sdk.service';
 
 export const DEFAULT_TRIAL_TOKEN_BUDGET = 20_000;
 
@@ -42,15 +42,13 @@ export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
   isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
 
-  private subscriptionProvider = this.sdk.nuclia.options.standalone
-    ? of(null)
-    : this.sdk.currentAccount.pipe(
-        switchMap((account) => {
-          return account.type === 'stash-trial' ? of(null) : this.getSubscription();
-        }),
-        map((subscription) => subscription?.provider || null),
-        shareReplay(1),
-      );
+  private subscriptionProvider = this.sdk.currentAccount.pipe(
+    switchMap((account) => {
+      return account.type === 'stash-trial' ? of(null) : this.getSubscription();
+    }),
+    map((subscription) => subscription?.provider || null),
+    shareReplay(1),
+  );
 
   isSubscribedToStripe = this.subscriptionProvider.pipe(map((provider) => provider === 'STRIPE'));
   isSubscribedToAws = this.subscriptionProvider.pipe(map((provider) => provider === 'AWS_MARKETPLACE'));

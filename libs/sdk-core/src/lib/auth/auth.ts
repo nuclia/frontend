@@ -1,11 +1,11 @@
 import { from, Observable, of, ReplaySubject, Subscription, tap, throwError, timer } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
-import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
+import { JwtHelper, JwtUser } from './jwt-helpers';
 
-import { type AuthInfo, type AuthTokens, type MagicAction, type NucliaDBRole } from './auth.models';
 import { replaceSubdomainInUrl, setZoneInRegionalUrl } from '../rest/utils';
+import { type AuthInfo, type AuthTokens, type MagicAction, type NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -45,9 +45,7 @@ export class Authentication implements IAuthentication {
   getAuthHeaders(): { [key: string]: string };
   getAuthHeaders(method: string, path: string): { [key: string]: string };
   getAuthHeaders(method?: string, path?: string): { [key: string]: string } {
-    if (this.nuclia.options.standalone) {
-      return { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) };
-    } else if (this.nuclia.options.apiKey) {
+    if (this.nuclia.options.apiKey) {
       return { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` };
     } else if (this.getToken()) {
       return { Authorization: `Bearer ${this.getToken()}` };

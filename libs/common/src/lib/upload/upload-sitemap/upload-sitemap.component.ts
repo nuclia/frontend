@@ -16,7 +16,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Classification } from '@nuclia/core';
 import { InfoCardComponent, SpinnerComponent } from '@nuclia/sistema';
 import { catchError, defer, from, map, of, switchMap, take } from 'rxjs';
-import { StandaloneService } from '../../services';
 import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
 import { UploadService } from '../upload.service';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
@@ -61,7 +60,6 @@ export class UploadSitemapComponent {
   headers: { key: string; value: string }[] = [];
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
-  standalone = this.standaloneService.standalone;
   extractConfigEnabled = this.features.authorized.extractConfig;
   splitConfigEnabled = this.features.authorized.splitConfig;
   extractStrategy?: string;
@@ -74,7 +72,6 @@ export class UploadSitemapComponent {
     private uploadService: UploadService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
-    private standaloneService: StandaloneService,
   ) {}
 
   close(): void {

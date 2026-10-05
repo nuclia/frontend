@@ -5,7 +5,7 @@ import { PaDropdownModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
+import { combineLatest, map, Observable, Subject, take } from 'rxjs';
 
 @Component({
   selector: 'app-kb-switch',
@@ -25,14 +25,11 @@ export class KbSwitchComponent implements OnDestroy {
   readonly account: Observable<Account> = this.sdk.currentAccount;
   readonly isCowork = this.navigation.contextBoxMode;
 
-  readonly standalone: boolean = this.sdk.nuclia.options.standalone || false;
   readonly knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
   readonly arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
-  readonly showKbSelector: Observable<boolean> = this.standalone
-    ? of(true)
-    : combineLatest([this.knowledgeBoxes, this.arags, this.isCowork]).pipe(
-        map(([kbs, arags, isCowork]) => !isCowork && kbs.length + arags.length > 1),
-      );
+  readonly showKbSelector: Observable<boolean> = combineLatest([this.knowledgeBoxes, this.arags, this.isCowork]).pipe(
+    map(([kbs, arags, isCowork]) => !isCowork && kbs.length + arags.length > 1),
+  );
   readonly inRaoApp = this.navigation.inRaoApp;
 
   ngOnDestroy(): void {
@@ -43,9 +40,7 @@ export class KbSwitchComponent implements OnDestroy {
   goToKb(kb: IKnowledgeBoxItem) {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = kb.zone;
-      this.navigation.navigateExternal(
-        this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id),
-      );
+      this.navigation.navigateExternal(this.navigation.getKbUrl(account.slug, kb.slug || kb.id));
       this.switchClose.emit();
     });
   }

@@ -3,7 +3,7 @@
 <div class="app-navbar">
   <div class="navbar-scroll-container">
     @if (!inAdminApp) {
-      @if (standalone || (inDashboard && !isInArag)) {
+      @if (inDashboard && !isInArag) {
         <div class="navbar-content">
           <div class="nav-group">
             <div class="group-items">
@@ -23,31 +23,30 @@
             <div class="group-items">
               <a
                 data-analytics-id="navbar-enter-upload"
-                [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/upload' : null"
+                [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/upload' : null"
                 class="nav-link"
                 routerLinkActive="active"
                 data-cy="go-to-upload"
-                [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                [class.disabled]="!(isAdminOrContrib | async)">
                 <pa-icon name="upload"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
               </a>
               <a
                 data-analytics-id="navbar-enter-resources"
-                [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
+                [routerLink]="kbUrl + '/resources'"
                 routerLinkActive="active"
                 class="nav-link"
-                data-cy="go-to-resources"
-                [class.disabled]="invalidKey | async">
+                data-cy="go-to-resources">
                 <pa-icon name="list"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
               </a>
               <a
                 data-analytics-id="navbar-enter-sync"
-                [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/sync' : null"
+                [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/sync' : null"
                 routerLinkActive="active"
                 class="nav-link"
                 data-cy="go-to-sync"
-                [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                [class.disabled]="!(isAdminOrContrib | async)">
                 <pa-icon name="connectors"></pa-icon>
                 <span class="nav-link-title">
                   {{ ((isAgenticSearchEnabled | async) ? 'navbar.sync' : 'navbar.sync-only') | translate }}
@@ -58,18 +57,17 @@
                 class="nav-link"
                 data-cy="go-to-search"
                 routerLinkActive="active"
-                [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
-                [class.disabled]="invalidKey | async">
+                [routerLink]="kbUrl + '/search'">
                 <pa-icon name="search"></pa-icon>
                 <span class="nav-link-title">{{ 'search.title' | translate }}</span>
               </a>
               <a
                 data-analytics-id="navbar-enter-widgets"
-                [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/widgets' : null"
+                [routerLink]="(isKbAdmin | async) ? kbUrl + '/widgets' : null"
                 routerLinkActive="active"
                 class="nav-link"
                 data-cy="go-to-widget"
-                [class.disabled]="!(isKbAdmin | async) || (invalidKey | async)">
+                [class.disabled]="!(isKbAdmin | async)">
                 <pa-icon name="widget"></pa-icon>
                 <span class="nav-link-title">{{ 'search.widgets.title' | translate }}</span>
               </a>
@@ -83,8 +81,8 @@
                 class="nav-link"
                 data-cy="go-to-advanced"
                 paFocusable
-                [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
-                [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
+                [paFocusDisabled]="(isAdminOrContrib | async) === false"
+                [class.disabled]="(isAdminOrContrib | async) === false">
                 <pa-icon
                   name="chevron-right"
                   [class.expanded]="showSettings"></pa-icon>
@@ -97,220 +95,196 @@
               <div class="group-items">
                 <a
                   data-analytics-id="navbar-enter-settings"
-                  [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
+                  [routerLink]="(isKbAdmin | async) ? kbUrl + '/manage' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
                   data-cy="go-to-settings"
-                  [class.disabled]="!(isKbAdmin | async) || (invalidKey | async)">
+                  [class.disabled]="!(isKbAdmin | async)">
                   <pa-icon name="gear"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
                 </a>
                 <a
                   data-analytics-id="navbar-enter-ai-models"
-                  [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
+                  [routerLink]="(isKbAdmin | async) ? kbUrl + '/ai-models' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
                   data-cy="go-to-ai-models"
-                  [class.disabled]="!(isKbAdmin | async) || (invalidKey | async)">
+                  [class.disabled]="!(isKbAdmin | async)">
                   <pa-icon name="settings"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
                 </a>
-                @if (!standalone) {
+
+                <a
+                  data-analytics-id="navbar-enter-da-agents"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/tasks' : null"
+                  routerLinkActive="active"
+                  data-cy="go-to-tasks"
+                  class="nav-link sub-item"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="submenu"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.da-agents' | translate }}</span>
+                </a>
+                @if (isKbAdmin | async) {
                   <a
-                    data-analytics-id="navbar-enter-da-agents"
-                    [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/tasks' : null"
+                    data-analytics-id="navbar-enter-api-keys"
+                    [routerLink]="kbUrl + '/keys'"
                     routerLinkActive="active"
-                    data-cy="go-to-tasks"
-                    class="nav-link sub-item"
-                    [class.disabled]="!(isAdminOrContrib | async)">
-                    <pa-icon name="submenu"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.da-agents' | translate }}</span>
+                    data-cy="go-to-api-keys"
+                    class="nav-link sub-item">
+                    <pa-icon name="lock-off"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
                   </a>
-                  @if (isKbAdmin | async) {
-                    <a
-                      data-analytics-id="navbar-enter-api-keys"
-                      [routerLink]="kbUrl + '/keys'"
-                      routerLinkActive="active"
-                      data-cy="go-to-api-keys"
-                      class="nav-link sub-item">
-                      <pa-icon name="lock-off"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
-                    </a>
-                  }
                 }
 
                 <a
                   data-analytics-id="navbar-enter-label-sets"
-                  [routerLink]="!(invalidKey | async) ? kbUrl + '/label-sets' : null"
+                  [routerLink]="kbUrl + '/label-sets'"
                   routerLinkActive="active"
                   class="nav-link sub-item"
-                  data-cy="go-to-classification"
-                  [class.disabled]="invalidKey | async">
+                  data-cy="go-to-classification">
                   <pa-icon name="label"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.classification' | translate }}</span>
                 </a>
                 <a
                   data-analytics-id="navbar-enter-entities"
-                  [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
+                  [routerLink]="kbUrl + '/entities'"
                   routerLinkActive="active"
                   class="nav-link sub-item"
-                  data-cy="go-to-ner"
-                  [class.disabled]="invalidKey | async">
+                  data-cy="go-to-ner">
                   <pa-icon name="form"></pa-icon>
                   <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
                 </a>
 
-                @if (!standalone) {
-                  @if (isKbAdmin | async) {
-                    <a
-                      data-analytics-id="navbar-enter-rag-lab"
-                      [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/rag-lab' : null"
-                      routerLinkActive="active"
-                      data-cy="go-to-prompt-lab"
-                      class="nav-link sub-item"
-                      [stfUnauthorizedFeature]="(isPromptLabAuthorized | async) === false">
-                      <pa-icon name="lab"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.rag-lab' | translate }}</span>
-                    </a>
-                    <a
-                      data-analytics-id="navbar-enter-users"
-                      [routerLink]="kbUrl + '/users'"
-                      routerLinkActive="active"
-                      data-cy="go-to-users"
-                      class="nav-link sub-item">
-                      <pa-icon name="users"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
-                    </a>
-                  }
+                @if (isKbAdmin | async) {
+                  <a
+                    data-analytics-id="navbar-enter-rag-lab"
+                    [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/rag-lab' : null"
+                    routerLinkActive="active"
+                    data-cy="go-to-prompt-lab"
+                    class="nav-link sub-item"
+                    [stfUnauthorizedFeature]="(isPromptLabAuthorized | async) === false">
+                    <pa-icon name="lab"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.rag-lab' | translate }}</span>
+                  </a>
+                  <a
+                    data-analytics-id="navbar-enter-users"
+                    [routerLink]="kbUrl + '/users'"
+                    routerLinkActive="active"
+                    data-cy="go-to-users"
+                    class="nav-link sub-item">
+                    <pa-icon name="users"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
+                  </a>
                 }
               </div>
             </div>
           }
-          @if (!standalone) {
+
+          <div class="nav-group">
+            <div class="group-items">
+              <a
+                data-analytics-id="navbar-enter-metrics"
+                (click)="toggleMetrics()"
+                (keyup.enter)="toggleMetrics()"
+                class="nav-link"
+                data-cy="go-to-metrics-section"
+                paFocusable
+                [paFocusDisabled]="((isAdminOrContrib | async) === false) === true"
+                [class.disabled]="((isAdminOrContrib | async) === false) === true">
+                <pa-icon
+                  name="chevron-right"
+                  [class.expanded]="showMetrics"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.metrics.metrics' | translate }}</span>
+              </a>
+            </div>
+          </div>
+          @if (showMetrics) {
             <div class="nav-group">
               <div class="group-items">
+                @if (isRemiMetricsEnabled | async) {
+                  <a
+                    data-analytics-id="navbar-enter-remi-analytics"
+                    [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/remi-analytics' : null"
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-remi-analytics"
+                    [class.disabled]="!(isAdminOrContrib | async)">
+                    <pa-icon name="image"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
+                  </a>
+                  <a
+                    data-analytics-id="navbar-enter-usage-analytics"
+                    [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/usage-analytics' : null"
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-usage-analytics"
+                    [class.disabled]="!(isAdminOrContrib | async)">
+                    <pa-icon name="chart"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.usage-analytics' | translate }}</span>
+                  </a>
+                }
                 <a
-                  data-analytics-id="navbar-enter-metrics"
-                  (click)="toggleMetrics()"
-                  (keyup.enter)="toggleMetrics()"
-                  class="nav-link"
-                  data-cy="go-to-metrics-section"
-                  paFocusable
-                  [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
-                  [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
-                  <pa-icon
-                    name="chevron-right"
-                    [class.expanded]="showMetrics"></pa-icon>
-                  <span class="nav-link-title">{{ 'navbar.metrics.metrics' | translate }}</span>
+                  data-analytics-id="navbar-enter-tokens-and-time-usage"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/tokens-and-time-usage' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-cost-token"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="payment-details"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.metrics.cost-token-usage' | translate }}</span>
+                </a>
+                <a
+                  data-analytics-id="navbar-enter-user-feedback"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/user-feedback' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-user-feedback"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="thumb-up"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.metrics.user-feedback' | translate }}</span>
+                </a>
+                <a
+                  data-analytics-id="navbar-enter-resource-activity"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/resource-activity' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-resource-activity"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="activity-log"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
+                </a>
+                <a
+                  data-analytics-id="navbar-enter-search-activity"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/search-activity' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-search-activity"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="payment-history"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
+                </a>
+                <a
+                  data-analytics-id="navbar-enter-chat-activity"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/chat-activity' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-chat-activity"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="chat"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.metrics.chat-activity' | translate }}</span>
+                </a>
+                <a
+                  data-analytics-id="navbar-enter-detailed-logs"
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/metrics/detailed' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-detailed-logs"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="activity-log"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.metrics.detailed-logs' | translate }}</span>
                 </a>
               </div>
             </div>
-            @if (showMetrics) {
-              <div class="nav-group">
-                <div class="group-items">
-                  @if (isRemiMetricsEnabled | async) {
-                    <a
-                      data-analytics-id="navbar-enter-remi-analytics"
-                      [routerLink]="
-                        (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null
-                      "
-                      routerLinkActive="active"
-                      class="nav-link sub-item"
-                      data-cy="go-to-remi-analytics"
-                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                      <pa-icon name="image"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
-                    </a>
-                    <a
-                      data-analytics-id="navbar-enter-usage-analytics"
-                      [routerLink]="
-                        (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null
-                      "
-                      routerLinkActive="active"
-                      class="nav-link sub-item"
-                      data-cy="go-to-usage-analytics"
-                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                      <pa-icon name="chart"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.metrics.usage-analytics' | translate }}</span>
-                    </a>
-                  }
-                  <a
-                    data-analytics-id="navbar-enter-tokens-and-time-usage"
-                    [routerLink]="
-                      (isAdminOrContrib | async) && !(invalidKey | async)
-                        ? kbUrl + '/metrics/tokens-and-time-usage'
-                        : null
-                    "
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-cost-token"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="payment-details"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.cost-token-usage' | translate }}</span>
-                  </a>
-                  <a
-                    data-analytics-id="navbar-enter-user-feedback"
-                    [routerLink]="
-                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/user-feedback' : null
-                    "
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-user-feedback"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="thumb-up"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.user-feedback' | translate }}</span>
-                  </a>
-                  <a
-                    data-analytics-id="navbar-enter-resource-activity"
-                    [routerLink]="
-                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/resource-activity' : null
-                    "
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-resource-activity"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="activity-log"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
-                  </a>
-                  <a
-                    data-analytics-id="navbar-enter-search-activity"
-                    [routerLink]="
-                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/search-activity' : null
-                    "
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-search-activity"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="payment-history"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
-                  </a>
-                  <a
-                    data-analytics-id="navbar-enter-chat-activity"
-                    [routerLink]="
-                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/chat-activity' : null
-                    "
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-chat-activity"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="chat"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.chat-activity' | translate }}</span>
-                  </a>
-                  <a
-                    data-analytics-id="navbar-enter-detailed-logs"
-                    [routerLink]="
-                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/detailed' : null
-                    "
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-detailed-logs"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="activity-log"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.detailed-logs' | translate }}</span>
-                  </a>
-                </div>
-              </div>
-            }
           }
         </div>
       } @else if (isInArag) {
@@ -355,8 +329,7 @@
                   class="nav-link"
                   data-cy="go-to-search"
                   routerLinkActive="active"
-                  [routerLink]="!(invalidKey | async) ? aragUrl + '/search' : null"
-                  [class.disabled]="invalidKey | async">
+                  [routerLink]="aragUrl + '/search'">
                   <pa-icon name="search"></pa-icon>
                   <span class="nav-link-title">{{ 'search.title' | translate }}</span>
                 </a>
@@ -364,11 +337,11 @@
               @if (isRaoWidgetEnabled | async) {
                 <a
                   data-analytics-id="navbar-enter-rao-widgets"
-                  [routerLink]="(isAragAdmin | async) && !(invalidKey | async) ? aragUrl + '/widgets' : null"
+                  [routerLink]="(isAragAdmin | async) ? aragUrl + '/widgets' : null"
                   routerLinkActive="active"
                   class="nav-link"
                   data-cy="go-to-widget"
-                  [class.disabled]="!(isAragAdmin | async) || (invalidKey | async)">
+                  [class.disabled]="!(isAragAdmin | async)">
                   <pa-icon name="widget"></pa-icon>
                   <span class="nav-link-title">{{ 'search.widgets.title' | translate }}</span>
                 </a>
@@ -383,8 +356,8 @@
                 class="nav-link"
                 data-cy="go-to-advanced"
                 paFocusable
-                [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
-                [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
+                [paFocusDisabled]="((isAdminOrContrib | async) === false) === true"
+                [class.disabled]="((isAdminOrContrib | async) === false) === true">
                 <pa-icon
                   name="chevron-right"
                   [class.expanded]="showSettings"></pa-icon>
@@ -397,11 +370,11 @@
               <div class="group-items">
                 <a
                   data-analytics-id="navbar-enter-rao-settings"
-                  [routerLink]="(isAragAdmin | async) && !(invalidKey | async) ? aragUrl + '/manage' : null"
+                  [routerLink]="(isAragAdmin | async) ? aragUrl + '/manage' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
                   data-cy="go-to-settings"
-                  [class.disabled]="!(isAragAdmin | async) || (invalidKey | async)">
+                  [class.disabled]="!(isAragAdmin | async)">
                   <pa-icon name="gear"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
                 </a>

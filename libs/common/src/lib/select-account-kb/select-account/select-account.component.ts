@@ -9,17 +9,11 @@ import {
   OnInit,
 } from '@angular/core';
 import { NavigationStart, Router, RouterLink, RouterOutlet, Scroll } from '@angular/router';
-import {
-  BrandService,
-  SDKService,
-  SelectAccountKbService,
-  standaloneSimpleAccount,
-  StaticEnvironmentConfiguration,
-} from '@flaps/core';
+import { BrandService, SDKService, SelectAccountKbService, StaticEnvironmentConfiguration } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
-import { filter, Observable, of, Subject } from 'rxjs';
+import { filter, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { selectAnimations } from '../utils';
 
@@ -40,8 +34,6 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   private brandService = inject(BrandService);
   logoPath = this.brandService.logoPath;
   brandName = this.brandService.brandName;
-
-  standalone = this.environment.standalone;
 
   constructor(
     private selectService: SelectAccountKbService,
@@ -67,10 +59,6 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
         }
         this.cdr.markForCheck();
       });
-
-    if (this.standalone) {
-      this.accounts = of([standaloneSimpleAccount]);
-    }
   }
 
   logout() {

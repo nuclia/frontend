@@ -3,10 +3,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from
 import { Router } from '@angular/router';
 import { AccountEntryContextService, BrandService, NavigationService, SDKService, UserService } from '@flaps/core';
 import { combineLatest, map, of, switchMap, take } from 'rxjs';
-import { StandaloneService } from '../services/standalone.service';
 import { KbSwitchComponent } from './kb-switch/kb-switch.component';
 import { PlanStatusComponent } from './plan-status/plan-status.component';
-import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 
 @Component({
@@ -14,7 +12,7 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [KbSwitchComponent, PlanStatusComponent, UserMenuComponent, StandaloneMenuComponent, AsyncPipe],
+  imports: [KbSwitchComponent, PlanStatusComponent, UserMenuComponent, AsyncPipe],
 })
 export class TopbarComponent {
   @Output() openNotificationPanel = new EventEmitter<void>();
@@ -24,7 +22,6 @@ export class TopbarComponent {
   inAdminApp = this.navigationService.inAdminApp;
   showKbSwitch =
     !this.inAdminApp || this.navigationService.fromApp('rao') || this.navigationService.fromApp('dashboard');
-  standalone = this.standaloneService.standalone;
 
   private brandService = inject(BrandService);
   private entryContext = inject(AccountEntryContextService);
@@ -34,8 +31,6 @@ export class TopbarComponent {
     map(([isCowork, logoPath]) => {
       if (isCowork) {
         return 'assets/logos/logo-context-box.svg';
-      } else if (this.standalone) {
-        return 'assets/logos/nucliadb.svg';
       } else {
         return logoPath;
       }
@@ -47,7 +42,6 @@ export class TopbarComponent {
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private standaloneService: StandaloneService,
   ) {}
 
   goToHome(): void {

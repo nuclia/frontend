@@ -1,21 +1,19 @@
 @if ((kbs | async) !== null || (arags | async) !== null) {
   <div class="select-kb">
     <div class="select-kb-header">
-      @if (!standalone) {
-        @if (hasSeveralAccounts | async) {
-          <nsi-back-button
-            class="select-kb-back"
-            link="/select">
-            {{ 'generic.back' | translate }}
-          </nsi-back-button>
-        } @else {
-          <nsi-button-mini
-            class="select-kb-back"
-            icon="chevron-left"
-            (click)="logout()">
-            {{ 'generic.logout' | translate }}
-          </nsi-button-mini>
-        }
+      @if (hasSeveralAccounts | async) {
+        <nsi-back-button
+          class="select-kb-back"
+          link="/select">
+          {{ 'generic.back' | translate }}
+        </nsi-back-button>
+      } @else {
+        <nsi-button-mini
+          class="select-kb-back"
+          icon="chevron-left"
+          (click)="logout()">
+          {{ 'generic.logout' | translate }}
+        </nsi-button-mini>
       }
 
       <h2
@@ -47,7 +45,7 @@
 
       @if (showList) {
         <div class="select-kb-list">
-          @if (!standalone && isAragEnabled) {
+          @if (isAragEnabled) {
             @for (arag of aragList; track arag.id) {
               @if (arag.id) {
                 <a
@@ -88,20 +86,9 @@
                   (click)="goToKb(kb)"
                   (keydown.enter)="goToKb(kb)"
                   (keydown.space)="goToKb(kb); $event.preventDefault()">
-                  @if (standalone) {
-                    <pa-button
-                      class="delete-btn"
-                      data-cy="delete-kb-button"
-                      icon="trash"
-                      aspect="basic"
-                      kind="destructive"
-                      size="small"
-                      (click)="deleteKb($event, kb.id, kb.zone, kb.title)"></pa-button>
-                  } @else {
-                    <pa-icon
-                      size="small"
-                      name="knowledge-box"></pa-icon>
-                  }
+                  <pa-icon
+                    size="small"
+                    name="knowledge-box"></pa-icon>
 
                   <span
                     class="kb-title"
@@ -133,7 +120,7 @@
     </div>
 
     <div class="select-kb-footer">
-      @if (!inRaoApp && (standalone || (canAddKb | async) === true)) {
+      @if (!inRaoApp && (canAddKb | async) === true) {
         <pa-button
           data-cy="create-kb-button"
           aspect="basic"

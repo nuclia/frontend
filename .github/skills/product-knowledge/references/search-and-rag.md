@@ -151,6 +151,14 @@ Use `faceted` parameter for aggregate counts:
 
 ---
 
+## NuaGuard Query Guardrails (Preview)
+
+NuaGuard evaluates the latest user query against enabled, account-level natural-language policies before a supported chat request reaches the generative model. Policies are regional, additive, and cannot be disabled by an individual request. The preview supports text queries and up to five enabled policies per regional account; policies are disabled by default and can be configured to fail open or closed if evaluation fails.
+
+Use `POST /api/v1/predict/guardrail` to test a stored or inline policy before enabling it. Manage stored policies with `/api/v1/account/{account_id}/guardrail_policies`. See the external [NuaGuard documentation](https://docs.rag.progress.cloud/docs/rag/advanced/guardrails) for policy authoring and rollout details.
+
+---
+
 ## Prompts
 
 Three prompt types, all customizable:

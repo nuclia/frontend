@@ -3,16 +3,6 @@
     {{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}
   </pa-modal-title>
   <pa-modal-content>
-    @if (standalone && (hasValidKey | async) === false) {
-      <nsi-info-card
-        type="warning"
-        icon="warning">
-        <div
-          class="body-s"
-          [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-      </nsi-info-card>
-      <br />
-    }
     @if (limitsExceeded) {
       <nsi-info-card
         type="warning"
@@ -115,7 +105,7 @@
               </pa-input>
             }
           </div>
-          @if ((extractConfigEnabled | async) && !standalone) {
+          @if (extractConfigEnabled | async) {
             <app-extraction-select
               [(extractConfig)]="extractStrategy"
               [(splitConfig)]="splitStrategy"

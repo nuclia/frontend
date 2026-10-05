@@ -22,7 +22,6 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 | `rao`                | Angular 22      | RAO white-label (agents only, no KB management)                                                                          |
 | `admin`              | Angular 22      | Account-management app (billing, members, API keys, `/at/:account/**`) — reused by `rao` and future white-label surfaces |
 | `manager-v2`         | Angular 22      | Internal back-office (accounts, users, zones)                                                                            |
-| `nucliadb-admin`     | Angular 22      | NucliaDB admin (hash routing)                                                                                            |
 | `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                                                                               |
 | `sistema-demo`       | Angular 22      | Interactive showcase for `libs/sistema`                                                                                  |
 
@@ -33,6 +32,7 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 | `@nuclia/core`                     | `sdk-core`          | TypeScript | Nuclia JS/TS SDK — all REST/WS API calls                                                         |
 | `@flaps/core`                      | `core`              | Angular    | App bootstrap, SDK wrapper, guards, auth, feature flags, analytics                               |
 | `@flaps/common`                    | `common`            | Angular    | Shared feature modules used by dashboard, rao + admin                                            |
+| `@nuclia/ui`                       | `ui`                | Angular    | Spartan/Helm primitives and Tailwind utilities (`avatar`, `button`, `utils` subpaths)            |
 | `@nuclia/sistema`                  | `sistema`           | Angular    | Nuclia design system (prefix `nsi-`)                                                             |
 | `@nuclia/user`                     | `user`              | Angular    | Auth/identity flows for `apps/auth` (mixed selector prefixes; onboarding now in `@flaps/common`) |
 | `@nuclia/sync`                     | `sync`              | Angular    | Data source sync UI (prefix `nsy-`)                                                              |
@@ -53,7 +53,6 @@ nx serve dashboard
 nx serve rao
 nx serve admin
 nx serve manager-v2
-nx serve nucliadb-admin
 nx serve sistema-demo
 
 # Vite apps
@@ -63,6 +62,9 @@ nx serve search-widget-demo  # Svelte, port 5173
 nx build sdk-core          # Rollup → dist/sdk-core/ (ESM + UMD)
 nx build chrome-ext        # Copies static files → dist/libs/chrome-ext/
 nx build search-widget     # tools/build-widgets.sh (3 Vite passes)
+nx test ui
+nx lint ui
+nx run ui:storybook
 ```
 
 ---
@@ -84,8 +86,8 @@ Test files are co-located alongside source as `*.spec.ts`.
 ### Angular components
 
 - **Change detection:** zoneless (`provideZonelessChangeDetection()`) — no `zone.js` in any of
-  the 7 first-party apps (`auth`, `dashboard`, `rao`, `admin`, `manager-v2`, `nucliadb-admin`,
-  `sistema-demo`). `OnPush` is still required everywhere, but CD is now purely
+  the 6 first-party apps (`auth`, `dashboard`, `rao`, `admin`, `manager-v2`, `sistema-demo`).
+  `OnPush` is still required everywhere, but CD is now purely
   signal/`markForCheck()`/`ApplicationRef.tick()`-driven — never assume a native event listener,
   `setTimeout`, or unpatched async callback will trigger a re-render on its own.
 - **Selector prefixes:** declared in each lib's `project.json` (`nsi-`, `nus-`, `nsy-`, `stf-`, `nma-`).

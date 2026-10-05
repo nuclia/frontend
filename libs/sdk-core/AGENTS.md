@@ -128,12 +128,11 @@ kb.createResource(data, true).subscribe(() => console.log('fully created'));
 
 ### Authentication modes
 
-| Mode                | Setup                           | Header                                                                    |
-| ------------------- | ------------------------------- | ------------------------------------------------------------------------- |
-| Public KB           | `public: true` in options       | None                                                                      |
-| Service account     | `apiKey: '<key>'`               | `X-NUCLIA-SERVICEACCOUNT: Bearer <key>`                                   |
-| User JWT            | `nuclia.auth.login(user, pass)` | `Authorization: Bearer <jwt>`                                             |
-| Standalone NucliaDB | `standalone: true`              | `X-NUCLIADB-ROLES: READER/WRITER/MANAGER` (auto-derived from method+path) |
+| Mode            | Setup                           | Header                                  |
+| --------------- | ------------------------------- | --------------------------------------- |
+| Public KB       | `public: true` in options       | None                                    |
+| Service account | `apiKey: '<key>'`               | `X-NUCLIA-SERVICEACCOUNT: Bearer <key>` |
+| User JWT        | `nuclia.auth.login(user, pass)` | `Authorization: Bearer <jwt>`           |
 
 ### TUS uploads
 
@@ -199,13 +198,13 @@ import { IResource, FIELD_TYPE, ResourceProperties } from '@nuclia/core';
 import { AccountBlockingState, KBRoles } from '@nuclia/core';
 ```
 
-| Consumer                     | Primary usage                               |
-| ---------------------------- | ------------------------------------------- |
-| `apps/dashboard`             | Full account + KB management, search        |
-| `apps/manager-v2`            | Account admin, model management             |
-| `apps/rao` | KB search, ask, find                        |
-| `libs/search-widget`         | `KnowledgeBox.ask()`, `find()`, `suggest()` |
-| `libs/core` (Angular)        | `SDKService` wraps the `Nuclia` instance    |
+| Consumer              | Primary usage                               |
+| --------------------- | ------------------------------------------- |
+| `apps/dashboard`      | Full account + KB management, search        |
+| `apps/manager-v2`     | Account admin, model management             |
+| `apps/rao`            | KB search, ask, find                        |
+| `libs/search-widget`  | `KnowledgeBox.ask()`, `find()`, `suggest()` |
+| `libs/core` (Angular) | `SDKService` wraps the `Nuclia` instance    |
 
 ---
 

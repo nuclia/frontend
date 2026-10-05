@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, EMPTY, filter, map, Observable, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Welcome } from '@nuclia/core';
-import { SDKService } from './sdk.service';
+import { BehaviorSubject, catchError, EMPTY, filter, map, Observable, switchMap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,15 +20,13 @@ export class UserService {
     private authService: AuthService,
     private route: ActivatedRoute,
   ) {
-    if (!this.sdk.nuclia.options.standalone) {
-      this.sdk.nuclia.auth
-        .isAuthenticated()
-        .pipe(
-          filter((yes) => yes),
-          switchMap(() => this.updateWelcome()),
-        )
-        .subscribe();
-    }
+    this.sdk.nuclia.auth
+      .isAuthenticated()
+      .pipe(
+        filter((yes) => yes),
+        switchMap(() => this.updateWelcome()),
+      )
+      .subscribe();
   }
 
   updateWelcome(): Observable<void> {

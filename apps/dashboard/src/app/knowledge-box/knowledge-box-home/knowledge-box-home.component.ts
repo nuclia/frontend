@@ -145,10 +145,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   isSubscribed = this.metrics.isSubscribedToStripe;
 
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
-    map(([account, kb]) => {
-      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      return this.navigationService.getKbUrl(account.slug, kbSlug);
-    }),
+    map(([account, kb]) => this.navigationService.getKbUrl(account.slug, kb.slug)),
   );
 
   isChartDropdownOpen = false;
