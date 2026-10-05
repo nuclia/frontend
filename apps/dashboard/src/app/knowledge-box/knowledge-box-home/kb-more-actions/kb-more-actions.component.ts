@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
+import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { NavigationService, SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, map } from 'rxjs';
 import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
@@ -29,8 +29,7 @@ export class KbMoreActionsComponent {
   kbUrl = toSignal(
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
       map(([account, kb]) => {
-        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-        return this.navigationService.getKbUrl(account.slug, kbSlug);
+        return this.navigationService.getKbUrl(account.slug, kb.slug);
       }),
     ),
     { initialValue: '' },

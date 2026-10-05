@@ -32,7 +32,6 @@ import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core'
 import { InfoCardComponent } from '@nuclia/sistema';
 import { take } from 'rxjs';
 import { HintComponent } from '../../hint/hint.component';
-import { StandaloneService } from '../../services';
 import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
 import { UploadService } from '../upload.service';
 import { getFilesGroupedByType } from '../upload.utils';
@@ -84,9 +83,6 @@ export class UploadFilesComponent {
     validators: [Validators.pattern(/^[a-z]{2}(\+[a-z]{2}){0,3}$/)],
   });
 
-  standalone = this.standaloneService.standalone;
-  noLimit = this.standalone;
-  hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
   extractConfigEnabled = this.features.authorized.extractConfig;
   spitConfigEnabled = this.features.authorized.splitConfig;
@@ -94,16 +90,13 @@ export class UploadFilesComponent {
   splitStrategy?: string;
 
   get allowedFiles(): File[] {
-    return this.noLimit
-      ? this.files.map((item) => item.file)
-      : this.files.filter((item) => !item.aboveLimit).map((item) => item.file);
+    return this.files.filter((item) => !item.aboveLimit).map((item) => item.file);
   }
 
   constructor(
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
     private sdk: SDKService,
-    private standaloneService: StandaloneService,
     private features: FeaturesService,
   ) {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
@@ -128,11 +121,11 @@ export class UploadFilesComponent {
       ...this.files,
       ...mediaFiles.map((file) => ({
         file,
-        aboveLimit: !this.noLimit && this.maxMediaFileSize !== -1 && file.size > this.maxMediaFileSize,
+        aboveLimit: this.maxMediaFileSize !== -1 && file.size > this.maxMediaFileSize,
       })),
       ...nonMediaFiles.map((file) => ({
         file,
-        aboveLimit: !this.noLimit && this.maxFileSize !== -1 && file.size > this.maxFileSize,
+        aboveLimit: this.maxFileSize !== -1 && file.size > this.maxFileSize,
       })),
     ];
     this.checkLimits();

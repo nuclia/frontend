@@ -222,7 +222,6 @@ export interface IDb {
   deleteNUAClient(accountId: string, internalId: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex?: number): Observable<EventList>;
-  getLearningSchema(): Observable<LearningConfigurations>;
   getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
   predictAnswer(question: string, context: string[], model?: string): Observable<string>;
@@ -319,8 +318,6 @@ export interface NucliaOptions {
    * Example: `my-kb` */
   kbSlug?: string;
   client?: string;
-  /** Indicates if you are using a local NucliaDB instance. */
-  standalone?: boolean;
   /** Indicates if you are using a proxy. */
   proxy?: boolean;
   /**

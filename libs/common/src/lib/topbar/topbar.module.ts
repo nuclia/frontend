@@ -1,17 +1,16 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { TopbarComponent } from './topbar.component';
-import { KbSwitchComponent } from './kb-switch/kb-switch.component';
 import { PaDropdownModule, PaIconModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-import { UserMenuComponent } from './user-menu';
-import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
+import { KbSwitchComponent } from './kb-switch/kb-switch.component';
 import { PlanStatusComponent } from './plan-status/plan-status.component';
+import { TopbarComponent } from './topbar.component';
+import { UserMenuComponent } from './user-menu';
 
 @NgModule({
   imports: [
@@ -26,7 +25,6 @@ import { PlanStatusComponent } from './plan-status/plan-status.component';
     DropdownButtonComponent,
     RouterModule,
     UserMenuComponent,
-    StandaloneMenuComponent,
     PlanStatusComponent,
     TopbarComponent,
     KbSwitchComponent,

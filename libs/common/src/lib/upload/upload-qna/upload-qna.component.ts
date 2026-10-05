@@ -11,7 +11,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TextFormat } from '@nuclia/core';
-import { StandaloneService } from '../../services';
 import { CsvSelectComponent } from '../csv-select/csv-select.component';
 import { UploadService } from '../upload.service';
 
@@ -34,9 +33,6 @@ import { UploadService } from '../upload.service';
   ],
 })
 export class UploadQnaComponent {
-  standalone = this.standaloneService.standalone;
-  hasValidKey = this.standaloneService.hasValidKey;
-
   isUploading = false;
   resourceTitle = new FormControl<string>(`Q&A ${new Date().toISOString().split('T')[0]}`, {
     nonNullable: true,
@@ -49,7 +45,6 @@ export class UploadQnaComponent {
   constructor(
     public modal: ModalRef,
     private uploadService: UploadService,
-    private standaloneService: StandaloneService,
     private cdr: ChangeDetectorRef,
   ) {}
 

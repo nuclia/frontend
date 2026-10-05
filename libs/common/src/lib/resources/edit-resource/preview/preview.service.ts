@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { combineLatest, distinctUntilKeyChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
-import { ResourceViewerService } from '../../resource-viewer.service';
+import { TranslateService } from '@ngx-translate/core';
 import { FieldId, Resource } from '@nuclia/core';
+import { combineLatest, distinctUntilKeyChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { ResourceViewerService } from '../../resource-viewer.service';
 
 const viewerId = 'viewer-widget';
 
@@ -32,7 +32,6 @@ export class PreviewService {
         state="${kb.state || ''}"
         account="${account.id}"
         lang="${this.translate.currentLang}"
-        ${this.sdk.nuclia.options.standalone ? 'standalone="true"' : ''}
         ></nuclia-viewer>`);
     }),
     tap(() => {

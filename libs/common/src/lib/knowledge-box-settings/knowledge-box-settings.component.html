@@ -58,59 +58,57 @@
             {{ 'kb.form.enforce-security' | translate }}
           </pa-toggle>
 
-          @if (!standalone) {
+          <pa-textarea
+            formControlName="allowed_origins"
+            placeholder="https://your.domain"
+            help="kb.form.allowed_origins.help"
+            rows="3"
+            resizable>
+            {{ 'kb.form.allowed_origins.label' | translate }}
+          </pa-textarea>
+          <div class="with-info">
             <pa-textarea
-              formControlName="allowed_origins"
-              placeholder="https://your.domain"
-              help="kb.form.allowed_origins.help"
+              formControlName="allowed_ip_addresses"
+              [placeholder]="'kb.form.allowed-ips.placeholder' | translate: { ip: ipAddress | async }"
+              help="kb.form.allowed-ips.help"
               rows="3"
               resizable>
-              {{ 'kb.form.allowed_origins.label' | translate }}
+              {{ 'kb.form.allowed-ips.label' | translate }}
             </pa-textarea>
-            <div class="with-info">
-              <pa-textarea
-                formControlName="allowed_ip_addresses"
-                [placeholder]="'kb.form.allowed-ips.placeholder' | translate: { ip: ipAddress | async }"
-                help="kb.form.allowed-ips.help"
-                rows="3"
-                resizable>
-                {{ 'kb.form.allowed-ips.label' | translate }}
-              </pa-textarea>
-              <div>
-                <pa-icon
-                  name="info"
-                  [paPopover]="warning"></pa-icon>
-                <pa-popover #warning>
-                  {{ 'kb.form.allowed-ips.warning' | translate: { ip: ipAddress | async } }}
-                </pa-popover>
+            <div>
+              <pa-icon
+                name="info"
+                [paPopover]="warning"></pa-icon>
+              <pa-popover #warning>
+                {{ 'kb.form.allowed-ips.warning' | translate: { ip: ipAddress | async } }}
+              </pa-popover>
+            </div>
+          </div>
+          @if (!(isArag | async)) {
+            <div>
+              <div class="with-info">
+                <pa-input
+                  formControlName="webhookUri"
+                  placeholder="https://your.endpoint">
+                  {{ 'kb.form.processing-webhook.url' | translate }}
+                </pa-input>
+                <div>
+                  <pa-icon
+                    name="info"
+                    [paPopover]="webhookInfo"></pa-icon>
+                  <pa-popover #webhookInfo>
+                    {{ 'kb.form.processing-webhook.help' | translate }}
+                  </pa-popover>
+                </div>
               </div>
             </div>
-            @if (!(isArag | async)) {
-              <div>
-                <div class="with-info">
-                  <pa-input
-                    formControlName="webhookUri"
-                    placeholder="https://your.endpoint">
-                    {{ 'kb.form.processing-webhook.url' | translate }}
-                  </pa-input>
-                  <div>
-                    <pa-icon
-                      name="info"
-                      [paPopover]="webhookInfo"></pa-icon>
-                    <pa-popover #webhookInfo>
-                      {{ 'kb.form.processing-webhook.help' | translate }}
-                    </pa-popover>
-                  </div>
-                </div>
+            @if (kbForm.controls.webhookUri.value) {
+              <div class="headers">
+                <label class="body-m">{{ 'kb.form.processing-webhook.headers' | translate }}</label>
+                <app-parameters-table
+                  secretDisabled
+                  [(values)]="headers"></app-parameters-table>
               </div>
-              @if (kbForm.controls.webhookUri.value) {
-                <div class="headers">
-                  <label class="body-m">{{ 'kb.form.processing-webhook.headers' | translate }}</label>
-                  <app-parameters-table
-                    secretDisabled
-                    [(values)]="headers"></app-parameters-table>
-                </div>
-              }
             }
           }
 

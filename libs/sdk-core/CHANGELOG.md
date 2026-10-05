@@ -1,4 +1,8 @@
-# 1.32.1 (unreleased)
+# 1.32.0 (2026-10-05)
+
+### Breaking changes
+
+- Remove deprecated option `standalone`
 
 ### Improvements
 

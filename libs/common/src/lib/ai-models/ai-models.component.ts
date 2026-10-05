@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
 import {
   PaButtonModule,
   PaExpanderModule,
@@ -10,18 +10,17 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { AnswerGenerationComponent } from './answer-generation/answer-generation.component';
-import { SummarizationComponent } from './summarization/summarization.component';
-import { SemanticModelComponent } from './semantic-model/semantic-model.component';
-import { AnonymizationComponent } from './anonymization/anonymization.component';
-import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
-import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
-import { LearningConfigurations, GenerativeProviders, WritableKnowledgeBox } from '@nuclia/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { GenerativeProviders, LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
+import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { removeDeprecatedModels } from './ai-models.utils';
-import { StandaloneService } from '../services';
+import { AnonymizationComponent } from './anonymization/anonymization.component';
+import { AnswerGenerationComponent } from './answer-generation/answer-generation.component';
 import { ExtractionComponent } from './extraction/extraction.component';
+import { SemanticModelComponent } from './semantic-model/semantic-model.component';
+import { SummarizationComponent } from './summarization/summarization.component';
 
 @Component({
   selector: 'stf-ai-models',
@@ -62,13 +61,11 @@ export class AiModelsComponent implements OnInit {
   isSummarizationAuthorized = this.features.authorized.summarization;
   isVectorsetAuthorized = this.features.authorized.vectorset;
   extractConfigEnabled = this.features.authorized.extractConfig;
-  standalone = this.standaloneService.standalone;
 
   constructor(
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
-    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit() {
@@ -118,7 +115,7 @@ export class AiModelsComponent implements OnInit {
       this.isVectorsetAuthorized
         .pipe(
           take(1),
-          filter((authorized) => this.standalone || authorized),
+          filter((authorized) => authorized),
         )
         .subscribe(() => (this.selectedTab = tab));
     } else {

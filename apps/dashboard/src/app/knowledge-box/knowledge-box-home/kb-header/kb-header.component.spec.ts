@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
-import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService, SDKService } from '@flaps/core';
 import { AppService } from '@flaps/common';
+import { NavigationService, SDKService } from '@flaps/core';
+import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
-import { KbHeaderComponent } from './kb-header.component';
 import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
+import { KbHeaderComponent } from './kb-header.component';
 
 function createTranslateLoader() {
   return { getTranslation: () => of(EN) };
@@ -50,7 +50,7 @@ describe('KbHeaderComponent', () => {
           currentKb: of(kb),
           currentAccount: of({ id: 'account-id', slug: 'account-slug' } as unknown as Account),
           counters: of({ resources: 1, index_size: 1024, paragraphs: 2, fields: 3, sentences: 4 }) as never,
-          nuclia: { options: { standalone: false } } as unknown as SDKService['nuclia'],
+          nuclia: { options: {} } as unknown as SDKService['nuclia'],
         }),
         MockProvider(AppService, {
           currentLocale: of('en'),

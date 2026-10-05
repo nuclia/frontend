@@ -32,6 +32,8 @@ import {
   UpdateKVSchema,
   UserMetadata,
 } from '../resource';
+import { setupAgenticWSHandlers } from '../retrieval-agent/agentic-websocket';
+import { AragResponse, HistoryEntry, InteractionOperation } from '../retrieval-agent/interactions.models';
 import {
   ask,
   catalog,
@@ -49,8 +51,8 @@ import {
 } from '../search';
 import { Agentic } from '../search/agentic';
 import { Ask, PredictAnswerOptions } from '../search/ask.models';
-import { setupAgenticWSHandlers } from '../retrieval-agent/agentic-websocket';
-import { AragResponse, HistoryEntry, InteractionOperation } from '../retrieval-agent/interactions.models';
+import { SyncManager } from '../sync/sync';
+import { ISyncManager } from '../sync/sync.models';
 import { TaskManager } from '../task';
 import { Training } from '../training';
 import type { UploadResponse } from '../upload';
@@ -64,6 +66,7 @@ import {
   ExtractConfig,
   ExtractStrategies,
   FullKbUser,
+  GenerativeProviders,
   IKnowledgeBox,
   IKnowledgeBoxBase,
   IKnowledgeBoxStandalone,
@@ -73,8 +76,8 @@ import {
   KbUserPayload,
   LabelSet,
   LabelSets,
+  ProcessingHook,
   ProcessingStatus,
-  GenerativeProviders,
   ResourceList,
   ResourceOperationNotification,
   ResourcePagination,
@@ -86,10 +89,7 @@ import {
   ServiceAccountCreation,
   SplitStrategies,
   SplitStrategy,
-  ProcessingHook,
 } from './kb.models';
-import { SyncManager } from '../sync/sync';
-import { ISyncManager } from '../sync/sync.models';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -722,23 +722,19 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _getTempToken(payload?: any): Observable<{ token: string }> {
-    if (this.nuclia.options.standalone) {
-      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
-    } else {
-      const accountId = this.nuclia.options.accountId;
-      const zone = this.nuclia.options.zone;
-      if (!accountId || !zone) {
-        throw new Error('Account id and zone are required to get a temp token');
-      }
-      return this.nuclia.rest.post<{ token: string }>(
-        `/account/${accountId}/kb/${this.id}/ephemeral_tokens`,
-        payload || {},
-        undefined,
-        undefined,
-        undefined,
-        zone,
-      );
+    const accountId = this.nuclia.options.accountId;
+    const zone = this.nuclia.options.zone;
+    if (!accountId || !zone) {
+      throw new Error('Account id and zone are required to get a temp token');
     }
+    return this.nuclia.rest.post<{ token: string }>(
+      `/account/${accountId}/kb/${this.id}/ephemeral_tokens`,
+      payload || {},
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfiguration(): Observable<{ [id: string]: any }> {
@@ -970,8 +966,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     const subject = new Subject<AragResponse | IErrorResponse>();
 
     // Public KBs have no accountId, so there's no way to get a temp token; the WS auth then relies on anonymous read access (same as HTTP calls).
-    const tempToken$ =
-      this.nuclia.options.standalone || this.nuclia.options.accountId ? this.getTempToken(undefined, true) : of('');
+    const tempToken$ = this.nuclia.options.accountId ? this.getTempToken(undefined, true) : of('');
 
     tempToken$.subscribe({
       next: (token) => {

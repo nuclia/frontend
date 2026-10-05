@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { NavigationService, SDKService, standaloneSimpleAccount, STFUtils, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, STFUtils, ZoneService } from '@flaps/core';
 import {
   IErrorMessages,
   PaButtonModule,
@@ -61,21 +61,18 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll = new Subject<void>();
 
-  standalone = this.sdk.nuclia.options.standalone;
-  zones = this.standalone
-    ? of([])
-    : this.zoneService
-        .getZones()
-        .pipe(map((zones) => [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''))));
+  zones = this.zoneService
+    .getZones()
+    .pipe(map((zones) => [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''))));
   account = this.sdk.currentAccount;
-  backPath = this.sdk.nuclia.options.standalone ? `/select/${standaloneSimpleAccount.slug}` : '..';
+  backPath = '..';
 
   form = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
     zone: new FormControl<string>('', {
       nonNullable: true,
-      validators: this.sdk.nuclia.options.standalone ? [] : [Validators.required],
+      validators: [Validators.required],
     }),
     anonymization: new FormControl<boolean>(false, { nonNullable: true }),
   });
@@ -104,32 +101,17 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       }
     });
 
-    if (this.sdk.nuclia.options.standalone) {
-      this.sdk.nuclia.db.getLearningSchema().subscribe({
-        next: (schema) => {
-          this.learningSchema.next(schema);
-        },
-        error: (error) => {
-          this.toaster.error(
-            this.translate.instant('kb.create.error-loading-schema', { error: error.body.detail || 'Unknown error' }),
-          );
-        },
+    // update learning schema when zone changes
+    this.form.controls.zone.valueChanges
+      .pipe(
+        switchMap((zone) =>
+          this.learningSchemasByZone[zone] ? of(this.learningSchemasByZone[zone]) : this.getLearningSchemaForZone(zone),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((schema) => {
+        this.learningSchema.next(schema);
       });
-    } else {
-      // update learning schema when zone changes
-      this.form.controls.zone.valueChanges
-        .pipe(
-          switchMap((zone) =>
-            this.learningSchemasByZone[zone]
-              ? of(this.learningSchemasByZone[zone])
-              : this.getLearningSchemaForZone(zone),
-          ),
-          takeUntil(this.unsubscribeAll),
-        )
-        .subscribe((schema) => {
-          this.learningSchema.next(schema);
-        });
-    }
   }
 
   private getLearningSchemaForZone(zone: string) {
@@ -198,16 +180,12 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             }),
           );
         }),
-        map((kb) =>
-          this.sdk.nuclia.options.standalone
-            ? this.navigationService.getKbUrl(standaloneSimpleAccount.slug, kb.id)
-            : this.backPath,
-        ),
+        map((kb) => this.backPath),
       )
       .subscribe({
         next: (nextPath) => {
           this.sdk.refreshKbList();
-          if (this.sdk.nuclia.options.standalone || this.embedded) {
+          if (this.embedded) {
             this.router.navigateByUrl(this.embedded ? `${nextPath}/knowledge-boxes` : nextPath);
           } else {
             this.router.navigate([nextPath], { relativeTo: this.route });
@@ -228,7 +206,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    if (this.sdk.nuclia.options.standalone || this.embedded) {
+    if (this.embedded) {
       this.router.navigateByUrl(this.embedded ? `${this.backPath}/knowledge-boxes` : this.backPath);
     } else {
       this.router.navigate([this.backPath], { relativeTo: this.route });

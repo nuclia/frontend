@@ -1,11 +1,11 @@
-import { combineLatest, filter, fromEvent, map, Observable, switchMap, take } from 'rxjs';
-import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
-import { FieldFullId } from '@nuclia/core';
 import { Location } from '@angular/common';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
+import { FieldFullId } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, fromEvent, map, Observable, switchMap, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -190,10 +190,7 @@ export class ResourceViewerService {
   private getResourcesBasePath(): Observable<string> {
     return combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
       take(1),
-      map(([kb, account]) => {
-        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-        return `${this.navigationService.getKbUrl(account.slug, kbSlug)}/resources`;
-      }),
+      map(([kb, account]) => `${this.navigationService.getKbUrl(account.slug, kb.slug)}/resources`),
     );
   }
   private navigateTo(path: string) {

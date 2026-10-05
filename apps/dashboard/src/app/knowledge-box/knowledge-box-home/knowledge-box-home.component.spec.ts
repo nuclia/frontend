@@ -1,8 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { RouterModule } from '@angular/router';
 import {
   AccountStatusComponent,
@@ -30,9 +27,12 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
@@ -116,7 +116,7 @@ describe('KnowledgeBoxHomeComponent', () => {
           counters: of({ resources: 1, index_size: 1024, paragraphs: 2, fields: 3, sentences: 4 }),
           refreshCounter: jest.fn(),
           nuclia: {
-            options: { standalone: false, backend: 'https://nuclia.cloud' },
+            options: { backend: 'https://nuclia.cloud' },
             db: {},
           },
         } as SDKService),

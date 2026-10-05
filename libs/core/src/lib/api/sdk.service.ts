@@ -4,7 +4,6 @@ import {
   Counters,
   IKnowledgeBoxItem,
   IRetrievalAgentItem,
-  KBRoles,
   KnowledgeBox,
   Nuclia,
   replaceSubdomainInUrl,
@@ -31,14 +30,12 @@ import {
 } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { BackendConfigurationService } from '../config';
-import { standaloneSimpleAccount } from '../models/account.model';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
   nuclia: Nuclia = new Nuclia({
     backend: this.config.getAPIURL(),
     client: this.config.staticConf.client,
-    standalone: this.config.staticConf.standalone,
     oauth: this.config.getOAuthSettings(),
   });
 
@@ -76,9 +73,7 @@ export class SDKService {
   );
   counters = new ReplaySubject<Counters | undefined>(1);
   pendingRefresh = new BehaviorSubject(false);
-  isAdminOrContrib = merge(this.currentKb, this.currentArag).pipe(
-    map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
-  );
+  isAdminOrContrib = merge(this.currentKb, this.currentArag).pipe(map((kb) => !!kb.admin || !!kb.contrib));
   isAragWithMemory = combineLatest([this._currentArag, this.aragListWithMemory]).pipe(
     map(([currentArag, withMemory]) => withMemory.some((arag) => arag.id === currentArag.id)),
   );
@@ -169,9 +164,7 @@ export class SDKService {
     if (currentAccount?.slug === accountSlug) {
       return of(currentAccount);
     } else {
-      const getAccount = this.config.staticConf.standalone
-        ? of(standaloneSimpleAccount)
-        : this.nuclia.db.getAccount(accountSlug);
+      const getAccount = this.nuclia.db.getAccount(accountSlug);
       return getAccount.pipe(tap((account) => (this.account = account)));
     }
   }
@@ -309,22 +302,10 @@ export class SDKService {
 
   private _refreshKbList(refreshCurrentKb = false) {
     this._refreshingKbList.next(true);
-    const kbList: Observable<IKnowledgeBoxItem[]> = this.nuclia.options.standalone
-      ? this.nuclia.db.getStandaloneKbs().pipe(
-          map((kbs) =>
-            kbs.map((kb) => ({
-              id: kb.uuid,
-              slug: kb.uuid,
-              zone: 'local',
-              title: kb.slug,
-              role_on_kb: 'SOWNER' as KBRoles,
-            })),
-          ),
-        )
-      : this.currentAccount.pipe(
-          take(1),
-          switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug, account.id, false)),
-        );
+    const kbList: Observable<IKnowledgeBoxItem[]> = this.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug, account.id, false)),
+    );
 
     kbList.subscribe({
       next: (list) => {

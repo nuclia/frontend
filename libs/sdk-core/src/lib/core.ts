@@ -36,7 +36,7 @@ export class Nuclia implements INuclia {
    * Direct access to the current Knowledge Box instance
    * (it returns a Knowledge Box in read mode, and does not work with account authentication). */
   get knowledgeBox(): KnowledgeBox {
-    if (!this.options.knowledgeBox || (!this.options.zone && !this.options.standalone && !this.options.proxy)) {
+    if (!this.options.knowledgeBox || (!this.options.zone && !this.options.proxy)) {
       throw new Error('zone and knowledge box id must be defined in the Nuclia options');
     }
     this.readKb ??= new KnowledgeBox(this, '', {
@@ -52,9 +52,7 @@ export class Nuclia implements INuclia {
    * Direct access to the current Retrieval Agent instance
    */
   get arag(): RetrievalAgent {
-    if (this.options.standalone) {
-      throw new Error('Retrieval agent is not available on standalone mode.');
-    } else if (!this.options.knowledgeBox || !this.options.zone) {
+    if (!this.options.knowledgeBox || !this.options.zone) {
       throw new Error('zone and knowledge box (ie. retrieval agent) id must be defined in the Nuclia options');
     }
     this._arag ??= new RetrievalAgent(this, '', {

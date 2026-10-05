@@ -60,7 +60,7 @@
               [(value)]="updateExisting">
               {{ 'upload.advanced.update-existing.label' | translate }}
             </pa-toggle>
-            @if ((extractConfigEnabled | async) && !standalone) {
+            @if (extractConfigEnabled | async) {
               <app-extraction-select
                 [(extractConfig)]="extractStrategy"
                 [(splitConfig)]="splitStrategy"

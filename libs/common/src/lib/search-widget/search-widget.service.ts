@@ -1,17 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { DEFAULT_WIDGET_CONFIG, SAVED_CONFIG_KEY } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
+import { TranslateService } from '@ngx-translate/core';
+import { getWidgetParameters, NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { ResourceViewerService } from '../resources';
-import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { SearchWidgetStorageService } from './search-widget-storage.service';
-import { getWidgetParameters, NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
+import { DEFAULT_WIDGET_CONFIG, SAVED_CONFIG_KEY } from './search-widget.models';
+import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
 
 @Injectable({
   providedIn: 'root',
@@ -159,16 +159,14 @@ export class SearchWidgetService {
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
-        const zone = this.sdk.nuclia.options.standalone
-          ? `standalone="true"`
-          : `zone="${this.sdk.nuclia.options.zone}"`;
+        const zone = `zone="${this.sdk.nuclia.options.zone}"`;
         const apiKey = `apikey="YOUR_API_TOKEN"`;
         const privateDetails =
           kb.state === 'PRIVATE'
             ? `\n  state="${kb.state}"\n  account="${account.id}"\n  kbslug="${kb.slug}"\n  ${apiKey}`
             : '';
         let backend = '';
-        if (this.sdk.nuclia.options.standalone || !this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
+        if (!this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
           backend = `\n  backend="${this.backendConfig.getAPIURL()}"`;
         }
         let cdn = '';
@@ -234,13 +232,11 @@ export class SearchWidgetService {
 
     return forkJoin([this.sdk.currentArag.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([arag, account]) => {
-        const zone = this.sdk.nuclia.options.standalone
-          ? `standalone="true"`
-          : `zone="${this.sdk.nuclia.options.zone}"`;
+        const zone = `zone="${this.sdk.nuclia.options.zone}"`;
         const apiKey = `apikey="YOUR_API_TOKEN"`;
         const privateDetails = `\n  ${apiKey}`;
         let backend = '';
-        if (this.sdk.nuclia.options.standalone || !this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
+        if (!this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
           backend = `\n  backend="${this.backendConfig.getAPIURL()}"`;
         }
         let cdn = '';

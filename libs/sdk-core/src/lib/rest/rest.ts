@@ -210,16 +210,13 @@ export class Rest implements IRest {
       path.startsWith('/marketplace');
 
     let backend: string;
-    if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
+    if (zoneSlug && !this.nuclia.options.proxy) {
       const zoneOrigin = this.zoneOrigins?.[zoneSlug];
       backend = zoneOrigin
         ? `${zoneOrigin}/api`
         : setZoneInRegionalUrl(this.nuclia.backend, zoneSlug, this.nuclia.options.regionalPrefix);
     } else {
-      backend =
-        isGlobal || this.nuclia.options.standalone || this.nuclia.options.proxy
-          ? this.nuclia.backend
-          : this.nuclia.regionalBackend;
+      backend = isGlobal || this.nuclia.options.proxy ? this.nuclia.backend : this.nuclia.regionalBackend;
     }
     const version =
       path.startsWith('/auth') ||

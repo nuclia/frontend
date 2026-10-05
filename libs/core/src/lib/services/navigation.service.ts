@@ -7,7 +7,6 @@ import {
   AccountEntryOriginClient,
   AuthService,
   SDKService,
-  standaloneSimpleAccount,
   StaticEnvironmentConfiguration,
 } from '@flaps/core';
 import {
@@ -68,8 +67,7 @@ export class NavigationService {
       } else if (account && arag) {
         return this.getRetrievalAgentUrl(account.slug, arag.slug);
       } else if (account && kb) {
-        const kbSlug = this.sdk.nuclia.options.standalone ? kb.id : kb.slug;
-        const kbUrl = this.getKbUrl(account.slug, kbSlug);
+        const kbUrl = this.getKbUrl(account.slug, kb.slug);
         return contextBoxMode ? `${kbUrl}/simple` : kbUrl;
       } else if (account) {
         return this.getKbSelectUrl(account.slug);
@@ -80,10 +78,7 @@ export class NavigationService {
   );
 
   kbUrl = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
-    map(([account, kb]) => {
-      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      return this.getKbUrl(account.slug, kbSlug);
-    }),
+    map(([account, kb]) => this.getKbUrl(account.slug, kb.slug)),
   );
 
   inAragSpace(path: string): boolean {
@@ -145,9 +140,7 @@ export class NavigationService {
   }
 
   getKbUrl(accountSlug: string, kbSlug: string): string {
-    const path = this.sdk.nuclia.options.standalone
-      ? `/at/${accountSlug}/${kbSlug}`
-      : `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
+    const path = `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
     // KBs are a `dashboard`/`rag` concept — once `admin` hosts this link (no KB pages of its
     // own), point at `rag`'s own origin regardless of which app the user entered `admin` from.
     return this.inAdminApp ? `${this.sdk.getOriginForApp('rag')}${path}` : path;
@@ -248,8 +241,6 @@ export class NavigationService {
     const goToUrl = this.authService.getNextUrl();
     if (goToUrl && goToUrl !== '/') {
       this.goToNextUrl(goToUrl);
-    } else if (this.environment.standalone) {
-      this.router.navigate([this.getKbSelectUrl(standaloneSimpleAccount.slug)]);
     } else {
       this.router.navigate([this.getAccountSelectUrl()]);
     }

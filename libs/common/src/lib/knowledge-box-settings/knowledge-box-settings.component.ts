@@ -23,9 +23,8 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProcessingHook, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { filter, forkJoin, merge, Observable, of, Subject } from 'rxjs';
+import { filter, forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { StandaloneService } from '../services';
 import { Sluggable } from '../validators';
 
 @Component({
@@ -96,7 +95,6 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   saving = false;
-  standalone = this.standaloneService.standalone;
   ipAddress = this.sdk.nuclia.auth.getAuthInfo(true).pipe(
     map((info) => info.ip_info?.client),
     shareReplay(1),
@@ -110,7 +108,6 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private router: Router,
     private toast: SisToastService,
     private modal: SisModalService,
-    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit(): void {

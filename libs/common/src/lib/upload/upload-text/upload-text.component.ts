@@ -12,7 +12,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
 import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
-import { StandaloneService } from '../../services';
 import { parseCsvLabels } from '../csv-parser';
 import { CsvSelectComponent } from '../csv-select/csv-select.component';
 import { UploadService } from '../upload.service';
@@ -47,9 +46,6 @@ interface Row {
 export class UploadTextComponent {
   isUploading = false;
   csv: Row[] = [];
-
-  standalone = this.standaloneService.standalone;
-  hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
 
   constructor(
@@ -57,7 +53,6 @@ export class UploadTextComponent {
     private uploadService: UploadService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
-    private standaloneService: StandaloneService,
     private sdk: SDKService,
   ) {}
 
