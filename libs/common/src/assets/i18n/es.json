@@ -237,6 +237,7 @@
 	"account.saml.domains": "Dominios",
 	"account.saml.domains-help": "Lista de dominios separados por comas",
 	"account.saml.entity-id": "Id de la entidad",
+	"account.saml.idp-initiated-target": "URL de la aplicación de destino para inicio desde IdP",
 	"account.saml.sso-url": "URL de inicio de sesión único",
 	"account.saml.title": "Configuración de inicio de sesión único",
 	"account.saml.x509-cert": "Certificado X.509",

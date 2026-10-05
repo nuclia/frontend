@@ -15,7 +15,11 @@ export class AppLoginComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      this.sdk.nuclia.auth.redirectToOAuth({ ...params });
+      const isSamlIdpLogin = !!params['saml_ref'] && !!params['nonce'];
+      this.sdk.nuclia.auth.redirectToOAuth(
+        { ...params },
+        isSamlIdpLogin ? { prompt: 'login' } : undefined,
+      );
     });
   }
 }

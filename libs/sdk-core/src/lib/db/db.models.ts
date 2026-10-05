@@ -111,6 +111,7 @@ export interface SamlConfig {
   entity_id: string;
   sso_url: string;
   x509_cert: string;
+  idp_initiated_target?: string;
   authn_context?: 'exact' | 'minimum' | 'better' | 'maximum';
 }
 
