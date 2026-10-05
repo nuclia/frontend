@@ -150,6 +150,7 @@ export class RegionalAccountService {
               contributors: [],
               members: [],
               owners: [],
+              published: kb.state === 'PUBLISHED',
             };
             users.forEach((user) => {
               const accountUser = accountDetails.users.find((accountUser) => accountUser.id === user.id);
@@ -187,6 +188,25 @@ export class RegionalAccountService {
           return of();
         }
         return this.sdk.nuclia.rest.patch<unknown>(kbPath, data, undefined, undefined, true, zoneSlug);
+      }),
+    );
+  }
+
+  publishKb(kbSummary: KbSummary, publish: boolean) {
+    const kbPath = `${ACCOUNT_ENDPOINT}/${kbSummary.accountId}/kb/${kbSummary.id}`;
+    return this.getKbZoneSlug(kbSummary).pipe(
+      switchMap((zoneSlug) => {
+        if (!zoneSlug) {
+          return of();
+        }
+        return this.sdk.nuclia.rest.patch<unknown>(
+          kbPath,
+          { state: publish ? 'PUBLISHED' : 'PRIVATE' },
+          undefined,
+          undefined,
+          true,
+          zoneSlug,
+        );
       }),
     );
   }
