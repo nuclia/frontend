@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -48,7 +49,7 @@ describe('Settings page layout', () => {
       ],
     })
       .overrideComponent(KnowledgeBoxSettingsComponent, {
-        set: { imports: [TranslateModule], schemas: [NO_ERRORS_SCHEMA] },
+        set: { imports: [CommonModule, TranslateModule], schemas: [NO_ERRORS_SCHEMA] },
       })
       .compileComponents();
   });
