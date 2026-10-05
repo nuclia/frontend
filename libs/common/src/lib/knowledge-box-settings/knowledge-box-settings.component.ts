@@ -231,29 +231,25 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  toggleKbState() {
+  unpublishKb() {
     if (!this.kb) {
       return;
     }
     const kb = this.kb;
-    const isPublished = kb.state === 'PUBLISHED';
-    const label = isPublished ? 'retire' : 'publish';
-    const state = isPublished ? 'PRIVATE' : 'PUBLISHED';
-
     (
       this.modal.openConfirm({
-        title: `stash.${label}.title`,
-        description: this.translate.instant(`stash.${label}.warning`, { kb: kb.title }),
+        title: 'stash.retire.title',
+        description: this.translate.instant('stash.retire.warning', { kb: kb.title }),
       }).onClose as Observable<boolean>
     )
       .pipe(
         filter((confirm) => confirm),
-        switchMap(() => kb.publish(state === 'PUBLISHED').pipe(tap(() => this.sdk.refreshKbList(true)))),
+        switchMap(() => kb.publish(false).pipe(tap(() => this.sdk.refreshKbList(true)))),
         take(1),
       )
       .subscribe({
         next: () => this.cdr.markForCheck(),
-        error: () => this.toast.error(`stash.${label}.error`),
+        error: () => this.toast.error('stash.retire.error'),
       });
   }
 }

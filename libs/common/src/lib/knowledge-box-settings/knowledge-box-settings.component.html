@@ -115,15 +115,16 @@
           }
 
           @if (kb.state?.toLowerCase(); as state) {
-            <div class="kb-status">
-              <h3
-                class="title-m"
-                [innerHTML]="'kb.settings.status.label' | translate: { state: state }"></h3>
-
-              <pa-button (click)="toggleKbState()">
-                {{ (state === 'published' ? 'account.kb.retire' : 'account.kb.publish') | translate }}
-              </pa-button>
-            </div>
+            @if (state === 'published') {
+              <div class="kb-status">
+                <h3
+                  class="title-m"
+                  [innerHTML]="'kb.settings.status.label' | translate: { state: state }"></h3>
+                <pa-button (click)="unpublishKb()">
+                  {{ 'account.kb.retire' | translate }}
+                </pa-button>
+              </div>
+            }
           }
 
           <footer>
