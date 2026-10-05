@@ -1,19 +1,17 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BackendConfigurationService } from '@flaps/core';
 import { isCameFromLegit } from '../login-error.util';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
 })
 export class SamlLoginComponent implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private config: BackendConfigurationService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {}
+  private route = inject(ActivatedRoute);
+  private config = inject(BackendConfigurationService);
+  private document = inject(DOCUMENT);
 
   ngOnInit(): void {
     const { ref, nonce, came_from } = this.route.snapshot.queryParams;
