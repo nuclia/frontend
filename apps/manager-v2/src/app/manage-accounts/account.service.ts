@@ -304,4 +304,8 @@ export class AccountService {
     const endpoint = `/billing/account/${accountId}/${providerStr}/subscription`;
     return this.sdk.nuclia.rest.patch<void>(endpoint, { free_tokens_per_billing_cycle });
   }
+
+  publishKb(kbSummary: KbSummary, publish: boolean): Observable<unknown> {
+    return this.regionalService.publishKb(kbSummary, publish);
+  }
 }

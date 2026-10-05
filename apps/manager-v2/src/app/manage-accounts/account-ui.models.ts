@@ -63,6 +63,7 @@ export interface KbDetails extends KbSummary {
   members: KbUser[];
   owners: KbUser[];
   prewarm_enabled?: boolean;
+  published: boolean;
 }
 
 export interface ProjectDetails extends Project {

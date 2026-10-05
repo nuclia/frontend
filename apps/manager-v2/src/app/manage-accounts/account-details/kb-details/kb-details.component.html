@@ -50,6 +50,11 @@
       [disabled]="!(canEdit | async)">
       Shards pre-warming
     </pa-toggle>
+    <pa-toggle
+      [value]="kb.published"
+      (valueChange)="togglePublish()">
+      Published
+    </pa-toggle>
     <nma-form-footer
       [disabled]="kbForm.pristine || kbForm.invalid || isSaving"
       (footerCancel)="reset()"></nma-form-footer>
