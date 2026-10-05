@@ -4,12 +4,13 @@ import {
   ChangeDetectorRef,
   Component,
   computed,
+  inject,
   OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ParametersTableComponent, SDKService, STFUtils } from '@flaps/core';
 import {
   IErrorMessages,
@@ -47,6 +48,7 @@ import { Sluggable } from '../validators';
   ],
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
+  embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
   unsubscribeAll = new Subject<void>();
 
   kb?: WritableKnowledgeBox;

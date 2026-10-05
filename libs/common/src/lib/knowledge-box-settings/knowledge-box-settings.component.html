@@ -1,7 +1,11 @@
 @if (kb; as kb) {
-  <div class="knowledge-box-settings page-spacing">
+  <div
+    class="knowledge-box-settings"
+    [class.page-spacing]="!embedded">
     <div class="section">
-      <h1>{{ 'stash.profile' | translate }}</h1>
+      @if (!embedded) {
+        <h1>{{ 'stash.profile' | translate }}</h1>
+      }
 
       @if (kbForm) {
         <form
