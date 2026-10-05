@@ -205,15 +205,7 @@ export class OnboardingComponent {
             }
             return kbConfig;
           }),
-          switchMap((config) =>
-            this.featuresService.unstable.shareFileInContextBox.pipe(
-              switchMap((enabled) =>
-                enabled
-                  ? this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)
-                  : this.onboardingService.createKb(account.slug, account.id, config, this.zone),
-              ),
-            ),
-          ),
+          switchMap((config) => this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)),
         )
       : this.onboardingService.createKb(account.slug, account.id, kbConfig, this.zone);
 
