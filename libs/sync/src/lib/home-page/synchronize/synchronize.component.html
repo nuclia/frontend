@@ -182,7 +182,7 @@
                   <pa-option [routerLink]="'./' + sync.id + '/edit'">
                     {{ 'sync.home-page.synchronize.sync-list.menu.edit-settings' | translate }}
                   </pa-option>
-                  @if (sync.connector?.allowToSelectFolders) {
+                  @if (sync.connector?.allowToSelectFolders && !(useCloudSync | async)) {
                     <pa-option [routerLink]="'./' + sync.id + '/edit'">
                       {{ 'sync.home-page.synchronize.sync-list.menu.edit-folders' | translate }}
                     </pa-option>
