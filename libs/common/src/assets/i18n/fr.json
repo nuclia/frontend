@@ -252,6 +252,7 @@
 	"account.trial.token-usage-unlimited": "{{used}} jetons (illimités)",
 	"account.trial.token-usage-value": "{{used}} / {{limit}} jetons",
 	"account.type.cowork": "Compte Context Box",
+	"account.type.cowork_trial": "Compte d'essai Context Box",
 	"account.type.label": "Niveau",
 	"account.type.stash-trial": "Compte d’essai",
 	"account.type.stash-trial_trial": "Compte d'essai",
