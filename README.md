@@ -173,7 +173,13 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 - build the widget
 - copy the resulting `nuclia-widget.umd.js` to `assets` folder of dashboard app
-- in `app.init.service.ts`, replace the line `injectWidget(config.backend.cdn);` to `injectWidget('/assets');`
+- in `app.init.service.ts`, replace the line
+
+```ts
+injectWidget(`${config.backend.cdn}/nuclia-widget.umd.js`);
+```
+
+by `injectWidget('/assets/nuclia-widget.umd.js');`
 
 ## Auth app and onboarding flow
 
