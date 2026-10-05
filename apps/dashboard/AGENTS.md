@@ -120,6 +120,8 @@ apps/dashboard/src/app/
 
 `KnowledgeBoxHomeComponent` composes several sub-components: `KbOnboardingHeaderComponent` (admin-only, wraps `KbHeaderComponent` once onboarding is done — KB name, storage summary popup, search/upload buttons, `KbMoreActionsComponent` "more actions" menu shared between both headers for KB settings / `DeveloperIntegrationsModalComponent` / test page), a KB summary grid (region, generative model, status, semantic model), account-manager-only usage charts + a usage summary table, a health-status card (REMI, shown when `isKBContrib` and `authorized.remiMetrics`, "more metrics" link goes to `/metrics/remi-analytics`), and `LastResourcesComponent` (recent resources preview). The `app-account-status` trial banner (`isAccountManager && isTrial`) was removed from this page.
 
+Build KB URLs through `NavigationService.getKbUrl(account.slug, kb.slug)` rather than assembling the route locally; this keeps navigation consistent with app-origin routing when links are shared across dashboard and admin surfaces.
+
 ---
 
 ## ARAG Dashboard (in `libs/common`)

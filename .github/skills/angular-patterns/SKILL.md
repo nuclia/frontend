@@ -22,8 +22,8 @@ many features; this covers only what the team has adopted. When in doubt, match 
 ## Non-Negotiable Rules
 
 1. **`ChangeDetectionStrategy.OnPush` on every component** — enforced by `nx.json` generator defaults. Never omit it.
-2. **Zoneless change detection — no `zone.js`.** All 7 first-party apps (`auth`, `dashboard`, `rao`,
-   `admin`, `manager-v2`, `nucliadb-admin`, `sistema-demo`) bootstrap with
+2. **Zoneless change detection — no `zone.js`.** All 6 first-party apps (`auth`, `dashboard`, `rao`,
+   `admin`, `manager-v2`, `sistema-demo`) bootstrap with
    `provideZonelessChangeDetection()` and have `zone.js` fully removed. This means:
    - Native event listeners (`document.addEventListener`), `setTimeout`/`setInterval`, raw
      Promises, and third-party async callbacks do **not** trigger change detection on their own.
@@ -327,7 +327,6 @@ vice-versa.
 | `apps/dashboard`                                              | App      | `app-` | `'app-knowledge-box-home'`                                                                                                                  |
 | `apps/rao`                                                    | App      | `app-` | `'app-root'`                                                                                                                                |
 | `apps/manager-v2`                                             | App      | `nma-` | `'nma-form-footer'`                                                                                                                         |
-| `apps/nucliadb-admin`                                         | App      | `nad-` | `'nad-home-page'`                                                                                                                           |
 | `libs/sistema` (`@nuclia/sistema`)                            | Lib      | `nsi-` | `'nsi-button'`                                                                                                                              |
 | `libs/common` (`@flaps/common`)                               | Lib      | `stf-` | `'stf-my-feature'`                                                                                                                          |
 | `libs/user` (`@nuclia/user`)                                  | Lib      | `nus-` | `'nus-login'` (note: many older components in this lib use legacy `stf-`/`nuclia-`/`app-` selectors instead — `nus-` is not universal here) |

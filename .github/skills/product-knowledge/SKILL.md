@@ -33,7 +33,8 @@ Provides domain knowledge about the Nuclia / Progress Agentic RAG platform so th
 2. **Search** that data via semantic, keyword, fulltext, and graph search modes.
 3. **Generate** answers using LLMs grounded in retrieved context (the RAG pipeline).
 4. **Evaluate** answer quality automatically using the **REMi** model.
-5. **Build agents** (Retrieval Agents) that orchestrate multi-source retrieval with workflows and drivers.
+5. **Apply query guardrails** with optional account-level NuaGuard policies before chat generation.
+6. **Build agents** (Retrieval Agents) that orchestrate multi-source retrieval with workflows and drivers.
 
 **Platform URL:** `https://rag.progress.cloud`  
 **API base URL:** `https://[zone-id].dp.progress.cloud/api/v1/`
@@ -244,7 +245,8 @@ Auth: `Authorization: Bearer <NUA-KEY>`. Supports chat completions, models list,
 This skill was last updated from:
 
 - **Docs repo:** `../docs` at commit `922725e`
-- **API specs:** Downloaded `2026-09-25` — ETags and versions stored in `meta.json`
+- **Docs repo:** `../docs` at commit `a498383`
+- **API specs:** ETags checked `2026-10-05` (unchanged from the `2026-09-25` downloads); values stored in `meta.json`
 
 ### Detecting stale docs
 

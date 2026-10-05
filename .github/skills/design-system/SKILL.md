@@ -3,7 +3,7 @@ name: design-system
 description: >
   Expert knowledge of the Nuclia design system — @nuclia/sistema and @guillotinaweb/pastanaga-angular.
   Use this skill whenever a task involves ANY of the following: creating or modifying Angular UI
-  components in dashboard, rao, manager-v2, or nucliadb-admin; using or overriding design tokens
+  components in dashboard, rao, manager-v2, or admin; using or overriding design tokens
   (colours, spacing, typography); adding icons, modals, toasts, dropdowns, tables, tabs, form fields,
   or any pa-/nsi- prefixed component; styling with SCSS tokens or utility classes; implementing
   settings pages, configuration rows, cards, badges, labels, progress indicators, or navigation
@@ -20,8 +20,10 @@ description: >
         ↓ theme overrides via SCSS @forward…with()
 @nuclia/sistema                   ← Nuclia layer (nsi- prefix, mostly standalone)
         ↓ import in apps
-dashboard / rao / manager-v2 / nucliadb-admin
+dashboard / rao / manager-v2 / admin
 ```
+
+`@nuclia/ui` is a separate Spartan/Helm primitive library with Tailwind utilities. Its component entry points are `@nuclia/ui/avatar`, `@nuclia/ui/button`, and `@nuclia/ui/utils`; see `libs/ui/AGENTS.md` for its exports.
 
 **Key rule:** Always prefer `SisModalService` / `SisToastService` (from `@nuclia/sistema`) over the
 raw Pastanaga equivalents. They apply opinionated defaults (`cancelAspect: 'basic'`, toast titles).
@@ -321,7 +323,7 @@ For file-type icons, use the `mimeIcon` pipe: `{{ mimeType | mimeIcon }}` or `St
 
 ## Typography Tokens
 
-### In Angular app component SCSS (dashboard, rao, manager-v2, nucliadb-admin)
+### In Angular app component SCSS (dashboard, rao, manager-v2, admin)
 
 After `@use 'apps/dashboard/src/variables' as *;`, use **SCSS functions/variables** — NOT CSS custom properties.
 `_cssvariables.scss` (which declares `--font-size-*` CSS vars) is loaded only by `standalone-css.scss` for the search-widget, **not** by `_core.scss` used by Angular apps.
