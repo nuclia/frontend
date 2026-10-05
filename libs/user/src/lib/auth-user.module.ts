@@ -25,7 +25,6 @@ import { loginResolver } from './login/login.resolver';
 import { MagicComponent } from './magic/magic.component';
 import { RecoverComponent } from './recover/recover.component';
 import { ResetComponent } from './reset/reset.component';
-import { SamlConfigurationErrorComponent } from './saml-configuration-error/saml-configuration-error.component';
 import { SamlLoginComponent } from './saml-login/saml-login.component';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonsComponent } from './sso/sso-buttons.component';
@@ -53,7 +52,6 @@ export const authRoutes: Routes = [
     component: CallbackComponent,
     data: { microsoft: true },
   },
-  { path: 'saml-configuration-error', component: SamlConfigurationErrorComponent },
   { path: 'saml-login', component: SamlLoginComponent },
   { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
   { path: 'recover', component: RecoverComponent },
@@ -89,7 +87,6 @@ export const authRoutes: Routes = [
     RecoverComponent,
     MagicComponent,
     ResetComponent,
-    SamlConfigurationErrorComponent,
     ConsentComponent,
     SignupComponent,
     CheckMailComponent,
