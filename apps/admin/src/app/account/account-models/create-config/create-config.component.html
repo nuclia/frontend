@@ -73,10 +73,10 @@
           labelOnRight>
           {{ 'account.models.model-configs.limit-kbs' | translate }}
         </pa-toggle>
-        @if (isRestricted) {
+        @if (isRestricted()) {
           <div class="checkboxes">
             @for (item of kbList | async; track item.id) {
-              <pa-checkbox [(value)]="selectedKbs[item.id]">{{ item.title }}</pa-checkbox>
+              <pa-checkbox [(value)]="selectedKbs()[item.id]">{{ item.title }}</pa-checkbox>
             }
           </div>
         }
@@ -87,10 +87,10 @@
           labelOnRight>
           {{ 'account.models.model-configs.limit-nua-keys' | translate }}
         </pa-toggle>
-        @if (isNuaRestricted) {
+        @if (isNuaRestricted()) {
           <div class="checkboxes">
             @for (item of nuaKeyList | async; track item.internal_id) {
-              <pa-checkbox [(value)]="selectedNuaKeys[item.internal_id]">{{ item.title }}</pa-checkbox>
+              <pa-checkbox [(value)]="selectedNuaKeys()[item.internal_id]">{{ item.title }}</pa-checkbox>
             }
           </div>
         }

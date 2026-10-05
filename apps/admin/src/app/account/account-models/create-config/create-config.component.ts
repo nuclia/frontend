@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FeaturesService, NavigationService, SDKService, Zone } from '@flaps/core';
 import {
@@ -115,16 +115,16 @@ export class CreateConfigComponent implements OnInit {
     ),
   );
 
-  isRestricted = false;
-  selectedKbs: { [key: string]: boolean } = {};
+  isRestricted = signal(false);
+  selectedKbs = signal<{ [key: string]: boolean }>({});
   kbList = combineLatest([
     this.navigation.fromApp('rao') ? of([]) : this.sdk.kbList,
     this.sdk.aragList,
     this.currentZone,
   ]).pipe(map(([kbs, arags, zone]) => kbs.concat(arags).filter((item) => item.zone === zone?.slug)));
 
-  isNuaRestricted = false;
-  selectedNuaKeys: { [key: string]: boolean } = {};
+  isNuaRestricted = signal(false);
+  selectedNuaKeys = signal<{ [key: string]: boolean }>({});
   nuaKeyList = combineLatest([this.sdk.currentAccount, this.currentZone]).pipe(
     switchMap(([account, zone]) => (zone ? this.sdk.nuclia.db.getNUAClientsForZone(account.id, zone.slug) : of([]))),
     shareReplay(1),
@@ -149,21 +149,25 @@ export class CreateConfigComponent implements OnInit {
         useBedrock: this.config.assume_role === AssumeRole.BEDROCK,
       });
 
-      this.isRestricted = (this.config.kbids || []).length > 0;
-      this.selectedKbs = (this.config.kbids || []).reduce(
-        (acc, curr) => {
-          acc[curr] = true;
-          return acc;
-        },
-        {} as { [key: string]: boolean },
+      this.isRestricted.set((this.config.kbids || []).length > 0);
+      this.selectedKbs.set(
+        (this.config.kbids || []).reduce(
+          (acc, curr) => {
+            acc[curr] = true;
+            return acc;
+          },
+          {} as { [key: string]: boolean },
+        ),
       );
-      this.isNuaRestricted = (this.config.nua_client_ids || []).length > 0;
-      this.selectedNuaKeys = (this.config.nua_client_ids || []).reduce(
-        (acc, curr) => {
-          acc[curr] = true;
-          return acc;
-        },
-        {} as { [key: string]: boolean },
+      this.isNuaRestricted.set((this.config.nua_client_ids || []).length > 0);
+      this.selectedNuaKeys.set(
+        (this.config.nua_client_ids || []).reduce(
+          (acc, curr) => {
+            acc[curr] = true;
+            return acc;
+          },
+          {} as { [key: string]: boolean },
+        ),
       );
 
       this.generativeModel.pipe(take(1)).subscribe((model) => {
@@ -210,13 +214,13 @@ export class CreateConfigComponent implements OnInit {
         prompt: userPrompt ? this.promptsForm.value.prompt?.trim() : '',
         system: systemPrompt ? this.promptsForm.value.system?.trim() : '',
       };
-      const kbids = this.isRestricted
-        ? Object.entries(this.selectedKbs)
+      const kbids = this.isRestricted()
+        ? Object.entries(this.selectedKbs())
             .filter(([id, value]) => !!value && kbList.some((kb) => kb.id === id))
             .map(([id]) => id)
         : [];
-      const nua_client_ids = this.isNuaRestricted
-        ? Object.entries(this.selectedNuaKeys)
+      const nua_client_ids = this.isNuaRestricted()
+        ? Object.entries(this.selectedNuaKeys())
             .filter(([id, value]) => !!value && nuaKeyList.some((key) => key.internal_id === id))
             .map(([id]) => id)
         : [];
