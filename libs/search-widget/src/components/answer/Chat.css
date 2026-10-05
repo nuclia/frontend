@@ -32,7 +32,7 @@
     --max-height-entries: calc(var(--height-container) - var(--height-input));
     --padding-top-input-container: var(--chat-padding);
     --padding-bottom-input-container: var(--chat-padding);
-    --padding-side-input-container: var(--chat-padding);
+    --padding-side-input-container: var(--custom-padding-side-input-container, var(--chat-padding));
     --padding-side-entries-container: var(--custom-padding-side-entries-container, 0);
     --margin-side-input-container: var(--custom-margin-side-input-container, 0);
     --width-input-container: var(--custom-width-input-container, auto);
@@ -51,8 +51,13 @@
     flex-direction: column;
     height: var(--height-container);
     max-width: var(--max-width-container);
+    min-width: var(--custom-chat-container-min-width, auto);
 
     .entries-container {
+      box-sizing: var(--custom-chat-entries-box-sizing, content-box);
+      width: var(--custom-width-entries-container, auto);
+      max-width: var(--custom-max-width-entries-container, none);
+      margin-inline: var(--custom-margin-side-entries-container, 0);
       max-height: var(--max-height-entries);
       overflow: auto;
       flex: 1 0 0;
@@ -64,6 +69,7 @@
 
       .chat-entry {
         padding: var(--chat-padding);
+        padding-inline: var(--custom-chat-entry-padding-inline, var(--chat-padding));
 
         .error {
           color: var(--color-neutral-light);
@@ -79,26 +85,38 @@
         .question {
           display: flex;
           gap: var(--rhythm-2);
+
+          .chat-icon {
+            flex: var(--custom-chat-question-icon-flex, 0 1 auto);
+          }
+
+          .title-m {
+            min-width: var(--custom-chat-question-min-width, auto);
+            overflow-wrap: var(--custom-chat-message-overflow-wrap, normal);
+            white-space: var(--custom-chat-question-white-space, normal);
+          }
         }
         .answer {
-          max-width: calc(var(--max-width-container) - var(--chat-padding) * 2);
+          max-width: var(--custom-chat-answer-max-width, calc(var(--max-width-container) - var(--chat-padding) * 2));
+          overflow-wrap: var(--custom-chat-message-overflow-wrap, normal);
         }
       }
     }
-    
+
     .warning {
       align-items: center;
       display: flex;
       color: var(--color-secondary-strong);
       gap: var(--rhythm-0_5);
       margin-top: var(--rhythm-0_5);
-    }    
+    }
     .reset-button {
       margin-top: var(--rhythm-0_5);
       text-align: right;
     }
 
     .input-container {
+      box-sizing: var(--custom-input-container-box-sizing, content-box);
       flex: 0 0 auto;
       padding: var(--padding-top-input-container) var(--padding-side-input-container)
         var(--padding-bottom-input-container);
@@ -143,7 +161,7 @@
 
       .entries-container {
         .title-m {
-          max-width: calc(var(--max-width-container) - var(--rhythm-12) * 2);
+          max-width: var(--custom-chat-question-max-width, calc(var(--max-width-container) - var(--rhythm-12) * 2));
         }
       }
     }

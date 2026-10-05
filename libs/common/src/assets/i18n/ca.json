@@ -720,7 +720,7 @@
 	"context-box.ready": "Llest",
 	"context-box.search-by-question": "Cerca per paraula en la pregunta o resposta",
 	"context-box.search-by-title": "Cerca per paraula al nom del fitxer",
-	"context-box.search-placeholder": "Escriviu la vostra pregunta aquí",
+	"context-box.search-placeholder": "Xateja amb Context Box",
 	"context-box.sharefile.connect-error": "Alguna cosa ha fallat en connectar-se a ShareFile. Torna-ho a provar.",
 	"context-box.sharefile.connect-success": "S'ha connectat correctament ShareFile.",
 	"context-box.sharefile.disconnect-confirm-description": "No s'eliminarà res: els fitxers romandran en aquest quadre de contingut. Només s'eliminarà la connexió amb ShareFile.",

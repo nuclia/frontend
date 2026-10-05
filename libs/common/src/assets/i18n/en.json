@@ -720,7 +720,7 @@
 	"context-box.ready": "Ready",
 	"context-box.search-by-question": "Search by word in question or answer",
 	"context-box.search-by-title": "Search by word in filename",
-	"context-box.search-placeholder": "Type your question here",
+	"context-box.search-placeholder": "Chat with Context Box",
 	"context-box.sharefile.connect-error": "Something went wrong connecting to ShareFile. Please try again.",
 	"context-box.sharefile.connect-success": "ShareFile connected successfully.",
 	"context-box.sharefile.disconnect-confirm-description": "Nothing will be deleted — your files stay in this Content Box. Only the connection to ShareFile is removed.",

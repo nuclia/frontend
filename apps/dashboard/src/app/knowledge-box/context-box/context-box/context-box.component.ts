@@ -221,6 +221,7 @@ export class ContextBoxComponent implements OnDestroy {
     this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG, {
       ...DEFAULT_WIDGET_CONFIG,
       displaySearchButton: true,
+      chatSubmitButton: true,
       widgetMode: 'chat',
       hideReset: true,
       customizeChatPlaceholder: true,

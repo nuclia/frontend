@@ -3,6 +3,8 @@
 
 $search-view-padding-top: rhythm(3);
 $counters-height: rhythm(6);
+$chat-column-width: rhythm(80);
+$chat-wrapper-padding: rhythm(1.5);
 
 .context-box {
   align-items: center;
@@ -38,6 +40,11 @@ $counters-height: rhythm(6);
   display: flex;
   flex-direction: column;
   gap: rhythm(1);
+
+  .title,
+  .subtitle {
+    margin: 0;
+  }
 }
 
 .subtitle {
@@ -74,7 +81,7 @@ $counters-height: rhythm(6);
   background-color: $color-light-stronger;
   border-top: 1px solid $color-neutral-lighter;
   display: flex;
-  gap: rhythm(2);
+  gap: rhythm(1);
   height: tokens.$footer-height;
   justify-content: center;
   position: sticky;
@@ -100,17 +107,52 @@ $counters-height: rhythm(6);
 .preview {
   align-items: center;
   display: flex;
+  width: min(100%, #{$chat-column-width + $chat-wrapper-padding * 2});
 
   // Customize chat widget
-  --custom-width-input-container: #{rhythm(80)};
+  --context-box-chat-column-width: min(calc(100% - #{$chat-wrapper-padding * 2}), #{$chat-column-width});
+  --custom-padding-side-input-container: #{$chat-wrapper-padding};
+  --custom-width-input-container: calc(var(--context-box-chat-column-width) + #{$chat-wrapper-padding * 2});
+  --custom-input-container-box-sizing: border-box;
+  --custom-chat-container-min-width: 0;
+  --custom-chat-entries-box-sizing: border-box;
+  --custom-chat-question-min-width: 0;
+  --custom-chat-question-icon-flex: 0 0 auto;
+  --custom-width-entries-container: var(--context-box-chat-column-width);
+  --custom-max-width-entries-container: calc(100% - #{$chat-wrapper-padding * 2});
+  --custom-margin-side-entries-container: auto;
   --custom-margin-side-input-container: auto;
   --custom-height-container: auto;
+  --custom-chat-input-border-radius: #{rhythm(3.5)};
+  --custom-chat-input-shadow: #{$drop-shadow-default};
+  --custom-chat-input-focus-border-color: #{$color-neutral-regular};
+  --custom-chat-input-leading-display: none;
+  --custom-chat-input-padding-inline: #{rhythm(3)} #{rhythm(1)};
+  --custom-textarea-white-space: pre-wrap;
+  --custom-textarea-overflow-wrap: anywhere;
+  --custom-textarea-margin: 0;
+  --custom-textarea-min-width: 0;
+  --custom-chat-input-padding-block: #{rhythm(1)};
+  --custom-chat-input-align-items: center;
+  --custom-chat-buttons-align-self: flex-end;
+  --custom-chat-buttons-flex-shrink: 0;
+  --custom-chat-buttons-margin: 0 0 0 #{rhythm(1)};
+  --custom-color-primary-regular: #{$color-primary-regular};
+  --custom-color-primary-strong: #{$color-primary-strong};
+  --custom-color-primary-stronger: #{$color-primary-stronger};
+  --custom-chat-message-overflow-wrap: anywhere;
+  --custom-chat-question-white-space: pre-wrap;
+  --custom-chat-entry-padding-inline: #{rhythm(0.5)};
+  --custom-chat-question-max-width: 100%;
+  --custom-chat-answer-max-width: 100%;
+
+  :host ::ng-deep & nuclia-chat {
+    width: 100%;
+  }
 
   &.open {
-    ::ng-deep nuclia-chat {
-      width: 100vw !important;
-    }
-    --custom-padding-side-entries-container: calc((100vw - #{tokens.$content-width}) / 2);
+    width: 100vw;
+    --custom-padding-side-entries-container: 0;
     --custom-height-container: calc(
       100vh - var(--app-topbar-height) - #{$search-view-padding-top} - #{$counters-height} - #{tokens.$footer-height} -
         #{rhythm(1)}
