@@ -14,7 +14,6 @@
 - [Admin app](#admin-app)
 - [SDK](#sdk)
 - [Sistema](#sistema)
-- [NucliaDB admin](#nucliadb-admin)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
 - [Linters](#linters)
@@ -294,33 +293,6 @@ To update the glyphs sprite:
 
 ```shell
 ./libs/sistema/scripts/update_icons.sh
-```
-
-## NucliaDB admin
-
-To run it locally for dev purpose:
-
-```
-docker network create nucliadb-network
-docker run -it -d --name pg --network nucliadb-network \
-  -p 5432:5432 \
-  -e POSTGRES_USER=nucliadb \
-  -e POSTGRES_PASSWORD=nucliadb \
-  -e POSTGRES_DB=nucliadb \
-  postgres:latest
-docker pull nuclia/nucliadb:latest --platform linux/amd64
-docker build --platform linux/amd64 -t nucliadb-server -f ./tools/nucliadb-admin/Dockerfile .
-docker run --network nucliadb-network \
-    --name nucliadb-server \
-    --platform linux/amd64 \
-    -p 8080:8080 \
-    -v nucliadb-standalone:/data \
-    -e NUCLIA_PUBLIC_URL="https://europe-1.stashify.cloud" \
-    -e NUA_API_KEY=<NUA_KEY> \
-    -e LOG_LEVEL=DEBUG \
-    -e DRIVER=PG \
-    -e DRIVER_PG_URL="postgresql://nucliadb:nucliadb@pg:5432/nucliadb" \
-    nucliadb-server
 ```
 
 ## CI/CD Deployment
