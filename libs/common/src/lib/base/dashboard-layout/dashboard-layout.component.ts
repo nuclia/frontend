@@ -1,10 +1,10 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NavigationService, SDKService, UploadEventService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { combineLatest, map, startWith, take } from 'rxjs';
+import { combineLatest, filter, map, startWith, take } from 'rxjs';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { EulaModalComponent } from '../../onboarding/eula-modal/eula-modal.component';
 import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';

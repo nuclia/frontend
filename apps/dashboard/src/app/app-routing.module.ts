@@ -9,6 +9,7 @@ import {
   awsGuard,
   AwsOnboardingComponent,
   BaseComponent,
+  contextBoxModeGuard,
   DashboardLayoutComponent,
   DriversPageComponent,
   EditResourceComponent,
@@ -41,7 +42,6 @@ import {
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
-  contextBoxModeGuard,
   WorkflowsComponent,
   WorkflowsListComponent,
 } from '@flaps/common';
@@ -102,10 +102,6 @@ const routes: Routes = [
               {
                 path: 'simple',
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.ContextBoxPageModule),
-              },
-              {
-                path: 'resources',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.RESOURCE_ROUTES),
               },
               {
                 path: 'search',

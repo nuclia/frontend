@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { SyncRootComponent } from './sync-root.component';
-import { HomePageComponent } from './home-page';
-import { AddSyncPageComponent } from './add-sync-page';
 import { AddSourcePageComponent } from './add-source-page';
-import { SyncDetailsPageComponent } from './sync-details-page';
-import { SynchronizeComponent } from './home-page/synchronize';
+import { AddSyncPageComponent } from './add-sync-page';
+import { HomePageComponent } from './home-page';
 import { ConnectComponent } from './home-page/connect';
+import { SynchronizeComponent } from './home-page/synchronize';
+import { SyncDetailsPageComponent } from './sync-details-page';
+import { SyncRootComponent } from './sync-root.component';
 
 export const SYNC_ROUTES: Routes = [
   {
@@ -21,7 +21,7 @@ export const SYNC_ROUTES: Routes = [
           {
             path: 'resources',
             data: { embedded: true },
-            loadChildren: () => import('./resources-lazy').then((m) => m.ResourcesModule),
+            loadChildren: () => import('./resources-lazy').then((m) => m.RESOURCE_ROUTES),
           },
         ],
       },
