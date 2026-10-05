@@ -11,10 +11,12 @@ import {
   FileUploadStatus,
   Resource,
   ResourceProperties,
+  RetrievalAgent,
   UploadStatus,
 } from '@nuclia/core';
 import {
   BehaviorSubject,
+  combineLatest,
   forkJoin,
   map,
   merge,
@@ -24,6 +26,7 @@ import {
   Subject,
   switchMap,
   take,
+  throwError,
   throttleTime,
 } from 'rxjs';
 
@@ -116,6 +119,22 @@ export class ContextBoxService {
     if (Object.keys(newStatus).length !== Object.keys(current).length) {
       this.uploadStatus.next(newStatus);
     }
+  }
+
+  getContextBoxAgent(): Observable<RetrievalAgent> {
+    return combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+      take(1),
+      switchMap(([account, kb]) =>
+        this.sdk.nuclia.db.getRetrievalAgentsForZone(account.id, kb.zone).pipe(
+          switchMap((agents) => {
+            const agent = agents[0];
+            return agent
+              ? this.sdk.nuclia.db.getRetrievalAgent(account.id, agent.id, kb.zone)
+              : throwError(() => new Error('No Retrieval Agent found for this Content Box'));
+          }),
+        ),
+      ),
+    );
   }
 
   createQuestion(

@@ -77,7 +77,7 @@
           kind="primary"
           icon="upload"
           iconAndText
-          (click)="fileInput.click()">
+          [paPopup]="uploadMenu">
           {{ 'upload.files' | translate }}
         </pa-button>
       </div>
@@ -91,7 +91,7 @@
         kind="primary"
         icon="upload"
         iconAndText
-        (click)="fileInput.click()">
+        [paPopup]="uploadMenu">
         {{ 'context-box.add-more' | translate }}
       </pa-button>
     } @else if (step() === 3) {
@@ -99,7 +99,7 @@
         kind="primary"
         icon="upload"
         iconAndText
-        (click)="fileInput.click()">
+        [paPopup]="uploadMenu">
         {{ 'upload.files' | translate }}
       </pa-button>
     }
@@ -131,6 +131,22 @@
     }
   </div>
 }
+<pa-dropdown #uploadMenu>
+  <pa-option (selectOption)="fileInput.click()">
+    {{ 'context-box.upload-from-computer' | translate }}
+  </pa-option>
+  @if (isShareFileConnected()) {
+    <pa-option
+      destructive
+      (selectOption)="disconnectShareFile()">
+      {{ 'context-box.sharefile.disconnect-option' | translate }}
+    </pa-option>
+  } @else {
+    <pa-option (selectOption)="connectShareFile()">
+      {{ 'context-box.upload-from-sharefile' | translate }}
+    </pa-option>
+  }
+</pa-dropdown>
 <input
   #fileInput
   type="file"

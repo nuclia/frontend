@@ -16,6 +16,7 @@ import {
 import { addMinutes } from 'date-fns';
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 import { PAGE_SIZES, ContextBoxService } from '../context-box/context-box.service';
+import { ContextBoxShareFileService } from '../context-box/context-box-sharefile.service';
 import { ResourceTableService } from './resource-table.service';
 
 interface TableRow {
@@ -27,6 +28,7 @@ interface TableRow {
   status?: RESOURCE_STATUS | 'uploading';
   rank?: number;
   errorMessage?: string;
+  sourceConnector?: 'sharefile';
 }
 
 @Component({
@@ -51,6 +53,7 @@ interface TableRow {
 })
 export class ResourceTableComponent {
   contextBoxService = inject(ContextBoxService);
+  shareFileService = inject(ContextBoxShareFileService);
   resourceTableService = inject(ResourceTableService);
   sdk = inject(SDKService);
   modalService = inject(SisModalService);
@@ -65,9 +68,10 @@ export class ResourceTableComponent {
     combineLatest([
       this.resourceTableService.resources,
       this.contextBoxService.visibleUploads,
+      toObservable(this.shareFileService.connectedSource),
       toObservable(this.resourceTableService.page),
     ]).pipe(
-      map(([resources, uploads, page]): TableRow[] => [
+      map(([resources, uploads, connectedSource, page]): TableRow[] => [
         ...resources.map((resource) => ({
           id: resource.id,
           title: this.splitTitle(resource.title || '').name,
@@ -80,6 +84,9 @@ export class ResourceTableComponent {
             resource.metadata?.status === RESOURCE_STATUS.ERROR
               ? getResourceErrors(new Resource(this.sdk.nuclia, resource.id, resource))
               : '',
+          sourceConnector: (connectedSource && resource.origin?.source_id === connectedSource.id
+            ? 'sharefile'
+            : undefined) as TableRow['sourceConnector'],
         })),
         // In-progress uploads are only overlaid on the first page; once indexed, they show up
         // in their normal position (and page) via the regular resources catalog.
