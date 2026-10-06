@@ -253,6 +253,7 @@
 	"account.trial.token-usage-unlimited": "{{used}} tokens (unlimited)",
 	"account.trial.token-usage-value": "{{used}} / {{limit}} tokens",
 	"account.type.cowork": "Context Box account",
+	"account.type.cowork_trial": "Context Box trial account",
 	"account.type.label": "Tier",
 	"account.type.stash-trial": "Trial Account",
 	"account.type.stash-trial_trial": "Trial Account",

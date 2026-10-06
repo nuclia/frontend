@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="5.6.0" version="1.3">
+<babeledit_project be_version="5.5.1" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -6041,6 +6041,29 @@
 								<children>
 									<concept_node>
 										<name>cowork</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>cowork_trial</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -35976,34 +35999,6 @@
 											</translation>
 										</translations>
 									</concept_node>
-									<folder_node>
-										<name>create-kb</name>
-										<children>
-											<concept_node>
-												<name>title</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-										</children>
-									</folder_node>
 									<concept_node>
 										<name>email-error</name>
 										<description/>
