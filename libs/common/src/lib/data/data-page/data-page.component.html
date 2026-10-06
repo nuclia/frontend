@@ -1,0 +1,37 @@
+<div class="page-spacing">
+  <header>
+    <div class="page-title">
+      {{ 'data.page-title' | translate }}
+    </div>
+    <div class="page-description">{{ 'data.page-description' | translate }}</div>
+  </header>
+  @if (isAgenticSearchEnabled()) {
+    <pa-tabs notFullWidth>
+      <pa-tab
+        (click)="navigateTo('resources')"
+        [active]="isResourcesActive()"
+        ariaControls="home-page-panel">
+        {{ 'data.tabs.resources' | translate }}
+      </pa-tab>
+      <pa-tab
+        (click)="navigateTo('synchronize')"
+        [active]="isSyncActive()"
+        ariaControls="home-page-panel">
+        {{ 'data.tabs.synchronize' | translate }}
+      </pa-tab>
+      <pa-tab
+        (click)="navigateTo('connect')"
+        [active]="isConnectActive()"
+        ariaControls="home-page-panel">
+        <div class="tab-with-badge">
+          {{ 'data.tabs.connect' | translate }}
+          <nsi-badge kind="tertiary">BETA</nsi-badge>
+        </div>
+      </pa-tab>
+    </pa-tabs>
+  }
+
+  <div id="data-page-panel">
+    <router-outlet></router-outlet>
+  </div>
+</div>

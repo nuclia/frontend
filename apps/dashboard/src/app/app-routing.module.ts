@@ -9,6 +9,7 @@ import {
   awsGuard,
   AwsOnboardingComponent,
   BaseComponent,
+  contextBoxModeGuard,
   DashboardLayoutComponent,
   DriversPageComponent,
   EditResourceComponent,
@@ -41,7 +42,6 @@ import {
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
-  contextBoxModeGuard,
   WorkflowsComponent,
   WorkflowsListComponent,
 } from '@flaps/common';
@@ -108,6 +108,11 @@ const routes: Routes = [
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.UploadModule),
               },
               {
+                path: 'data',
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.DATA_ROUTES),
+              },
+              //TODO: to be removed
+              {
                 path: 'resources',
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.RESOURCE_ROUTES),
               },
@@ -115,6 +120,7 @@ const routes: Routes = [
                 path: 'search',
                 component: SearchPageComponent,
               },
+              //TODO: to be removed
               {
                 path: 'sync',
                 // eslint-disable-next-line @nx/enforce-module-boundaries
