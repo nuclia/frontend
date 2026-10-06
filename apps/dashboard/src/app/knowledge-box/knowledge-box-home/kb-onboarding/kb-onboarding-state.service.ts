@@ -1,7 +1,7 @@
-import { Injectable, inject, DestroyRef } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FeaturesService, GETTING_STARTED_DONE_KEY, SDKService, UploadEventService } from '@flaps/core';
 import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
-import { FeaturesService, SDKService, GETTING_STARTED_DONE_KEY, UploadEventService } from '@flaps/core';
 import { KbOnboardingEntry, KbOnboardingStateMap, OnboardingStep } from './kb-onboarding-state.model';
 
 const KB_ONBOARDING_STATE = 'KB_ONBOARDING_STATE';
@@ -54,6 +54,21 @@ export class KbOnboardingStateService {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((isActive) => this.uploadEventService.setOnboardingActive(isActive));
+
+    // The global "Resource handling in progress" banner should disappear once processing is
+    // actually confirmed done (step advances to searching-data), not linger with stale copy
+    // until the whole onboarding flow finishes (which also requires a completed search).
+    this.onboardingState$
+      .pipe(
+        map((state) => state?.currentStep),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((step) => {
+        if (step === 'searching-data') {
+          this.uploadEventService.dismissOnboardingBanner();
+        }
+      });
   }
 
   updateState(partial: Partial<KbOnboardingEntry>): void {

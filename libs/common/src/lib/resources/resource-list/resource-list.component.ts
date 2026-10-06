@@ -1,5 +1,13 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, LabelModule, ResourceListService, SDKService, SearchModes, UploadService } from '@flaps/core';
@@ -76,8 +84,9 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
     TranslatePipe,
   ],
 })
-export class ResourceListComponent implements OnDestroy {
+export class ResourceListComponent implements AfterViewInit, OnDestroy {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
+  @ViewChild(ResourcesTableComponent) resourcesTable?: ResourcesTableComponent;
 
   unsubscribeAll = new Subject<void>();
 
@@ -183,6 +192,14 @@ export class ResourceListComponent implements OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
+  }
+
+  ngAfterViewInit() {
+    // `resourcesTable` (used by the column-selector/expand-labels toolbar in the template) is only
+    // populated once view children exist. This component is OnPush, so without an explicit
+    // markForCheck() here, that toolbar wouldn't reliably appear until some unrelated async pipe
+    // emission elsewhere in the template happened to trigger a later change-detection pass.
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy() {
