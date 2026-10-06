@@ -1,4 +1,5 @@
 export {
+  DATA_ROUTES,
   EntitiesModule,
   KbSettingsModule,
   MetricsModule,

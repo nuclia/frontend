@@ -32,6 +32,15 @@
                 <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
               </a>
               <a
+                data-analytics-id="navbar-enter-data"
+                [routerLink]="kbUrl + '/data/resources'"
+                routerLinkActive="active"
+                class="nav-link"
+                data-cy="go-to-data">
+                <pa-icon name="database"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.data' | translate }}</span>
+              </a>
+              <a
                 data-analytics-id="navbar-enter-resources"
                 [routerLink]="kbUrl + '/resources'"
                 routerLinkActive="active"
