@@ -22,16 +22,6 @@
           <div class="nav-group">
             <div class="group-items">
               <a
-                data-analytics-id="navbar-enter-upload"
-                [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/upload' : null"
-                class="nav-link"
-                routerLinkActive="active"
-                data-cy="go-to-upload"
-                [class.disabled]="!(isAdminOrContrib | async)">
-                <pa-icon name="upload"></pa-icon>
-                <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
-              </a>
-              <a
                 data-analytics-id="navbar-enter-data"
                 [routerLink]="kbUrl + '/data/resources'"
                 routerLinkActive="active"
@@ -39,27 +29,6 @@
                 data-cy="go-to-data">
                 <pa-icon name="database"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.data' | translate }}</span>
-              </a>
-              <a
-                data-analytics-id="navbar-enter-resources"
-                [routerLink]="kbUrl + '/resources'"
-                routerLinkActive="active"
-                class="nav-link"
-                data-cy="go-to-resources">
-                <pa-icon name="list"></pa-icon>
-                <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
-              </a>
-              <a
-                data-analytics-id="navbar-enter-sync"
-                [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/sync' : null"
-                routerLinkActive="active"
-                class="nav-link"
-                data-cy="go-to-sync"
-                [class.disabled]="!(isAdminOrContrib | async)">
-                <pa-icon name="connectors"></pa-icon>
-                <span class="nav-link-title">
-                  {{ ((isAgenticSearchEnabled | async) ? 'navbar.sync' : 'navbar.sync-only') | translate }}
-                </span>
               </a>
               <a
                 data-analytics-id="navbar-enter-search"

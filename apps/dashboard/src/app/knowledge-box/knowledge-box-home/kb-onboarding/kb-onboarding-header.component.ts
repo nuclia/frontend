@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
+import { UploadButtonComponent } from '@flaps/common';
 import {
   ModalConfig,
   PaButtonModule,
@@ -8,14 +9,13 @@ import {
   PaModalModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { KbHeaderComponent } from '../kb-header/kb-header.component';
-import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
-import { KbOnboardingStateService } from './kb-onboarding-state.service';
 import { OnboardingStep } from './kb-onboarding-state.model';
-import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
+import { KbOnboardingStateService } from './kb-onboarding-state.service';
 import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
+import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 
 const STEP_ORDER: OnboardingStep[] = ['uploading-data', 'processing-data', 'searching-data'];
 
@@ -25,13 +25,13 @@ const STEP_ORDER: OnboardingStep[] = ['uploading-data', 'processing-data', 'sear
     BadgeComponent,
     InfoCardComponent,
     KbHeaderComponent,
-    KbMoreActionsComponent,
     PaButtonModule,
     PaIconModule,
     PaModalModule,
     PaTooltipModule,
     RouterModule,
-    TranslateModule,
+    TranslatePipe,
+    UploadButtonComponent,
   ],
   templateUrl: './kb-onboarding-header.component.html',
   styleUrl: './kb-onboarding-header.component.scss',
@@ -53,6 +53,10 @@ export class KbOnboardingHeaderComponent {
     this.modalService.openModal(RestartOnboardingModalComponent, new ModalConfig({ dismissable: true }));
   }
 
+  /** Routing to Search is treated as the completion of onboarding, so it exits immediately on click. */
+  trySearch(): void {
+    this.onboardingService.markDone();
+  }
   /** Badge colour for each onboarding step, relative to the current step. Memoized per `state()` change. */
   stepBadgeKinds = computed(() => {
     const currentIndex = STEP_ORDER.indexOf(this.state()?.currentStep ?? 'uploading-data');

@@ -14,12 +14,10 @@ export const DATA_ROUTES: Routes = [
         children: [
           {
             path: 'resources',
-            data: { embedded: true },
             loadChildren: () => RESOURCE_ROUTES,
           },
           {
             path: 'sync',
-            data: { embedded: true },
             loadChildren: () => import('./sync-lazy').then((m) => m.SYNC_ROUTES),
           },
         ],
