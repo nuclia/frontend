@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { LabelsService, md5, NotificationService, SDKService, UploadEventService } from '@flaps/core';
+import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Classification,
@@ -43,7 +42,13 @@ import {
 } from 'rxjs';
 import { debounceTime, delay, tap } from 'rxjs/operators';
 import SparkMD5 from 'spark-md5';
-import { mergeExistingAndNewLabels } from '../resources/edit-resource/edit-resource.helpers';
+
+import { SDKService } from '../api';
+import { LabelsService } from '../label';
+import { NotificationService } from '../notifications';
+import { mergeExistingAndNewLabels } from '../resources/edit-resource.helpers';
+import { md5 } from '../utils';
+import { UploadEventService } from './upload-event.service';
 import { PENDING_RESOURCES_LIMIT } from './upload.utils';
 
 export const SPREADSHEET_MIMES = [
@@ -65,6 +70,14 @@ export const STATUS_FACET = '/metadata.status';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
+  private sdk = inject(SDKService);
+  private labelsService = inject(LabelsService);
+  private toaster = inject(SisToastService);
+  private modal = inject(SisModalService);
+  private translate = inject(TranslateService);
+  private notificationsService = inject(NotificationService);
+  private uploadEventService = inject(UploadEventService);
+
   private _progress = new ReplaySubject<UploadStatus>(1);
   private _bulkUploadInProgress = new BehaviorSubject<boolean>(false);
   private _barDisabled = new BehaviorSubject<boolean>(false);
@@ -84,15 +97,7 @@ export class UploadService {
     map(([progress, bulkUploadInProgress]) => (progress && !progress.completed) || bulkUploadInProgress),
   );
 
-  constructor(
-    private sdk: SDKService,
-    private labelsService: LabelsService,
-    private toaster: SisToastService,
-    private modal: SisModalService,
-    private translate: TranslateService,
-    private notificationsService: NotificationService,
-    private uploadEventService: UploadEventService,
-  ) {
+  constructor() {
     this.notificationsService.hasNewResourceOperationNotifications
       .pipe(
         debounceTime(2000),

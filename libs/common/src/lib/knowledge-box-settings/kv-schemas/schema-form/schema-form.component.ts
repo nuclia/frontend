@@ -20,12 +20,12 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { KvSchemasService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KVFieldType, KVSchema, KVSchemaField } from '@nuclia/core';
 import { ButtonMiniComponent } from '@nuclia/sistema';
 import { KV_SCHEMA_FORM_CONFIG, KvSchemaFormColumn } from '../kv-schemas.config';
-import { KvSchemasService } from '../kv-schemas.service';
 
 function uniqueKeysValidator(control: AbstractControl): ValidationErrors | null {
   const arr = control as FormArray;

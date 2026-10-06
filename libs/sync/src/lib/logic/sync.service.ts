@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ColoredLabel } from '@flaps/common';
-import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  ColoredLabel,
+  FeaturesService,
+  NotificationService,
+  SDKService,
+} from '@flaps/core';
 import {
   BrowseOptions,
   ExternalConnection,

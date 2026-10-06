@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+
 import { TranslateService } from '@ngx-translate/core';
 import {
   AnyFieldData,
@@ -40,7 +40,10 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
+import { FeaturesService } from '../analytics';
+import { SDKService } from '../api';
+import { generatedEntitiesColor, getNerFamilyTitle } from '../models/ner.model';
+import { NavigationService } from '../services/navigation.service';
 import {
   addEntitiesToGroups,
   EditResourceView,
@@ -56,6 +59,14 @@ import {
   providedIn: 'root',
 })
 export class EditResourceService {
+  private sdk = inject(SDKService);
+  private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
+  private navigation = inject(NavigationService);
+  private sanitizer = inject(DomSanitizer);
+  private features = inject(FeaturesService);
+
   private _resource = new BehaviorSubject<Resource | null>(null);
   private _currentView = new BehaviorSubject<EditResourceView | null>(null);
   private _currentField = new BehaviorSubject<FieldId | 'resource'>('resource');
@@ -138,16 +149,6 @@ export class EditResourceService {
   );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isSession = false;
-
-  constructor(
-    private sdk: SDKService,
-    private toaster: SisToastService,
-    private modalService: SisModalService,
-    private translate: TranslateService,
-    private navigation: NavigationService,
-    private sanitizer: DomSanitizer,
-    private features: FeaturesService,
-  ) {}
 
   loadSession(sessionId: string): Observable<Session> {
     this.isSession = true;

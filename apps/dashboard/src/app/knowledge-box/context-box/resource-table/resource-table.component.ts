@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { getResourceErrors, TablePaginationComponent } from '@flaps/common';
-import { SDKService } from '@flaps/core';
+import { TablePaginationComponent } from '@flaps/common';
+import { getResourceErrors, SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTableModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Resource, RESOURCE_STATUS } from '@nuclia/core';
@@ -15,8 +15,8 @@ import {
 } from '@nuclia/sistema';
 import { addMinutes } from 'date-fns';
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
-import { PAGE_SIZES, ContextBoxService } from '../context-box/context-box.service';
 import { ContextBoxShareFileService } from '../context-box/context-box-sharefile.service';
+import { ContextBoxService, PAGE_SIZES } from '../context-box/context-box.service';
 import { ResourceTableService } from './resource-table.service';
 
 interface TableRow {

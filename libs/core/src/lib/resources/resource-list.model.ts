@@ -2,7 +2,6 @@ import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import {
   CatalogOptions,
   CatalogQuery,
-  Classification,
   CREATION_END_PREFIX,
   CREATION_START_PREFIX,
   Filter,
@@ -21,10 +20,7 @@ import {
 } from '@nuclia/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-export interface ColoredLabel extends Classification {
-  color: string;
-}
+import { ColoredLabel } from '../label';
 
 export interface ResourceWithLabels {
   resource: Resource;

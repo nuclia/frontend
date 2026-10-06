@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { searchResources, UploadService } from '@flaps/common';
-import { NavigationService, NotificationService, SDKService } from '@flaps/core';
+import { NavigationService, NotificationService, SDKService, searchResources, UploadService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDateTimeModule,

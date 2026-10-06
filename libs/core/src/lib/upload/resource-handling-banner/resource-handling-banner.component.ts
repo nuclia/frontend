@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-resource-handling-banner',
-  imports: [RouterModule, TranslateModule, PaButtonModule, InfoCardComponent],
+  imports: [RouterLink, TranslatePipe, PaButtonModule, InfoCardComponent],
   templateUrl: './resource-handling-banner.component.html',
   styleUrl: './resource-handling-banner.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

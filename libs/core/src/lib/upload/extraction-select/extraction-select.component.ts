@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { InfoCardComponent } from '@nuclia/sistema';
-import { PaIconModule, PaPopupModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { shareReplay, switchMap, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { PaIconModule, PaPopupModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { SDKService } from '@flaps/core';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { shareReplay, switchMap, take } from 'rxjs';
+import { SDKService } from '../../api';
 
 @Component({
   selector: 'app-extraction-select',

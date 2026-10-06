@@ -1,5 +1,5 @@
-import { DroppedFile } from '@flaps/core';
 import mime from 'mime';
+import { DroppedFile } from '../ui';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];

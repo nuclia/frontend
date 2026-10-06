@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { EntitiesGroup, IKnowledgeBox } from '@nuclia/core';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
-import { SDKService } from '@flaps/core';
-import { EntitiesGroup, IKnowledgeBox } from '@nuclia/core';
-import { TranslateService } from '@ngx-translate/core';
-import { getNerFamilyTitle, NerFamily } from './model';
+import { SDKService } from '../api';
+import { getNerFamilyTitle, NerFamily } from '../models/ner.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { NerFamily } from '@flaps/core';
 import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Entity } from '@nuclia/core';
 import { Subject } from 'rxjs';
-import { Entity, NerFamily } from '../model';
 
 const COUNT_ROWS_DISPLAYED = 1000;
 

@@ -2,6 +2,7 @@ export * from './account.model';
 export * from './bedrock.model';
 export * from './billing.model';
 export * from './local.model';
+export * from './ner.model';
 export * from './permissions.model';
 export * from './region.model';
 export * from './user.model';

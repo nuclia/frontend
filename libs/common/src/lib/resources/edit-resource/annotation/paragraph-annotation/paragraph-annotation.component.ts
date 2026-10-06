@@ -12,11 +12,11 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { Search } from '@nuclia/core';
 
+import { EntityGroup, ParagraphWithTextAndAnnotations } from '@flaps/core';
 import { DelayedSpinnerComponent } from '@nuclia/sistema';
 import { combineLatest, forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { shareReplay, takeUntil } from 'rxjs/operators';
 import { SafeHtmlPipe } from '../../../../pipes/safe-html.pipe';
-import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
 import { SelectFirstFieldDirective } from '../../select-first-field/select-first-field.directive';
 import { RelationsComponent } from '../relations/relations.component';
 import { ParagraphAnnotationService } from './paragraph-annotation.service';

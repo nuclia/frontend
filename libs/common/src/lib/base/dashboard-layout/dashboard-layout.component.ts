@@ -1,13 +1,19 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavigationService, SDKService, UploadEventService } from '@flaps/core';
+import {
+  NavigationService,
+  PENDING_RESOURCES_LIMIT,
+  ResourceHandlingBannerComponent,
+  SDKService,
+  UploadEventService,
+  UploadService,
+} from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { combineLatest, map, startWith, take } from 'rxjs';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { EulaModalComponent } from '../../onboarding/eula-modal/eula-modal.component';
-import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';
 import { UploadBarComponent } from '../../upload/upload-bar/upload-bar.component';
 import { DashboardLayoutService } from './dashboard-layout.service';
 
@@ -24,6 +30,7 @@ import { DashboardLayoutService } from './dashboard-layout.service';
     AsyncPipe,
     DecimalPipe,
     TranslatePipe,
+    ResourceHandlingBannerComponent,
   ],
 })
 export class DashboardLayoutComponent {

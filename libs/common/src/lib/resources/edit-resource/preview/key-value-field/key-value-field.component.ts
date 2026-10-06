@@ -1,8 +1,8 @@
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { formatKeyValue } from '@flaps/core';
 import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { KVSchema, KVValue } from '@nuclia/core';
-import { formatKeyValue } from '../../edit-resource.helpers';
 
 @Component({
   selector: 'stf-key-value-field',

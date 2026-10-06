@@ -11,9 +11,9 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaExpanderModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { delay, map, take } from 'rxjs';
+import { SDKService } from '../../api';
 
 @Component({
   selector: 'ncom-hint',

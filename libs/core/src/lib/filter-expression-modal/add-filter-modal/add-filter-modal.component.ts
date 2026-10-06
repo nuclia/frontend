@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   ModalRef,
   OptionModel,
@@ -11,14 +12,13 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { LabelsService } from '@flaps/core';
 import { FIELD_TYPE, KVFieldType, TypeParagraph } from '@nuclia/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NerService } from '../../../../entities';
-import { BehaviorSubject, combineLatest, defer, filter, map, merge, of, switchMap, take, tap } from 'rxjs';
-import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.component';
-import { KvSchemasService } from '../../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { BehaviorSubject, combineLatest, defer, filter, map, merge, of, switchMap, take, tap } from 'rxjs';
+
+import { LabelsService } from '../../label';
+import { KvSchemasService, NerService } from '../../services';
+import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.component';
 
 @Component({
   imports: [

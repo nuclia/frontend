@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { renderMarkdown } from '@flaps/core';
+import { EditResourceService, renderMarkdown } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TextField } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { filter, map, Observable } from 'rxjs';
 import { LineBreakFormatterPipe } from '../../../pipes';
-import { EditResourceService } from '../../../resources';
-
 @Component({
   selector: 'stf-session-info',
   imports: [CommonModule, InfoCardComponent, TranslateModule, LineBreakFormatterPipe],

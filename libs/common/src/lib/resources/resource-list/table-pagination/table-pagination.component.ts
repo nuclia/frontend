@@ -1,4 +1,3 @@
-
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -11,11 +10,11 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { ResourceListService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { RESOURCE_STATUS } from '@nuclia/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-import { ResourceListService } from '../resource-list.service';
 
 @Component({
   selector: 'stf-table-pagination',

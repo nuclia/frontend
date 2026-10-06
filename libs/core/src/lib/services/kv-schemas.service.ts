@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
+
 import { KBKVSchemas, KVSchema, UpdateKVSchema } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { EMPTY, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
+import { SDKService } from '../api';
 
 @Injectable({ providedIn: 'root' })
 export class KvSchemasService {

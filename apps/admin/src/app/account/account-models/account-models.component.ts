@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { AssumeRoleModalComponent } from '@flaps/common';
 import {
+  AssumeRoleModalComponent,
   BEDROCK_IAM_POLICY,
   BedrockService,
   BedrockStatus,

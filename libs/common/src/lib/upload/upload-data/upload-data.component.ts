@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { NavigationService, UploadEventService } from '@flaps/core';
+import { NavigationService, ResourceHandlingBannerComponent, UploadEventService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { filter } from 'rxjs';
 import { UploadDialogService, UploadType } from '../../resources/upload-button/upload-dialog.service';
-import { ResourceHandlingBannerComponent } from '../resource-handling-banner/resource-handling-banner.component';
 import { UploadOptionComponent } from './upload-option/upload-option.component';
 
 @Component({

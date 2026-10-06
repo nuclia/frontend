@@ -1,4 +1,4 @@
-import { ColoredLabel } from '@flaps/common';
+import { ColoredLabel } from '@flaps/core';
 import { ISyncEntity } from '../logic';
 
 export interface SyncOptions {

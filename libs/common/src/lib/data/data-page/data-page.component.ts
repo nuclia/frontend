@@ -2,25 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, ElementRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { FeaturesService } from '@flaps/core';
+import { FeaturesService, UploadService } from '@flaps/core';
 import { PaButtonModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
 import { filter, map, startWith } from 'rxjs';
-import { UploadButtonComponent } from '../../resources';
-import { UploadService } from '../../upload';
 
 @Component({
   selector: 'stf-data-page',
-  imports: [
-    RouterOutlet,
-    CommonModule,
-    BadgeComponent,
-    PaButtonModule,
-    PaTabsModule,
-    UploadButtonComponent,
-    TranslatePipe,
-  ],
+  imports: [RouterOutlet, CommonModule, BadgeComponent, PaButtonModule, PaTabsModule, TranslatePipe],
   templateUrl: './data-page.component.html',
   styleUrl: './data-page.component.scss',
 })
