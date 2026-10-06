@@ -20,6 +20,7 @@ import {
   merge,
   Observable,
   of,
+  startWith,
   take,
 } from 'rxjs';
 import { BackendConfigurationService } from '../config/backend-config.service';
@@ -55,6 +56,12 @@ export class NavigationService {
     ? this.entryContext.get()?.originClient || 'dashboard'
     : (this.environment.client as AccountEntryOriginClient);
 
+  private currentUrl$ = this.router.events.pipe(
+    filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+    map((event) => event.urlAfterRedirects.split(/[?#]/)[0]),
+    startWith(this.router.url.split(/[?#]/)[0]),
+  );
+
   homeUrl: Observable<string> = combineLatest([
     this.sdk.currentAccount,
     this.sdk.currentKb,
@@ -80,6 +87,7 @@ export class NavigationService {
   kbUrl = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => this.getKbUrl(account.slug, kb.slug)),
   );
+  isOnKbHome$ = combineLatest([this.currentUrl$, this.kbUrl]).pipe(map(([url, kbUrl]) => url === kbUrl));
 
   inAragSpace(path: string): boolean {
     return IN_ARAG.test(path);
