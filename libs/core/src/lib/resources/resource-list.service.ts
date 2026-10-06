@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LabelsService, SDKService } from '@flaps/core';
+import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { TranslateService } from '@ngx-translate/core';
 import {
   IResource,
@@ -34,9 +34,11 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { FormatETAPipe } from '../../pipes';
-import { UploadService } from '../../upload/upload.service';
-import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
+import { SDKService } from '../api';
+import { LabelsService } from '../label';
+import { FormatETAPipe } from '../ui';
+import { UploadService } from '../upload';
+import { getResourceErrors } from './edit-resource.helpers';
 import {
   DEFAULT_LABELS_LOGIC,
   DEFAULT_PAGE_SIZE,
@@ -51,8 +53,7 @@ import {
   SearchModes,
   searchResources,
 } from './resource-list.model';
-import { getResourceErrors } from '../edit-resource';
-import { LOCAL_STORAGE } from '@ng-web-apis/common';
+import { ResourceNavigationService } from './resource-navigation.service';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {

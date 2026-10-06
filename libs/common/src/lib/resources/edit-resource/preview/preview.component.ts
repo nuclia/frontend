@@ -10,7 +10,21 @@ import {
 } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FeaturesService, LabelModule, LabelsService, NavigationService, SDKService } from '@flaps/core';
+import {
+  DATA_AUGMENTATION_ERROR,
+  EditResourceService,
+  FeaturesService,
+  getErrors,
+  getParagraphsWithImages,
+  LabelModule,
+  LabelsService,
+  NavigationService,
+  ParagraphWithTextAndClassifications,
+  ParagraphWithTextAndImage,
+  ResourceNavigationService,
+  SDKService,
+  Thumbnail,
+} from '@flaps/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -66,18 +80,8 @@ import {
   tap,
 } from 'rxjs';
 import { shareReplay, takeUntil } from 'rxjs/operators';
-import {
-  DATA_AUGMENTATION_ERROR,
-  getErrors,
-  getParagraphsWithImages,
-  ParagraphWithTextAndClassifications,
-  ParagraphWithTextAndImage,
-  Thumbnail,
-} from '../edit-resource.helpers';
-import { EditResourceService } from '../edit-resource.service';
 import { ParagraphService } from '../paragraph.service';
 import { ThumbnailComponent } from '../profile/thumbnail/thumbnail.component';
-import { ResourceNavigationService } from '../resource-navigation.service';
 import { KeyValueFieldComponent } from './key-value-field/key-value-field.component';
 import { PreviewTableComponent } from './preview-table.component';
 import { PreviewService } from './preview.service';

@@ -2,12 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
+import { DEFAULT_WIDGET_CONFIG, SearchWidgetService } from '@flaps/common';
 import {
   DroppedFile,
   FeaturesService,
   FileDropDirective,
   FileSelectDirective,
+  getFilesGroupedByType,
   SDKService,
   SizePipe,
 } from '@flaps/core';

@@ -2,7 +2,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { FeaturesService, LabelModule, SDKService } from '@flaps/core';
+import { FeaturesService, LabelModule, ResourceListService, SDKService, SearchModes, UploadService } from '@flaps/core';
 import {
   ControlModel,
   DropdownComponent,
@@ -39,15 +39,12 @@ import {
 import { endOfDay } from 'date-fns';
 import { distinctUntilChanged, filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { UploadService } from '../../upload/upload.service';
 import { ResourceCacheService } from '../resource-cache.service';
 import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { ProcessedResourcesTableComponent } from './processed-resources-table/processed-resources-table.component';
-import { SearchModes } from './resource-list.model';
-import { ResourceListService } from './resource-list.service';
 import { ResourcesTableComponent } from './resources-table/resources-table.component';
 
 @Component({

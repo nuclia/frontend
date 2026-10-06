@@ -8,7 +8,17 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import {
+  DATA_AUGMENTATION_ERROR,
+  EditResourceService,
+  EditResourceView,
+  FeaturesService,
+  getErrors,
+  NavigationService,
+  ResourceNavigationService,
+  SDKService,
+  UNAUTHORIZED_ICON,
+} from '@flaps/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -23,9 +33,6 @@ import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 
 import { take, takeUntil } from 'rxjs/operators';
 import { isMemoryFieldId, isMemoryResource } from '../memory/memory.helpers';
 import { ResourceCacheService } from '../resource-cache.service';
-import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-resource.helpers';
-import { EditResourceService } from './edit-resource.service';
-import { ResourceNavigationService } from './resource-navigation.service';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;

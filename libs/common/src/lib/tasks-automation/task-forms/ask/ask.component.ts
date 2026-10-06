@@ -1,22 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { FeaturesService, KvSchemasService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { AgenticConfig, KVSchema, KVSchemaField, TaskApplyTo, TaskName } from '@nuclia/core';
 import {
+  BadgeComponent,
   ExpandableTextareaComponent,
   InfoCardComponent,
   TwoColumnsConfigurationItemComponent,
-  BadgeComponent,
 } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
-import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TaskRouteDirective } from '../task-route.directive';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AgenticConfig, KVSchema, KVSchemaField, TaskApplyTo, TaskName } from '@nuclia/core';
-import { catchError, filter, map, of, switchMap, take } from 'rxjs';
-import { KvSchemasService } from '../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 import { JSONSchema4, JSONSchema4TypeName } from 'json-schema';
-import { FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { RouterModule } from '@angular/router';
+import { catchError, filter, map, of, switchMap, take } from 'rxjs';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskRouteDirective } from '../task-route.directive';
 
 const AGENTIC_SCHEMA_NAME = 'agentic-da-generation';
 

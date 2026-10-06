@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChildren } from '@angular/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -15,7 +15,6 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import {
   And,
   FieldFilterExpression,
@@ -28,10 +27,11 @@ import {
   Or,
   ParagraphFilterExpression,
 } from '@nuclia/core';
-import { AddFilterModalComponent } from './add-filter-modal/add-filter-modal.component';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
+import { KvSchemasService } from '../services/kv-schemas.service';
+import { AddFilterModalComponent } from './add-filter-modal/add-filter-modal.component';
 import { FilterValueComponent } from './filter-value/filter-value.component';
-import { KvSchemasService } from '../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 
 export type AnyFilterExpression =
   | And<AnyFilterExpression>

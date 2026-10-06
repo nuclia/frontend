@@ -1,9 +1,7 @@
 export * from './compact-number.pipe';
 export * from './format-date.pipe';
 export * from './format-duration.pipe';
-export * from './format-eta.pipe';
 export * from './format-time.pipe';
 export * from './generative-model.pipe';
 export * from './line-break-formatter.pipe';
-
 export * from './safe-html.pipe';

@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { EditResourceService, ResourceNavigationService } from '@flaps/core';
 import { IErrorMessages, PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
 import { DropdownButtonComponent, ExpandableTextareaComponent } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { DropzoneComponent } from '../dropzone/dropzone.component';
-import { EditResourceService } from '../edit-resource.service';
-import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Component({
   templateUrl: './add-field.component.html',

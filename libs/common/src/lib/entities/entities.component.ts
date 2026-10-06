@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { generatedEntitiesColor, NerFamily, NerService } from '@flaps/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, Subject, tap } from 'rxjs';
 import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 import { EntityListComponent } from './entity-list/entity-list.component';
-import { generatedEntitiesColor, NerFamily } from './model';
-import { NerService } from './ner.service';
 
 @Component({
   selector: 'app-entities',

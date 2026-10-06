@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EditResourceService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, TextField, TextFieldData } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { EditResourceService } from '../../edit-resource.service';
 
 @Component({
   templateUrl: 'text.component.html',

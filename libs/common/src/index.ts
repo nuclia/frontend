@@ -12,7 +12,6 @@ export * from './lib/directives';
 export * from './lib/entities';
 export * from './lib/features';
 export * from './lib/guards';
-export * from './lib/hint';
 export * from './lib/kb-creation';
 export * from './lib/knowledge-box-keys';
 export * from './lib/knowledge-box-settings';

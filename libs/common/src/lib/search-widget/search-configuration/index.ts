@@ -1,5 +1,4 @@
 export * from './filter-assistant';
-export * from './filter-expression-modal';
 export * from './generative-answer-form';
 export * from './results-display-form';
 export * from './save-config-modal';

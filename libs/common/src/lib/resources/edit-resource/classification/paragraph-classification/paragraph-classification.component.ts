@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { LabelsService } from '@flaps/core';
+import { EditResourceService, LabelsService, ParagraphWithTextAndClassifications } from '@flaps/core';
 import { PaChipsModule, PaScrollModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FieldId, IFieldData, LabelSets, Resource, Search } from '@nuclia/core';
@@ -10,8 +10,6 @@ import { FieldId, IFieldData, LabelSets, Resource, Search } from '@nuclia/core';
 import { DelayedSpinnerComponent } from '@nuclia/sistema';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
-import { EditResourceService } from '../../edit-resource.service';
 import { ParagraphService } from '../../paragraph.service';
 
 @Component({

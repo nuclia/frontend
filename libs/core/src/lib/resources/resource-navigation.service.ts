@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SDKService } from '@flaps/core';
 import { deDuplicateList } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, Observable, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ResourceListParams, searchResources } from '../resource-list/resource-list.model';
+import { SDKService } from '../api';
+import { ResourceListParams, searchResources } from './resource-list.model';
 
 interface ResourceNavigationModel extends ResourceListParams {
   resourceIdList: string[];
