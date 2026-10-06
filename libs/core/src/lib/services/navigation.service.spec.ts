@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { WINDOW } from '@ng-web-apis/common';
 import { MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
-import { AuthService } from '../auth';
+import { EMPTY, of } from 'rxjs';
 import { SDKService } from '../api';
-import { BackendConfigurationService } from '../config/backend-config.service';
+import { AuthService } from '../auth';
 import { AccountEntryContextService } from '../auth/account-entry-context.service';
+import { BackendConfigurationService } from '../config/backend-config.service';
 import { NavigationService } from './navigation.service';
 
 const STATIC_ENV = { client: 'dashboard' };
@@ -25,10 +25,11 @@ describe('NavigationService', () => {
       providers: [
         NavigationService,
         MockProvider(Router, {
+          url: '/',
+          events: EMPTY,
           navigate: jest.fn().mockResolvedValue(true),
           navigateByUrl: jest.fn().mockResolvedValue(true),
           createUrlTree: jest.fn().mockReturnValue('URL_TREE' as any),
-          events: of() as any,
         }),
         MockProvider(AuthService),
         MockProvider(SDKService, {
