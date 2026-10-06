@@ -26,7 +26,7 @@ const ROUTES: Routes = [
     component: KbSettingsLayoutComponent,
     children: [
       { path: '', redirectTo: 'general', pathMatch: 'full' as const },
-      { path: 'general', component: KnowledgeBoxSettingsComponent },
+      { path: 'general', component: KnowledgeBoxSettingsComponent, data: { embedded: true } },
       { path: 'kv-schemas', component: KvSchemasComponent },
     ],
   },
