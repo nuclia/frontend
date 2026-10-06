@@ -1,7 +1,7 @@
 @use 'apps/dashboard/src/variables' as *;
 
-.container {
-  display:flex;
+.resource-selector {
+  display: flex;
   flex-direction: column;
   gap: rhythm(2);
 }
@@ -11,7 +11,7 @@
 }
 
 .resources {
-  display:flex;
+  display: flex;
   flex-direction: column;
   gap: rhythm(1);
 }
