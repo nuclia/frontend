@@ -69,7 +69,8 @@
     @if (canAddKb | async) {
       @if (knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1) {
         <div class="account-kbs-counter">
-          {{ 'account.kb.count' | translate: { count: knowledgeBoxes.length, max: maxKnowledgeBoxes } }}
+          {{ 'account.kb.count' | translate: { count: knowledgeBoxes.length } }}
+          <span class="max-kbs">({{ 'account.kb.max' | translate: { max: maxKnowledgeBoxes } }})</span>
         </div>
       }
 

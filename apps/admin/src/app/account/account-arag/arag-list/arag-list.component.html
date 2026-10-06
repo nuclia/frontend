@@ -75,7 +75,8 @@
       @if (canAddArag | async) {
         @if (retrievalAgents.length > 0 && maxRetrievalAgents !== -1) {
           <div class="account-arag-counter">
-            {{ 'account.kb.count' | translate: { count: retrievalAgents.length, max: maxRetrievalAgents } }}
+            {{ 'account.retrieval-agents.count' | translate: { count: retrievalAgents.length } }}
+            <span class="max-arags">({{ 'account.kb.max' | translate: { max: maxRetrievalAgents } }})</span>
           </div>
         }
 
