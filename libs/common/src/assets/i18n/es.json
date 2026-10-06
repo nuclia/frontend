@@ -229,7 +229,6 @@
 	"account.retrieval-agents.error.create": "Se produjo un error al crear el agente de cosecha. Inténtalo de nuevo.",
 	"account.retrieval-agents.error.creation-limit": "Ha alcanzado el número máximo de agentes de cosecha para esta cuenta.",
 	"account.retrieval-agents.error.delete": "Se produjo un error al eliminar el agente de cosecha. Inténtalo de nuevo.",
-	"account.retrieval-agents.max": "máximo {{max}}",
 	"account.retrieval-agents.menu.delete": "Eliminar agente",
 	"account.retrieval-agents.menu.edit": "Editar configuración",
 	"account.retrieval-agents.menu.sessions-list": "Lista de sesiones",

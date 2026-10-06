@@ -229,7 +229,6 @@
 	"account.retrieval-agents.error.create": "Une erreur s'est produite lors de la création de l'agent récolteur. Veuillez réessayer.",
 	"account.retrieval-agents.error.creation-limit": "Vous avez atteint le nombre maximum d’agents récolteur pour ce compte.",
 	"account.retrieval-agents.error.delete": "Une erreur s'est produite lors de la suppression de l'agent récolteur. Veuillez réessayer.",
-	"account.retrieval-agents.max": "maximum {{max}}",
 	"account.retrieval-agents.menu.delete": "Supprimer l'agent",
 	"account.retrieval-agents.menu.edit": "Modifier la configuration",
 	"account.retrieval-agents.menu.sessions-list": "Liste des sessions",

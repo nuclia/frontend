@@ -229,7 +229,6 @@
 	"account.retrieval-agents.error.create": "S'ha produït un error en crear l'agent de recol·lecció. Si us plau, torna-ho a provar.",
 	"account.retrieval-agents.error.creation-limit": "Heu assolit el nombre màxim d'agents de recol·lecció per a aquest compte.",
 	"account.retrieval-agents.error.delete": "S'ha produït un error en suprimir l'agent de recol·lecció. Si us plau, torna-ho a provar.",
-	"account.retrieval-agents.max": "màxim {{max}}",
 	"account.retrieval-agents.menu.delete": "Suprimeix l'agent",
 	"account.retrieval-agents.menu.edit": "Edita la configuració",
 	"account.retrieval-agents.menu.sessions-list": "Llista de sessions",

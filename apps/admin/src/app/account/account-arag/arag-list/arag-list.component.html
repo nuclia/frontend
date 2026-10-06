@@ -76,9 +76,7 @@
         @if (retrievalAgents.length > 0 && maxRetrievalAgents !== -1) {
           <div class="account-arag-counter">
             {{ 'account.retrieval-agents.count' | translate: { count: retrievalAgents.length } }}
-            <span class="max-arags">
-              ({{ 'account.retrieval-agents.max' | translate: { max: maxRetrievalAgents } }})
-            </span>
+            <span class="max-arags">({{ 'account.kb.max' | translate: { max: maxRetrievalAgents } }})</span>
           </div>
         }
 

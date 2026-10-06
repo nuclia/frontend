@@ -229,7 +229,6 @@
 	"account.retrieval-agents.error.create": "Something went wrong when creating the Retrieval Agent. Please try again.",
 	"account.retrieval-agents.error.creation-limit": "You reached the maximum number of Retrieval agent for this account.",
 	"account.retrieval-agents.error.delete": "Something went wrong when deleting the Retrieval Agent. Please try again.",
-	"account.retrieval-agents.max": "maximum {{max}}",
 	"account.retrieval-agents.menu.delete": "Delete agent",
 	"account.retrieval-agents.menu.edit": "Edit configuration",
 	"account.retrieval-agents.menu.sessions-list": "Sessions list",
