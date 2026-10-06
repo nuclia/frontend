@@ -24,7 +24,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProcessingHook, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { filter, forkJoin, merge, Observable, of, Subject } from 'rxjs';
+import { filter, forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { StandaloneService } from '../services';
 import { Sluggable } from '../validators';
@@ -48,7 +48,8 @@ import { Sluggable } from '../validators';
   ],
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
-  embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
+  private route = inject(ActivatedRoute);
+  embedded = !!this.route.snapshot.data['embedded'];
   unsubscribeAll = new Subject<void>();
 
   kb?: WritableKnowledgeBox;
