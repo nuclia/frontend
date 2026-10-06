@@ -1,6 +1,6 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { NavigationService, SDKService, UploadEventService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
@@ -33,7 +33,6 @@ export class DashboardLayoutComponent {
   private modalService = inject(SisModalService);
   private sdk = inject(SDKService);
   private uploadEventService = inject(UploadEventService);
-  private router = inject(Router);
 
   showProgress = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
     map(([progress, disabled]) => !progress.completed && !disabled),
@@ -46,15 +45,10 @@ export class DashboardLayoutComponent {
   kbUrl = this.navigationService.kbUrl;
   // The KB home page already shows its own step-aware "processing" message
   // (`KbOnboardingHeaderComponent`), so the global banner would be redundant there.
-  private currentUrl$ = this.router.events.pipe(
-    filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-    map((event) => event.urlAfterRedirects.split(/[?#]/)[0]),
-    startWith(this.router.url.split(/[?#]/)[0]),
-  );
-  private isOnKbHome$ = combineLatest([this.currentUrl$, this.kbUrl]).pipe(map(([url, kbUrl]) => url === kbUrl));
-  showOnboardingBanner = combineLatest([this.uploadEventService.showOnboardingBanner$, this.isOnKbHome$]).pipe(
-    map(([show, isOnKbHome]) => show && !isOnKbHome),
-  );
+  showOnboardingBanner = combineLatest([
+    this.uploadEventService.showOnboardingBanner$,
+    this.navigationService.isOnKbHome$,
+  ]).pipe(map(([show, isOnKbHome]) => show && !isOnKbHome));
   collapsedNav = this.layoutService.collapsedNav;
   // Hidden in simple mode outside ARAG, or anywhere under /manage (account-management routes
   // are full-width).
