@@ -2757,7 +2757,7 @@
 	"stash.users.add_email": "Afegeix un correu electrònic",
 	"stash.users.add_emails": "Afegeix correus electrònics",
 	"stash.users.bulk_input_hint": "Separeu diversos correus electrònics amb comes, punts i coma o salts de línia",
-	"stash.users.bulk_input_label": "Adreça(es) de correu electrònic",
+	"stash.users.bulk_input_label": "Adreces de correu electrònic",
 	"stash.users.bulk_input_placeholder": "Escriviu o enganxeu una o més adreces de correu electrònic",
 	"stash.users.clear_invalid": "Elimina els correus electrònics amb problemes",
 	"stash.users.email_input_label": "Adreça electrònica",
