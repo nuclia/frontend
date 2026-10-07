@@ -1,6 +1,7 @@
 <nus-user-container>
   <div class="onboarding-container">
-    @if (onboardingStep | async; as step) {
+    @let step = onboardingStep | async;
+    @if (ready && step !== null) {
       <header>
         @if (step < lastStep) {
           <h1>{{ 'onboarding.step' + step + '.title' | translate }}</h1>
