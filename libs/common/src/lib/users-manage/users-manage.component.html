@@ -39,9 +39,19 @@
               <pa-chip-closeable
                 role="listitem"
                 [ngClass]="inviteEntryStatusClass(entry.status)"
-                [class.chip-duplicate]="entry.status === 'duplicate'"
-                [backgroundColor]="entry.status === 'duplicate' ? 'var(--color-secondary-lightest)' : ''"
-                [textColor]="entry.status === 'duplicate' ? 'var(--color-secondary-stronger)' : ''"
+                [class.chip-issue]="
+                  entry.status === 'duplicate' || entry.status === 'invalid' || entry.status === 'failed'
+                "
+                [backgroundColor]="
+                  entry.status === 'duplicate' || entry.status === 'invalid' || entry.status === 'failed'
+                    ? 'var(--color-secondary-lightest)'
+                    : ''
+                "
+                [textColor]="
+                  entry.status === 'duplicate' || entry.status === 'invalid' || entry.status === 'failed'
+                    ? 'var(--color-secondary-stronger)'
+                    : ''
+                "
                 [disabled]="users.inviteInProgress()"
                 [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
                 (closed)="users.removeEntryByIndex($index)">

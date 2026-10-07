@@ -28,7 +28,6 @@
 }
 
 .paste-emails-row,
-.chips-list,
 .warning {
   max-width: rhythm(90) * 0.75;
 }
@@ -71,19 +70,8 @@
   text-transform: uppercase;
 }
 
-:host ::ng-deep .chip-duplicate .pa-button:not(:disabled) {
+:host ::ng-deep .chip-issue .pa-button:not(:disabled) {
   color: $color-secondary-stronger;
-}
-
-::ng-deep pa-chip-closeable.chip-error {
-  .pa-chip {
-    background: $color-secondary-lightest;
-    border: 2px solid $color-secondary-strong;
-  }
-
-  .chip-status {
-    color: $color-secondary-strong;
-  }
 }
 
 .invite-progress {
