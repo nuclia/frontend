@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   AnalyticsService,
-  FeaturesService,
   NavigationService,
   SDKService,
   SelectAccountKbService,
@@ -41,7 +41,7 @@ import { Step1Component } from './step1/step1.component';
     CompanyNameComponent,
   ],
 })
-export class OnboardingComponent {
+export class OnboardingComponent implements OnInit {
   private readonly onboardingService = inject(OnboardingService);
   private readonly sdk = inject(SDKService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -49,7 +49,7 @@ export class OnboardingComponent {
   private readonly navigation = inject(NavigationService);
   private readonly userService = inject(UserService);
   private readonly selectAccountKbService = inject(SelectAccountKbService);
-  private readonly featuresService = inject(FeaturesService);
+  private readonly route = inject(ActivatedRoute);
 
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
   lastStep = 5;
@@ -67,6 +67,25 @@ export class OnboardingComponent {
   enterCompanyName = false;
   inRaoApp = this.navigation.inRaoApp;
   showLogout = false;
+  ready = false;
+
+  ngOnInit() {
+    this.route.queryParams
+      .pipe(
+        take(1),
+        switchMap((queryParams) =>
+          queryParams['account_slug'] ? this.sdk.setCurrentAccount(queryParams['account_slug']) : of(null),
+        ),
+      )
+      .subscribe((account) => {
+        if (account) {
+          this.account = account;
+        }
+        this.onboardingService.setStep(account ? 3 : 1);
+        this.ready = true;
+        this.cdr.markForCheck();
+      });
+  }
 
   goBack(): void {
     this.onboardingService.previousStep();
