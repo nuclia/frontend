@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { UploadButtonComponent } from '@flaps/common';
+import { NavigationService } from '@flaps/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -38,12 +39,13 @@ const STEP_ORDER: OnboardingStep[] = ['uploading-data', 'processing-data', 'sear
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KbOnboardingHeaderComponent {
-  kbUrl = input.required<string>();
-
   private onboardingService = inject(KbOnboardingStateService);
   private modalService = inject(SisModalService);
+  private navigationService = inject(NavigationService);
 
   state = toSignal(this.onboardingService.onboardingState$, { requireSync: true });
+  resourceListUrl = toSignal(this.navigationService.getResourceListUrl());
+  searchUrl = toSignal(this.navigationService.getSearchUrl());
 
   openSkipModal(): void {
     this.modalService.openModal(SkipOnboardingModalComponent, new ModalConfig({ dismissable: true }));
