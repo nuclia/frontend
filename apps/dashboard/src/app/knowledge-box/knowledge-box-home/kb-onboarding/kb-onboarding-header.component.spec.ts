@@ -26,6 +26,7 @@ import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 };
 
 import { UploadButtonComponent } from '@flaps/common';
+import { NavigationService } from '@flaps/core';
 import { KbHeaderComponent } from '../kb-header/kb-header.component';
 import { KbOnboardingHeaderComponent } from './kb-onboarding-header.component';
 import { KbOnboardingEntry } from './kb-onboarding-state.model';
@@ -69,6 +70,10 @@ describe('KbOnboardingHeaderComponent', () => {
         }),
         MockProvider(SisModalService, {
           openModal: jest.fn(),
+        }),
+        MockProvider(NavigationService, {
+          getResourceListUrl: jest.fn(() => of('/data/resources')),
+          getSearchUrl: jest.fn(() => of('/search')),
         }),
       ],
     }).compileComponents();
