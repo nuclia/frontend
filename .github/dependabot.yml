@@ -4,9 +4,22 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+registries:
+  harness-npm:
+    type: npm-registry
+    url: https://pkg.harness.io/pkg/ct8onj8YTdaXtKaFsYCRLg/org-nuclia-npm/npm/
+    replaces-base: true
+  # Harness redirects tarball downloads to this R2 bucket; declaring it is the only way to get it onto
+  # Dependabot's egress allowlist.
+  harness-npm-storage:
+    type: npm-registry
+    url: https://184e0ec0f876097aad7b889f83013df2.r2.cloudflarestorage.com
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
+    registries:
+      - harness-npm
+      - harness-npm-storage
     schedule:
       interval: 'weekly'
     cooldown:
