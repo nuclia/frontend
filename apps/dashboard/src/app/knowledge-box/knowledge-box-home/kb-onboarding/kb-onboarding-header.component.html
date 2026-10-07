@@ -26,7 +26,7 @@
                   kind="primary"
                   icon="search"
                   iconAndText
-                  [routerLink]="kbUrl() + '/search'"
+                  [routerLink]="searchUrl()"
                   (click)="trySearch()">
                   {{ 'onboarding.header.step3.try-search' | translate }}
                 </pa-button>
@@ -67,7 +67,7 @@
                 <pa-button
                   aspect="basic"
                   size="small"
-                  [routerLink]="kbUrl() + '/resources'">
+                  [routerLink]="resourceListUrl()">
                   {{ 'onboarding.header.step2.check-files' | translate }}
                 </pa-button>
               </div>
@@ -115,7 +115,7 @@
                 <pa-button
                   size="small"
                   aspect="basic"
-                  [routerLink]="kbUrl() + '/resources'">
+                  [routerLink]="resourceListUrl()">
                   {{ 'onboarding.header.step2.check-files' | translate }}
                 </pa-button>
               </div>

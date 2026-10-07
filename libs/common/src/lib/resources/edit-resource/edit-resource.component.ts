@@ -67,7 +67,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     takeUntil(this.unsubscribeAll),
   );
   backRoute: Observable<string> = combineLatest([this.navigationService.homeUrl, this.isArag]).pipe(
-    map(([homeUrl, isArag]) => (isArag ? `${homeUrl}/sessions` : `${homeUrl}/resources`)),
+    map(([homeUrl, isArag]) => (isArag ? `${homeUrl}/sessions` : `${homeUrl}/data/resources`)),
   );
   currentView: EditResourceView | null = null;
   currentField: Observable<FieldId | 'resource'> = this.editResource.currentField;
