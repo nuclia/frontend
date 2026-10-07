@@ -1,17 +1,34 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../../../../sistema/theme/tokens/textfield.tokens' as textfield;
 
-h3 {
-  margin-bottom: rhythm(2);
+:host ::ng-deep .email-input .pa-field-textarea {
+  height: calc((#{textfield.$line-height-field-control} * 2 + #{textfield.$padding-field-control-top} * 2) * 1.25);
+}
+
+.invite-header {
+  align-items: flex-start;
+  display: flex;
+  gap: rhythm(3);
+  justify-content: space-between;
+  margin-bottom: rhythm(6);
+}
+
+.invite-heading {
+  min-width: 0;
+
+  h2 {
+    margin-bottom: rhythm(1);
+  }
 }
 
 .invite-description {
   color: $color-neutral-regular;
   font-size: $font-size-body-m;
-  margin: 0 0 rhythm(2.5);
+  margin: 0;
 }
 
-.users-invite-form {
-  max-width: rhythm(90);
+.invite-emails {
+  max-width: rhythm(90) * 0.75;
 }
 
 .invite-form {
@@ -24,13 +41,18 @@ h3 {
   gap: rhythm(1.5);
   grid-template-columns: 1fr auto;
   margin-bottom: rhythm(3);
+  margin-top: rhythm(4);
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
 .chips-list {
   display: flex;
   flex-wrap: wrap;
   gap: rhythm(1);
-  margin-top: rhythm(2);
+  margin-top: 0;
 }
 
 .chip-email {
@@ -99,8 +121,8 @@ h3 {
   align-items: center;
   display: flex;
   gap: rhythm(1);
-  margin-top: rhythm(2);
-  height: rhythm(5);
+  margin-top: rhythm(1);
+  min-height: rhythm(3);
 
   .clear-button {
     color: $color-neutral-regular;
@@ -154,7 +176,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: rhythm(1.5);
-  margin-top: rhythm(2);
+  flex-shrink: 0;
 
   pa-select {
     min-width: rhythm(18);
@@ -190,6 +212,10 @@ h3 {
 }
 
 @media (max-width: $size-viewport-medium-max) {
+  .invite-header {
+    flex-direction: column;
+  }
+
   .paste-emails-row {
     grid-template-columns: 1fr;
   }
@@ -202,6 +228,7 @@ h3 {
   .invite-actions-row {
     align-items: stretch;
     flex-direction: column;
+    width: 100%;
 
     pa-select {
       width: 100%;

@@ -12,7 +12,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
-import { DropdownButtonComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { INVITE_REMOVE_ARIA_I18N_KEY, INVITE_STATUS_CLASS, INVITE_STATUS_I18N_KEY } from './users-manage.config';
 import { InviteEntry, InviteEntryStatus } from './users-manage.model';
@@ -26,7 +26,6 @@ import { UsersManageService } from './users-manage.service';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    ExpandableTextareaComponent,
     PaButtonModule,
     PaChipsModule,
     NgClass,
