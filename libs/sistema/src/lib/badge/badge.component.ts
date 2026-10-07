@@ -40,7 +40,7 @@ export class BadgeComponent implements AfterViewInit {
     return typeof count === 'number' ? (count > 999 ? '999+' : `${count}`) : '';
   });
 
-  @HostBinding('class.overline') get overline() {
+  @HostBinding('class.body-overline') get overline() {
     return true;
   }
   @HostBinding('class.with-count') get hasCount() {
