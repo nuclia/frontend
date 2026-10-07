@@ -49,6 +49,10 @@ import {
 // to avoid making a dependency
 const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
 
+const CONTEXT_BOX_TITLE_INDEX = 'CONTEXT_BOX_TITLE_INDEX';
+const FIRST_ROTATING_TITLE_INDEX = 2;
+const TOTAL_TITLES = 20;
+
 @Component({
   selector: 'app-context-box',
   templateUrl: './context-box.component.html',
@@ -88,6 +92,7 @@ export class ContextBoxComponent implements OnDestroy {
   fileOver = signal(false);
   maxFileSize = -1;
   maxMediaFileSize = -1;
+  titleIndex = signal(1);
 
   view = signal<'resources' | 'search'>('resources');
   currentConversation?: string;
@@ -168,10 +173,19 @@ export class ContextBoxComponent implements OnDestroy {
       this.maxFileSize = account.limits?.upload.upload_limit_max_non_media_file_size || -1;
       this.maxMediaFileSize = account.limits?.upload.upload_limit_max_media_file_size || -1;
     });
+
+    this.setTitleIndex();
   }
 
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
+  }
+
+  setTitleIndex() {
+    const prevTitleIndex = Number.parseInt(localStorage.getItem(CONTEXT_BOX_TITLE_INDEX) || '0');
+    const titleIndex = prevTitleIndex < TOTAL_TITLES ? prevTitleIndex + 1 : FIRST_ROTATING_TITLE_INDEX;
+    this.titleIndex.set(titleIndex);
+    localStorage.setItem(CONTEXT_BOX_TITLE_INDEX, titleIndex.toString());
   }
 
   uploadFiles(files: File[]) {

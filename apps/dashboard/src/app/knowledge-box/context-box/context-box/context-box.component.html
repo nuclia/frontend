@@ -13,7 +13,7 @@
         <nsi-spinner size="small"></nsi-spinner>
         {{ 'context-box.title.uploading' | translate }}
       } @else if (step() === 3) {
-        {{ 'context-box.title.testing' | translate }}
+        {{ 'context-box.title.testing.testing-' + titleIndex() | translate }}
       }
     </h1>
 
