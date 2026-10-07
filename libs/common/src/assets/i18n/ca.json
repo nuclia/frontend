@@ -239,6 +239,7 @@
 	"account.saml.domains": "Dominis",
 	"account.saml.domains-help": "Llista de dominis separats per comes",
 	"account.saml.entity-id": "Id de l’entitat",
+	"account.saml.idp-initiated-target": "URL de l’aplicació de destinació per a inici des de l’IdP",
 	"account.saml.sso-url": "URL d’inici de sessió únic",
 	"account.saml.title": "Configuració d’inici de sessió únic",
 	"account.saml.x509-cert": "Certificat X.509",

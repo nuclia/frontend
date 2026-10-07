@@ -49,6 +49,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     entity_id: ['', [Validators.required]],
     sso_url: ['', [Validators.required]],
     x509_cert: ['', [Validators.required]],
+    idp_initiated_target: [''],
     authn_context: [''],
   });
 
@@ -164,6 +165,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
       entity_id: this.samlForm.value.entity_id,
       sso_url: this.samlForm.value.sso_url,
       x509_cert: this.samlForm.value.x509_cert,
+      idp_initiated_target: this.samlForm.value.idp_initiated_target || undefined,
       authn_context: this.samlForm.value.authn_context || undefined,
     });
   }

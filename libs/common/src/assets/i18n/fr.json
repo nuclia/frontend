@@ -239,6 +239,7 @@
 	"account.saml.domains": "Domaines",
 	"account.saml.domains-help": "Liste de domaines séparés par des virgules",
 	"account.saml.entity-id": "ID d’entité",
+	"account.saml.idp-initiated-target": "URL de l’application cible pour une connexion initiée par l’IdP",
 	"account.saml.sso-url": "URL d’authentification unique",
 	"account.saml.title": "Configuration de l’authentification unique",
 	"account.saml.x509-cert": "Certificat X.509",

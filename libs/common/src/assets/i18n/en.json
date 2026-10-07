@@ -239,6 +239,7 @@
 	"account.saml.domains": "Domains",
 	"account.saml.domains-help": "Comma-separated list of domains",
 	"account.saml.entity-id": "Entity id",
+	"account.saml.idp-initiated-target": "IdP-initiated target app URL",
 	"account.saml.sso-url": "Single Sign-On URL",
 	"account.saml.title": "Single Sign-On configuration",
 	"account.saml.x509-cert": "X.509 certificate",
