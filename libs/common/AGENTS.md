@@ -24,6 +24,7 @@ ai-models/         ← KB-level AI/LLM model configuration (extraction, generati
 base/              ← Root shell: BaseComponent (auth + notification polling), DashboardLayoutComponent
 chat-advice/       ← AI chat assistant prototype (ChatAdviceService, ChatAdviceBubbleComponent)
 charts/            ← Reusable chart components (bar, line, range) using base-chart directive
+data/              ← KB Data page shell and tabs; `data.routes.ts` composes resource routes with sync routes
 entities/          ← NER entity group management
 guards/            ← All route guards (functional, not class-based)
 metrics/           ← Activity logs & REMI quality analytics (dashboard-only, 5 sub-pages)
@@ -43,6 +44,11 @@ services/          ← AppService (locale)
 tasks-automation/  ← Data augmentation task CRUD (ask, labeler, graph-extraction, etc.)
 upload/            ← Multi-channel upload (file, link, CSV, sitemap, text, Q&A)
 ```
+
+In the dashboard navbar, **Data** opens `/:zone/:kb/data/resources`. `DataPageComponent` provides
+Resources, Synchronize, and Connect tabs when `FeaturesService.unstable.agenticSearch` is enabled;
+the latter two are `/data/sync` and `/data/sync/connect` routes. Upload actions are part of Resources,
+not a separate navigation destination.
 
 Other small areas: `aws-onboarding/`, `directives/`, `features/`, `hint/`, `kb-creation/`, `knowledge-box-keys/`, `knowledge-box-settings/`, `knowledge-box-users/`, `navbar/`, `page-not-found/`, `pagination/`, `pipes/`, `select-account-kb/`, `token-dialog/`, `topbar/`, `users-manage/`, `validators/`.
 

@@ -125,29 +125,15 @@
     ]
   },
   {
-    "id": "kb-upload",
-    "route": "/at/:account/:zone/:kb/upload",
-    "title": "Upload data",
-    "summary": "Add content to a Knowledge Box by uploading files, folders, links, text, CSV, sitemaps, or Q&A pairs. Entry point for all manual content ingestion.",
-    "capabilities": [
-      "Upload files or entire folders",
-      "Add web links or URLs",
-      "Add raw text content",
-      "Import CSV data or Q&A pairs",
-      "Add a sitemap for bulk web content",
-      "Navigate to the Synchronize page for automated cloud sync"
-    ]
-  },
-  {
     "id": "kb-resources",
-    "route": "/at/:account/:zone/:kb/resources",
+    "route": "/at/:account/:zone/:kb/data/resources",
     "title": "Resources",
-    "summary": "Browse and manage all content (resources) stored in a Knowledge Box. Search, filter by type or label, check processing status, and upload more content.",
+    "summary": "Browse and manage content stored in a Knowledge Box, check processing status, and add files, folders, links, text, CSV, sitemaps, or Q&A pairs.",
     "capabilities": [
       "Search all resources in the Knowledge Box",
       "Filter resources by type, labels, date, and visibility",
       "Switch between processed, processing, and error views to check status",
-      "Upload more content directly from this page",
+      "Upload files or folders, add links or text, and import CSV, sitemaps, or Q&A pairs",
       "Open and edit individual resources"
     ]
   },
@@ -363,7 +349,7 @@
   },
   {
     "id": "kb-sync",
-    "route": "/at/:account/:zone/:kb/sync",
+    "route": "/at/:account/:zone/:kb/data/sync",
     "title": "Synchronize",
     "summary": "Set up automated cloud storage synchronization into a Knowledge Box. Supports Google Drive, Microsoft SharePoint, OneDrive, Dropbox, AWS S3, and ShareFile. Keeps the KB up to date as files change.",
     "capabilities": [
@@ -372,6 +358,17 @@
       "Review sync jobs and their last sync status",
       "Enable or disable a sync job",
       "Edit, view folders, or delete a sync job"
+    ]
+  },
+  {
+    "id": "kb-connect",
+    "route": "/at/:account/:zone/:kb/data/sync/connect",
+    "title": "Connect",
+    "summary": "Configure local, MCP, and external data sources for a Knowledge Box. Review, edit, or remove connected sources.",
+    "capabilities": [
+      "Browse available local, MCP, and external connectors",
+      "Add a connector as a Knowledge Box data source",
+      "Review configured sources and edit or delete them"
     ]
   },
   {

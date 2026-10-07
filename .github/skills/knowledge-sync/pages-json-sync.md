@@ -3,7 +3,7 @@
 This document describes how to build and maintain the `pages.json` navigation document used
 by the chat advice widget. The file lives at:
 
-- `apps/dashboard/src/assets/chat/pages.json`
+- `libs/common/src/lib/chat-advice/pages.json`
 
 **Do not write pages.json entries from memory or routing tables alone.**  
 The capabilities and summaries must be derived from the actual component code.
@@ -16,7 +16,7 @@ Every entry that is written without reading the component will be wrong.
 - When a new route is added to `apps/dashboard`
 - When the staleness check reports routing files newer than `pages.json`:
   ```bash
-  find apps/dashboard/src/app -name "*routing*" -newer apps/dashboard/src/assets/chat/pages.json
+  find apps/dashboard/src/app -name "*routing*" -newer libs/common/src/lib/chat-advice/pages.json
   ```
 - When `knowledge-sync` detects changes in route-related files
 
@@ -45,8 +45,9 @@ cat libs/common/src/lib/metrics/metrics.module.ts
 cat libs/common/src/lib/tasks-automation/tasks-automation.routes.ts
 cat libs/common/src/lib/search-widget/widgets/widgets.routes.ts
 cat libs/common/src/lib/knowledge-box-settings/kv-schemas/kb-settings.module.ts
-cat libs/common/src/lib/resources/resources.module.ts
-cat libs/common/src/lib/upload/upload-routing.module.ts
+cat libs/common/src/lib/data/data.routes.ts
+cat libs/common/src/lib/resources/resource.routes.ts
+cat libs/sync/src/lib/sync.routes.ts
 ```
 
 The component class name is the value of the `component:` field for that route path.
@@ -112,7 +113,7 @@ Key patterns to extract from templates:
 
 ### Step 4 — Write the JSON entry
 
-Add an entry to the `pages` array in `apps/dashboard/src/assets/chat/pages.json`:
+Add an entry to the `pages` array in `libs/common/src/lib/chat-advice/pages.json`:
 
 ```json
 {
@@ -222,7 +223,7 @@ grep -oh "'[a-z._-]*' | translate" libs/common/src/lib/<feature>/*.html \
 
 | Changed path                                        | Documentation to update                                                                | Priority |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------- | -------- |
-| `apps/dashboard/src/app/*routing*`                  | `apps/dashboard/src/assets/chat/pages.json`                                            | HIGH     |
+| `apps/dashboard/src/app/*routing*`                  | `libs/common/src/lib/chat-advice/pages.json`                                           | HIGH     |
 | `libs/common/src/lib/<feature>/**/*.component.html` | Check if feature maps to a pages.json entry; update `summary` and `capabilities` if so | MEDIUM   |
 | `libs/common/src/lib/<feature>/**/*.component.ts`   | Same as above — check for new public actions                                           | LOW      |
 
@@ -241,10 +242,10 @@ grep -oh "'[a-z._-]*' | translate" libs/common/src/lib/<feature>/*.html \
 | `/at/:account/manage/nua`                  | `AccountNUAComponent`                           | `libs/common/src/lib/account/account-nua/`       |
 | `/at/:account/manage/billing`              | `BillingComponent`                              | `libs/common/src/lib/account/billing/`           |
 | `/:zone/:kb` (home)                        | `KnowledgeBoxHomeComponent`                     | `apps/dashboard/src/app/knowledge-box/`          |
-| `/:zone/:kb/upload`                        | `UploadDataComponent`                           | `libs/common/src/lib/upload/`                    |
-| `/:zone/:kb/resources`                     | `ResourcesComponent`                            | `libs/common/src/lib/resources/`                 |
+| `/at/:account/:zone/:kb/data/resources`    | `ResourcesComponent`                            | `libs/common/src/lib/resources/`                 |
+| `/at/:account/:zone/:kb/data/sync`         | `SynchronizeComponent`                          | `libs/sync/src/lib/home-page/synchronize/`       |
+| `/at/:account/:zone/:kb/data/sync/connect` | `ConnectComponent`                              | `libs/sync/src/lib/home-page/connect/`           |
 | `/:zone/:kb/search`                        | `SearchPageComponent`                           | `libs/common/src/lib/search/`                    |
-| `/:zone/:kb/sync`                          | (SYNC_ROUTES)                                   | `libs/sync/src/lib/`                             |
 | `/:zone/:kb/entities`                      | (EntitiesModule)                                | `libs/common/src/lib/entities/`                  |
 | `/:zone/:kb/label-sets`                    | (LabelSetsModule)                               | `libs/core/src/lib/label-sets/`                  |
 | `/:zone/:kb/ai-models`                     | `AiModelsComponent`                             | `libs/common/src/lib/ai-models/`                 |
