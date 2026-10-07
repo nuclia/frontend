@@ -50,6 +50,7 @@ import {
 const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
 
 const CONTEXT_BOX_TITLE_INDEX = 'CONTEXT_BOX_TITLE_INDEX';
+const FIRST_ROTATING_TITLE_INDEX = 2;
 const TOTAL_TITLES = 20;
 
 @Component({
@@ -182,7 +183,7 @@ export class ContextBoxComponent implements OnDestroy {
 
   setTitleIndex() {
     const prevTitleIndex = Number.parseInt(localStorage.getItem(CONTEXT_BOX_TITLE_INDEX) || '0');
-    const titleIndex = prevTitleIndex < TOTAL_TITLES ? prevTitleIndex + 1 : 1;
+    const titleIndex = prevTitleIndex < TOTAL_TITLES ? prevTitleIndex + 1 : FIRST_ROTATING_TITLE_INDEX;
     this.titleIndex.set(titleIndex);
     localStorage.setItem(CONTEXT_BOX_TITLE_INDEX, titleIndex.toString());
   }
