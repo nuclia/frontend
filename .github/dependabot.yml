@@ -4,9 +4,15 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+registries:
+  npm-github:
+    type: npm-registry
+    url: https://pkg.harness.io/pkg/ct8onj8YTdaXtKaFsYCRLg/org-nuclia-npm/npm/
+    token: ${{secrets.DEPENDABOT_TEMP_PLACEHOLDER_TOKEN}}
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
+    registries: '*'
     schedule:
       interval: 'weekly'
     cooldown:
