@@ -91,7 +91,19 @@
               <div
                 class="invite-summary"
                 aria-live="polite">
-                {{ 'stash.users.validation_summary' | translate: users.counts() }}
+                @for (
+                  summary of ('stash.users.validation_summary' | translate: users.counts()).split('·');
+                  track $index
+                ) {
+                  @if (!$first) {
+                    <span
+                      class="summary-separator"
+                      aria-hidden="true">
+                      ·
+                    </span>
+                  }
+                  <span>{{ summary.trim() }}</span>
+                }
               </div>
               <div class="invite-summary-actions">
                 @if (users.counts().invalid > 0 || users.counts().duplicate > 0) {

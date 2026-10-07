@@ -122,12 +122,19 @@
   display: flex;
   flex: 0 0 auto;
   flex-wrap: nowrap;
-  gap: rhythm(3);
+  gap: rhythm(2);
 }
 
 .invite-summary {
+  align-items: center;
   color: $color-neutral-regular;
+  display: flex;
+  gap: rhythm(1);
   white-space: nowrap;
+}
+
+.summary-separator {
+  font-weight: $font-weight-bold;
 }
 
 .invite-hint {
@@ -228,6 +235,7 @@
   }
 
   .invite-summary {
+    flex-wrap: wrap;
     white-space: normal;
   }
 
