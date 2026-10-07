@@ -39,6 +39,9 @@
               <pa-chip-closeable
                 role="listitem"
                 [ngClass]="inviteEntryStatusClass(entry.status)"
+                [class.chip-duplicate]="entry.status === 'duplicate'"
+                [backgroundColor]="entry.status === 'duplicate' ? 'var(--color-secondary-lightest)' : ''"
+                [textColor]="entry.status === 'duplicate' ? 'var(--color-secondary-stronger)' : ''"
                 [disabled]="users.inviteInProgress()"
                 [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
                 (closed)="users.removeEntryByIndex($index)">
@@ -80,24 +83,23 @@
                 aria-live="polite">
                 {{ 'stash.users.validation_summary' | translate: users.counts() }}
               </div>
-              <button
-                type="button"
-                class="clear-button"
-                (click)="users.clearAllEntries()">
-                {{ 'generic.clear_all' | translate }}
-              </button>
-            </div>
-            @if (users.counts().invalid > 0 || users.counts().duplicate > 0) {
-              <div class="invite-hint invite-hint-error hint-with-action">
-                {{ 'stash.users.fix_invalid_hint' | translate }}
+              <div class="invite-summary-actions">
+                @if (users.counts().invalid > 0 || users.counts().duplicate > 0) {
+                  <button
+                    type="button"
+                    class="clear-button invite-hint-error"
+                    (click)="users.clearBlockingEntries()">
+                    {{ 'stash.users.clear_invalid' | translate }}
+                  </button>
+                }
                 <button
                   type="button"
                   class="clear-button"
-                  (click)="users.clearBlockingEntries()">
-                  {{ 'stash.users.clear_invalid' | translate }}
+                  (click)="users.clearAllEntries()">
+                  {{ 'generic.clear_all' | translate }}
                 </button>
               </div>
-            }
+            </div>
             @if (users.counts().failed > 0) {
               <div class="invite-hint">
                 {{ 'stash.users.retry_failed_hint' | translate: { count: users.counts().failed } }}
