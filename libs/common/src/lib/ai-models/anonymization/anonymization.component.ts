@@ -4,41 +4,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { filter, forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, Observable, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
-import { Zone } from '@flaps/core';
-
-interface Project {
-  account_id: string;
-  project_id: string;
-  name: string;
-  description?: string;
-  created_datetime: string;
-  updated_datetime: string;
-}
-
-interface ZoneSummary {
-  id: string;
-  slug: string;
-  account: string | null;
-  title: string;
-  created: string;
-  modified: string | null;
-  '@id': string;
-  cloud_provider: 'AWS' | 'GCP';
-  private: boolean;
-  origin: string | null;
-}
-
-interface Projects {
-  data: Project[];
-  total: number;
-}
-
-interface ProjectDetails extends Project {
-  zone: Zone;
-}
 
 @Component({
   selector: 'stf-anonymization',
@@ -80,57 +48,6 @@ export class AnonymizationComponent extends LearningConfigurationDirective {
         this.cdr.markForCheck();
       });
     }
-  }
-
-  constructor() {
-    super();
-    this.sdk.currentAccount
-      .pipe(
-        take(1),
-        switchMap((account) => this.getProjects(account.id)),
-      )
-      .subscribe((projects) => {
-        console.log('Projects fetched:');
-        console.log(projects);
-      });
-  }
-
-  getZoneDict(): Observable<{ [zoneId: string]: Zone }> {
-    return this.sdk.currentAccount.pipe(
-      take(1),
-      switchMap((account) => {
-        return this.sdk.nuclia.rest.get<Zone[]>(`/zones`).pipe(
-          map((zones) =>
-            zones.reduce(
-              (map, zone) => {
-                map[zone.id] = zone;
-                return map;
-              },
-              {} as { [zoneId: string]: Zone },
-            ),
-          ),
-        );
-      }),
-    );
-  }
-
-  getProjects(accountId: string): Observable<ProjectDetails[]> {
-    return this.getZoneDict().pipe(
-      take(1),
-      switchMap((zones) =>
-        forkJoin(
-          Object.values(zones).map((zone) =>
-            this.sdk.nuclia.rest
-              .get<Projects>(`/dataplatform/${accountId}/projects`, undefined, undefined, zone.slug)
-              .pipe(
-                map((projects) => projects.data.map((project) => ({ ...project, zone }))),
-                catchError(() => of([])),
-              ),
-          ),
-        ),
-      ),
-      map((projects) => projects.flat()),
-    );
   }
 
   protected save() {
