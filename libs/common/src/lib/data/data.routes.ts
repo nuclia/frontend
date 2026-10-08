@@ -8,6 +8,11 @@ export const DATA_ROUTES: Routes = [
     component: DataPageComponent,
     children: [
       {
+        path: '',
+        redirectTo: 'resources',
+        pathMatch: 'full',
+      },
+      {
         path: 'resources',
         loadChildren: () => RESOURCE_ROUTES,
       },
