@@ -136,16 +136,16 @@
         }
 
         <div class="paste-emails-row">
-          <pa-textarea
-            class="email-input"
+          <nsi-expandable-textarea
             formControlName="bulkInput"
             [rows]="2"
             [placeholder]="'stash.users.bulk_input_placeholder' | translate"
+            [modalTitle]="'stash.users.bulk_input_label' | translate"
             [help]="'stash.users.bulk_input_hint' | translate"
-            [resizable]="false"
+            resizable
             (keydown)="handleTextareaKeydown($event)">
             {{ 'stash.users.bulk_input_label' | translate }}
-          </pa-textarea>
+          </nsi-expandable-textarea>
           <pa-button
             type="button"
             kind="primary"
@@ -164,6 +164,12 @@
         }
       </div>
     </form>
+  </div>
+} @else {
+  <div class="invite-header">
+    <div class="invite-heading">
+      <h2 class="display-s">{{ 'generic.users' | translate }}</h2>
+    </div>
   </div>
 }
 

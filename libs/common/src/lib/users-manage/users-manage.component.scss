@@ -1,9 +1,4 @@
 @use 'apps/dashboard/src/variables' as *;
-@use '../../../../sistema/theme/tokens/textfield.tokens' as textfield;
-
-:host ::ng-deep .email-input .pa-field-textarea {
-  height: calc((#{textfield.$line-height-field-control} * 2 + #{textfield.$padding-field-control-top} * 2) * 1.25);
-}
 
 .invite-header {
   align-items: flex-start;
