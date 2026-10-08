@@ -111,6 +111,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@schematics/angular": "22.1.7",
     "@spartan-ng/cli": "^1.4.1",
+    "@storybook/addon-docs": "^10.6.0",
     "@storybook/angular": "^10.5.0",
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/package": "^2.0.0",
