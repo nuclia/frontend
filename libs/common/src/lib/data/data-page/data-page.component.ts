@@ -23,9 +23,9 @@ import { BadgeComponent } from '@nuclia/sistema';
   styleUrl: './data-page.component.scss',
 })
 export class DataPageComponent {
-  private elementRef = inject(ElementRef<HTMLElement>);
-  private features = inject(FeaturesService);
-  private uploadService = inject(UploadService);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly features = inject(FeaturesService);
+  private readonly uploadService = inject(UploadService);
 
   isAgenticSearchEnabled = toSignal(this.features.unstable.agenticSearch, { initialValue: false });
 
