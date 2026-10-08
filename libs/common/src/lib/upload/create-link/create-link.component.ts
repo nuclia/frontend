@@ -1,7 +1,14 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, LabelModule, SDKService } from '@flaps/core';
+import {
+  ExtractionSelectComponent,
+  FeaturesService,
+  LabelModule,
+  PENDING_RESOURCES_LIMIT,
+  SDKService,
+  UploadService,
+} from '@flaps/core';
 import {
   IErrorMessages,
   ModalRef,
@@ -17,9 +24,6 @@ import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/si
 import { catchError, Observable, switchMap, take } from 'rxjs';
 import { parseCsvLabels } from '../csv-parser';
 import { CsvSelectComponent } from '../csv-select/csv-select.component';
-import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
-import { UploadService } from '../upload.service';
-import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
 interface Row {
   link: string;

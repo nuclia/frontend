@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IConnector, ISyncEntity, LogEntity, LogSeverityLevel, SyncItem, SyncService } from '../logic';
+import { NavigationService, ResourceHandlingBannerComponent, SDKService, UploadEventService } from '@flaps/core';
+import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Job } from '@nuclia/core';
+import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import {
   combineLatest,
   EMPTY,
@@ -20,13 +22,10 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { SyncSettingsComponent } from './sync-settings';
 import { ConfigurationFormComponent } from '../configuration-form';
-import { NavigationService, SDKService, UploadEventService } from '@flaps/core';
-import { Job } from '@nuclia/core';
+import { IConnector, ISyncEntity, LogEntity, LogSeverityLevel, SyncItem, SyncService } from '../logic';
 import { getCloudSyncOptionsPayload, SyncOptions, SyncOptionsFormComponent } from '../sync-options-form';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ResourceHandlingBannerComponent } from '@flaps/common';
+import { SyncSettingsComponent } from './sync-settings';
 
 @Component({
   selector: 'nsy-sync-details-page',

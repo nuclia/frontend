@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
-import { searchResources, UploadService } from '@flaps/common';
-import { NavigationService, NotificationService, SDKService } from '@flaps/core';
+import { NavigationService, NotificationService, SDKService, searchResources, UploadService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -52,6 +52,7 @@ export class LastResourcesComponent implements OnInit {
       return url;
     }),
   );
+  resourceListUrl = toSignal(this.navigationService.getResourceListUrl());
   selectedResourcesTab: 'processed' | 'pending' = 'processed';
   statusChanged = combineLatest([
     this.uploadService.refreshNeeded.pipe(startWith(true)),

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, of, tap } from 'rxjs';
 import {
+  cloneDeep,
   getConversationParagraphs,
   getParagraphsWithClassifications,
   getTotalMessagePages,
   ParagraphWithText,
-} from './edit-resource.helpers';
+} from '@flaps/core';
 import {
   ConversationField,
   FIELD_TYPE,
@@ -17,7 +17,7 @@ import {
   ResourceFieldProperties,
   Search,
 } from '@nuclia/core';
-import { cloneDeep } from '@flaps/core';
+import { BehaviorSubject, combineLatest, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

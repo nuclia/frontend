@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
-import { ModalConfig, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { FilterExpressionModalComponent } from '@flaps/common';
+import { FilterExpressionModalComponent, SDKService } from '@flaps/core';
+import { ModalConfig, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { FilterExpression } from '@nuclia/core';
+import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, map, take } from 'rxjs';
 import { SourceFormDirective } from '../source-form.directive';
-import { SDKService } from '@flaps/core';
-import { FilterExpression } from '@nuclia/core';
 
 @Component({
   selector: 'nsy-nucliadb-source',

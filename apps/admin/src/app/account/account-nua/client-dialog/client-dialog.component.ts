@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HintComponent } from '@flaps/common';
 import {
   BillingService,
   FeaturesService,
+  HintComponent,
   SDKService,
   UnauthorizedFeatureDirective,
   UserService,

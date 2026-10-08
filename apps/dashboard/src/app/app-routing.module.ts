@@ -9,6 +9,7 @@ import {
   awsGuard,
   AwsOnboardingComponent,
   BaseComponent,
+  contextBoxModeGuard,
   DashboardLayoutComponent,
   DriversPageComponent,
   EditResourceComponent,
@@ -41,7 +42,6 @@ import {
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
-  contextBoxModeGuard,
   WorkflowsComponent,
   WorkflowsListComponent,
 } from '@flaps/common';
@@ -104,21 +104,12 @@ const routes: Routes = [
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.ContextBoxPageModule),
               },
               {
-                path: 'upload',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.UploadModule),
-              },
-              {
-                path: 'resources',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.RESOURCE_ROUTES),
+                path: 'data',
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.DATA_ROUTES),
               },
               {
                 path: 'search',
                 component: SearchPageComponent,
-              },
-              {
-                path: 'sync',
-                // eslint-disable-next-line @nx/enforce-module-boundaries
-                loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then((m) => m.SYNC_ROUTES),
               },
               {
                 path: 'metrics',

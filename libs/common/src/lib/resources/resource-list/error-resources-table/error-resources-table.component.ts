@@ -1,5 +1,6 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ColumnHeader, UploadService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -11,8 +12,6 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { SpinnerComponent, StickyFooterComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
-import { UploadService } from '../../../upload/upload.service';
-import { ColumnHeader } from '../resource-list.model';
 import { COMMON_COLUMNS, ResourcesTableDirective } from '../resources-table.directive';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 import { TitleCellComponent } from '../title-cell/title-cell.component';

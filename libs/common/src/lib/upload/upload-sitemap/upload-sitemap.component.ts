@@ -1,7 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FeaturesService, LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
+import {
+  ExtractionSelectComponent,
+  FeaturesService,
+  LabelModule,
+  ParametersTableComponent,
+  PENDING_RESOURCES_LIMIT,
+  SDKService,
+  UploadService,
+} from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -16,9 +24,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Classification } from '@nuclia/core';
 import { InfoCardComponent, SpinnerComponent } from '@nuclia/sistema';
 import { catchError, defer, from, map, of, switchMap, take } from 'rxjs';
-import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
-import { UploadService } from '../upload.service';
-import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 import { SitemapSelectComponent } from './sitemap-select/sitemap-select.component';
 
 @Component({

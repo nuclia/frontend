@@ -1,0 +1,516 @@
+import { inject, Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+
+import { TranslateService } from '@ngx-translate/core';
+import {
+  AnyFieldData,
+  Classification,
+  CloudLink,
+  ExtractedDataTypes,
+  FIELD_TYPE,
+  FieldId,
+  FileFieldData,
+  getDataKeyFromFieldType,
+  IFieldData,
+  LinkField,
+  Paragraph,
+  Resource,
+  ResourceData,
+  ResourceField,
+  ResourceFieldProperties,
+  ResourceProperties,
+  Session,
+  TextField,
+  UserClassification,
+} from '@nuclia/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
+import { FeaturesService } from '../analytics';
+import { SDKService } from '../api';
+import { generatedEntitiesColor, getNerFamilyTitle } from '../models/ner.model';
+import { NavigationService } from '../services/navigation.service';
+import {
+  addEntitiesToGroups,
+  EditResourceView,
+  EntityGroup,
+  getClassificationsPayload,
+  getCustomEntities,
+  getNamedEntities,
+  getParagraphId,
+  Thumbnail,
+} from './edit-resource.helpers';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EditResourceService {
+  private sdk = inject(SDKService);
+  private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
+  private navigation = inject(NavigationService);
+  private sanitizer = inject(DomSanitizer);
+  private features = inject(FeaturesService);
+
+  private _resource = new BehaviorSubject<Resource | null>(null);
+  private _currentView = new BehaviorSubject<EditResourceView | null>(null);
+  private _currentField = new BehaviorSubject<FieldId | 'resource'>('resource');
+  private _loadingField = new BehaviorSubject<boolean>(false);
+
+  currentView: Observable<EditResourceView | null> = this._currentView.asObservable();
+  currentField: Observable<FieldId | 'resource'> = this._currentField.asObservable();
+  resource: Observable<Resource | null> = this._resource.asObservable();
+  loadingField: Observable<boolean> = this._loadingField.asObservable();
+
+  fieldExtractedData: Observable<IFieldData | null> = combineLatest([
+    this.resource.pipe(distinctUntilChanged((prev, curr) => prev === curr || prev?.id === curr?.id)),
+    this.currentField.pipe(
+      distinctUntilChanged(
+        (prev, curr) =>
+          prev === curr || (prev !== 'resource' && curr !== 'resource' && prev.field_id === curr.field_id),
+      ),
+    ),
+  ]).pipe(
+    switchMap(([resource, field]) => {
+      if (!resource || field === 'resource') {
+        this._loadingField.next(false);
+        return of(null);
+      }
+      this._loadingField.next(true);
+      return resource
+        .getField(
+          field.field_type,
+          field.field_id,
+          [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
+          [
+            ExtractedDataTypes.TEXT,
+            ExtractedDataTypes.METADATA,
+            ExtractedDataTypes.LINK,
+            ExtractedDataTypes.FILE,
+            ExtractedDataTypes.QUESTION_ANSWERS,
+          ],
+        )
+        .pipe(
+          catchError(() => {
+            this._loadingField.next(false);
+            return of(null);
+          }),
+          tap(() => {
+            this._loadingField.next(false);
+          }),
+        );
+    }),
+    shareReplay(1),
+  );
+  fields: Observable<ResourceField[]> = this.resource.pipe(
+    map((resource) =>
+      Object.entries(resource?.data || {}).reduce((list, [type, dict]) => {
+        if (!dict) {
+          return list;
+        }
+        return list.concat(
+          Object.entries(dict)
+            // Filter out session info field when the resource is a session (as this field is directly managed by the session preview)
+            .filter(([fieldId]) => !this.isSession || fieldId !== 'info')
+            .map(([fieldId, field]) => ({
+              ...field,
+              field_id: fieldId,
+              field_type: type.slice(0, -1), // remove the `s` from resource.data property
+            })),
+        );
+      }, [] as ResourceField[]),
+    ),
+  );
+  kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
+  );
+  extractStrategies = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getExtractStrategies()),
+    shareReplay(1),
+  );
+  splitStrategies = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getSplitStrategies()),
+    shareReplay(1),
+  );
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
+  isSession = false;
+
+  loadSession(sessionId: string): Observable<Session> {
+    this.isSession = true;
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) =>
+        arag.getSession(sessionId).pipe(map((session) => new Session(this.sdk.nuclia, arag.id, session))),
+      ),
+      tap((session) => this._resource.next(session)),
+    );
+  }
+
+  loadResource(resourceId: string): Observable<Resource> {
+    this.isSession = false;
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.getResource(
+          resourceId,
+          [
+            ResourceProperties.BASIC,
+            ResourceProperties.ORIGIN,
+            ResourceProperties.EXTRA,
+            ResourceProperties.RELATIONS,
+            ResourceProperties.VALUES,
+            ResourceProperties.ERRORS,
+            ResourceProperties.SECURITY,
+            ResourceProperties.EXTRACTED,
+          ],
+          // File extracted data is retrived to display all thumbnails.
+          // All other extracted data is lazy loaded in "fieldExtractedData" to improve performance
+          [ExtractedDataTypes.FILE],
+        ),
+      ),
+      tap((resource) => this._resource.next(resource)),
+    );
+  }
+
+  loadResourceEntities(): Observable<EntityGroup[]> {
+    return combineLatest([
+      this.fieldExtractedData.pipe(filter((fieldData) => !!fieldData)),
+      this.sdk.currentKb.pipe(switchMap((kb) => kb.getEntities())),
+    ]).pipe(
+      map(([fieldData, allEntities]) => {
+        const allGroups: EntityGroup[] = Object.entries(allEntities)
+          .map(([groupId, group]) => {
+            const generatedColor = generatedEntitiesColor[groupId];
+            return {
+              id: groupId,
+              title: getNerFamilyTitle(groupId, group, this.translate),
+              color: group.color || generatedColor || '#c4c4c4',
+              entities: [],
+              custom: group.custom,
+            };
+          })
+          .sort((a, b) => a.title.localeCompare(b.title));
+
+        addEntitiesToGroups(allGroups, getNamedEntities(fieldData));
+        addEntitiesToGroups(allGroups, getCustomEntities(fieldData));
+        allGroups.forEach((group) => {
+          group.entities = group.entities.toSorted((a, b) => a.localeCompare(b));
+        });
+        return allGroups;
+      }),
+    );
+  }
+
+  getField(fieldType: keyof ResourceData, fieldId: string): Observable<AnyFieldData> {
+    return this.resource.pipe(
+      filter((resource) => !!resource),
+      map((resource) => resource as Resource),
+      map((resource) => resource.data[fieldType]?.[fieldId] || {}),
+    );
+  }
+
+  savePartialResource(partialResource: Partial<Resource>, showSuccessToast = true): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+    return forkJoin([
+      currentResource.modify(partialResource),
+      this.sdk.currentKb.pipe(
+        take(1),
+        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, ...partialResource }))),
+      ),
+    ]).pipe(
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => {
+        if (showSuccessToast) {
+          this.toaster.success('resource.save-successful');
+        }
+      }),
+    );
+  }
+
+  setCurrentView(view: EditResourceView) {
+    this._currentView.next(view);
+  }
+
+  setCurrentField(field: FieldId | 'resource') {
+    this._currentField.next(field);
+  }
+
+  reset() {
+    this._resource.next(null);
+    this._currentView.next(null);
+    this._currentField.next('resource');
+    this._loadingField.next(false);
+  }
+
+  getClassificationsPayload(labels: Classification[]): UserClassification[] {
+    if (!this._resource.value) {
+      return [];
+    }
+    return getClassificationsPayload(this._resource.value, labels);
+  }
+
+  addField(fieldType: FIELD_TYPE, fieldId: string, fieldData: TextField | LinkField): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const dataKey = getDataKeyFromFieldType(fieldType);
+    const resourceData: ResourceData = dataKey
+      ? {
+          ...currentResource.data,
+          [dataKey]: {
+            ...currentResource.data[dataKey],
+            [fieldId]: {
+              value: fieldData,
+            },
+          },
+        }
+      : currentResource.data;
+    return this.setField(
+      currentResource,
+      fieldType,
+      fieldId,
+      fieldData,
+      resourceData,
+      'resource.field.addition-successful',
+    );
+  }
+
+  addFile(fieldId: string, file: File): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const dataKey = getDataKeyFromFieldType(FIELD_TYPE.file);
+    const updatedData: ResourceData = dataKey
+      ? {
+          ...currentResource.data,
+          [dataKey]: {
+            ...currentResource.data[dataKey],
+            [fieldId]: this.getFileFieldData(file),
+          },
+        }
+      : currentResource.data;
+    return currentResource.upload(fieldId, file).pipe(
+      switchMap(() => this.sdk.currentKb.pipe(take(1))),
+      tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => this.toaster.success('resource.field.update-successful')),
+    );
+  }
+
+  updateField(fieldType: FIELD_TYPE, fieldId: string, fieldData: TextField | LinkField): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const resourceData: ResourceData = this.getUpdatedData(fieldType, currentResource.data, (fields, [id, field]) => {
+      if (id === fieldId) {
+        fields[id] = {
+          value: fieldData,
+        };
+      } else {
+        fields[id] = field;
+      }
+      return fields;
+    });
+    return this.setField(
+      currentResource,
+      fieldType,
+      fieldId,
+      fieldData,
+      resourceData,
+      'resource.field.update-successful',
+    );
+  }
+
+  private setField(
+    currentResource: Resource,
+    fieldType: FIELD_TYPE,
+    fieldId: string,
+    fieldData: TextField | LinkField,
+    resourceData: ResourceData,
+    successMessage: string,
+  ) {
+    return forkJoin([
+      currentResource.setField(fieldType, fieldId, fieldData),
+      this.sdk.currentKb.pipe(
+        take(1),
+        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: resourceData }))),
+      ),
+    ]).pipe(
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => this.toaster.success(successMessage)),
+    );
+  }
+
+  updateFile(fieldId: string, file: File): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const updatedData: ResourceData = this.getUpdatedData(
+      FIELD_TYPE.file,
+      currentResource.data,
+      (fields, [id, field]) => {
+        if (id === fieldId) {
+          fields[id] = this.getFileFieldData(file);
+        } else {
+          fields[id] = field;
+        }
+        return fields;
+      },
+    );
+    return currentResource.deleteField(FIELD_TYPE.file, fieldId).pipe(
+      switchMap(() => currentResource.upload(fieldId, file)),
+      switchMap(() => this.sdk.currentKb.pipe(take(1))),
+      tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => this.toaster.success('resource.field.update-successful')),
+    );
+  }
+
+  confirmAndDelete(fieldType: FIELD_TYPE, fieldId: string): Observable<boolean> {
+    return this.modalService
+      .openConfirm({
+        title: this.translate.instant('resource.field.delete-confirm-title', {
+          type: this.translate.instant(`resource.field-${fieldType}`),
+        }),
+        confirmLabel: 'generic.delete',
+        description: this.translate.instant('resource.field.delete-confirm-description', {
+          type: this.translate.instant(`resource.field-${fieldType}`),
+        }),
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.deleteField(fieldType, fieldId)),
+        map((done) => done !== null),
+      );
+  }
+
+  getParagraphId(field: FieldId, paragraph: Paragraph): string {
+    const resource = this._resource.getValue();
+    return resource ? getParagraphId(resource.id, field, paragraph) : '';
+  }
+
+  private deleteField(fieldType: FIELD_TYPE, fieldId: string): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const updatedData: ResourceData = this.getUpdatedData(fieldType, currentResource.data, (fields, [id, field]) => {
+      if (id !== fieldId) {
+        fields[id] = field;
+      }
+      return fields;
+    });
+    return forkJoin([
+      currentResource.deleteField(fieldType, fieldId),
+      this.sdk.currentKb.pipe(
+        take(1),
+        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
+      ),
+    ]).pipe(
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => this.toaster.success('resource.field.delete-successful')),
+    );
+  }
+
+  private getUpdatedData(
+    fieldType: FIELD_TYPE,
+    currentData: ResourceData,
+    reduceCallback: (previous: any, current: [string, any]) => ResourceData,
+  ): ResourceData {
+    const dataKey = getDataKeyFromFieldType(fieldType);
+    return dataKey
+      ? {
+          ...currentData,
+          [dataKey]: Object.entries(currentData[dataKey] || {}).reduce(
+            (acc, val) => reduceCallback(acc, val),
+            {} as any,
+          ),
+        }
+      : currentData;
+  }
+
+  private getFileFieldData(file: File): FileFieldData {
+    return {
+      value: {
+        file: {
+          filename: file.name,
+          content_type: file.type,
+          size: file.size,
+        },
+      },
+    };
+  }
+
+  getThumbnailsAndImages(resource: Resource): CloudLink[] {
+    // Thumbnail uploaded by user
+    const thumbnailFiles = resource
+      .getFields<FileFieldData>(['files'])
+      .filter((fileField) => fileField.value?.file?.content_type?.startsWith('image') && fileField.value?.file?.uri)
+      .map((fileField) => fileField.value?.file as CloudLink);
+    const extractedFileThumbnailUrl = new Set(
+      thumbnailFiles.map((cloudLink) => (cloudLink.uri || '').replace('/field', '/extracted/file_thumbnail')),
+    );
+    // thumbnail generated by the backend, excluding the ones generated on the thumbnail image uploaded by the user
+    const extractedThumbnails = resource
+      .getThumbnails()
+      .filter((cloudLink) => !!cloudLink.uri && !extractedFileThumbnailUrl.has(cloudLink.uri));
+
+    return thumbnailFiles.concat(extractedThumbnails);
+  }
+
+  getThumbnails(links: CloudLink[]): Observable<Thumbnail[]> {
+    return forkJoin(
+      links.map((thumbnail) =>
+        this.sdk.nuclia.rest.getObjectURL(thumbnail.uri!).pipe(
+          map((url) => ({
+            uri: thumbnail.uri as string,
+            blob: this.sanitizer.bypassSecurityTrustUrl(url),
+          })),
+        ),
+      ),
+    );
+  }
+}

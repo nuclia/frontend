@@ -49,8 +49,13 @@ apps/dashboard/src/app/
     /simple                → SimplePageModule (lazy) → SimplePageComponent
                              ├─ reader role  → ReaderExperienceComponent
                              └─ admin/contrib → SimpleKBComponent
-    /upload                → UploadModule (lazy)
-    /resources             → ResourcesModule (lazy)
+        /data                  → DATA_ROUTES (lazy) → DataPageComponent tab shell
+                  ├─ /resources       → RESOURCE_ROUTES (resource list, upload actions, editor)
+                  └─ /sync            → SYNC_ROUTES
+                    ├─ /           → SynchronizeComponent
+                    └─ /connect    → ConnectComponent
+                  The Resources, Synchronize, and Connect tabs are shown when
+                  `FeaturesService.unstable.agenticSearch` is enabled.
     /search                → SearchPageComponent
     /sync                  → SYNC_ROUTES (lazy)
     /entities              → EntitiesModule (lazy)
@@ -193,7 +198,7 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 3. **Shared ARAG code** — `AgentDashboardComponent` + all workflow code in `libs/common`. Dashboard-specific code: `app/` directory only.
 4. **Standalone-first** — components are standalone; a handful of `@NgModule`s remain only as route-grouping wrappers for lazy-loaded feature areas (e.g. `KnowledgeBoxModule`, `SimplePageModule`, `AppRoutingModule`) or to import legacy library modules — they no longer declare/wrap component logic.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
-6. **Lazy modules** — `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `ResourcesModule`, `TASK_AUTOMATION_ROUTES`, `UploadModule`, `WIDGETS_ROUTES`, `SimplePageModule`, `LabelSetsModule` — all re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module). Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
+6. **Lazy routes** — `DATA_ROUTES`, `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `TASK_AUTOMATION_ROUTES`, `WIDGETS_ROUTES`, `SimplePageModule`, and `LabelSetsModule` are re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. Resource listing and editing are child routes of `/data/resources`; upload actions are available there rather than through a separate `/upload` route. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module). Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
 7. **`/metrics` always loads `MetricsModule`** — the legacy REMI-only page and the `metricsDisabledGuard`/`metricsEnabledGuard` split were removed. `MetricsModule` is always loaded when the `/metrics` route is activated.
 8. **Activity logs live at `/metrics/detailed`** — `ActivityModule` (`libs/common/src/lib/metrics/activity/`) is lazy-loaded inside `MetricsModule` at the `detailed` child route. There is no standalone `/activity` route on the KB.
 9. **`/user/callbacks/saml` is temporary** — added for IDP-initiated SAML clients whose `RelayState` points here. Remove once those clients are updated to use the auth app's URL.

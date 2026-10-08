@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { STATUS_FACET } from '@flaps/common';
-import { SDKService } from '@flaps/core';
+import { SDKService, STATUS_FACET } from '@flaps/core';
 import { KBRoles, Nuclia } from '@nuclia/core';
 import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ZoneSummary } from '../manage-zones/zone.models';

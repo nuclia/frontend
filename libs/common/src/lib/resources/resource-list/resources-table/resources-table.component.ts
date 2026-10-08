@@ -1,6 +1,15 @@
 import { AsyncPipe, DatePipe, KeyValuePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnChanges, SimpleChanges } from '@angular/core';
-import { LabelModule, LabelsService } from '@flaps/core';
+import {
+  ColoredLabel,
+  ColumnHeader,
+  formatKeyValue,
+  LabelModule,
+  LabelsService,
+  mergeExistingAndNewLabels,
+  removeLabels,
+  UploadService,
+} from '@flaps/core';
 import {
   HeaderCell,
   PaButtonModule,
@@ -22,9 +31,6 @@ import {
 } from '@nuclia/sistema';
 import { catchError, combineLatest, defer, from, Observable, of, take, toArray } from 'rxjs';
 import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { UploadService } from '../../../upload/upload.service';
-import { formatKeyValue, mergeExistingAndNewLabels, removeLabels } from '../../edit-resource';
-import { ColoredLabel, ColumnHeader } from '../resource-list.model';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 import { TitleCellComponent } from '../title-cell/title-cell.component';

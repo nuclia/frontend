@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewChild, inje
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EditResourceService } from '@flaps/core';
 import {
   DatePickerComponent,
   ModalConfig,
@@ -17,7 +18,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { NsiSkeletonComponent, SisModalService, SisSearchInputComponent, SisToastService } from '@nuclia/sistema';
 import { catchError, delay, filter, forkJoin, of, switchMap, take } from 'rxjs';
-import { EditResourceService } from '../edit-resource';
 import { MemoryFactsModalComponent } from './memory-facts-modal/memory-facts-modal.component';
 import { MemoryTranscriptModalComponent } from './memory-transcript-modal/memory-transcript-modal.component';
 import { MemoryEntry, MemoryFact, MemorySessionInfo } from './memory.model';
