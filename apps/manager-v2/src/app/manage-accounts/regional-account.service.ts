@@ -322,7 +322,7 @@ export class RegionalAccountService {
   }
 
   getProjects(accountId: string): Observable<ProjectDetails[]> {
-    return this.zoneService.getZoneDict().pipe(
+    return this.zoneService.getAccountZonesDict(accountId).pipe(
       take(1),
       switchMap((zones) =>
         forkJoin(
@@ -341,7 +341,7 @@ export class RegionalAccountService {
   }
 
   getProject(accountId: string, projectId: string, zoneId: string): Observable<ProjectDetails> {
-    return this.zoneService.getZoneDict().pipe(
+    return this.zoneService.getAccountZonesDict(accountId).pipe(
       take(1),
       switchMap((zones) =>
         this.sdk.nuclia.rest
@@ -357,7 +357,7 @@ export class RegionalAccountService {
     zoneId: string,
     data: { name: string; description?: string },
   ): Observable<ProjectDetails> {
-    return this.zoneService.getZoneDict().pipe(
+    return this.zoneService.getAccountZonesDict(accountId).pipe(
       take(1),
       switchMap((zones) =>
         this.sdk.nuclia.rest
