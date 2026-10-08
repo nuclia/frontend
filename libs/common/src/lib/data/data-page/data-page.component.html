@@ -5,26 +5,26 @@
     </div>
     <div class="page-description">{{ 'data.page-description' | translate }}</div>
   </header>
-  @if (isAgenticSearchEnabled()) {
-    <pa-tabs notFullWidth>
-      <pa-tab
-        routerLink="resources"
-        routerLinkActive
-        #rla0="routerLinkActive"
-        [active]="rla0.isActive"
-        ariaControls="data-page-panel"
-        (click)="scrollUp()">
-        {{ 'data.tabs.resources' | translate }}
-      </pa-tab>
-      <pa-tab
-        routerLink="sync"
-        routerLinkActive
-        #rla1="routerLinkActive"
-        [active]="rla1.isActive"
-        ariaControls="data-page-panel"
-        (click)="scrollUp()">
-        {{ 'data.tabs.synchronize' | translate }}
-      </pa-tab>
+  <pa-tabs notFullWidth>
+    <pa-tab
+      routerLink="resources"
+      routerLinkActive
+      #rla0="routerLinkActive"
+      [active]="rla0.isActive"
+      ariaControls="data-page-panel"
+      (click)="scrollUp()">
+      {{ 'data.tabs.resources' | translate }}
+    </pa-tab>
+    <pa-tab
+      routerLink="sync"
+      routerLinkActive
+      #rla1="routerLinkActive"
+      [active]="rla1.isActive"
+      ariaControls="data-page-panel"
+      (click)="scrollUp()">
+      {{ 'data.tabs.synchronize' | translate }}
+    </pa-tab>
+    @if (isAgenticSearchEnabled()) {
       <pa-tab
         routerLink="sync/connect"
         routerLinkActive
@@ -37,8 +37,8 @@
           <nsi-badge kind="tertiary">BETA</nsi-badge>
         </div>
       </pa-tab>
-    </pa-tabs>
-  }
+    }
+  </pa-tabs>
 
   <div id="data-page-panel">
     <router-outlet></router-outlet>
