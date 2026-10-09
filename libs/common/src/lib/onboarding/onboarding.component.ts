@@ -56,7 +56,6 @@ export class OnboardingComponent implements OnInit {
 
   onboardingInquiryPayload?: OnboardingPayload;
   zone = '';
-  isCowork = false;
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
@@ -68,6 +67,10 @@ export class OnboardingComponent implements OnInit {
   inRaoApp = this.navigation.inRaoApp;
   showLogout = false;
   ready = false;
+
+  get isCowork() {
+    return this.account?.workflow === 'cowork';
+  }
 
   ngOnInit() {
     this.route.queryParams
@@ -128,14 +131,14 @@ export class OnboardingComponent implements OnInit {
     this.creatingAccount = true;
     return this.onboardingService.createAccount(data).pipe(
       take(1),
-      tap((account) => {
+      switchMap((account) => {
         this.account = account;
         this.creatingAccount = false;
+        this.cdr.markForCheck;
         // Register the new account in SDKService so zone-scoped API calls (e.g. zone list) work
-        this.sdk.setCurrentAccount(account.slug).pipe(take(1)).subscribe();
-        if (this.account.workflow === 'cowork') {
-          this.isCowork = true;
-        }
+        return this.sdk.setCurrentAccount(account.slug);
+      }),
+      tap(() => {
         this.onboardingService.nextStep();
       }),
       catchError((error) => {
@@ -162,13 +165,16 @@ export class OnboardingComponent implements OnInit {
   }
 
   storeWorkflowAndGoNext(workflow: WorkflowType) {
-    if (workflow === 'cowork') {
-      this.isCowork = true;
-    }
     this.onboardingService.setSteps(workflow);
-    this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
-      this.onboardingService.nextStep();
-    });
+    this.onboardingService
+      .modifyAccount(this.account?.slug || '', { workflow })
+      .pipe(switchMap(() => this.sdk.nuclia.db.getAccount(this.account?.slug || '')))
+      .subscribe((account) => {
+        this.account = account;
+        this.sdk.account = account;
+        this.cdr.markForCheck();
+        this.onboardingService.nextStep();
+      });
   }
 
   storeZoneAndGoNext(zone: string) {
