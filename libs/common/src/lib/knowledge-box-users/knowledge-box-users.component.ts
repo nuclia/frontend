@@ -13,7 +13,6 @@ import { UsersManageModule, UsersManageService } from '../users-manage';
       @if (contextBoxMode | async) {
         <nsi-back-button [link]="backLink | async">{{ 'generic.back_to_home' | translate }}</nsi-back-button>
       }
-      <h2 class="display-s">{{ 'navbar.users' | translate }}</h2>
       @if (kb | async; as kb) {
         <app-users-manage [kb]="kb"></app-users-manage>
       } @else {

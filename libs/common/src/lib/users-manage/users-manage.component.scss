@@ -1,21 +1,34 @@
 @use 'apps/dashboard/src/variables' as *;
 
-h3 {
-  margin-bottom: rhythm(2);
+.invite-header {
+  align-items: flex-start;
+  display: flex;
+  gap: rhythm(3);
+  justify-content: space-between;
+  margin-bottom: rhythm(3);
+}
+
+.invite-heading {
+  min-width: 0;
+
+  h2 {
+    margin-bottom: rhythm(1);
+  }
 }
 
 .invite-description {
   color: $color-neutral-regular;
   font-size: $font-size-body-m;
-  margin: 0 0 rhythm(2.5);
+  margin: 0;
 }
 
-.users-invite-form {
-  max-width: rhythm(90);
+.paste-emails-row,
+.warning {
+  max-width: rhythm(90) * 0.75;
 }
 
 .invite-form {
-  margin-bottom: rhythm(6);
+  margin-bottom: rhythm(4);
 }
 
 .paste-emails-row {
@@ -23,14 +36,19 @@ h3 {
   display: grid;
   gap: rhythm(1.5);
   grid-template-columns: 1fr auto;
-  margin-bottom: rhythm(3);
+  margin-bottom: rhythm(2);
+  margin-top: rhythm(4);
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
 .chips-list {
   display: flex;
   flex-wrap: wrap;
   gap: rhythm(1);
-  margin-top: rhythm(2);
+  margin-top: 0;
 }
 
 .chip-email {
@@ -47,26 +65,8 @@ h3 {
   text-transform: uppercase;
 }
 
-::ng-deep pa-chip-closeable.chip-error {
-  .pa-chip {
-    background: $color-secondary-lightest;
-    border: 2px solid $color-secondary-strong;
-  }
-
-  .chip-status {
-    color: $color-secondary-strong;
-  }
-}
-
-::ng-deep pa-chip-closeable.chip-warning {
-  .pa-chip {
-    background: $color-neutral-lighter;
-    border-color: $color-neutral-regular;
-  }
-
-  .chip-status {
-    color: $color-neutral-regular;
-  }
+:host ::ng-deep .chip-issue .pa-button:not(:disabled) {
+  color: $color-secondary-stronger;
 }
 
 .invite-progress {
@@ -98,22 +98,43 @@ h3 {
 .invite-summary-row {
   align-items: center;
   display: flex;
-  gap: rhythm(1);
-  margin-top: rhythm(2);
-  height: rhythm(5);
+  flex-wrap: wrap;
+  gap: rhythm(3);
+  margin-top: rhythm(1);
+  min-height: rhythm(3);
 
   .clear-button {
     color: $color-neutral-regular;
+
+    &.invite-hint-error {
+      color: $color-secondary-stronger;
+    }
   }
 }
 
+.invite-summary-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: rhythm(2);
+}
+
 .invite-summary {
+  align-items: center;
   color: $color-neutral-regular;
+  display: flex;
+  gap: rhythm(1);
+  white-space: nowrap;
+}
+
+.summary-separator {
+  font-weight: $font-weight-bold;
 }
 
 .invite-hint {
   color: $color-neutral-regular;
-  height: rhythm(5);
+  height: auto;
 
   .clear-button {
     color: $color-secondary-strong;
@@ -154,7 +175,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: rhythm(1.5);
-  margin-top: rhythm(2);
+  flex-shrink: 0;
 
   pa-select {
     min-width: rhythm(18);
@@ -190,6 +211,10 @@ h3 {
 }
 
 @media (max-width: $size-viewport-medium-max) {
+  .invite-header {
+    flex-direction: column;
+  }
+
   .paste-emails-row {
     grid-template-columns: 1fr;
   }
@@ -197,11 +222,22 @@ h3 {
   .invite-summary-row {
     align-items: flex-start;
     flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .invite-summary-actions {
+    flex-wrap: wrap;
+  }
+
+  .invite-summary {
+    flex-wrap: wrap;
+    white-space: normal;
   }
 
   .invite-actions-row {
     align-items: stretch;
     flex-direction: column;
+    width: 100%;
 
     pa-select {
       width: 100%;

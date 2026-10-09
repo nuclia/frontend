@@ -1,138 +1,175 @@
 @if (users.canAddUsers | async) {
   <div class="users-invite-form">
-    <h3>{{ 'stash.users.invite_users' | translate }}</h3>
-    <p class="invite-description">{{ 'stash.users.invite_users_description' | translate }}</p>
     <form
       class="invite-form"
       (ngSubmit)="users.sendInvites(addForm.value.role)"
       [formGroup]="addForm">
-      <div class="paste-emails-row">
-        <nsi-expandable-textarea
-          #bulkInputRef
-          formControlName="bulkInput"
-          [rows]="2"
-          [placeholder]="'stash.users.bulk_input_placeholder' | translate"
-          [modalTitle]="'stash.users.bulk_input_label' | translate"
-          [help]="'stash.users.bulk_input_hint' | translate"
-          resizable
-          (keydown)="handleTextareaKeydown($event)">
-          {{ 'stash.users.bulk_input_label' | translate }}
-        </nsi-expandable-textarea>
-        <pa-button
-          type="button"
-          [disabled]="!bulkInputValue.trim() || users.inviteInProgress()"
-          (click)="addBulkEmails()">
-          {{ 'stash.users.add_emails' | translate }}
-        </pa-button>
-      </div>
-
-      @if (users.hasInviteEntries()) {
-        <div
-          class="chips-list"
-          role="list">
-          @for (entry of users.visibleChips(); track entry.id) {
-            <pa-chip-closeable
-              role="listitem"
-              [ngClass]="inviteEntryStatusClass(entry.status)"
-              [disabled]="users.inviteInProgress()"
-              [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
-              (closed)="users.removeEntryByIndex($index)">
-              <span class="chip-email">{{ entry.email }}</span>
-              @if (entry.status !== 'valid') {
-                <span class="chip-status">{{ inviteEntryStatusLabel(entry.status) }}</span>
-              }
-            </pa-chip-closeable>
-          }
+      <div class="invite-header">
+        <div class="invite-heading">
+          <h2 class="display-s">{{ 'generic.users' | translate }}</h2>
+          <p class="invite-description">{{ 'stash.users.invite_users_description' | translate }}</p>
         </div>
-
-        @if (users.hiddenChipsCount() > 0 || users.showAllChips()) {
+        <div class="invite-actions-row">
+          <pa-select
+            formControlName="role"
+            label="{{ 'generic.role' | translate }}">
+            @for (role of roles; track role) {
+              <pa-option [value]="role">
+                {{ roleTitles[role] | translate }}
+              </pa-option>
+            }
+          </pa-select>
           <pa-button
-            class="show-hide-chips"
-            type="button"
-            kind="secondary"
-            aspect="basic"
-            size="small"
-            (click)="users.toggleShowAllChips()">
-            {{
-              (users.showAllChips() ? 'stash.users.show_less_emails' : 'stash.users.show_more_emails')
-                | translate: { count: users.hiddenChipsCount() }
-            }}
+            type="submit"
+            kind="primary"
+            iconAndText
+            [icon]="users.inviteInProgress() ? 'spinner' : ''"
+            [disabled]="users.sendInvitesDisabled()">
+            {{ 'stash.users.send_invites' | translate: { count: users.counts().ready } }}
           </pa-button>
-        }
-
-        @if (users.inviteInProgress()) {
-          <div
-            class="invite-progress"
-            aria-live="polite">
-            <span class="thinking-dots">
-              {{ 'stash.users.inviting_progress' | translate: users.inviteProgress() }}
-            </span>
-          </div>
-        } @else {
-          <div class="invite-summary-row">
-            <div
-              class="invite-summary"
-              aria-live="polite">
-              {{ 'stash.users.validation_summary' | translate: users.counts() }}
-            </div>
-            <button
-              type="button"
-              class="clear-button"
-              (click)="users.clearAllEntries()">
-              {{ 'generic.clear_all' | translate }}
-            </button>
-          </div>
-          @if (users.counts().invalid > 0 || users.counts().duplicate > 0) {
-            <div class="invite-hint invite-hint-error hint-with-action">
-              {{ 'stash.users.fix_invalid_hint' | translate }}
-              <button
-                type="button"
-                class="clear-button"
-                (click)="users.clearBlockingEntries()">
-                {{ 'stash.users.clear_invalid' | translate }}
-              </button>
-            </div>
-          }
-          @if (users.counts().failed > 0) {
-            <div class="invite-hint">
-              {{ 'stash.users.retry_failed_hint' | translate: { count: users.counts().failed } }}
-            </div>
-          }
-          @if (users.inviteError(); as err) {
-            <div class="invite-hint invite-hint-error">
-              {{ err.key | translate: err.params }}
-            </div>
-          }
-        }
-      }
-
-      <div class="invite-actions-row">
-        <pa-select
-          formControlName="role"
-          label="{{ 'generic.role' | translate }}">
-          @for (role of roles; track role) {
-            <pa-option [value]="role">
-              {{ roleTitles[role] | translate }}
-            </pa-option>
-          }
-        </pa-select>
-        <pa-button
-          type="submit"
-          kind="primary"
-          iconAndText
-          [icon]="users.inviteInProgress() ? 'spinner' : ''"
-          [disabled]="users.sendInvitesDisabled()">
-          {{ 'stash.users.send_invites' | translate: { count: users.counts().ready } }}
-        </pa-button>
+        </div>
       </div>
-      @if (users.showAccessWarning()) {
-        <nsi-info-card
-          type="warning"
-          class="warning">
-          {{ 'stash.users.access-warning' | translate }}
-        </nsi-info-card>
-      }
+
+      <div class="invite-emails">
+        @if (users.hasInviteEntries()) {
+          <div
+            class="chips-list"
+            role="list">
+            @for (entry of users.visibleChips(); track entry.id) {
+              <pa-chip-closeable
+                role="listitem"
+                [ngClass]="inviteEntryStatusClass(entry.status)"
+                [class.chip-issue]="
+                  entry.status === 'duplicate' || entry.status === 'invalid' || entry.status === 'failed'
+                "
+                [backgroundColor]="
+                  entry.status === 'duplicate' || entry.status === 'invalid' || entry.status === 'failed'
+                    ? 'var(--color-secondary-lightest)'
+                    : ''
+                "
+                [textColor]="
+                  entry.status === 'duplicate' || entry.status === 'invalid' || entry.status === 'failed'
+                    ? 'var(--color-secondary-stronger)'
+                    : ''
+                "
+                [disabled]="users.inviteInProgress()"
+                [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
+                (closed)="users.removeEntryByIndex($index)">
+                <span class="chip-email">{{ entry.email }}</span>
+                @if (entry.status !== 'valid') {
+                  <span class="chip-status">{{ inviteEntryStatusLabel(entry.status) }}</span>
+                }
+              </pa-chip-closeable>
+            }
+          </div>
+
+          @if (users.hiddenChipsCount() > 0 || users.showAllChips()) {
+            <pa-button
+              class="show-hide-chips"
+              type="button"
+              kind="secondary"
+              aspect="basic"
+              size="small"
+              (click)="users.toggleShowAllChips()">
+              {{
+                (users.showAllChips() ? 'stash.users.show_less_emails' : 'stash.users.show_more_emails')
+                  | translate: { count: users.hiddenChipsCount() }
+              }}
+            </pa-button>
+          }
+
+          @if (users.inviteInProgress()) {
+            <div
+              class="invite-progress"
+              aria-live="polite">
+              <span class="thinking-dots">
+                {{ 'stash.users.inviting_progress' | translate: users.inviteProgress() }}
+              </span>
+            </div>
+          } @else {
+            <div class="invite-summary-row">
+              <div
+                class="invite-summary"
+                aria-live="polite">
+                @for (
+                  summary of ('stash.users.validation_summary' | translate: users.counts()).split('·');
+                  track $index
+                ) {
+                  @if (!$first) {
+                    <span
+                      class="summary-separator"
+                      aria-hidden="true">
+                      ·
+                    </span>
+                  }
+                  <span>{{ summary.trim() }}</span>
+                }
+              </div>
+              <div class="invite-summary-actions">
+                @if (users.counts().invalid > 0 || users.counts().duplicate > 0) {
+                  <button
+                    type="button"
+                    class="clear-button invite-hint-error"
+                    (click)="users.clearBlockingEntries()">
+                    {{ 'stash.users.clear_invalid' | translate }}
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="clear-button"
+                  (click)="users.clearAllEntries()">
+                  {{ 'generic.clear_all' | translate }}
+                </button>
+              </div>
+            </div>
+            @if (users.counts().failed > 0) {
+              <div class="invite-hint">
+                {{ 'stash.users.retry_failed_hint' | translate: { count: users.counts().failed } }}
+              </div>
+            }
+            @if (users.inviteError(); as err) {
+              <div class="invite-hint invite-hint-error">
+                {{ err.key | translate: err.params }}
+              </div>
+            }
+          }
+        }
+
+        <div class="paste-emails-row">
+          <nsi-expandable-textarea
+            formControlName="bulkInput"
+            [rows]="2"
+            [placeholder]="'stash.users.bulk_input_placeholder' | translate"
+            [modalTitle]="'stash.users.bulk_input_label' | translate"
+            [help]="'stash.users.bulk_input_hint' | translate"
+            resizable
+            (keydown)="handleTextareaKeydown($event)">
+            {{ 'stash.users.bulk_input_label' | translate }}
+          </nsi-expandable-textarea>
+          <pa-button
+            type="button"
+            kind="primary"
+            aspect="basic"
+            [disabled]="!bulkInputValue.trim() || users.inviteInProgress()"
+            (click)="addBulkEmails()">
+            {{ 'stash.users.add_emails' | translate }}
+          </pa-button>
+        </div>
+        @if (users.showAccessWarning()) {
+          <nsi-info-card
+            type="warning"
+            class="warning">
+            {{ 'stash.users.access-warning' | translate }}
+          </nsi-info-card>
+        }
+      </div>
     </form>
+  </div>
+} @else {
+  <div class="invite-header">
+    <div class="invite-heading">
+      <h2 class="display-s">{{ 'generic.users' | translate }}</h2>
+    </div>
   </div>
 }
 
