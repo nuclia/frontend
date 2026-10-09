@@ -1,9 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterModule } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -23,11 +20,6 @@ describe('KbMoreActionsComponent', () => {
   let fixture: ComponentFixture<KbMoreActionsComponent>;
   let modalService: SisModalService;
 
-  const kb = {
-    id: 'kb-id',
-    slug: 'kb-slug',
-  } as unknown as WritableKnowledgeBox;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -40,17 +32,8 @@ describe('KbMoreActionsComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
         MockModule(PaPopupModule),
-        MockModule(RouterModule),
       ],
       providers: [
-        MockProvider(SDKService, {
-          currentKb: of(kb),
-          currentAccount: of({ id: 'account-id', slug: 'account-slug' } as unknown as Account),
-          nuclia: {} as unknown as SDKService['nuclia'],
-        }),
-        MockProvider(NavigationService, {
-          getKbUrl: (accountSlug: string, kbSlug: string) => `/at/${accountSlug}/${kbSlug}`,
-        }),
         MockProvider(SisModalService, {
           openModal: jest.fn(),
         }),
@@ -68,8 +51,12 @@ describe('KbMoreActionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should derive kbUrl from the current account and KB', () => {
-    expect(component.kbUrl()).toBe('/at/account-slug/kb-slug');
+  it('should show only developer integrations and test page options without a settings link', () => {
+    const options: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('pa-option');
+    expect(options).toHaveLength(2);
+    expect(options[0].textContent).toContain(EN['home.developer-integrate.title']);
+    expect(options[1].textContent).toContain(EN['dashboard-home.kb-details.test-page']);
+    expect(fixture.nativeElement.querySelector('[routerLink], a')).toBeNull();
   });
 
   it('should show the more actions trigger button', () => {
