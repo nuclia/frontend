@@ -36,6 +36,12 @@ nsi-search-input {
   max-width: rhythm(50);
 }
 
+.text-and-icon {
+  display: flex;
+  align-items: center;
+  gap: rhythm(0.5);
+}
+
 .extension {
   margin-left: rhythm(1);
 }

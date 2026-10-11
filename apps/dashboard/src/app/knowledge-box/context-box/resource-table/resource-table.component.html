@@ -76,7 +76,7 @@
           </span>
         </pa-table-cell>
         <pa-table-cell>
-          <span class="body-s">
+          <span class="body-s text-and-icon">
             @if (row.sourceConnector === 'sharefile') {
               <pa-icon
                 name="upload-cloud"
@@ -95,7 +95,7 @@
         </pa-table-cell>
         <pa-table-cell>
           @if (row.status === RESOURCE_STATUS.PROCESSED) {
-            <span class="title-xxs success">
+            <span class="title-xxs success text-and-icon">
               {{ 'context-box.ready' | translate }}
               <pa-icon
                 name="check"
