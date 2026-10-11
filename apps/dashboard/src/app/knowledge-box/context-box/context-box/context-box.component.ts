@@ -84,6 +84,7 @@ export class ContextBoxComponent implements OnDestroy {
   private features = inject(FeaturesService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   logs = new Subject<any>();
@@ -352,7 +353,10 @@ export class ContextBoxComponent implements OnDestroy {
           this.toaster.error(this.translate.instant('context-box.sharefile.connect-error'));
           return of(undefined);
         }),
-        finalize(() => this.router.navigate(['..'], { relativeTo: this.route })),
+        finalize(() => {
+          // Remove externalConnection without reloading the component
+          this.location.replaceState(this.router.createUrlTree(['..'], { relativeTo: this.route }).toString());
+        }),
       )
       .subscribe((sync) => {
         if (sync) {
