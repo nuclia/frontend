@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -362,6 +362,7 @@ export class ContextBoxComponent implements OnDestroy {
         if (sync) {
           this.toaster.success(this.translate.instant('context-box.sharefile.connect-success'));
           this.contextBoxService.forceRefresh();
+          this.shareFileService.refreshWhileSyncing(sync.id);
           if (this.step() === 1) {
             this.step.set(2);
           }

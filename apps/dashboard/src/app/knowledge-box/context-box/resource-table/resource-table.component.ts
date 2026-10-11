@@ -10,6 +10,7 @@ import {
   NsiSkeletonComponent,
   SisModalService,
   SisSearchInputComponent,
+  SpinnerComponent,
   StandaloneMimeIconPipe,
   StickyFooterComponent,
 } from '@nuclia/sistema';
@@ -47,6 +48,7 @@ interface TableRow {
     TranslatePipe,
     StandaloneMimeIconPipe,
     TablePaginationComponent,
+    SpinnerComponent,
     StickyFooterComponent,
     SisSearchInputComponent,
   ],
@@ -61,6 +63,7 @@ export class ResourceTableComponent {
   columns = ['file', 'type', 'status', 'date-added', 'delete'];
   RESOURCE_STATUS = RESOURCE_STATUS;
   pageSizes = PAGE_SIZES;
+  syncing = this.shareFileService.syncing;
 
   skeletonRows = computed(() => new Array(this.resourceTableService.pageSize()));
 

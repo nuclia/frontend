@@ -771,6 +771,7 @@
 	"context-box.upload-from-computer": "Depuis votre ordinateur",
 	"context-box.upload-from-sharefile": "Depuis ShareFile",
 	"context-box.uploading": "Téléchargement...",
+	"context-box.uploading-sharefile": "Téléversement des fichiers ShareFile...",
 	"context-box.your-resources": "Vos ressources",
 	"dashboard-home.blocked.generative": "Votre quota de réponses génératives a été atteint",
 	"dashboard-home.blocked.title": "Vous devez mettre à jour votre compte",

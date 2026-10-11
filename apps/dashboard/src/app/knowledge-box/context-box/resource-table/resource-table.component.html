@@ -1,3 +1,9 @@
+@if (syncing()) {
+  <div class="syncing">
+    <nsi-spinner size="small"></nsi-spinner>
+    <div class="body-m">{{ 'context-box.uploading-sharefile' | translate }}</div>
+  </div>
+}
 <div class="search-bar">
   <nsi-search-input
     icon="search"

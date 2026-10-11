@@ -3,7 +3,7 @@ import { SDKService } from '@flaps/core';
 import { ExternalConnection, NucliaDBConfig, SyncConfig, SyncConfiguration, SyncDriver } from '@nuclia/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ISyncEntity, SyncService } from '@nuclia/sync';
-import { catchError, combineLatest, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { catchError, combineLatest, filter, map, Observable, of, repeat, switchMap, take, tap, throwError } from 'rxjs';
 import { ContextBoxService } from './context-box.service';
 
 const SHAREFILE_CONNECTOR_ID = 'sharefile';
@@ -20,6 +20,9 @@ export class ContextBoxShareFileService {
 
   private _connectedSource = signal<ISyncEntity | null | undefined>(undefined);
   connectedSource = this._connectedSource.asReadonly();
+
+  private _syncing = signal<boolean>(false);
+  syncing = this._syncing.asReadonly();
 
   constructor() {
     this.loadConnectedSource();
@@ -76,6 +79,31 @@ export class ContextBoxShareFileService {
     return this.removeShareFileFromAgentWorkflow().pipe(
       switchMap(() => this.syncService.deleteSync(syncId)),
       tap(() => this._connectedSource.set(null)),
+    );
+  }
+
+  refreshWhileSyncing(syncId: string) {
+    this._syncing.set(true);
+    return this.isSyncRunning(syncId)
+      .pipe(
+        repeat({ delay: 10000 }),
+        tap(() => this.contextBoxService.forceRefresh()),
+        catchError(() => of(false)),
+        filter((isRunning) => !isRunning),
+        take(1),
+      )
+      .subscribe(() => {
+        this._syncing.set(false);
+      });
+  }
+
+  private isSyncRunning(syncId: string): Observable<boolean> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => {
+        return kb.syncManager.getConfigJobs(syncId);
+      }),
+      map((jobs) => ['pending', 'in_progress'].includes(jobs.items[0].status || '')),
     );
   }
 
