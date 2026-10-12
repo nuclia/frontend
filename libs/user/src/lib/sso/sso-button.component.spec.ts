@@ -32,7 +32,7 @@ describe('SsoButtonComponent', () => {
           get: jest.fn((key) => of(`translate--${key}`)),
           onTranslationChange: new EventEmitter(),
           onLangChange: new EventEmitter(),
-          onDefaultLangChange: new EventEmitter(),
+          onFallbackLangChange: new EventEmitter(),
         }),
       ],
     }).compileComponents();

@@ -31,7 +31,7 @@ export class PreviewService {
         backend="${this.backendConfig.getAPIURL()}"
         state="${kb.state || ''}"
         account="${account.id}"
-        lang="${this.translate.currentLang}"
+        lang="${this.translate.getCurrentLang()}"
         ></nuclia-viewer>`);
     }),
     tap(() => {

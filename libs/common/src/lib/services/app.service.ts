@@ -1,22 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BackendConfigurationService, SDKService, UploadService } from '@flaps/core';
+import { BackendConfigurationService } from '@flaps/core';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
-
-const EMPTY_KB_ALERT = 'NUCLIA_EMPTY_KB_ALERT';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppService {
-  private currentLocaleSubject = new BehaviorSubject<string>(this.getLocaleFromLang(this.translateService.currentLang));
+  private currentLocaleSubject = new BehaviorSubject<string>(
+    this.getLocaleFromLang(this.translateService.getCurrentLang()),
+  );
   readonly currentLocale = this.currentLocaleSubject.asObservable();
 
   constructor(
     private config: BackendConfigurationService,
     private translateService: TranslateService,
-    private sdk: SDKService,
-    private uploadService: UploadService,
   ) {
     this.listenLanguageChange();
   }

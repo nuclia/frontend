@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginService, TranslatePipeMock, UserService } from '@flaps/core';
-import { TranslateFakeLoader, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateNoOpLoader, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
-import { ProfileComponent } from './profile.component';
+import { provideRouter } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockModule } from 'ng-mocks';
-import { provideRouter } from '@angular/router';
+import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -25,7 +25,7 @@ describe('ProfileComponent', () => {
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
-            useClass: TranslateFakeLoader,
+            useClass: TranslateNoOpLoader,
           },
         }),
       ],

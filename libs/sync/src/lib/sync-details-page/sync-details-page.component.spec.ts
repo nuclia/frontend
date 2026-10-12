@@ -1,11 +1,11 @@
-import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
-import { SyncDetailsPageComponent } from './sync-details-page.component';
-import { SyncService } from '../logic';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { of } from 'rxjs';
 import { NavigationService, SDKService } from '@flaps/core';
-import { TranslateFakeLoader, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { TranslateLoader, TranslateModule, TranslateNoOpLoader, TranslateService } from '@ngx-translate/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
+import { of } from 'rxjs';
+import { SyncService } from '../logic';
+import { SyncDetailsPageComponent } from './sync-details-page.component';
 
 describe('SyncDetailsPageComponent', () => {
   let spectator: SpectatorRouting<SyncDetailsPageComponent>;
@@ -24,7 +24,7 @@ describe('SyncDetailsPageComponent', () => {
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,
-          useClass: TranslateFakeLoader,
+          useClass: TranslateNoOpLoader,
         },
       }),
     ],

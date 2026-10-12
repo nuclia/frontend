@@ -189,7 +189,7 @@ describe('KnowledgeBoxHomeComponent', () => {
 
   beforeEach(() => {
     // `defaultLanguage` alone never sets `currentLang`; the pipe's translation lookup then
-    // relies on a fallback path that can race with its own onDefaultLangChange subscription.
+    // relies on a fallback path that can race with its own onFallbackLangChange subscription.
     TestBed.inject(TranslateService).use('en');
     fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);
     component = fixture.componentInstance;
