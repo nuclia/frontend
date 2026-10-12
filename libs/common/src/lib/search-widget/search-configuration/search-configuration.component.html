@@ -177,21 +177,6 @@
       </div>
 
       <pa-accordion (toggleAccordion)="scrollOnTop()">
-        @if (!(inArag | async)) {
-          <pa-accordion-item
-            #widgetOptions
-            id="widget-options"
-            [itemTitle]="'search.configuration.embed-appearance.section-title' | translate"
-            [description]="'search.configuration.embed-appearance.section-description' | translate"
-            (expandedChange)="updateWidgetOptionsHeight()">
-            <pa-accordion-item-body>
-              <stf-widget-options-form
-                [config]="widgetOptionsConfig()"
-                (configChanged)="updateWidgetOptionsConfig($event)"
-                (heightChanged)="updateWidgetOptionsHeight()"></stf-widget-options-form>
-            </pa-accordion-item-body>
-          </pa-accordion-item>
-        }
         @if (searchMode() === 'agentic') {
           <pa-accordion-item
             #agenticConfig
@@ -295,6 +280,21 @@
                 [learningConfigurations]="learningConfigurations"
                 (configChanged)="updateRoutingConfig($event)"
                 (heightChanged)="updateRoutingHeight()"></stf-routing-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if (!(inArag | async)) {
+          <pa-accordion-item
+            #widgetOptions
+            id="widget-options"
+            [itemTitle]="'search.configuration.embed-appearance.section-title' | translate"
+            [description]="'search.configuration.embed-appearance.section-description' | translate"
+            (expandedChange)="updateWidgetOptionsHeight()">
+            <pa-accordion-item-body>
+              <stf-widget-options-form
+                [config]="widgetOptionsConfig()"
+                (configChanged)="updateWidgetOptionsConfig($event)"
+                (heightChanged)="updateWidgetOptionsHeight()"></stf-widget-options-form>
             </pa-accordion-item-body>
           </pa-accordion-item>
         }
