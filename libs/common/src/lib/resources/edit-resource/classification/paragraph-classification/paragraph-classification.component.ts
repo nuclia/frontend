@@ -1,18 +1,32 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { EditResourceService } from '../../edit-resource.service';
-import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
-import { FieldId, IFieldData, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
-import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
+import { PaChipsModule, PaScrollModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FieldId, IFieldData, LabelSets, Resource, Search } from '@nuclia/core';
+
+import { DelayedSpinnerComponent } from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
+import { EditResourceService } from '../../edit-resource.service';
 import { ParagraphService } from '../../paragraph.service';
 
 @Component({
   templateUrl: './paragraph-classification.component.html',
   styleUrls: ['../../common-page-layout.scss', './paragraph-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTextFieldModule,
+    FormsModule,
+    PaScrollModule,
+    PaChipsModule,
+    DelayedSpinnerComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

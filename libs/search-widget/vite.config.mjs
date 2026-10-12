@@ -10,7 +10,7 @@ const fileName = process.argv[6] || 'nuclia-widget';
 export default defineConfig({
   resolve: {
     conditions: process.env.VITEST ? ['browser'] : undefined,
-    alias: [{ find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') }],
+    alias: [{ find: '@nuclia/core', replacement: path.resolve(import.meta.dirname, '../sdk-core/src/index.ts') }],
   },
   build: {
     outDir: `dist/libs/${widgetFolder}`,

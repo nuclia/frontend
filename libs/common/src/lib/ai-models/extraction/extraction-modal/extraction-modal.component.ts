@@ -14,13 +14,11 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractConfig, ExtractVLLMConfig, GenerativeProviders, LearningConfigurations } from '@nuclia/core';
-import { InfoCardComponent } from '@nuclia/sistema';
 import { LLMConfigurationComponent } from '../llm-configuration/llm-configuration.component';
 
 @Component({
   imports: [
     CommonModule,
-    InfoCardComponent,
     PaButtonModule,
     PaFocusableModule,
     PaIconModule,

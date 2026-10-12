@@ -42,6 +42,9 @@ import {
   NUAClientEditPayload,
   NUAClientPayload,
   NUAClientResponse,
+  NuaGuardPolicy,
+  NuaGuardPolicyPayload,
+  NuaGuardPolicyResponse,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -319,20 +322,18 @@ export class Db implements IDb {
     const kbId = knowledgeBoxId || this.nuclia.options.knowledgeBox;
     const zoneSlug = zone || this.nuclia.options.zone;
 
-    if (accountID || this.nuclia.options.standalone) {
-      if (!this.nuclia.options.standalone && !this.nuclia.options.proxy && (!kbId || !zoneSlug)) {
+    if (accountID) {
+      if (!this.nuclia.options.proxy && (!kbId || !zoneSlug)) {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
       const zoneSlugArg = this.nuclia.options.proxy ? undefined : zoneSlug;
-      const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
-        ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
-        : this.nuclia.rest.get<IKnowledgeBoxBase>(
-            `/account/${accountID}/kb/${kbId}`,
-            undefined,
-            undefined,
-            zoneSlugArg,
-          );
+      const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.rest.get<IKnowledgeBoxBase>(
+        `/account/${accountID}/kb/${kbId}`,
+        undefined,
+        undefined,
+        zoneSlugArg,
+      );
 
       return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
     } else {
@@ -386,7 +387,7 @@ export class Db implements IDb {
 
   /**
    * Creates a new Knowledge Box.
-   * Zone parameter is mandatory except if the Knowledge Box is from a local NucliaDB instance.
+   * Zone parameter is mandatory.
    * Example:
     ```ts
     const knowledgeBox = {
@@ -401,24 +402,19 @@ export class Db implements IDb {
   createKnowledgeBox(
     accountId: string,
     knowledgeBox: KnowledgeBoxCreation,
-    zone?: string,
+    zone: string,
   ): Observable<WritableKnowledgeBox> {
-    let creation: Observable<string>;
-    if (this.nuclia.options.standalone) {
-      creation = this.nuclia.rest.post<IKnowledgeBoxStandalone>('/kbs', knowledgeBox).pipe(map((res) => res.uuid));
-    } else {
-      creation = this.nuclia.rest
-        .post<IKnowledgeBoxBase>(`/account/${accountId}/kbs`, knowledgeBox, undefined, undefined, undefined, zone)
-        .pipe(map((res) => res.id));
-    }
-    return creation.pipe(
-      switchMap((id) => {
-        if (!id) {
-          throw new Error('Knowledge Box creation failed');
-        }
-        return this.getKnowledgeBox(accountId, id, zone);
-      }),
-    );
+    return this.nuclia.rest
+      .post<IKnowledgeBoxBase>(`/account/${accountId}/kbs`, knowledgeBox, undefined, undefined, undefined, zone)
+      .pipe(map((res) => res.id))
+      .pipe(
+        switchMap((id) => {
+          if (!id) {
+            throw new Error('Knowledge Box creation failed');
+          }
+          return this.getKnowledgeBox(accountId, id, zone);
+        }),
+      );
   }
 
   /**
@@ -685,22 +681,144 @@ export class Db implements IDb {
   }
 
   /**
-   * Get learning configuration schema.
-   * When used on Cloud account, this method is requiring account id and zone parameters.
-   * When used on standalone, this method doesn't take any parameter
+   * Get NUA guardrail policies for the given account.
+   * @param accountId
+   * @returns
    */
-  getLearningSchema(): Observable<LearningConfigurations>;
-  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
-  getLearningSchema(accountId?: string, zone?: string): Observable<LearningConfigurations> {
-    const standalone = this.nuclia.options.standalone;
-    if (!standalone && (!accountId || !zone)) {
-      const error = 'Account id and zone are mandatory to get learning schema for Cloud accounts.';
+  getNuaGuardPolicies(accountId: string): Observable<NuaGuardPolicy[]> {
+    return this.nuclia.rest.getAccountZones(accountId).pipe(
+      switchMap((zones) =>
+        forkJoin(Object.values(zones).map((zoneSlug) => this.getNuaGuardPoliciesForZone(accountId, zoneSlug))),
+      ),
+      map((response) =>
+        response.reduce((allGuards, guards) => {
+          return allGuards.concat(guards);
+        }, [] as NuaGuardPolicy[]),
+      ),
+    );
+  }
+
+  /**
+   * Get NUA guardrail policies for the given account and zone.
+   * @param accountId
+   * @param zone
+   * @returns
+   */
+  getNuaGuardPoliciesForZone(accountId: string, zone: string): Observable<NuaGuardPolicy[]> {
+    return this.ensureZoneOriginReady(accountId, zone).pipe(
+      take(1),
+      switchMap(() =>
+        this.nuclia.rest.get<NuaGuardPolicy[]>(`/account/${accountId}/guardrail_policies`, undefined, undefined, zone),
+      ),
+      timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      map((policies) => policies.map((policy) => ({ ...policy, zone }))),
+      catchError(() => of([] as NuaGuardPolicy[])),
+    );
+  }
+
+  /**
+   * Get the NUA guardrail policy matching the given guardrail ID on the given account and zone.
+   * @param guardId
+   * @param accountId
+   * @param zone
+   * @returns
+   */
+  getNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<NuaGuardPolicy | undefined> {
+    return this.ensureZoneOriginReady(accountId, zone).pipe(
+      take(1),
+      switchMap(() =>
+        this.nuclia.rest.get<NuaGuardPolicy>(
+          `/account/${accountId}/guardrail_policies/${guardId}`,
+          undefined,
+          undefined,
+          zone,
+        ),
+      ),
+      timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      catchError(() => of(undefined)),
+    );
+  }
+
+  /**
+   * Create a NUA guardrail policy on the given account and zone.
+   * @param accountId
+   * @param zone
+   * @param data
+   * @returns
+   */
+  createNuaGuardPolicy(accountId: string, zone: string, data: NuaGuardPolicyPayload): Observable<NuaGuardPolicy> {
+    if (!accountId || !data) {
+      const error = 'Account and data are required to create a NUA guardrail policy';
       console.error(error);
       return throwError(() => error);
     }
-    const request = standalone
-      ? this.nuclia.rest.get<LearningConfigurations>('/nua/schema')
-      : this.nuclia.rest.get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone);
+
+    return this.nuclia.rest
+      .post<NuaGuardPolicyResponse>(
+        `/account/${accountId}/guardrail_policies`,
+        data,
+        undefined,
+        undefined,
+        undefined,
+        zone,
+      )
+      .pipe(map((policy) => ({ ...policy, zone })));
+  }
+
+  /**
+   * Edit the NUA guardrail matching the given identifier and the given account and zone.
+   * @param guardId
+   * @param accountId
+   * @param zone
+   * @param data
+   * @returns
+   */
+  editNuaGuardPolicy(
+    guardId: string,
+    accountId: string,
+    zone: string,
+    data: Partial<NuaGuardPolicyPayload>,
+  ): Observable<NuaGuardPolicy> {
+    if (!guardId || !accountId || !data) {
+      const error = 'Account, guardrail identifier and data are required to edit a NUA guardrail policy';
+      console.error(error);
+      return throwError(() => error);
+    }
+
+    return this.nuclia.rest
+      .patch<NuaGuardPolicyResponse>(
+        `/account/${accountId}/guardrail_policies/${guardId}`,
+        data,
+        undefined,
+        undefined,
+        undefined,
+        zone,
+      )
+      .pipe(map((policy) => ({ ...policy, zone })));
+  }
+
+  /**
+   * Delete a NUA guardrail policy from the given account and zone.
+   * @param guardId
+   * @param accountId
+   * @param zone
+   * @returns
+   */
+  deleteNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/guardrail_policies/${guardId}`, undefined, undefined, zone);
+  }
+
+  /**
+   * Get learning configuration schema.
+   * This method is requiring account id and zone parameters.
+   */
+  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations> {
+    const request = this.nuclia.rest.get<LearningConfigurations>(
+      `/account/${accountId}/schema`,
+      undefined,
+      undefined,
+      zone,
+    );
     return request.pipe(map((config) => improveSchemaNames(normalizeSchemaProperty(config))));
   }
 

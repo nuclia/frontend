@@ -14,7 +14,7 @@
             (selectOption)="selectHeader(header, $event)"
             dontCloseOnSelect>
             <pa-checkbox
-              [value]="(displayedHeaders | async)?.includes(header)"
+              [value]="$safeNavigationMigration((displayedHeaders | async)?.includes(header))"
               (change)="this.toggleHeader(header)">
               {{ header }}
             </pa-checkbox>
@@ -49,7 +49,7 @@
     }
   </div>
 
-  <div class="container">
+  <div class="table-container">
     <cdk-virtual-scroll-viewport
       tableVirtualScroll
       class="viewport"

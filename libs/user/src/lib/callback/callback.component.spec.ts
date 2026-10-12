@@ -21,6 +21,8 @@ describe('CallbackComponent', () => {
     nuclia: {
       auth: {
         authenticate: jest.Mock;
+        getToken: jest.Mock;
+        getRefreshToken: jest.Mock;
         processAuthorizationResponse: jest.Mock;
         redirectToOAuth: jest.Mock;
       };
@@ -88,6 +90,8 @@ describe('CallbackComponent', () => {
       nuclia: {
         auth: {
           authenticate: jest.fn(),
+          getToken: jest.fn(() => 'saml-oauth-access'),
+          getRefreshToken: jest.fn(() => 'saml-oauth-refresh'),
           processAuthorizationResponse: jest.fn(() => of({ success: true, state: {} })),
           redirectToOAuth: jest.fn(),
         },
@@ -166,6 +170,22 @@ describe('CallbackComponent', () => {
 
     expect(sdk.nuclia.auth.processAuthorizationResponse).toHaveBeenCalledWith('code-1', 'state-1');
     expect(router.navigate).toHaveBeenCalledWith(['/']);
+  });
+
+  it('should forward tokens to the target app after the SAML OAuth flow', async () => {
+    snapshotQueryParams = { code: 'code-1', state: 'saml-oauth-state' };
+    sdk.nuclia.auth.processAuthorizationResponse.mockReturnValue(
+      of({ success: true, state: { saml_ref: 'single-use-ref', came_from: 'https://app.progress.cloud' } }),
+    );
+    await createComponent();
+    const authenticateSpy = jest.spyOn(component as any, 'authenticate');
+
+    component.ngOnInit();
+
+    expect(authenticateSpy).toHaveBeenCalledWith(
+      { access_token: 'saml-oauth-access', refresh_token: 'saml-oauth-refresh' },
+      'saml-oauth-state',
+    );
   });
 
   it('should handle failed processAuthorizationResponse result', async () => {
@@ -301,7 +321,7 @@ describe('CallbackComponent', () => {
     component.ssoLogin();
 
     expect(translate.instant).toHaveBeenCalledWith('login.error.no_personal_email', { provider: undefined });
-    expect(component.message).toBe('login.error.no_personal_email');
+    expect(component.message()).toBe('login.error.no_personal_email');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
@@ -315,7 +335,7 @@ describe('CallbackComponent', () => {
     expect(toaster.error).toHaveBeenCalledWith(
       'Authentication configuration error. Please contact support if this persists.',
     );
-    expect(component.message).toBe('login.error.oops');
+    expect(component.message()).toBe('login.error.oops');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
@@ -326,7 +346,7 @@ describe('CallbackComponent', () => {
 
     component.ssoLogin();
 
-    expect(component.message).toBe('login.error.oops');
+    expect(component.message()).toBe('login.error.oops');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
@@ -342,7 +362,7 @@ describe('CallbackComponent', () => {
 
     component.ssoLogin();
 
-    expect(component.message).toBe('login.error.user_not_registered');
+    expect(component.message()).toBe('login.error.user_not_registered');
   });
 
   it('should fall back to the legacy detail string when error_code is absent', async () => {
@@ -352,7 +372,7 @@ describe('CallbackComponent', () => {
 
     component.ssoLogin();
 
-    expect(component.message).toBe('login.error.user_not_registered');
+    expect(component.message()).toBe('login.error.user_not_registered');
   });
 
   it('should do nothing in ssoLogin when code or state are missing', async () => {

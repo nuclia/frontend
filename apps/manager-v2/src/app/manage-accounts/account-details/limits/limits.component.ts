@@ -1,19 +1,32 @@
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { AccountService } from '../../account.service';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AccountTypeDefaults } from '@flaps/core';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { AccountLimitsPatchPayload } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, map, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AccountLimitsPatchPayload } from '@nuclia/core';
-import { AccountTypeDefaults } from '@flaps/core';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
+import { AccountService } from '../../account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
 
 @Component({
   templateUrl: './limits.component.html',
   styleUrls: ['./limits.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTogglesModule,
+    PaTextFieldModule,
+    PaTooltipModule,
+    FormFooterComponent,
+    AsyncPipe,
+    KeyValuePipe,
+  ],
 })
 export class LimitsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

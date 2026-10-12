@@ -60,6 +60,7 @@ export class FeaturesService {
     contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
     retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
     modelManagement: this.featureFlag.isFeatureEnabled('model-management'),
+    nuaGuardsManagement: this.featureFlag.isFeatureEnabled('nua-guards-management'),
     routing: this.featureFlag.isFeatureEnabled('routing'),
     aragWithMemory: this.featureFlag.isFeatureEnabled('arag-with-memory'),
     sitefinityConnector: this.featureFlag.isFeatureEnabled('sitefinity-connector'),
@@ -77,6 +78,7 @@ export class FeaturesService {
     mcpSource: this.featureFlag.isFeatureEnabled('mcp-source'),
     perplexitySource: this.featureFlag.isFeatureEnabled('perplexity-source'),
     googleSource: this.featureFlag.isFeatureEnabled('google-source'),
+    agenticDAGeneration: this.featureFlag.isFeatureEnabled('agentic-da-generation'),
   };
 
   /**

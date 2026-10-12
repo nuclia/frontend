@@ -9,17 +9,27 @@
     <pa-tab
       routerLink="nua"
       routerLinkActive
-      #rla0="routerLinkActive"
-      [active]="rla0.isActive"
+      #rlaNuaKeys="routerLinkActive"
+      [active]="rlaNuaKeys.isActive"
       ariaControls="configuration-section-panel">
       {{ 'navbar.nua-keys' | translate }}
     </pa-tab>
+    @if (isNuaGuardManagementEnabled | async) {
+      <pa-tab
+        routerLink="nua-guard"
+        routerLinkActive
+        #rlaGuard="routerLinkActive"
+        [active]="rlaGuard.isActive"
+        ariaControls="configuration-section-panel">
+        {{ 'navbar.nua-guard' | translate }}
+      </pa-tab>
+    }
     @if (isModelManagementEnabled | async) {
       <pa-tab
         routerLink="models"
         routerLinkActive
-        #rla1="routerLinkActive"
-        [active]="rla1.isActive"
+        #rlaModels="routerLinkActive"
+        [active]="rlaModels.isActive"
         ariaControls="configuration-section-panel">
         {{ 'navbar.models' | translate }}
       </pa-tab>

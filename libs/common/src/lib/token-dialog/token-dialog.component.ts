@@ -1,21 +1,25 @@
-import { Component } from '@angular/core';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { SlicePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './token-dialog.component.html',
   styleUrls: ['./token-dialog.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [PaModalModule, PaButtonModule, SlicePipe, TranslatePipe],
 })
 export class TokenDialogComponent {
-  clipboardSupported = !!(navigator.clipboard?.writeText);
-  successMessage = false;
+  clipboardSupported = !!navigator.clipboard?.writeText;
+  successMessage = signal(false);
 
   constructor(public modal: ModalRef) {}
 
   copy() {
     navigator.clipboard.writeText(this.modal.config.data?.['token']);
-    this.successMessage = true;
-    setTimeout(() => (this.successMessage = false), 2000);
+    this.successMessage.set(true);
+    // A signal write self-notifies the zoneless CD scheduler even from a raw setTimeout.
+    setTimeout(() => this.successMessage.set(false), 2000);
   }
 
   close(): void {

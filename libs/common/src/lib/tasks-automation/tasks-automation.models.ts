@@ -10,12 +10,26 @@ export interface DataAugmentationTaskOnBatch extends TaskOnBatch {
 }
 
 export const TASK_ICONS: { [key in TaskName]?: string } = {
-  labeler: 'labeler',
-  ask: 'generator',
+  labeler: 'label',
+  ask: 'prompt',
   'llm-graph': 'graph',
-  'synthetic-questions': 'question-answer',
+  'synthetic-questions': 'chat',
   'prompt-guard': 'unlock',
   'llama-guard': 'shield-check',
+};
+
+// Visual grouping for the create-agent cards: "enrich" agents add/structure content,
+// "protect" agents guard content/queries. Drives the icon badge tint on the task card
+// so the grid reads as two families of options rather than six identical gray rows.
+export type TaskCardTone = 'enrich' | 'protect';
+
+export const TASK_CARD_TONES: { [key in TaskName]?: TaskCardTone } = {
+  labeler: 'enrich',
+  ask: 'enrich',
+  'llm-graph': 'enrich',
+  'synthetic-questions': 'enrich',
+  'prompt-guard': 'protect',
+  'llama-guard': 'protect',
 };
 
 export interface BaseTask {

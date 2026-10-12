@@ -4,12 +4,7 @@ import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CustomModel, ModelType } from '@nuclia/core';
-import {
-  BadgeComponent,
-  SisProgressModule,
-  SisToastService,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
+import { BadgeComponent, SisToastService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { combineLatest, forkJoin, of, ReplaySubject } from 'rxjs';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
 
@@ -32,7 +27,6 @@ type ModelSelection = {
     PaButtonModule,
     PaTableModule,
     PaTogglesModule,
-    SisProgressModule,
     TwoColumnsConfigurationItemComponent,
     TranslateModule,
   ],

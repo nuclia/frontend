@@ -4,7 +4,15 @@
   import { SpeechSettings, SpeechStore } from 'talk2svelte';
   import { Dropdown, Icon, IconButton } from '../../common';
   import Textarea from '../../common/textarea/Textarea.svelte';
-  import { chatInput, hasFilterButton, hasFilters, hasSearchButton, isSpeechEnabled, isSpeechOn } from '../../core';
+  import {
+    chatInput,
+    hasChatSubmitButton,
+    hasFilterButton,
+    hasFilters,
+    hasSearchButton,
+    isSpeechEnabled,
+    isSpeechOn,
+  } from '../../core';
   import { _, currentLanguage, translateInstant } from '../../core/i18n';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
   import SelectedFilters from '../search-filters/SelectedFilters.svelte';
@@ -20,6 +28,7 @@
 
   let inputElement: Textarea | undefined = $state();
   let question = $state('');
+  let canSubmit = $derived(!disabled && question.trim().length > 0);
   let isListening = $state(false);
   let showFilterDropdowns = $state(false);
   let filterButtonElement: HTMLElement | undefined = $state();
@@ -65,7 +74,9 @@
   });
 
   const askQuestion = () => {
-    // ask.next({ question, reset: false });
+    if ($hasChatSubmitButton && !canSubmit) {
+      return;
+    }
     onChange(question);
     question = '';
     if ((navigator as any).userAgentData?.mobile) {
@@ -75,7 +86,10 @@
   };
 
   const onKeyPress = (event: { detail: KeyboardEvent }) => {
-    if (event.detail.key === 'Enter' && !!question) {
+    if (
+      event.detail.key === 'Enter' &&
+      ($hasChatSubmitButton ? canSubmit && !event.detail.isComposing : !!question)
+    ) {
       event.detail.preventDefault();
       askQuestion();
     }
@@ -145,11 +159,16 @@
             on:click={toggleSpeech} />
         {/if}
         {#if $hasSearchButton}
-          <IconButton
-            icon="search"
-            aspect="basic"
-            ariaLabel={$_('input.search')}
-            on:click={askQuestion} />
+          <div class="submit">
+            <IconButton
+              icon={$hasChatSubmitButton ? 'arrow-up' : 'search'}
+              aspect={$hasChatSubmitButton ? 'solid' : 'basic'}
+              kind={$hasChatSubmitButton ? 'primary' : 'secondary'}
+              size={$hasChatSubmitButton ? 'small' : 'medium'}
+              disabled={$hasChatSubmitButton && !canSubmit}
+              ariaLabel={$_('input.search')}
+              on:click={askQuestion} />
+          </div>
         {/if}
         {#if $hasFilterButton}
           <div bind:this={filterButtonElement}>

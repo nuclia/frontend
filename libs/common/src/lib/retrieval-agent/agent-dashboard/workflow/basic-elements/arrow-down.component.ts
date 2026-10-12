@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-arrow-down',
@@ -14,6 +14,7 @@ import { Component } from '@angular/core';
         fill="#707070" />
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `:host {align-self: center}`,
 })
 export class ArrowDownComponent {}

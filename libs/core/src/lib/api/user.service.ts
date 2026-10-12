@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, EMPTY, filter, map, Observable, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Welcome } from '@nuclia/core';
-import { SDKService } from './sdk.service';
+import { BehaviorSubject, catchError, EMPTY, filter, map, Observable, switchMap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,23 +20,22 @@ export class UserService {
     private authService: AuthService,
     private route: ActivatedRoute,
   ) {
-    if (!this.sdk.nuclia.options.standalone) {
-      this.sdk.nuclia.auth
-        .isAuthenticated()
-        .pipe(
-          filter((yes) => yes),
-          switchMap(() => this.updateWelcome()),
-        )
-        .subscribe();
-    }
+    this.sdk.nuclia.auth
+      .isAuthenticated()
+      .pipe(
+        filter((yes) => yes),
+        switchMap(() => this.updateWelcome()),
+      )
+      .subscribe();
   }
 
   updateWelcome(): Observable<void> {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
+        this.authService.setNextParams(this.route.snapshot.queryParams);
+        this.authService.setNextUrl(new URL(window.location.href).pathname);
         if (error?.status === 401) {
-          this.authService.setNextParams(this.route.snapshot.queryParams);
-          this.authService.setNextUrl(new URL(window.location.href).pathname);
+          // TODO: This code is unreachable because CORS headers are missing in 401 responses
           this.sdk.nuclia.auth.logout();
         }
         return EMPTY;

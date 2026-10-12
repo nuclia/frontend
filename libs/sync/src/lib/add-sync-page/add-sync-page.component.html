@@ -29,13 +29,6 @@
       @if (loading) {
         <nsi-spinner></nsi-spinner>
       } @else {
-        @if (shareFileNotSupported | async) {
-          <nsi-info-card
-            type="warning"
-            icon="warning">
-            {{ 'sync.add-page.sharefile-not-supported' | translate }}
-          </nsi-info-card>
-        }
         <nsy-configuration-form
           [useOAuth]="useOAuth"
           [enterCredentials]="!!(isCloud | async) && enterCredentials"
@@ -50,6 +43,7 @@
         @if (externalConnection) {
           <nsy-cloud-folder
             [externalConnection]="externalConnection"
+            [connectorId]="connectorId | async"
             (selection)="selectFolder($event)"></nsy-cloud-folder>
         }
         @if (externalConnection) {
@@ -61,6 +55,7 @@
 
       <nsi-sticky-footer>
         <pa-button
+          data-analytics-id="add-sync-cancel"
           aspect="basic"
           (click)="cancel()">
           {{ 'generic.cancel' | translate }}
@@ -68,13 +63,15 @@
 
         @if (!!(isCloud | async) && enterCredentials) {
           <pa-button
+            data-analytics-id="add-sync-authenticate"
             kind="primary"
-            [disabled]="!validForm || saving || (shareFileNotSupported | async)"
+            [disabled]="!validForm || saving"
             (click)="authenticate()">
             {{ 'sync.add-page.footer.auth-button' | translate }}
           </pa-button>
         } @else {
           <pa-button
+            data-analytics-id="add-sync-save"
             kind="primary"
             [disabled]="!validForm || (connector.allowToSelectFolders && !isFolderSelectionValid()) || saving"
             (click)="save()">

@@ -1,4 +1,8 @@
-# 1.32.1 (unreleased)
+# 1.33.0 (2026-10-05)
+
+### Breaking changes
+
+- Remove deprecated option `standalone`
 
 ### Improvements
 
@@ -6,6 +10,7 @@
 - Support endpoint to append messages to a conversation field
 - Add `include_search_configs` option to control inclusion of `search_configs` property
 - Support endpoint to edit NUA keys
+- Make `slug` optional when creating an account, letting the backend generate it
 
 # 1.32.0 (2026-03-13)
 

@@ -3,16 +3,6 @@
     {{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}
   </pa-modal-title>
   <pa-modal-content>
-    @if (standalone && (hasValidKey | async) === false) {
-      <nsi-info-card
-        type="warning"
-        icon="warning">
-        <div
-          class="body-s"
-          [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-      </nsi-info-card>
-      <br />
-    }
     @if (limitsExceeded) {
       <nsi-info-card
         type="warning"
@@ -24,7 +14,7 @@
               | translate
                 : {
                     maxMedia: (maxMediaFileSize | size),
-                    max: (maxFileSize | size)
+                    max: (maxFileSize | size),
                   }
           }}
         </div>
@@ -68,7 +58,7 @@
         hidden />
     }
 
-    @if (!(simpleMode | async) && !useFoldersAsLabels) {
+    @if (!(contextBoxMode | async) && !useFoldersAsLabels) {
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
     }
 
@@ -94,7 +84,7 @@
       </div>
     }
 
-    @if (!(simpleMode | async)) {
+    @if (!(contextBoxMode | async)) {
       <pa-expander [expanded]="false">
         <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
         <pa-expander-body>
@@ -115,7 +105,7 @@
               </pa-input>
             }
           </div>
-          @if ((extractConfigEnabled | async) && !standalone) {
+          @if (extractConfigEnabled | async) {
             <app-extraction-select
               [(extractConfig)]="extractStrategy"
               [(splitConfig)]="splitStrategy"

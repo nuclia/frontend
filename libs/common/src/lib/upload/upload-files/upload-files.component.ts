@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,13 +8,33 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { take } from 'rxjs';
-import { DroppedFile, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  DroppedFile,
+  FeaturesService,
+  FileDropDirective,
+  FileSelectDirective,
+  LabelModule,
+  NavigationService,
+  SDKService,
+  STFPipesModule,
+  STFUtils,
+} from '@flaps/core';
+import {
+  PaButtonModule,
+  PaExpanderModule,
+  PaModalModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { take } from 'rxjs';
+import { HintComponent } from '../../hint/hint.component';
+import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
 import { UploadService } from '../upload.service';
-import { StandaloneService } from '../../services';
 import { getFilesGroupedByType } from '../upload.utils';
-import { FormControl, Validators } from '@angular/forms';
 
 const GENERAL_LABELSET = 'General';
 
@@ -22,7 +43,24 @@ const GENERAL_LABELSET = 'General';
   templateUrl: './upload-files.component.html',
   styleUrls: ['./upload-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaModalModule,
+    InfoCardComponent,
+    FileDropDirective,
+    FileSelectDirective,
+    PaTogglesModule,
+    LabelModule,
+    PaButtonModule,
+    PaExpanderModule,
+    PaTextFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ExtractionSelectComponent,
+    HintComponent,
+    AsyncPipe,
+    TranslatePipe,
+    STFPipesModule,
+  ],
 })
 export class UploadFilesComponent {
   @Input() folderMode = false;
@@ -30,7 +68,7 @@ export class UploadFilesComponent {
   @Output() upload = new EventEmitter<void>();
 
   navigationService = inject(NavigationService);
-  simpleMode = this.navigationService.simpleMode;
+  contextBoxMode = this.navigationService.contextBoxMode;
 
   files: { file: FileWithMetadata; aboveLimit: boolean }[] = [];
   selectedLabels: Classification[] = [];
@@ -45,9 +83,6 @@ export class UploadFilesComponent {
     validators: [Validators.pattern(/^[a-z]{2}(\+[a-z]{2}){0,3}$/)],
   });
 
-  standalone = this.standaloneService.standalone;
-  noLimit = this.standalone;
-  hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
   extractConfigEnabled = this.features.authorized.extractConfig;
   spitConfigEnabled = this.features.authorized.splitConfig;
@@ -55,16 +90,13 @@ export class UploadFilesComponent {
   splitStrategy?: string;
 
   get allowedFiles(): File[] {
-    return this.noLimit
-      ? this.files.map((item) => item.file)
-      : this.files.filter((item) => !item.aboveLimit).map((item) => item.file);
+    return this.files.filter((item) => !item.aboveLimit).map((item) => item.file);
   }
 
   constructor(
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
     private sdk: SDKService,
-    private standaloneService: StandaloneService,
     private features: FeaturesService,
   ) {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
@@ -89,11 +121,11 @@ export class UploadFilesComponent {
       ...this.files,
       ...mediaFiles.map((file) => ({
         file,
-        aboveLimit: !this.noLimit && this.maxMediaFileSize !== -1 && file.size > this.maxMediaFileSize,
+        aboveLimit: this.maxMediaFileSize !== -1 && file.size > this.maxMediaFileSize,
       })),
       ...nonMediaFiles.map((file) => ({
         file,
-        aboveLimit: !this.noLimit && this.maxFileSize !== -1 && file.size > this.maxFileSize,
+        aboveLimit: this.maxFileSize !== -1 && file.size > this.maxFileSize,
       })),
     ];
     this.checkLimits();

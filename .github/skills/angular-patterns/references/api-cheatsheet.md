@@ -1,6 +1,6 @@
-# Angular 21 API Cheatsheet
+# Angular 22 API Cheatsheet
 
-Quick-reference for signal APIs, DI, and interop utilities as of Angular 21.
+Quick-reference for signal APIs, DI, and interop utilities as of Angular 22.
 
 ---
 
@@ -254,7 +254,7 @@ Use `resource()` when you have a signal-driven async data source. For Observable
 
 ---
 
-## Common Angular 21 Pitfalls
+## Common Angular 22 Pitfalls
 
 | Mistake                                                         | Fix                                                                                |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |

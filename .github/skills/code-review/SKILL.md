@@ -4,7 +4,7 @@ description: >
   Performs a focused code review of changed files or PR diffs in the Nuclia frontend monorepo.
   Activates when the user explicitly says "review", "code review", "review this PR", "review this
   diff", "review these changes", or "review this file". Checks changed code against all repo
-  standards: Angular 21 patterns, RxJS best practices, design system usage, SDK patterns, module
+  standards: Angular 22 patterns, RxJS best practices, design system usage, SDK patterns, module
   boundaries, test coverage, and general TypeScript hygiene. Returns a flat list of findings grouped
   by file with a severity label for each.
 ---

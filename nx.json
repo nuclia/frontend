@@ -95,7 +95,10 @@
       }
     },
     "@nx/eslint:lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc"],
+      "inputs": ["default", "^default", "{workspaceRoot}/.eslintrc", "{workspaceRoot}/tools/eslint-rules/**/*"],
+      "cache": true
+    },
+    "build-storybook": {
       "cache": true
     }
   },
@@ -113,7 +116,9 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/.eslintrc",
-      "!{projectRoot}/src/test-setup.[jt]s"
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/.storybook/**/*"
     ]
   },
   "parallel": 1,
@@ -142,7 +147,25 @@
       "options": {
         "testTargetName": "vite:test"
       }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
     }
   ],
-  "analytics": false
+  "analytics": false,
+  "neverConnectToCloud": true
 }

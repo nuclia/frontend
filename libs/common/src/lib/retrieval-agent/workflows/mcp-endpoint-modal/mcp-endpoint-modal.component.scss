@@ -1,6 +1,6 @@
 @use 'apps/dashboard/src/variables' as *;
 
-.container {
+.endpoint-container {
   display: flex;
   flex-direction: column;
   gap: rhythm(3);

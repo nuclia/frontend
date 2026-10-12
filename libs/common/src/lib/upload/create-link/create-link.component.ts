@@ -1,13 +1,24 @@
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FeaturesService, LabelModule, SDKService } from '@flaps/core';
+import {
+  IErrorMessages,
+  ModalRef,
+  PaButtonModule,
+  PaExpanderModule,
+  PaModalModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, WritableKnowledgeBox } from '@nuclia/core';
+import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { catchError, Observable, switchMap, take } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
-import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
-import { StandaloneService } from '../../services';
+import { CsvSelectComponent } from '../csv-select/csv-select.component';
+import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
+import { UploadService } from '../upload.service';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
 interface Row {
@@ -24,7 +35,23 @@ type UploadOption = 'one' | 'multiple' | 'csv';
   templateUrl: './create-link.component.html',
   styleUrls: ['./create-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaModalModule,
+    PaButtonModule,
+    InfoCardComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTogglesModule,
+    PaTextFieldModule,
+    PaExpanderModule,
+    ExtractionSelectComponent,
+    CsvSelectComponent,
+    LabelModule,
+    SpinnerComponent,
+    AsyncPipe,
+    DecimalPipe,
+    TranslatePipe,
+  ],
 })
 export class CreateLinkComponent {
   linkForm = new FormGroup({
@@ -53,8 +80,6 @@ export class CreateLinkComponent {
     validators: [Validators.pattern(/^[a-z]{2}(\+[a-z]{2}){0,3}$/)],
   });
 
-  standalone = this.standaloneService.standalone;
-  hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
   extractConfigEnabled = this.features.authorized.extractConfig;
   splitConfigEnabled = this.features.authorized.splitConfig;
@@ -76,7 +101,6 @@ export class CreateLinkComponent {
     private sdk: SDKService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
-    private standaloneService: StandaloneService,
     private features: FeaturesService,
   ) {}
 

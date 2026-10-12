@@ -150,6 +150,7 @@ export class RegionalAccountService {
               contributors: [],
               members: [],
               owners: [],
+              published: kb.state === 'PUBLISHED',
             };
             users.forEach((user) => {
               const accountUser = accountDetails.users.find((accountUser) => accountUser.id === user.id);
@@ -191,6 +192,25 @@ export class RegionalAccountService {
     );
   }
 
+  publishKb(kbSummary: KbSummary, publish: boolean) {
+    const kbPath = `${ACCOUNT_ENDPOINT}/${kbSummary.accountId}/kb/${kbSummary.id}`;
+    return this.getKbZoneSlug(kbSummary).pipe(
+      switchMap((zoneSlug) => {
+        if (!zoneSlug) {
+          return of();
+        }
+        return this.sdk.nuclia.rest.patch<unknown>(
+          kbPath,
+          { state: publish ? 'PUBLISHED' : 'PRIVATE' },
+          undefined,
+          undefined,
+          true,
+          zoneSlug,
+        );
+      }),
+    );
+  }
+
   updateKbUsers(
     kbSummary: KbSummary,
     data: { add: SimpleKbUser[]; update: SimpleKbUser[]; delete: string[] },
@@ -221,7 +241,7 @@ export class RegionalAccountService {
       trialExpirationDate: account.trial_expiration_date,
       users: account.users,
       created: account.created,
-      workflow: account.workflow,
+      workflow: account.workflow ?? 'classic',
       allowAccessNonEnterpriseModels: account.allow_access_non_enterprise_models,
       zoneVisibility: account.zone_visibility ?? 'DEFAULT',
       labels: account.labels,

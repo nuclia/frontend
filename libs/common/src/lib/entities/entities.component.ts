@@ -1,12 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, Subject, tap } from 'rxjs';
 import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
+import { EntityListComponent } from './entity-list/entity-list.component';
 import { generatedEntitiesColor, NerFamily } from './model';
 import { NerService } from './ner.service';
 
@@ -15,7 +13,7 @@ import { NerService } from './ner.service';
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTextFieldModule, EntityListComponent, AsyncPipe, TranslatePipe],
 })
 export class EntitiesComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

@@ -22,7 +22,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "module": "preserve",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

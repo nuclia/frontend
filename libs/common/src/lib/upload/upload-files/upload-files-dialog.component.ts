@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { UploadFilesComponent } from './upload-files.component';
+import { UploadProgressComponent } from '../upload-progress/upload-progress.component';
 
 @Component({
   selector: 'app-upload-files-dialog',
   template: `
     @if (!showProgress) {
       <app-upload-files
-        [folderMode]="modal.config.data?.['folderMode']"
+        [folderMode]="$safeNavigationMigration(modal.config.data?.['folderMode'])"
         (upload)="onUpload()"
         (uploadClose)="close($event)"></app-upload-files>
     }
@@ -15,7 +17,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [UploadFilesComponent, UploadProgressComponent],
 })
 export class UploadFilesDialogComponent {
   showProgress = false;

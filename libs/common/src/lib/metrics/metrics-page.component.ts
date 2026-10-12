@@ -1,3 +1,4 @@
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,21 +14,49 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
-import { Subject, debounceTime } from 'rxjs';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaExpanderModule,
+  PaIconModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ActivityLogItem, DownloadFormat } from '@nuclia/core';
+import { DropdownButtonComponent, InfoCardComponent, SisSearchInputComponent, SpinnerComponent } from '@nuclia/sistema';
+import { debounceTime, Subject } from 'rxjs';
+import { MetricsCellPlugin, MetricsSidebarPlugin } from './metrics-cell-plugin';
 import { MetricsColumnDef, MetricsMonthRange, MetricsSidebarField } from './metrics-column.model';
 import { MetricsPageService } from './metrics-page.service';
-import { MetricsCellPlugin, MetricsSidebarPlugin } from './metrics-cell-plugin';
+import { MetricsPaginationComponent } from './metrics-pagination/metrics-pagination.component';
 import { METRICS_EMPTY_STATE, METRICS_PAGE_SIZES } from './metrics.config';
 
 @Component({
-  standalone: false,
   selector: 'app-metrics-page',
   templateUrl: './metrics-page.component.html',
   styleUrl: './metrics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DatePipe, MetricsPageService],
+  imports: [
+    PaTextFieldModule,
+    PaDropdownModule,
+    DropdownButtonComponent,
+    PaTogglesModule,
+    SisSearchInputComponent,
+    SpinnerComponent,
+    InfoCardComponent,
+    PaButtonModule,
+    PaTableModule,
+    NgTemplateOutlet,
+    PaTooltipModule,
+    PaIconModule,
+    MetricsPaginationComponent,
+    PaExpanderModule,
+    TranslatePipe,
+  ],
 })
 export class MetricsPageComponent {
   readonly service = inject(MetricsPageService);

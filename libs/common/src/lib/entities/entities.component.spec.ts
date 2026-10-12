@@ -2,11 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NerService } from './ner.service';
 
-import { EntitiesComponent } from './entities.component';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { EntitiesComponent } from './entities.component';
 
 describe('EntitiesComponent', () => {
   let component: EntitiesComponent;
@@ -14,18 +14,19 @@ describe('EntitiesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MockModule(TranslateModule),
-        MockModule(PaTextFieldModule),
-        MockModule(PaButtonModule),
-        MockModule(ReactiveFormsModule),
-      ],
-      declarations: [EntitiesComponent],
+      imports: [TranslateModule.forRoot(), MockModule(ReactiveFormsModule), EntitiesComponent],
       providers: [
-        MockProvider(TranslateService),
         MockProvider(NerService, {
           entities: of({}),
         }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
   });

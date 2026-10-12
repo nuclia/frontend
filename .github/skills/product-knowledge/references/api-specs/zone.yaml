@@ -1204,7 +1204,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-08-27T13:51:28.609922'
+          default: '2026-09-21T12:14:28.025127'
           title: To
       responses:
         '200':
@@ -2316,7 +2316,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-08-27T13:51:28.615043'
+          default: '2026-09-21T12:14:28.031436'
           title: To
       responses:
         '200':
@@ -2393,17 +2393,1824 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  cloud_storage_sync:
-    commit: ba1fdde791099614482d40f5eba1e8438ad116aa
-    last_updated: '2026-08-21T15:20:36.049961+00:00'
-  idp_regional:
-    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
-    last_updated: '2026-08-27T13:55:22.507745'
   events:
-    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
-    last_updated: '2026-08-27T13:51:28.846282'
+    commit: bfd7f09c3eed6fe2b0d69cb09216183f63bca5af
+    last_updated: '2026-09-21T12:14:28.318918'
+  cloud_storage_sync:
+    commit: b4dabc726b5b1e428ba78d6b052608397b21dee6
+    last_updated: '2026-09-22T08:11:09.980039+00:00'
+  idp_regional:
+    commit: cbe35db1b947c302a2e1fc47b8d56b55b31e6d21
+    last_updated: '2026-09-16T13:50:48.458856'
 components:
   schemas:
+    ActivityLogsAskQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - question
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - rephrased_question
+          - resources_count
+          - question
+          - rag_strategies_names
+          - id
+          - date
+          - answer
+        filters:
+          $ref: '#/components/schemas/QueryFiltersAsk'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsAskQuery
+    ActivityLogsChatQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - question
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - rephrased_question
+          - answer
+          - question
+          - date
+          - id
+          - rag_strategies_names
+        filters:
+          $ref: '#/components/schemas/QueryFiltersChat'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsChatQuery
+    ActivityLogsQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - date
+        filters:
+          $ref: '#/components/schemas/QueryFiltersCommon'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsQuery
+    ActivityLogsSearchQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - question
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - date
+          - resources_count
+          - question
+        filters:
+          $ref: '#/components/schemas/QueryFiltersSearch'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsSearchQuery
+    ActivityUsageResponse:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        search:
+          type: integer
+          title: Search
+        chat:
+          type: integer
+          title: Chat
+          deprecated: true
+        ask:
+          type: integer
+          title: Ask
+      type: object
+      required:
+      - timestamp
+      - search
+      - chat
+      - ask
+      title: ActivityUsageResponse
+    AggregatedRemiScoreMetric:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        metrics:
+          items:
+            $ref: '#/components/schemas/AggregatedRemiScoreValues'
+          type: array
+          title: Metrics
+      type: object
+      required:
+      - timestamp
+      - metrics
+      title: AggregatedRemiScoreMetric
+    AggregatedRemiScoreValues:
+      properties:
+        name:
+          type: string
+          title: Name
+        min:
+          type: number
+          title: Min
+        max:
+          type: number
+          title: Max
+        average:
+          type: number
+          title: Average
+      type: object
+      required:
+      - name
+      - min
+      - max
+      - average
+      title: AggregatedRemiScoreValues
+    Aggregation:
+      type: string
+      enum:
+      - hour
+      - day
+      - week
+      - month
+      - quarter
+      - year
+      - millennium
+      title: Aggregation
+    AuditMetadata:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isnotin
+        like:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Like
+        ilike:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ilike
+        key:
+          type: string
+          title: Key
+      additionalProperties: false
+      type: object
+      required:
+      - key
+      title: AuditMetadata
+    ClientType:
+      type: string
+      enum:
+      - api
+      - widget
+      - web
+      - dashboard
+      - desktop
+      - chrome_extension
+      title: ClientType
+    ContextRelevanceQuery:
+      properties:
+        value:
+          type: integer
+          title: Value
+        operation:
+          type: string
+          enum:
+          - gt
+          - lt
+          - eq
+          title: Operation
+        aggregation:
+          type: string
+          enum:
+          - average
+          - max
+          - min
+          title: Aggregation
+      type: object
+      required:
+      - value
+      - operation
+      - aggregation
+      title: ContextRelevanceQuery
+    DownloadActivityLogsAskQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - question
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - rephrased_question
+          - resources_count
+          - question
+          - rag_strategies_names
+          - id
+          - date
+          - answer
+        filters:
+          $ref: '#/components/schemas/QueryFiltersAsk'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsAskQuery
+    DownloadActivityLogsChatQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - question
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - rephrased_question
+          - answer
+          - question
+          - date
+          - id
+          - rag_strategies_names
+        filters:
+          $ref: '#/components/schemas/QueryFiltersChat'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsChatQuery
+    DownloadActivityLogsQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - date
+        filters:
+          $ref: '#/components/schemas/QueryFiltersCommon'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsQuery
+    DownloadActivityLogsSearchQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - question
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - date
+          - resources_count
+          - question
+        filters:
+          $ref: '#/components/schemas/QueryFiltersSearch'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsSearchQuery
+    DownloadFormat:
+      type: string
+      enum:
+      - ndjson
+      - csv
+      title: DownloadFormat
+    DownloadRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        download_type:
+          $ref: '#/components/schemas/DownloadRequestType'
+        download_format:
+          $ref: '#/components/schemas/DownloadFormat'
+        event_type:
+          $ref: '#/components/schemas/EventType'
+        requested_at:
+          type: string
+          format: date-time
+          title: Requested At
+        kb_id:
+          type: string
+          title: Kb Id
+        download_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Download Url
+      type: object
+      required:
+      - request_id
+      - download_type
+      - download_format
+      - event_type
+      - requested_at
+      - kb_id
+      - download_url
+      title: DownloadRequest
+    DownloadRequestType:
+      type: string
+      enum:
+      - query
+      title: DownloadRequestType
+    EventDownloadsList:
+      properties:
+        downloads:
+          items:
+            type: string
+          type: array
+          title: Downloads
+      type: object
+      required:
+      - downloads
+      title: EventDownloadsList
+    EventType:
+      type: string
+      enum:
+      - visited
+      - modified
+      - deleted
+      - new
+      - search
+      - suggest
+      - indexed
+      - chat
+      - ask
+      - retrieve
+      - augment
+      - started
+      - stopped
+      - processed
+      title: EventType
+    GenericFilter_ClientType_:
+      properties:
+        eq:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        gt:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        ge:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        lt:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        le:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        ne:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClientType'
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ClientType'
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[ClientType]
+    GenericFilter_UserType_:
+      properties:
+        eq:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        gt:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        ge:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        lt:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        le:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        ne:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UserType'
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UserType'
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[UserType]
+    GenericFilter_bool_:
+      properties:
+        eq:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: boolean
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: boolean
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[bool]
+    GenericFilter_datetime_:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+              format: date-time
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+              format: date-time
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[datetime]
+    GenericFilter_float_:
+      properties:
+        eq:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: number
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[float]
+    GenericFilter_int_:
+      properties:
+        eq:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[int]
+    GenericFilter_str_:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isnotin
+      additionalProperties: false
+      type: object
+      title: GenericFilter[str]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Pagination:
+      properties:
+        limit:
+          type: integer
+          maximum: 1000.0
+          minimum: 0.0
+          title: Limit
+          default: 10
+        starting_after:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Starting After
+        ending_before:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ending Before
+      type: object
+      title: Pagination
+    QueryFiltersAsk:
+      properties:
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        rephrased_question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        answer:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        learning_id:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        feedback_good:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if the feedback provided for the main question is positive.
+          cast_to: bool
+        feedback_comment:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+          description: User-provided comment on the feedback for the question.
+        feedback_good_all:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if all feedback, including that on the main question and
+            each related text block, is positive.
+          cast_to: bool
+        feedback_good_any:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if there is any positive feedback on the question itself
+            or any related text block.
+          cast_to: bool
+        model:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        generative_answer_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first answer chunk of data was returned by the generative model.
+          cast_to: int
+        generative_reasoning_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first reasoning chunk of data was returned by the generative
+            model.
+          cast_to: int
+        generative_answer_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds elapsed between the answer streaming request
+            is done to the generative model until the last chunk of the answer is
+            returned.
+          cast_to: int
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        resources_count:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        vectorset:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        min_score_bm25:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        min_score_semantic:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        result_per_page:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        retrieval_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds spent on the NucliaDB side for retrieval,
+            including retrieval rephrase, calculation of query embedding, index search
+            and results hydration
+          cast_to: int
+      additionalProperties: false
+      type: object
+      title: QueryFiltersAsk
+    QueryFiltersChat:
+      properties:
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        rephrased_question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        answer:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        learning_id:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        feedback_good:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if the feedback provided for the main question is positive.
+          cast_to: bool
+        feedback_comment:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+          description: User-provided comment on the feedback for the question.
+        feedback_good_all:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if all feedback, including that on the main question and
+            each related text block, is positive.
+          cast_to: bool
+        feedback_good_any:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if there is any positive feedback on the question itself
+            or any related text block.
+          cast_to: bool
+        model:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        generative_answer_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first answer chunk of data was returned by the generative model.
+          cast_to: int
+        generative_reasoning_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first reasoning chunk of data was returned by the generative
+            model.
+          cast_to: int
+        generative_answer_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds elapsed between the answer streaming request
+            is done to the generative model until the last chunk of the answer is
+            returned.
+          cast_to: int
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: QueryFiltersChat
+    QueryFiltersCommon:
+      properties:
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: QueryFiltersCommon
+    QueryFiltersSearch:
+      properties:
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        resources_count:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        vectorset:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        min_score_bm25:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        min_score_semantic:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        result_per_page:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        retrieval_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds spent on the NucliaDB side for retrieval,
+            including retrieval rephrase, calculation of query embedding, index search
+            and results hydration
+          cast_to: int
+      additionalProperties: false
+      type: object
+      title: QueryFiltersSearch
+    RemiAnswerRelevance:
+      properties:
+        score:
+          type: integer
+          title: Score
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - score
+      - reason
+      title: RemiAnswerRelevance
+    RemiQuery:
+      properties:
+        context_relevance:
+          anyOf:
+          - $ref: '#/components/schemas/ContextRelevanceQuery'
+          - type: 'null'
+        month:
+          type: string
+          title: Month
+        from_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From Date
+        to_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To Date
+        feedback_good:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Feedback Good
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/Status'
+          - type: 'null'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+      type: object
+      required:
+      - month
+      title: RemiQuery
+    RemiQueryResult:
+      properties:
+        id:
+          type: integer
+          title: Id
+        question:
+          type: string
+          title: Question
+        date:
+          type: string
+          format: date-time
+          title: Date
+        answer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Answer
+        remi:
+          anyOf:
+          - $ref: '#/components/schemas/RemiScores'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - question
+      - date
+      - answer
+      - remi
+      title: RemiQueryResult
+    RemiQueryResultWithContext:
+      properties:
+        id:
+          type: integer
+          title: Id
+        question:
+          type: string
+          title: Question
+        date:
+          type: string
+          format: date-time
+          title: Date
+        answer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Answer
+        remi:
+          anyOf:
+          - $ref: '#/components/schemas/RemiScores'
+          - type: 'null'
+        context:
+          items:
+            $ref: '#/components/schemas/RetrievedContext'
+          type: array
+          title: Context
+      type: object
+      required:
+      - id
+      - question
+      - date
+      - answer
+      - remi
+      - context
+      title: RemiQueryResultWithContext
+    RemiQueryResults:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/RemiQueryResult'
+          type: array
+          title: Data
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - data
+      - has_more
+      title: RemiQueryResults
+    RemiScores:
+      properties:
+        answer_relevance:
+          $ref: '#/components/schemas/RemiAnswerRelevance'
+        context_relevance:
+          items:
+            type: integer
+          type: array
+          title: Context Relevance
+        groundedness:
+          items:
+            type: integer
+          type: array
+          title: Groundedness
+      type: object
+      required:
+      - answer_relevance
+      - context_relevance
+      - groundedness
+      title: RemiScores
+    RetrievedContext:
+      properties:
+        text:
+          type: string
+          title: Text
+        text_block_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text Block Id
+      type: object
+      required:
+      - text
+      title: RetrievedContext
+    ShowOnly:
+      properties: {}
+      additionalProperties: false
+      type: object
+      title: ShowOnly
+      description: 'Marker class to indicate that a field is for display purposes
+        only.
+
+
+        Fields wrapped in this class are excluded from OpenAPI documentation to prevent
+        confusion,
+
+        as they are not intended for filtering. Instead, they are only used in the
+        "show" parameter.
+
+
+        This behavior is enforced in the FastAPI application through introspection,
+
+        ensuring these fields are removed from the generated API documentation.'
+    Status:
+      type: string
+      enum:
+      - SUCCESS
+      - ERROR
+      - NO_CONTEXT
+      title: Status
+    StringFilter:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        isin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isin
+        isnotin:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Isnotin
+        like:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Like
+        ilike:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ilike
+      additionalProperties: false
+      type: object
+      title: StringFilter
+    UserType:
+      type: string
+      enum:
+      - user
+      - nuakey
+      title: UserType
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AWSS3AssumeRoleCredentials:
       properties:
         role_arn:
@@ -2649,15 +4456,6 @@ components:
       required:
       - mode
       title: FileFilterOutput
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     InvalidResource:
       properties:
         resource:
@@ -3026,6 +4824,11 @@ components:
             format: uuid
           - type: 'null'
           title: Extract Strategy
+        sharepoint_site_pages_site_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sharepoint Site Pages Site Id
       type: object
       required:
       - name
@@ -3053,7 +4856,9 @@ components:
           format: date-time
           title: Updated At
         sync_root_path:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Sync Root Path
         sync_interval_minutes:
           type: integer
@@ -3069,6 +4874,11 @@ components:
           - type: string
           - type: 'null'
           title: Drive Id
+        drive_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Type
         file_filter:
           anyOf:
           - $ref: '#/components/schemas/FileFilterOutput'
@@ -3090,6 +4900,11 @@ components:
             format: uuid
           - type: 'null'
           title: Extract Strategy
+        sharepoint_site_pages_site_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sharepoint Site Pages Site Id
         last_sync_run:
           anyOf:
           - type: string
@@ -3208,32 +5023,6 @@ components:
       type: object
       title: TriggerSyncInput
       description: Input for triggering a sync job.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     AccountType:
       type: string
       enum:
@@ -4182,1775 +5971,3 @@ components:
       - id
       - role
       title: UpdateKbUser
-    ActivityLogsAskQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - question
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - question
-          - rephrased_question
-          - resources_count
-          - rag_strategies_names
-          - id
-          - answer
-          - date
-        filters:
-          $ref: '#/components/schemas/QueryFiltersAsk'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsAskQuery
-    ActivityLogsChatQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - question
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - question
-          - rephrased_question
-          - id
-          - rag_strategies_names
-          - answer
-          - date
-        filters:
-          $ref: '#/components/schemas/QueryFiltersChat'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsChatQuery
-    ActivityLogsQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - id
-          - date
-        filters:
-          $ref: '#/components/schemas/QueryFiltersCommon'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsQuery
-    ActivityLogsSearchQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - question
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - id
-          - question
-          - date
-          - resources_count
-        filters:
-          $ref: '#/components/schemas/QueryFiltersSearch'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsSearchQuery
-    ActivityUsageResponse:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        search:
-          type: integer
-          title: Search
-        chat:
-          type: integer
-          title: Chat
-          deprecated: true
-        ask:
-          type: integer
-          title: Ask
-      type: object
-      required:
-      - timestamp
-      - search
-      - chat
-      - ask
-      title: ActivityUsageResponse
-    AggregatedRemiScoreMetric:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        metrics:
-          items:
-            $ref: '#/components/schemas/AggregatedRemiScoreValues'
-          type: array
-          title: Metrics
-      type: object
-      required:
-      - timestamp
-      - metrics
-      title: AggregatedRemiScoreMetric
-    AggregatedRemiScoreValues:
-      properties:
-        name:
-          type: string
-          title: Name
-        min:
-          type: number
-          title: Min
-        max:
-          type: number
-          title: Max
-        average:
-          type: number
-          title: Average
-      type: object
-      required:
-      - name
-      - min
-      - max
-      - average
-      title: AggregatedRemiScoreValues
-    Aggregation:
-      type: string
-      enum:
-      - hour
-      - day
-      - week
-      - month
-      - quarter
-      - year
-      - millennium
-      title: Aggregation
-    AuditMetadata:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Isnotin
-        like:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Like
-        ilike:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ilike
-        key:
-          type: string
-          title: Key
-      additionalProperties: false
-      type: object
-      required:
-      - key
-      title: AuditMetadata
-    ClientType:
-      type: string
-      enum:
-      - api
-      - widget
-      - web
-      - dashboard
-      - desktop
-      - chrome_extension
-      title: ClientType
-    ContextRelevanceQuery:
-      properties:
-        value:
-          type: integer
-          title: Value
-        operation:
-          type: string
-          enum:
-          - gt
-          - lt
-          - eq
-          title: Operation
-        aggregation:
-          type: string
-          enum:
-          - average
-          - max
-          - min
-          title: Aggregation
-      type: object
-      required:
-      - value
-      - operation
-      - aggregation
-      title: ContextRelevanceQuery
-    DownloadActivityLogsAskQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - question
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - question
-          - rephrased_question
-          - resources_count
-          - rag_strategies_names
-          - id
-          - answer
-          - date
-        filters:
-          $ref: '#/components/schemas/QueryFiltersAsk'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsAskQuery
-    DownloadActivityLogsChatQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - question
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - question
-          - rephrased_question
-          - id
-          - rag_strategies_names
-          - answer
-          - date
-        filters:
-          $ref: '#/components/schemas/QueryFiltersChat'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsChatQuery
-    DownloadActivityLogsQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - id
-          - date
-        filters:
-          $ref: '#/components/schemas/QueryFiltersCommon'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsQuery
-    DownloadActivityLogsSearchQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - question
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - id
-          - question
-          - date
-          - resources_count
-        filters:
-          $ref: '#/components/schemas/QueryFiltersSearch'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsSearchQuery
-    DownloadFormat:
-      type: string
-      enum:
-      - ndjson
-      - csv
-      title: DownloadFormat
-    DownloadRequest:
-      properties:
-        request_id:
-          type: string
-          title: Request Id
-        download_type:
-          $ref: '#/components/schemas/DownloadRequestType'
-        download_format:
-          $ref: '#/components/schemas/DownloadFormat'
-        event_type:
-          $ref: '#/components/schemas/EventType'
-        requested_at:
-          type: string
-          format: date-time
-          title: Requested At
-        kb_id:
-          type: string
-          title: Kb Id
-        download_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Download Url
-      type: object
-      required:
-      - request_id
-      - download_type
-      - download_format
-      - event_type
-      - requested_at
-      - kb_id
-      - download_url
-      title: DownloadRequest
-    DownloadRequestType:
-      type: string
-      enum:
-      - query
-      title: DownloadRequestType
-    EventDownloadsList:
-      properties:
-        downloads:
-          items:
-            type: string
-          type: array
-          title: Downloads
-      type: object
-      required:
-      - downloads
-      title: EventDownloadsList
-    EventType:
-      type: string
-      enum:
-      - visited
-      - modified
-      - deleted
-      - new
-      - search
-      - suggest
-      - indexed
-      - chat
-      - ask
-      - retrieve
-      - augment
-      - started
-      - stopped
-      - processed
-      title: EventType
-    GenericFilter_ClientType_:
-      properties:
-        eq:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        gt:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        ge:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        lt:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        le:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        ne:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ClientType'
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/ClientType'
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[ClientType]
-    GenericFilter_UserType_:
-      properties:
-        eq:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        gt:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        ge:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        lt:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        le:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        ne:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/UserType'
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/UserType'
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[UserType]
-    GenericFilter_bool_:
-      properties:
-        eq:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: boolean
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: boolean
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[bool]
-    GenericFilter_datetime_:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: string
-              format: date-time
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: string
-              format: date-time
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[datetime]
-    GenericFilter_float_:
-      properties:
-        eq:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: number
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: number
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[float]
-    GenericFilter_int_:
-      properties:
-        eq:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: integer
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[int]
-    GenericFilter_str_:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Isnotin
-      additionalProperties: false
-      type: object
-      title: GenericFilter[str]
-    Pagination:
-      properties:
-        limit:
-          type: integer
-          maximum: 1000.0
-          minimum: 0.0
-          title: Limit
-          default: 10
-        starting_after:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Starting After
-        ending_before:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Ending Before
-      type: object
-      title: Pagination
-    QueryFiltersAsk:
-      properties:
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        date:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_datetime_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        rephrased_question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        answer:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        learning_id:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        feedback_good:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if the feedback provided for the main question is positive.
-          cast_to: bool
-        feedback_comment:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-          description: User-provided comment on the feedback for the question.
-        feedback_good_all:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if all feedback, including that on the main question and
-            each related text block, is positive.
-          cast_to: bool
-        feedback_good_any:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if there is any positive feedback on the question itself
-            or any related text block.
-          cast_to: bool
-        model:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        generative_answer_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first answer chunk of data was returned by the generative model.
-          cast_to: int
-        generative_reasoning_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first reasoning chunk of data was returned by the generative
-            model.
-          cast_to: int
-        generative_answer_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds elapsed between the answer streaming request
-            is done to the generative model until the last chunk of the answer is
-            returned.
-          cast_to: int
-        reasoning:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        resources_count:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        vectorset:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        min_score_bm25:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        min_score_semantic:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        result_per_page:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        retrieval_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds spent on the NucliaDB side for retrieval,
-            including retrieval rephrase, calculation of query embedding, index search
-            and results hydration
-          cast_to: int
-      additionalProperties: false
-      type: object
-      title: QueryFiltersAsk
-    QueryFiltersChat:
-      properties:
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        date:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_datetime_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        rephrased_question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        answer:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        learning_id:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        feedback_good:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if the feedback provided for the main question is positive.
-          cast_to: bool
-        feedback_comment:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-          description: User-provided comment on the feedback for the question.
-        feedback_good_all:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if all feedback, including that on the main question and
-            each related text block, is positive.
-          cast_to: bool
-        feedback_good_any:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if there is any positive feedback on the question itself
-            or any related text block.
-          cast_to: bool
-        model:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        generative_answer_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first answer chunk of data was returned by the generative model.
-          cast_to: int
-        generative_reasoning_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first reasoning chunk of data was returned by the generative
-            model.
-          cast_to: int
-        generative_answer_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds elapsed between the answer streaming request
-            is done to the generative model until the last chunk of the answer is
-            returned.
-          cast_to: int
-        reasoning:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: QueryFiltersChat
-    QueryFiltersCommon:
-      properties:
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        date:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_datetime_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: QueryFiltersCommon
-    QueryFiltersSearch:
-      properties:
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        date:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_datetime_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        resources_count:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        vectorset:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        min_score_bm25:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        min_score_semantic:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        result_per_page:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        retrieval_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds spent on the NucliaDB side for retrieval,
-            including retrieval rephrase, calculation of query embedding, index search
-            and results hydration
-          cast_to: int
-      additionalProperties: false
-      type: object
-      title: QueryFiltersSearch
-    RemiAnswerRelevance:
-      properties:
-        score:
-          type: integer
-          title: Score
-        reason:
-          type: string
-          title: Reason
-      type: object
-      required:
-      - score
-      - reason
-      title: RemiAnswerRelevance
-    RemiQuery:
-      properties:
-        context_relevance:
-          anyOf:
-          - $ref: '#/components/schemas/ContextRelevanceQuery'
-          - type: 'null'
-        month:
-          type: string
-          title: Month
-        from_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: From Date
-        to_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: To Date
-        feedback_good:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Feedback Good
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/Status'
-          - type: 'null'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-      type: object
-      required:
-      - month
-      title: RemiQuery
-    RemiQueryResult:
-      properties:
-        id:
-          type: integer
-          title: Id
-        question:
-          type: string
-          title: Question
-        date:
-          type: string
-          format: date-time
-          title: Date
-        answer:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Answer
-        remi:
-          anyOf:
-          - $ref: '#/components/schemas/RemiScores'
-          - type: 'null'
-      type: object
-      required:
-      - id
-      - question
-      - date
-      - answer
-      - remi
-      title: RemiQueryResult
-    RemiQueryResultWithContext:
-      properties:
-        id:
-          type: integer
-          title: Id
-        question:
-          type: string
-          title: Question
-        date:
-          type: string
-          format: date-time
-          title: Date
-        answer:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Answer
-        remi:
-          anyOf:
-          - $ref: '#/components/schemas/RemiScores'
-          - type: 'null'
-        context:
-          items:
-            $ref: '#/components/schemas/RetrievedContext'
-          type: array
-          title: Context
-      type: object
-      required:
-      - id
-      - question
-      - date
-      - answer
-      - remi
-      - context
-      title: RemiQueryResultWithContext
-    RemiQueryResults:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/RemiQueryResult'
-          type: array
-          title: Data
-        has_more:
-          type: boolean
-          title: Has More
-      type: object
-      required:
-      - data
-      - has_more
-      title: RemiQueryResults
-    RemiScores:
-      properties:
-        answer_relevance:
-          $ref: '#/components/schemas/RemiAnswerRelevance'
-        context_relevance:
-          items:
-            type: integer
-          type: array
-          title: Context Relevance
-        groundedness:
-          items:
-            type: integer
-          type: array
-          title: Groundedness
-      type: object
-      required:
-      - answer_relevance
-      - context_relevance
-      - groundedness
-      title: RemiScores
-    RetrievedContext:
-      properties:
-        text:
-          type: string
-          title: Text
-        text_block_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Text Block Id
-      type: object
-      required:
-      - text
-      title: RetrievedContext
-    ShowOnly:
-      properties: {}
-      additionalProperties: false
-      type: object
-      title: ShowOnly
-      description: 'Marker class to indicate that a field is for display purposes
-        only.
-
-
-        Fields wrapped in this class are excluded from OpenAPI documentation to prevent
-        confusion,
-
-        as they are not intended for filtering. Instead, they are only used in the
-        "show" parameter.
-
-
-        This behavior is enforced in the FastAPI application through introspection,
-
-        ensuring these fields are removed from the generated API documentation.'
-    Status:
-      type: string
-      enum:
-      - SUCCESS
-      - ERROR
-      - NO_CONTEXT
-      title: Status
-    StringFilter:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        isin:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Isin
-        isnotin:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Isnotin
-        like:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Like
-        ilike:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ilike
-      additionalProperties: false
-      type: object
-      title: StringFilter
-    UserType:
-      type: string
-      enum:
-      - user
-      - nuakey
-      title: UserType

@@ -1,25 +1,44 @@
-import { Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
+import { AsyncPipe } from '@angular/common';
 import {
   BackendConfigurationService,
   BrandService,
   FeaturesService,
+  LowerCaseInputDirective,
   OAuthLoginData,
   OAuthService,
   SAMLService,
 } from '@flaps/core';
-import { InputComponent } from '@guillotinaweb/pastanaga-angular';
+import { InputComponent, PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
+import { SsoButtonsComponent } from '../sso/sso-buttons.component';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'nus-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    UserContainerComponent,
+    FormsModule,
+    PaTextFieldModule,
+    LowerCaseInputDirective,
+    ReactiveFormsModule,
+    PasswordInputComponent,
+    PaIconModule,
+    PaButtonModule,
+    RouterLink,
+    SsoButtonsComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class LoginComponent {
   @ViewChild('email', { static: false }) email: InputComponent | undefined;
@@ -73,7 +92,7 @@ export class LoginComponent {
         ? this.samlService.checkDomain(domain).pipe(catchError(() => of(undefined)))
         : of(undefined);
     }),
-    map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
+    map((result) => (result ? this.samlService.ssoUrl(result.token, this.loginChallenge) : undefined)),
   );
   isPDP = this.brandService.isPDP;
   brandName = this.brandService.brandName;

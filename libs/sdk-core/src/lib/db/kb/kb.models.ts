@@ -217,6 +217,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
   listAgenticConfigs(): Observable<AgenticConfigs>;
   getAgenticSource(id: string): Observable<AgenticSource>;
   listAgenticSources(): Observable<AgenticSources>;
+
+  getProcessingHook(): Observable<ProcessingHook | undefined>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -301,6 +303,10 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   updateAgenticSource(id: string, source: AgenticSource): Observable<void>;
 
   deleteAgenticSource(id: string): Observable<void>;
+
+  updateProcessingHook(data: ProcessingHook): Observable<ProcessingHook>;
+
+  deleteProcessingHook(): Observable<void>;
 }
 
 export interface KnowledgeBoxCreation {
@@ -679,4 +685,9 @@ export enum DataResidencyStatus {
   UNKNOWN = 'unknown',
   GUARANTEED = 'guaranteed',
   NOT_GUARANTEED = 'not_guaranteed',
+}
+
+export interface ProcessingHook {
+  uri: string;
+  headers?: { [key: string]: string };
 }

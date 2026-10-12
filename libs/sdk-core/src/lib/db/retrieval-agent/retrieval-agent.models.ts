@@ -175,7 +175,8 @@ export type ContextAgentCreation =
   | BasicAskAgentCreation
   | ContextConditionalAgentCreation
   | RestrictedAgentCreation
-  | SparqlAgentCreation;
+  | SparqlAgentCreation
+  | SyncAgentCreation;
 export type GenerationAgentCreation = SummarizeAgentCreation | GenerateAgentCreation;
 export type PostprocessAgentCreation =
   | RestartAgentCreation
@@ -262,6 +263,13 @@ export interface BasicAskAgentCreation {
   sources: string[];
   fallback?: BaseContextAgent | null;
   summarize_model?: string;
+  generative_model?: string;
+}
+
+export interface SyncAgentCreation {
+  module: 'sync';
+  sources: string[];
+  fallback?: BaseContextAgent | null;
   generative_model?: string;
 }
 
@@ -414,6 +422,9 @@ export interface BasicAskAgent extends ContextAgent, BasicAskAgentCreation {
 }
 export interface AskAgent extends ContextAgent, AskAgentCreation {
   module: 'ask';
+}
+export interface SyncAgent extends ContextAgent, SyncAgentCreation {
+  module: 'sync';
 }
 export interface PreConditionalAgent extends PreprocessAgent, PreConditionalAgentCreation {
   module: 'pre_conditional';

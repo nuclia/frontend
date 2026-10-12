@@ -1,0 +1,74 @@
+/* source-code-pro-regular - latin */
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    url('/assets/fonts/source-code-pro/source-code-pro-v14-latin-regular.woff2') format('woff2'),
+    url('/assets/fonts/source-code-pro/source-code-pro-v14-latin-regular.woff') format('woff');
+}
+
+/* Enable with ?fontTest=progress-sans (and disable with ?fontTest=default) */
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('/assets/fonts/progress-sans/ProgressSansText-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('/assets/fonts/progress-sans/ProgressSansText-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('/assets/fonts/progress-sans/ProgressSansText-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('/assets/fonts/progress-sans/ProgressSansText-ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}

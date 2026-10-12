@@ -20,7 +20,7 @@ description: >
 
 **Started:** <!-- e.g. 2026-03-05 -->
 **User goal:** <!-- One-sentence description of what the user wants to achieve end-to-end -->
-**Target project(s):** <!-- dashboard | rao | manager-v2 | nucliadb-admin | sdk-core | common | core | sistema | user | sync | search-widget | rao-widget | NEW -->
+**Target project(s):** <!-- dashboard | rao | manager-v2 | admin | sdk-core | common | core | sistema | user | sync | search-widget | rao-widget | NEW -->
 **Definition of done:** <!-- What does "finished" look like? Files created, tests passing, feature visible? -->
 
 ---

@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { SisProgressModule } from '@nuclia/sistema';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { UserContainerComponent } from '../user-container';
 import { FarewellComponent } from './farewell.component';
 import { FeedbackComponent } from './feedback.component';
-import { UserContainerComponent } from '../user-container';
 
 @NgModule({
   imports: [
@@ -17,9 +17,9 @@ import { UserContainerComponent } from '../user-container';
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
-    SisProgressModule,
+    FarewellComponent,
+    FeedbackComponent,
   ],
-  declarations: [FarewellComponent, FeedbackComponent],
   exports: [],
 })
 export class FarewellModule {}

@@ -1,19 +1,35 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { SisToastService } from '@nuclia/sistema';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { forkJoin, map, of, shareReplay, Subject, switchMap } from 'rxjs';
-import { ManagerStore } from '../../../manager.store';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  OptionModel,
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { AccountTypes } from '@nuclia/core';
-import { GlobalAccountService } from '../../global-account.service';
+import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { forkJoin, map, of, shareReplay, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { SearchPrice, PaymentCurrency } from '../../global-account.models';
+import { ManagerStore } from '../../../manager.store';
+import { PaymentCurrency, SearchPrice } from '../../global-account.models';
+import { GlobalAccountService } from '../../global-account.service';
 
 @Component({
   templateUrl: './payment-links.component.html',
   styleUrls: ['./payment-links.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaDropdownModule,
+    PaTogglesModule,
+    PaButtonModule,
+    InfoCardComponent,
+    AsyncPipe,
+  ],
 })
 export class PaymentLinksComponent implements OnDestroy {
   private unsubscribeAll = new Subject<void>();

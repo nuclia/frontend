@@ -6,7 +6,6 @@ import {
   DashboardLayoutComponent,
   EmptyComponent,
   PageNotFoundComponent,
-  PageNotFoundModule,
   rootGuard,
   awsGuard,
   AwsOnboardingComponent,
@@ -79,7 +78,7 @@ const routerOptions: ExtraOptions = {
 };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, routerOptions), PageNotFoundModule],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

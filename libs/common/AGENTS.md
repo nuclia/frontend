@@ -39,7 +39,7 @@ resources/         ← Resource CRUD, editor, list with pending/processed/error 
                       component-provided (not root) and batches session loads (`MEMORY_LOAD_CONCURRENCY = 6`)
 retrieval-agent/   ← ARAG: visual workflow canvas, workflows list, drivers, sessions, activity log
 search-widget/     ← Search widget builder & deployment config
-services/          ← AppService (locale), StandaloneService (NucliaDB standalone mode)
+services/          ← AppService (locale)
 tasks-automation/  ← Data augmentation task CRUD (ask, labeler, graph-extraction, etc.)
 upload/            ← Multi-channel upload (file, link, CSV, sitemap, text, Q&A)
 ```
@@ -64,7 +64,6 @@ All functional guards in `libs/common/src/lib/guards/`:
 | `setAccountGuard`          | Loads account from URL param via `SDKService.setCurrentAccount()`                                                                                                                                                                          |
 | `setKbGuard`               | Loads KB from URL param via `SDKService.setCurrentKb()`                                                                                                                                                                                    |
 | `setAgentGuard`            | Loads ARAG from URL param via `SDKService.setCurrentRetrievalAgent()`                                                                                                                                                                      |
-| `setLocalKbGuard`          | Like `setKbGuard` but for NucliaDB standalone mode                                                                                                                                                                                         |
 | `simpleModeGuard`          | `CanActivateFn` — when `NavigationService.simpleMode` is true, redirects KB home (`/`) to `./simple`                                                                                                                                       |
 | `selectAccountGuard`       | Redirects if account already selected                                                                                                                                                                                                      |
 | `selectKbGuard`            | Redirects if KB already selected; if the account is manager-only (`can_manage_account`), redirects to the account-manage URL (now on `apps/admin`, via `NavigationService.getAccountManageUrl()`) instead of the old in-app `/at/:account` |

@@ -44,7 +44,9 @@ const ROUTES: Routes = [
     ReactiveFormsModule,
     PaScrollModule,
     TranslateModule,
+    ManageZonesComponent,
+    ZoneDetailsComponent,
+    ZoneListComponent,
   ],
-  declarations: [ManageZonesComponent, ZoneDetailsComponent, ZoneListComponent],
 })
 export class ManageZonesModule {}

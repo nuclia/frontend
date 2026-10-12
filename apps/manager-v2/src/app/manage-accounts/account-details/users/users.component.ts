@@ -1,18 +1,37 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { debounceTime, filter, map, Subject, switchMap } from 'rxjs';
-import { AccountService } from '../../account.service';
+import { RouterLink } from '@angular/router';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
-import { UserService } from '../../../manage-users/user.service';
+import { debounceTime, filter, map, Subject, switchMap } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { UserSearch } from '../../../manage-users/user.models';
+import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails, AccountUser } from '../../account-ui.models';
-import { takeUntil } from 'rxjs/operators';
+import { AccountService } from '../../account.service';
 
 @Component({
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTextFieldModule,
+    PaPopupModule,
+    PaDropdownModule,
+    PaTableModule,
+    RouterLink,
+    PaIconModule,
+    PaButtonModule,
+    AsyncPipe,
+  ],
 })
 export class UsersComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

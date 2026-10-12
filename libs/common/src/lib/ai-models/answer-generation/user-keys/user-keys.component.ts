@@ -11,7 +11,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
+import { FeaturesService } from '@flaps/core';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -47,7 +47,6 @@ interface UserKeysProperties {
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
-    UnauthorizedFeatureDirective,
     ExpandableTextareaComponent,
     InfoCardComponent,
   ],

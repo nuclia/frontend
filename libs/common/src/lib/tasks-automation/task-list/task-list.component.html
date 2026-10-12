@@ -108,32 +108,40 @@
   }
 
   <div class="section">
-    <h2 class="body-m">{{ 'tasks-automation.data-augmentation-section' | translate }}</h2>
-    <div class="create-task">
-      <app-task-card
-        type="labeler"
-        (newTask)="createTask('labeler')"
-        [ready]="true"></app-task-card>
-      <app-task-card
-        type="ask"
-        (newTask)="createTask('ask')"
-        [ready]="true"></app-task-card>
-      <app-task-card
-        type="llm-graph"
-        (newTask)="createTask('llm-graph')"
-        [ready]="graphTaskEnabled | async"></app-task-card>
-      <app-task-card
-        type="synthetic-questions"
-        (newTask)="createTask('synthetic-questions')"
-        [ready]="questionsTaskEnabled | async"></app-task-card>
-      <app-task-card
-        type="llama-guard"
-        (newTask)="createTask('llama-guard')"
-        [ready]="contentSafetyTaskEnabled | async"></app-task-card>
-      <app-task-card
-        type="prompt-guard"
-        (newTask)="createTask('prompt-guard')"
-        [ready]="promptSafetyTaskEnabled | async"></app-task-card>
+    <div class="tone-section">
+      <h3 class="tone-heading">{{ 'tasks-automation.section.enrich' | translate }}</h3>
+      <div class="create-task">
+        <app-task-card
+          type="labeler"
+          (newTask)="createTask('labeler')"
+          [ready]="true"></app-task-card>
+        <app-task-card
+          type="ask"
+          (newTask)="createTask('ask')"
+          [ready]="true"></app-task-card>
+        <app-task-card
+          type="llm-graph"
+          (newTask)="createTask('llm-graph')"
+          [ready]="graphTaskEnabled | async"></app-task-card>
+        <app-task-card
+          type="synthetic-questions"
+          (newTask)="createTask('synthetic-questions')"
+          [ready]="questionsTaskEnabled | async"></app-task-card>
+      </div>
+    </div>
+
+    <div class="tone-section">
+      <h3 class="tone-heading">{{ 'tasks-automation.section.protect' | translate }}</h3>
+      <div class="create-task">
+        <app-task-card
+          type="llama-guard"
+          (newTask)="createTask('llama-guard')"
+          [ready]="contentSafetyTaskEnabled | async"></app-task-card>
+        <app-task-card
+          type="prompt-guard"
+          (newTask)="createTask('prompt-guard')"
+          [ready]="promptSafetyTaskEnabled | async"></app-task-card>
+      </div>
     </div>
   </div>
 </div>

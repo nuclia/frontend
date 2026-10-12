@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -10,15 +11,16 @@ import {
   signal,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { SyncService } from '../logic';
 import { ExternalConnection, StorageDrive, StorageFolder, StorageSite } from '@nuclia/core';
+import { SyncService } from '../logic';
+import { ONEDRIVE_CONNECTOR_ID } from '../logic/connectors/onedrive';
 
-import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ButtonMiniComponent,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 
@@ -28,29 +30,40 @@ import {
     ButtonMiniComponent,
     ReactiveFormsModule,
     TranslateModule,
-    SisProgressModule,
+    SpinnerComponent,
     TwoColumnsConfigurationItemComponent,
     PaButtonModule,
     PaIconModule,
     PaTextFieldModule,
+    PaTogglesModule,
   ],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['cloud-folder.component.scss'],
 })
 export class CloudFolderComponent implements OnInit {
   private toaster = inject(SisToastService);
 
   @Input() externalConnection?: ExternalConnection;
-  @Output() selection = new EventEmitter<{ sync_root_path?: string; folder_id?: string; drive_id: string }>();
+  @Input() connectorId?: string | null;
+  @Output() selection = new EventEmitter<{
+    sync_root_path?: string;
+    folder_id?: string;
+    drive_id: string;
+    sharepoint_site_pages_site_id?: string;
+  }>();
   currentSite = signal<StorageSite | undefined>(undefined);
   currentDrive = signal<StorageDrive | undefined>(undefined);
   currentFolder = signal<StorageFolder[]>([]);
   selectedFolder = signal<StorageFolder | undefined>(undefined);
+  syncPages = signal<boolean>(false);
   isCurrentSelected = computed(
     () => this.selectedFolder() && this.selectedFolder()?.path === this.currentFolder().at(-1)?.path,
   );
   hasCurrentFolder = computed(() => this.currentFolder().length > 0);
+  // hide Back at root — going further back would reach the SharePoint site picker, which the OneDrive tile skips
+  canGoBack = computed(() => !(this.forceOneDrive && !this.currentDrive() && !this.hasCurrentFolder()));
   sites: StorageSite[] | undefined = undefined;
   drives: StorageDrive[] = [];
   folders: StorageFolder[] = [];
@@ -59,9 +72,11 @@ export class CloudFolderComponent implements OnInit {
   requiresSiteUrlResolution = false;
   searchQuery = '';
   siteUrlControl = new FormControl('');
+  forceOneDrive = false; // Use 'me' as the root site for OneDrive connections
   requiresBucketSearch = false;
   bucketName = '';
   usePath = false;
+  isSharepoint = false;
   private cdr = inject(ChangeDetectorRef);
   private syncService = inject(SyncService);
   private translate = inject(TranslateService);
@@ -72,9 +87,13 @@ export class CloudFolderComponent implements OnInit {
     this.hasSites = !!capabilities?.has_sites;
     this.requiresSearch = !!capabilities?.requires_site_search;
     this.requiresSiteUrlResolution = !!capabilities?.requires_site_url_resolution;
+    this.forceOneDrive = this.connectorId === ONEDRIVE_CONNECTOR_ID;
     this.requiresBucketSearch = this.externalConnection?.provider === 'aws_s3_assume_role';
     this.usePath = this.externalConnection?.provider === 'aws_s3_assume_role';
-    if (!this.requiresSearch && !this.requiresSiteUrlResolution && !this.requiresBucketSearch) {
+    this.isSharepoint = this.connectorId === 'sharepoint';
+    if (this.forceOneDrive) {
+      this.resolveAndBrowseSite();
+    } else if (!this.requiresSearch && !this.requiresSiteUrlResolution && !this.requiresBucketSearch) {
       this.loadFolders();
     }
   }
@@ -136,7 +155,7 @@ export class CloudFolderComponent implements OnInit {
     } else if (this.currentDrive()) {
       this.currentDrive.set(undefined);
       this.loadFolders(this.currentSite() ? this.currentSite()?.id : undefined);
-    } else {
+    } else if (!this.forceOneDrive) {
       this.currentSite.set(undefined);
       if (this.requiresSiteUrlResolution) {
         this.siteUrlControl.setErrors(null);
@@ -153,6 +172,7 @@ export class CloudFolderComponent implements OnInit {
       drive_id: this.currentDrive()?.id || '',
       sync_root_path: this.usePath ? folder?.path || '' : undefined,
       folder_id: !this.usePath ? folder?.id || '' : undefined,
+      sharepoint_site_pages_site_id: this.syncPages() ? this.currentSite()?.id || '' : undefined,
     });
     this.selectedFolder.set(folder);
     this.cdr.markForCheck();
@@ -182,7 +202,8 @@ export class CloudFolderComponent implements OnInit {
     if (!this.externalConnection) {
       return;
     }
-    if (!this.siteUrlControl.value?.trim()) {
+    const siteUrl = this.forceOneDrive ? 'me' : this.siteUrlControl.value?.trim();
+    if (!siteUrl) {
       this.siteUrlControl.markAsDirty();
       this.siteUrlControl.setErrors({ customError: this.translate.instant('sync.cloud-folder.site-url-required') });
       this.cdr.markForCheck();
@@ -191,14 +212,18 @@ export class CloudFolderComponent implements OnInit {
     this.siteUrlControl.setErrors(null);
     this.loading = true;
     this.cdr.markForCheck();
-    this.syncService.resolveSite(this.externalConnection.id, this.siteUrlControl.value).subscribe({
+    this.syncService.resolveSite(this.externalConnection.id, siteUrl).subscribe({
       next: (site) => {
         this.loading = false;
         this.browseSite(site);
       },
       error: () => {
-        this.siteUrlControl.markAsDirty();
-        this.siteUrlControl.setErrors({ customError: this.translate.instant('sync.cloud-folder.site-url-error') });
+        if (this.forceOneDrive) {
+          this.toaster.error('sync.cloud-folder.site-url-error');
+        } else {
+          this.siteUrlControl.markAsDirty();
+          this.siteUrlControl.setErrors({ customError: this.translate.instant('sync.cloud-folder.site-url-error') });
+        }
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -221,5 +246,10 @@ export class CloudFolderComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  updateSyncPages(value: boolean) {
+    this.syncPages.set(value);
+    this.selectFolder();
   }
 }

@@ -1,5 +1,8 @@
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { STFPipesModule } from '@flaps/core';
+import { PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { filter, map, Observable, shareReplay, switchMap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { KbCounters, KbSummary } from '../../account-ui.models';
@@ -13,7 +16,7 @@ import { AccountService } from '../../account.service';
   templateUrl: './containers.component.html',
   styleUrls: ['./containers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, RouterLink, PaIconModule, AsyncPipe, DecimalPipe, STFPipesModule],
 })
 export class ContainersComponent {
   private store = inject(ManagerStore);

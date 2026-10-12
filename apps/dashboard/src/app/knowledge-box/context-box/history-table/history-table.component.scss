@@ -1,0 +1,77 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../context-box-page.tokens' as tokens;
+
+pa-table {
+  display: block;
+  width: 100%;
+}
+
+nsi-search-input {
+  display: block;
+  margin-bottom: rhythm(3);
+  max-width: rhythm(50);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  margin-bottom: rhythm(3);
+  max-width: rhythm(60);
+  padding-top: rhythm(1);
+
+  nsi-search-input {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    min-width: 0;
+    max-width: none;
+  }
+
+  pa-button {
+    flex: 0 0 auto;
+  }
+}
+
+.history-pagination {
+  align-items: center;
+  display: flex;
+  gap: rhythm(3);
+  width: 100%;
+
+  .page-size {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    white-space: nowrap;
+  }
+
+  .pages {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+    margin-left: auto;
+
+    .page-label {
+      min-width: rhythm(8);
+      text-align: center;
+    }
+  }
+}
+
+.expander {
+  margin-left: rhythm(1);
+}
+
+.empty {
+  margin-top: rhythm(4);
+  text-align: center;
+  color: $color-neutral-regular;
+}
+
+.success {
+  color: tokens.$success-color;
+}
+
+.error {
+  color: tokens.$error-color;
+}

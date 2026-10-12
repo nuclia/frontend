@@ -1,28 +1,39 @@
 .sw-chat-input {
   border: 1px solid var(--border-color);
+  border-radius: var(--custom-chat-input-border-radius, 0);
+  box-shadow: var(--custom-chat-input-shadow, none);
+
+  &:focus-within {
+    border-color: var(--custom-chat-input-focus-border-color, var(--border-color));
+  }
 
   &.highlight {
     background-color: var(--color-tertiary-lighter);
   }
 
   .input-container {
-    align-items: flex-start;
+    align-items: var(--custom-chat-input-align-items, flex-start);
     box-sizing: border-box;
     display: flex;
     flex: 1 0 auto;
     position: relative;
+    padding-inline: var(--custom-chat-input-padding-inline, 0);
+    padding-block: var(--custom-chat-input-padding-block, 0);
   }
 
   .chat-icon {
-    display: flex;
+    display: var(--custom-chat-input-leading-display, flex);
     padding: var(--rhythm-1) var(--rhythm-2);
   }
   .clear {
+    display: var(--custom-chat-input-leading-display, block);
     padding: var(--rhythm-0_5) var(--rhythm-1_5);
   }
   .buttons {
+    align-self: var(--custom-chat-buttons-align-self, auto);
     display: flex;
-    margin: 0 var(--rhythm-1);
+    flex-shrink: var(--custom-chat-buttons-flex-shrink, 1);
+    margin: var(--custom-chat-buttons-margin, 0 var(--rhythm-1));
   }
   .filters-container {
     padding: var(--rhythm-1) 0;

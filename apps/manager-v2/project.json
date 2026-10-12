@@ -13,14 +13,16 @@
   },
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath.base}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/manager-v2",
+        "outputPath": {
+          "base": "dist/apps/manager-v2",
+          "browser": ""
+        },
         "subresourceIntegrity": true,
         "index": "apps/manager-v2/src/index.html",
-        "main": "apps/manager-v2/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/manager-v2/tsconfig.app.json",
         "allowedCommonJsDependencies": [],
         "assets": [
@@ -54,9 +56,10 @@
         ],
         "styles": ["apps/manager-v2/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/manager-v2/src"]
+          "includePaths": ["apps/manager-v2/src", "."]
         },
-        "scripts": []
+        "scripts": [],
+        "browser": "apps/manager-v2/src/main.ts"
       },
       "configurations": {
         "production": {
@@ -118,10 +121,8 @@
           ]
         },
         "local-stage": {
-          "buildOptimizer": false,
           "subresourceIntegrity": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -156,10 +157,8 @@
           ]
         },
         "local-prod": {
-          "buildOptimizer": false,
           "subresourceIntegrity": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -194,10 +193,8 @@
           ]
         },
         "local-dev": {
-          "buildOptimizer": false,
           "subresourceIntegrity": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -231,11 +228,12 @@
             }
           ]
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "local-stage",
+      "continuous": true,
       "configurations": {
         "production": {
           "buildTarget": "manager-v2:build:production"
@@ -249,12 +247,10 @@
         "local-dev": {
           "buildTarget": "manager-v2:build:local-dev"
         }
-      },
-      "defaultConfiguration": "local-stage",
-      "continuous": true
+      }
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@angular/build:extract-i18n",
       "options": {
         "buildTarget": "manager-v2:build"
       }
@@ -264,11 +260,14 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/manager-v2/jest.config.ts",
-        "tsConfig": "apps/manager-v2/tsconfig.spec.json"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     }
   }

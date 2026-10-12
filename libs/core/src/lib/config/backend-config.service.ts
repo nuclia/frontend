@@ -66,10 +66,6 @@ export class BackendConfigurationService {
   }
 
   getVersion(): string {
-    return this.config.version;
-  }
-
-  getVersionHash(): string {
     return this.config.version.replace(/^\d+\.\d+\.\d+-/, '');
   }
 

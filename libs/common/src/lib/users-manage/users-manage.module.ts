@@ -29,8 +29,8 @@ import { UsersManageComponent } from './users-manage.component';
     PaTooltipModule,
     ExpandableTextareaComponent,
     InfoCardComponent,
+    UsersManageComponent,
   ],
-  declarations: [UsersManageComponent],
   exports: [UsersManageComponent],
 })
 export class UsersManageModule {}

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { FieldConfig } from '../field-config.service';
@@ -23,6 +23,7 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
   selector: 'app-field-renderer',
   templateUrl: './field-renderer.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     ArrayStringFieldComponent,
     CodeEditorComponent,

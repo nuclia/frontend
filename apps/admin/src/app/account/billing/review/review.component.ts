@@ -1,14 +1,16 @@
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { AccountTypes } from '@nuclia/core';
 import { Currency, Prices, StripeCustomer } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AccountTypes } from '@nuclia/core';
 import { COUNTRIES } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './review.component.html',
   styleUrls: ['./review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaModalModule, PaButtonModule, DecimalPipe, CurrencyPipe, TranslatePipe],
 })
 export class ReviewComponent {
   account = this.modal.config.data?.account || '';

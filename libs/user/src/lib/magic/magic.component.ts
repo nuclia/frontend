@@ -1,13 +1,16 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { MagicService } from './magic.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { getLoginErrorMessageKey } from '../login-error.util';
+import { UserContainerComponent } from '../user-container/user-container.component';
+import { MagicService } from './magic.service';
 
 @Component({
   selector: 'stf-magic',
   templateUrl: './magic.component.html',
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [UserContainerComponent, TranslatePipe],
 })
 export class MagicComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

@@ -1,18 +1,20 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../user.service';
+import { PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { UserType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, map, Subject, switchMap } from 'rxjs';
-import { FormControl, FormGroup } from '@angular/forms';
-import { User } from '../user.models';
-import { UserType } from '@nuclia/core';
 import { ManagerStore } from '../../manager.store';
+import { User } from '../user.models';
+import { UserService } from '../user.service';
 
 @Component({
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaButtonModule, FormsModule, ReactiveFormsModule, PaTextFieldModule, PaDropdownModule, AsyncPipe],
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

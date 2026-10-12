@@ -1,15 +1,25 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { BillingService, CancellationFeedback, NavigationService, SDKService } from '@flaps/core';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { map, switchMap, take } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
-import { BillingService, NavigationService, CancellationFeedback, SDKService } from '@flaps/core';
+import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
   styleUrls: ['./feedback.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    UserContainerComponent,
+    PaTogglesModule,
+    PaTextFieldModule,
+    PaButtonModule,
+    SpinnerComponent,
+    TranslatePipe,
+  ],
 })
 export class FeedbackComponent {
   feedback?: CancellationFeedback;
@@ -20,7 +30,6 @@ export class FeedbackComponent {
     private sdk: SDKService,
     private toaster: SisToastService,
     private billingService: BillingService,
-    private router: Router,
     private route: ActivatedRoute,
     private navigation: NavigationService,
     private cdr: ChangeDetectorRef,
@@ -45,7 +54,9 @@ export class FeedbackComponent {
       )
       .subscribe({
         next: (account) => {
-          this.router.navigate([`${this.navigation.getBillingUrl(account.slug)}/my-subscription`]);
+          this.navigation.navigateExternal(`${this.navigation.getBillingUrl(account.slug)}/my-subscription`, {
+            withFromApp: true,
+          });
           this.toaster.success('billing.subscription-ended');
         },
         error: () => {

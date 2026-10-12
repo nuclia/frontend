@@ -7,8 +7,13 @@
   gap: rhythm(1);
   margin-bottom: rhythm(3);
 
+  h2,
+  .page-description {
+    margin: 0;
+  }
+
   pa-button {
-    margin-top: rhythm(1);
+    margin-top: rhythm(2);
   }
 }
 
@@ -16,13 +21,8 @@
   border: 1px solid var(--color-neutral-light);
 }
 
-.page-title {
-  margin-bottom: rhythm(1);
-}
-
 .page-description {
   color: var(--color-neutral-regular);
-  margin-bottom: rhythm(2);
 }
 
 .empty-state {

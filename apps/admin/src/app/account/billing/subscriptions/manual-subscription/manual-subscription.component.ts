@@ -1,5 +1,9 @@
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { BudgetComponent } from '@flaps/common';
 import { AccountBudget, BillingService } from '@flaps/core';
+import { PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { shareReplay } from 'rxjs';
 
@@ -8,7 +12,7 @@ import { shareReplay } from 'rxjs';
   templateUrl: './manual-subscription.component.html',
   styleUrls: ['./manual-subscription.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, BudgetComponent, PaButtonModule, AsyncPipe, DecimalPipe, DatePipe, TranslatePipe],
 })
 export class ManualSubscriptionComponent {
   usage = this.billing.getManualAccountUsage().pipe(shareReplay(1));

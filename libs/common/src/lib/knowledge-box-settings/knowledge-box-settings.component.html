@@ -1,7 +1,11 @@
 @if (kb; as kb) {
-  <div class="knowledge-box-settings page-spacing">
+  <div
+    class="knowledge-box-settings"
+    [class.page-spacing]="!embedded">
     <div class="section">
-      <h1>{{ 'stash.profile' | translate }}</h1>
+      @if (!embedded) {
+        <h1>{{ 'stash.profile' | translate }}</h1>
+      }
 
       @if (kbForm) {
         <form
@@ -58,43 +62,69 @@
             {{ 'kb.form.enforce-security' | translate }}
           </pa-toggle>
 
-          @if (!standalone) {
+          <pa-textarea
+            formControlName="allowed_origins"
+            placeholder="https://your.domain"
+            help="kb.form.allowed_origins.help"
+            rows="3"
+            resizable>
+            {{ 'kb.form.allowed_origins.label' | translate }}
+          </pa-textarea>
+          <div class="with-info">
             <pa-textarea
-              formControlName="allowed_origins"
-              placeholder="https://your.domain"
-              help="kb.form.allowed_origins.help"
+              formControlName="allowed_ip_addresses"
+              [placeholder]="'kb.form.allowed-ips.placeholder' | translate: { ip: ipAddress | async }"
+              help="kb.form.allowed-ips.help"
               rows="3"
               resizable>
-              {{ 'kb.form.allowed_origins.label' | translate }}
+              {{ 'kb.form.allowed-ips.label' | translate }}
             </pa-textarea>
-            <div class="allowed-ips">
-              <pa-textarea
-                formControlName="allowed_ip_addresses"
-                [placeholder]="'kb.form.allowed-ips.placeholder' | translate: { ip: ipAddress | async }"
-                help="kb.form.allowed-ips.help"
-                rows="3"
-                resizable>
-                {{ 'kb.form.allowed-ips.label' | translate }}
-              </pa-textarea>
-              <div>
-                <pa-icon
-                  name="info"
-                  [paPopover]="warning"></pa-icon>
-                <pa-popover #warning>
-                  {{ 'kb.form.allowed-ips.warning' | translate: { ip: ipAddress | async } }}
-                </pa-popover>
+            <div>
+              <pa-icon
+                name="info"
+                [paPopover]="warning"></pa-icon>
+              <pa-popover #warning>
+                {{ 'kb.form.allowed-ips.warning' | translate: { ip: ipAddress | async } }}
+              </pa-popover>
+            </div>
+          </div>
+          @if (!(isArag | async)) {
+            <div>
+              <div class="with-info">
+                <pa-input
+                  formControlName="webhookUri"
+                  placeholder="https://your.endpoint">
+                  {{ 'kb.form.processing-webhook.url' | translate }}
+                </pa-input>
+                <div>
+                  <pa-icon
+                    name="info"
+                    [paPopover]="webhookInfo"></pa-icon>
+                  <pa-popover #webhookInfo>
+                    {{ 'kb.form.processing-webhook.help' | translate }}
+                  </pa-popover>
+                </div>
               </div>
             </div>
+            @if (kbForm.controls.webhookUri.value) {
+              <div class="headers">
+                <label class="body-m">{{ 'kb.form.processing-webhook.headers' | translate }}</label>
+                <app-parameters-table
+                  secretDisabled
+                  [(values)]="headers"></app-parameters-table>
+              </div>
+            }
           }
 
-          @if (kb.state?.toLowerCase(); as state) {
+          @if (kb.state === 'PUBLISHED') {
             <div class="kb-status">
               <h3
                 class="title-m"
-                [innerHTML]="'kb.settings.status.label' | translate: { state: state }"></h3>
-
-              <pa-button (click)="toggleKbState()">
-                {{ (state === 'published' ? 'account.kb.retire' : 'account.kb.publish') | translate }}
+                [innerHTML]="
+                  'kb.settings.status.label' | translate: { state: 'kb.settings.status.published' | translate }
+                "></h3>
+              <pa-button (click)="unpublishKb()">
+                {{ 'account.kb.retire' | translate }}
               </pa-button>
             </div>
           }
@@ -104,12 +134,12 @@
               type="submit"
               kind="primary"
               data-cy="save-kb-settings"
-              [disabled]="kbForm.invalid || kbForm.pristine || saving">
+              [disabled]="kbForm.invalid || (kbForm.pristine && headersPristine()) || saving">
               {{ 'generic.save' | translate }}
             </pa-button>
             <pa-button
               aspect="basic"
-              [disabled]="kbForm.pristine"
+              [disabled]="kbForm.pristine && headersPristine()"
               (click)="resetKbForm()">
               {{ 'generic.cancel' | translate }}
             </pa-button>

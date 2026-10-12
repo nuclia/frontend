@@ -2,7 +2,7 @@
 
 **Import path:** `@flaps/core` | **Nx project:** `core` | **Selector prefix:** `stf`
 
-Shared Angular foundation library consumed by every first-party app (`admin`, `dashboard`, `manager-v2`, `nucliadb-admin`, `rao`). No separate build target — transpiled as part of the consuming app.
+Shared Angular foundation library consumed by first-party apps (`admin`, `dashboard`, `manager-v2`, `rao`). No separate build target — transpiled as part of the consuming app.
 
 Provides: SDK wrapper (`SDKService`), bootstrap config, auth flows, feature flags, navigation URL builder, billing API client, label management, real-time notifications, analytics (GTM + Pendo), and shared UI utilities.
 
@@ -83,14 +83,14 @@ Central source of truth for the currently active account/KB/ARAG. Application-le
 
 **Key observables (read-only):**
 
-| Observable         | Type                                | Description                                     |
-| ------------------ | ----------------------------------- | ----------------------------------------------- |
-| `currentAccount`   | `Observable<Account>`               | Currently selected account                      |
-| `currentKb`        | `Observable<WritableKnowledgeBox>`  | Auto-loaded when `_kb` + `_account` both emit   |
-| `currentArag`      | `Observable<RetrievalAgent>`        | Auto-loaded when `_arag` + `_account` both emit |
-| `kbList`           | `Observable<IKnowledgeBoxItem[]>`   | All KBs for current account                     |
-| `aragList`         | `Observable<IRetrievalAgentItem[]>` | All ARAGs for current account                   |
-| `isAdminOrContrib` | `Observable<boolean>`               | True in standalone mode or admin/contrib role   |
+| Observable         | Type                                | Description                                                       |
+| ------------------ | ----------------------------------- | ----------------------------------------------------------------- |
+| `currentAccount`   | `Observable<Account>`               | Currently selected account                                        |
+| `currentKb`        | `Observable<WritableKnowledgeBox>`  | Auto-loaded when `_kb` + `_account` both emit                     |
+| `currentArag`      | `Observable<RetrievalAgent>`        | Auto-loaded when `_arag` + `_account` both emit                   |
+| `kbList`           | `Observable<IKnowledgeBoxItem[]>`   | All KBs for current account                                       |
+| `aragList`         | `Observable<IRetrievalAgentItem[]>` | All ARAGs for current account                                     |
+| `isAdminOrContrib` | `Observable<boolean>`               | True when the current KB or agent grants admin/contributor access |
 
 **Key methods:** `setCurrentAccount(slug)`, `setCurrentKnowledgeBox(accountId, kbId, zone?, force?)`, `setCurrentRetrievalAgent(accountId, aragId, zone?, force?)`, `refreshKbList()`, `refreshAragList()`, `cleanAccount()`, `getOriginForApp(prefix)` (builds another first-party app's origin — `rag`/`rao`/`admin`/`platform` — by swapping the subdomain prefix; used by `NavigationService` for cross-app links).
 
@@ -117,7 +117,7 @@ Never hard-code route paths in components. Use `NavigationService`:
 | Method                                 | Path produced                                                                                                            |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `getAccountUrl(slug)`                  | `/at/:slug`                                                                                                              |
-| `getKbUrl(account, kb)`                | `/at/:account/:zone/:kb` (omits zone in standalone) — cross-origin to `rag`'s origin when called from `admin`            |
+| `getKbUrl(account, kb)`                | `/at/:account/:zone/:kb` — cross-origin to `rag`'s origin when called from `admin`                                       |
 | `getRetrievalAgentUrl(account, agent)` | `/at/:account/:zone/arag/:agent` — cross-origin to `rao`'s origin when called from `admin`                               |
 | `getKbSelectUrl(account)`              | `/select/:account` — cross-origin to `rag`'s origin when called from `admin`                                             |
 | `getKbManageUrl(account, kb)`          | `.../manage`                                                                                                             |
@@ -171,17 +171,12 @@ Most guards live in `libs/common/src/lib/guards/`; `authGuard` and `redirectToSi
 
 2. **`JWT_KEY` is the magic localStorage key** — `authGuard` checks `localStorage['JWT_KEY']`. Managed externally by `@nuclia/core` auth module.
 
-3. **Standalone mode** (`staticEnvironmentConfiguration.standalone = true`):
-   - `SDKService.setCurrentAccount()` returns `standaloneSimpleAccount` instead of a network call
-   - `NavigationService` omits zone from KB URLs
-   - `UserService` skips `getWelcome()`
+3. **OnPush everywhere** — all generated components default to `ChangeDetectionStrategy.OnPush`. Use `async` pipe or explicit `markForCheck()`.
 
-4. **OnPush everywhere** — all generated components default to `ChangeDetectionStrategy.OnPush`. Use `async` pipe or explicit `markForCheck()`.
+4. **Zone/region in URLs** — KB and ARAG URLs include the active zone, stored on `SDKService.nuclia.options.zone`.
 
-5. **Zone/region in URLs** — zone is always included in non-standalone KB/ARAG URLs. Active zone stored on `SDKService.nuclia.options.zone`.
+5. **Testing stubs** — use `subscriptionFn` / `subscriptionPipeFn` from `@flaps/core` testing exports to mock observable-returning services without importing RxJS subjects directly.
 
-6. **Testing stubs** — use `subscriptionFn` / `subscriptionPipeFn` from `@flaps/core` testing exports to mock observable-returning services without importing RxJS subjects directly.
+6. **`UserService.updateWelcome()` only logs out on a 401** — other `/db/welcome` errors (e.g. network failures during OAuth redirects) are swallowed via `EMPTY` and do not affect the session, to avoid spurious logout loops (see #2728).
 
-7. **`UserService.updateWelcome()` only logs out on a 401** — other `/db/welcome` errors (e.g. network failures during OAuth redirects) are swallowed via `EMPTY` and do not affect the session, to avoid spurious logout loops (see #2728).
-
-8. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.
+7. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.

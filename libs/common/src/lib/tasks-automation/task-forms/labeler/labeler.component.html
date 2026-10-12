@@ -4,7 +4,7 @@
   triggerDescription="tasks-automation.labeler.trigger-description"
   footerNoteAutomation="tasks-automation.labeler.footer.apply-automation"
   footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
-  [validFormInside]="labelingConfig?.valid"
+  [validFormInside]="$safeNavigationMigration(labelingConfig?.valid)"
   (save)="onSave($event)"
   (taskCancel)="backToTaskList()">
   <stf-labeling-configuration

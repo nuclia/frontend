@@ -1,20 +1,26 @@
-@if (cowork) {
-  <div class="onboarding-form">
-    <pa-radio-group [formControl]="coworkModelControl">
-      @for (option of coworkOptions; track option.name) {
+<div class="onboarding-form">
+  <pa-radio-group
+    [formControl]="modelControl"
+    noBackground>
+    @for (option of options; track option.name) {
+      <div class="option-container">
         <pa-radio [value]="option.value">
-          {{ 'user.kb.creation-form.models.options.' + option.name | translate }}
+          {{ 'onboarding.language.options.' + option.name | translate }}
         </pa-radio>
-      }
-    </pa-radio-group>
-  </div>
-} @else {
-  <div class="onboarding-form">
-    <nus-embeddings-model-form
-      [learningSchema]="schema"
-      (learningConfiguration)="updateModel($event)"></nus-embeddings-model-form>
-  </div>
-}
+        @if (option.name === 'MULTILINGUAL_ALPHA') {
+          <div>
+            <pa-icon
+              name="info"
+              [paPopover]="languageList"></pa-icon>
+            <pa-popover #languageList>
+              <div [innerHTML]="'onboarding.language.other-languages' | translate"></div>
+            </pa-popover>
+          </div>
+        }
+      </div>
+    }
+  </pa-radio-group>
+</div>
 
 <nsi-sticky-footer>
   <pa-button
@@ -24,7 +30,7 @@
   </pa-button>
   <pa-button
     kind="primary"
-    [disabled]="!learningConfig || learningConfig.semantic_models.length < 1"
+    [disabled]="modelControl.invalid"
     (click)="submitForm()">
     {{ (isLastStep ? 'onboarding.final-button' : 'onboarding.next-button') | translate }}
   </pa-button>

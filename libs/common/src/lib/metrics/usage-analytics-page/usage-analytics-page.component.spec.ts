@@ -1,15 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MockModule, MockPipe, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { SDKService, FeaturesService, UserService } from '@flaps/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FeaturesService, SDKService, UserService } from '@flaps/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { UsageAnalyticsPageComponent } from './usage-analytics-page.component';
-import { UsageAnalyticsPageService } from './usage-analytics-page.service';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockPipe, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
 import { RagAdviceModalComponent } from '../rag-advice/rag-advice.component';
+import { UsageAnalyticsPageComponent } from './usage-analytics-page.component';
+import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 
 describe('UsageAnalyticsPageComponent', () => {
   let component: UsageAnalyticsPageComponent;
@@ -29,16 +30,22 @@ describe('UsageAnalyticsPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
-      imports: [MockModule(TranslateModule)],
+      imports: [TranslateModule.forRoot(), UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),
-        MockProvider(TranslateService, { instant: (key: string) => key }),
         MockProvider(SisModalService, { openModal }),
         MockProvider(UserService, { userPrefs: of({ email: 'test@example.com' }) }),
         MockProvider(SisToastService),
         DatePipe,
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

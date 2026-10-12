@@ -1,9 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'formatTime',
-  standalone: false,
-})
+@Pipe({ name: 'formatTime' })
 export class FormatTimePipe implements PipeTransform {
   transform(date: Date | string, args?: any): string {
     if (typeof date === 'string') {

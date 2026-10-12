@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AccountListComponent } from './account-list.component';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaScrollModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { AccountService } from '../account.service';
-import { of } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
+import { AccountService } from '../account.service';
+import { AccountListComponent } from './account-list.component';
 
 describe('AccountListComponent', () => {
   let component: AccountListComponent;
@@ -14,12 +15,13 @@ describe('AccountListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        AccountListComponent,
+        RouterModule.forRoot([]),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),
         MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
       ],
-      declarations: [AccountListComponent],
       providers: [
         MockProvider(AccountService, {
           getAccounts: jest.fn(() => of([])),

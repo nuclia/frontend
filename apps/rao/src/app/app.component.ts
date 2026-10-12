@@ -1,16 +1,18 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 
-import { TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
-import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;

@@ -16,7 +16,7 @@ export const setAccountGuard = (route: ActivatedRouteSnapshot) => {
   return sdk.setCurrentAccount(accountSlug).pipe(
     switchMap((account) => {
       sdk.nuclia.options.accountId = account.id;
-      navigation.setSimpleMode(account.workflow === 'cowork');
+      navigation.setContextBoxMode(account.workflow === 'cowork');
       return of(true);
     }),
     catchError(() => of(router.createUrlTree([navigation.getAccountSelectUrl()]))),

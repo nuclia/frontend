@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   template: '<router-outlet></router-outlet>',
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterOutlet],
 })
 export class ResourcesComponent {}

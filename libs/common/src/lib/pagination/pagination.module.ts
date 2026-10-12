@@ -5,8 +5,7 @@ import { PaginationComponent } from './pagination.component';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  declarations: [PaginationComponent],
-  imports: [CommonModule, TranslateModule.forChild(), PaButtonModule],
+  imports: [CommonModule, TranslateModule.forChild(), PaButtonModule, PaginationComponent],
   exports: [PaginationComponent],
 })
 export class PaginationModule {}

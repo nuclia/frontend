@@ -39,7 +39,6 @@ export type StaticEnvironmentConfiguration = {
     oauth?: string;
   };
   locales?: string[]; // List of registred locales in the app
-  standalone?: boolean;
 };
 
 declare let window: any;
@@ -74,7 +73,6 @@ export class AppInitService {
           }
           const apiOrigin = config.backend.apiOrigin;
           config.backend.api = `${apiOrigin}/api`;
-          config.backend.cdn = staticEnv.standalone ? 'https://cdn.rag.progress.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(`${config.backend.cdn}/nuclia-widget.umd.js`);
             injectWidget(`${config.backend.cdn}/nuclia-arag-widget.umd.js`);

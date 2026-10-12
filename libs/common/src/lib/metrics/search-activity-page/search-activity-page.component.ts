@@ -1,15 +1,19 @@
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MetricsMonthRange } from '../metrics-column.model';
 import { DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
-import { SearchActivityPageService } from './search-activity-page.service';
+import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
+import { MetricsPageComponent } from '../metrics-page.component';
 import { SEARCH_ACTIVITY_COLUMNS, SEARCH_ACTIVITY_SIDEBAR_FIELDS } from './search-activity-page.config';
+import { SearchActivityPageService } from './search-activity-page.service';
 
 @Component({
   selector: 'app-search-activity-page',
   templateUrl: './search-activity-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [SearchActivityPageService],
+  imports: [MetricsPageComponent, MetricsFiltersComponent, DecimalPipe, TranslatePipe],
 })
 export class SearchActivityPageComponent {
   protected service = inject(SearchActivityPageService);

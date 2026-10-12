@@ -4,8 +4,7 @@ import { LabelComponent } from './label.component';
 import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  declarations: [LabelComponent],
-  imports: [CommonModule, PaChipsModule],
+  imports: [CommonModule, PaChipsModule, LabelComponent],
   exports: [LabelComponent],
 })
 export class SisLabelModule {}

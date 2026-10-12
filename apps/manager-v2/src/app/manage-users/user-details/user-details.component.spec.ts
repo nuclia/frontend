@@ -1,13 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { ManagerStore } from '../../manager.store';
 import { UserService } from '../user.service';
 import { UserDetailsComponent } from './user-details.component';
-import { ManagerStore } from '../../manager.store';
-import { of } from 'rxjs';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
@@ -15,19 +14,21 @@ describe('UserDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([]),
-        MockModule(PaButtonModule),
-        MockModule(PaTextFieldModule),
-        MockModule(ReactiveFormsModule),
-      ],
-      declarations: [UserDetailsComponent],
+      imports: [UserDetailsComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(UserService),
         MockProvider(SisToastService),
         MockProvider(ManagerStore, {
           canEdit: of(true),
         }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
 

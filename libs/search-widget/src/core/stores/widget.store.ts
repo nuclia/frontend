@@ -93,6 +93,7 @@ export const expandedCitations: Observable<boolean | undefined> = widgetFeatures
   }),
 );
 export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?.displaySearchButton));
+export const hasChatSubmitButton = widgetFeatures.pipe(map((features) => !!features?.chatSubmitButton));
 export const collapseTextBlocks = widgetFeatures.pipe(map((features) => !!features?.collapseTextBlocks));
 export const expandTextBlocks = widgetFeatures.pipe(map((features) => !!features?.expandTextBlocks));
 export const hideDownload: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideDownload));

@@ -7,15 +7,21 @@ import {
   AgentDashboardComponent,
   AiModelsComponent,
   aragOwnerGuard,
+  awsGuard,
+  AwsOnboardingComponent,
   BaseComponent,
   DashboardLayoutComponent,
   DriversPageComponent,
   EditResourceComponent,
   EmptyComponent,
+  KnowledgeBoxKeysComponent,
   KnowledgeBoxSettingsComponent,
+  KnowledgeBoxUsersComponent,
+  OnboardingComponent,
   PageNotFoundComponent,
-  PageNotFoundModule,
   PreviewComponent,
+  ProfileComponent,
+  redirectToAdminGuard,
   ResourceFileComponent,
   ResourceLinkComponent,
   ResourceTextComponent,
@@ -31,24 +37,17 @@ import {
   SessionsListComponent,
   setAccountGuard,
   setAgentGuard,
-  awsGuard,
-  AwsOnboardingComponent,
-  KnowledgeBoxKeysComponent,
-  KnowledgeBoxUsersComponent,
-  ProfileComponent,
-  OnboardingComponent,
-  redirectToAdminGuard,
-  WorkflowsListComponent,
   WorkflowsComponent,
+  WorkflowsListComponent,
 } from '@flaps/common';
+import { authGuard, redirectToSignUp } from '@flaps/core';
 import {
-  RedirectComponent,
+  AppLoginComponent,
+  CallbackComponent,
   FarewellComponent,
   FeedbackComponent,
-  CallbackComponent,
-  AppLoginComponent,
+  RedirectComponent,
 } from '@nuclia/user';
-import { authGuard, redirectToSignUp } from '@flaps/core';
 
 const routes: Routes = [
   {
@@ -233,7 +232,7 @@ const routerOptions: ExtraOptions = {
 };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, routerOptions), PageNotFoundModule],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

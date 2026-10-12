@@ -15,8 +15,8 @@
     <div class="consent-content">
       <div class="consent-subject">
         <pa-avatar
-          [userName]="consentData?.user_name"
-          [userId]="consentData?.user_email"
+          [userName]="$safeNavigationMigration(consentData?.user_name)"
+          [userId]="$safeNavigationMigration(consentData?.user_email)"
         size="small"></pa-avatar>
         <span>{{ consentData?.user_email }}</span>
       </div>

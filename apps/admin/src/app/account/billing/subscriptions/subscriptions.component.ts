@@ -1,4 +1,19 @@
+import { AsyncPipe, CurrencyPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  AccountService,
+  BillingService,
+  Currency,
+  FeaturesService,
+  NavigationService,
+  SDKService,
+  STFPipesModule,
+} from '@flaps/core';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { WINDOW } from '@ng-web-apis/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AccountTypes } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -12,18 +27,26 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
-import { AccountService, BillingService, Currency, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SubscriptionService } from '../subscription.service';
-import { WINDOW } from '@ng-web-apis/common';
-import { AccountTypes } from '@nuclia/core';
-import { Router } from '@angular/router';
+import { AwsSubscriptionComponent } from './aws-subscription/aws-subscription.component';
+import { ManualSubscriptionComponent } from './manual-subscription/manual-subscription.component';
 
 @Component({
   selector: 'app-subscriptions',
   templateUrl: './subscriptions.component.html',
   styleUrls: ['./subscriptions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    AwsSubscriptionComponent,
+    ManualSubscriptionComponent,
+    PaButtonModule,
+    NgTemplateOutlet,
+    PaIconModule,
+    AsyncPipe,
+    CurrencyPipe,
+    TranslatePipe,
+    STFPipesModule,
+  ],
 })
 export class SubscriptionsComponent implements OnDestroy {
   accountType = this.billing.type.pipe(shareReplay(1));

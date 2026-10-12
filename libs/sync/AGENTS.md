@@ -105,7 +105,7 @@ OAuth handling and cloud-folder browsing are **not** part of `IConnector` — th
 ## How Apps Use This Library
 
 ```ts
-// apps/dashboard and apps/nucliadb-admin
+// apps/dashboard
 { path: 'sync', loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then(m => m.SYNC_ROUTES) }
 ```
 

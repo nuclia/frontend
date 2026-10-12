@@ -1,27 +1,38 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import {
   BackendConfigurationService,
   FeatureFlagService,
   FeaturesService,
   NavigationService,
   SDKService,
+  UnauthorizedFeatureDirective,
 } from '@flaps/core';
+import { PaFocusableModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { StandaloneService } from '../services';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    RouterLinkActive,
+    RouterLink,
+    PaIconModule,
+    PaFocusableModule,
+    UnauthorizedFeatureDirective,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   properKbId = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => {
-      return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
+      return this.navigationService.getKbUrl(account.slug, kb.slug || kb.id);
     }),
   );
   inArag = this.navigationService.inArag();
@@ -31,10 +42,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
-        of(
-          this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl) &&
-            !this.isOnMetricsPage(location.pathname),
-        ),
+        of(this.navigationService.inKbSettings(location.pathname, kbUrl) && !this.isOnMetricsPage(location.pathname)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map(
@@ -61,7 +69,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ),
   );
 
-  simpleMode = this.navigationService.simpleMode;
+  contextBoxMode = this.navigationService.contextBoxMode;
   showSettings = false;
   showMetrics = false;
   kbUrl = '';
@@ -77,9 +85,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAragAdmin = this.features.isAragAdmin;
   isAccountManager = this.features.isAccountManager;
   noStripe = this.backendConfig.noStripe();
-  versionHash = this.backendConfig.getVersionHash();
+  version = this.backendConfig.getVersion();
   isStageOrDev = this.featureFlagService.isStageOrDev;
-  showFooter = this.isStageOrDev || !!this.versionHash;
+  showFooter = this.isStageOrDev || !!this.version;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
@@ -89,16 +97,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isPromptLabAuthorized = this.features.authorized.promptLab;
 
-  standalone = this.standaloneService.standalone;
-  invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
-
   constructor(
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
     private sdk: SDKService,
     private router: Router,
     private navigationService: NavigationService,
-    private standaloneService: StandaloneService,
     private backendConfig: BackendConfigurationService,
     private featureFlagService: FeatureFlagService,
   ) {}
@@ -110,8 +114,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([account, kb]) => {
-        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-        this.kbUrl = this.navigationService.getKbUrl(account.slug, kbSlug);
+        this.kbUrl = this.navigationService.getKbUrl(account.slug, kb.slug);
         this.cdr.markForCheck();
       });
 

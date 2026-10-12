@@ -15,13 +15,19 @@
     gap: rhythm(2);
   }
 
-  .allowed-ips {
+  .with-info {
     align-items: flex-start;
     display: flex;
     gap: rhythm(1);
-    pa-textarea {
+    pa-textarea,
+    pa-input {
       width: 100%;
     }
+  }
+
+  .headers > label {
+    display: block;
+    margin-bottom: rhythm(0.5);
   }
 
   .kb-status {

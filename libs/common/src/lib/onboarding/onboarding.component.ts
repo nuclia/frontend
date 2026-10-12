@@ -1,26 +1,27 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { OnboardingService } from './onboarding.service';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import {
   AnalyticsService,
+  FeaturesService,
   NavigationService,
   SDKService,
   SelectAccountKbService,
   STFUtils,
   UserService,
 } from '@flaps/core';
-import { catchError, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
-import { OnboardingPayload } from './onboarding.models';
-import { Account, KnowledgeBoxCreation, LearningConfigurations, SignUpInfo, WorkflowType } from '@nuclia/core';
-import { LearningConfigurationForm } from './embeddings-model-form';
-import { CommonModule } from '@angular/common';
-import { UserContainerComponent } from '@nuclia/user';
-import { TranslateModule } from '@ngx-translate/core';
-import { Step1Component } from './step1/step1.component';
-import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './kb-creation-steps';
-import { SettingUpComponent } from './setting-up/setting-up.component';
-import { AccountWorkflowComponent } from './account-workflow/account-workflow.component';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { Account, KnowledgeBoxCreation, LearningConfigurations, SignUpInfo, WorkflowType } from '@nuclia/core';
+import { UserContainerComponent } from '@nuclia/user';
+import { catchError, map, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { AccountWorkflowComponent } from './account-workflow/account-workflow.component';
 import { CompanyNameComponent } from './company-name/company-name.component';
+import { LearningConfigurationForm } from './embeddings-model-form';
+import { EmbeddingModelStepComponent, ZoneStepComponent } from './kb-creation-steps';
+import { OnboardingPayload } from './onboarding.models';
+import { OnboardingService } from './onboarding.service';
+import { SettingUpComponent } from './setting-up/setting-up.component';
+import { Step1Component } from './step1/step1.component';
 
 @Component({
   selector: 'nus-onboarding',
@@ -33,7 +34,6 @@ import { CompanyNameComponent } from './company-name/company-name.component';
     UserContainerComponent,
     TranslateModule,
     Step1Component,
-    KbNameStepComponent,
     SettingUpComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
@@ -42,11 +42,19 @@ import { CompanyNameComponent } from './company-name/company-name.component';
   ],
 })
 export class OnboardingComponent {
+  private readonly onboardingService = inject(OnboardingService);
+  private readonly sdk = inject(SDKService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly analytics = inject(AnalyticsService);
+  private readonly navigation = inject(NavigationService);
+  private readonly userService = inject(UserService);
+  private readonly selectAccountKbService = inject(SelectAccountKbService);
+  private readonly featuresService = inject(FeaturesService);
+
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
-  lastStep = 6;
+  lastStep = 5;
 
   onboardingInquiryPayload?: OnboardingPayload;
-  kbName = '';
   zone = '';
   isCowork = false;
 
@@ -59,16 +67,6 @@ export class OnboardingComponent {
   enterCompanyName = false;
   inRaoApp = this.navigation.inRaoApp;
   showLogout = false;
-
-  constructor(
-    private onboardingService: OnboardingService,
-    private sdk: SDKService,
-    private cdr: ChangeDetectorRef,
-    private analytics: AnalyticsService,
-    private navigation: NavigationService,
-    private userService: UserService,
-    private selectAccountKbService: SelectAccountKbService,
-  ) {}
 
   goBack(): void {
     this.onboardingService.previousStep();
@@ -117,7 +115,6 @@ export class OnboardingComponent {
         // Register the new account in SDKService so zone-scoped API calls (e.g. zone list) work
         this.sdk.setCurrentAccount(account.slug).pipe(take(1)).subscribe();
         if (this.account.workflow === 'cowork') {
-          this.kbName = 'ContextBox';
           this.isCowork = true;
         }
         this.onboardingService.nextStep();
@@ -145,14 +142,8 @@ export class OnboardingComponent {
       .subscribe();
   }
 
-  storeKbNameAndGoNext($event: string) {
-    this.kbName = $event;
-    this.onboardingService.nextStep();
-  }
-
   storeWorkflowAndGoNext(workflow: WorkflowType) {
     if (workflow === 'cowork') {
-      this.kbName = 'ContextBox';
       this.isCowork = true;
     }
     this.onboardingService.setSteps(workflow);
@@ -191,16 +182,33 @@ export class OnboardingComponent {
       return;
     }
 
+    const account = this.account;
+    const kbName = this.isCowork ? this.onboardingService.contextBoxKbName : this.onboardingService.knowledgeBoxKbName;
     const kbConfig: KnowledgeBoxCreation = {
-      slug: STFUtils.generateSlug(this.kbName),
-      title: this.kbName,
+      slug: STFUtils.generateSlug(kbName),
+      title: kbName,
       learning_configuration: this.learningConfig,
       zone: this.zone,
       enforce_security: true,
     };
 
-    this.onboardingService
-      .createKb(this.account.slug, this.account.id, kbConfig, this.zone)
-      .subscribe(() => this.analytics.logTrialActivation());
+    const contextBoxModel = this.onboardingService.contextBoxDefaultModel;
+    const kbCreationRequest = this.isCowork
+      ? this.learningSchema.pipe(
+          map((schema) => {
+            if (schema['generative_model'].options?.find((model) => model.value === contextBoxModel)) {
+              if (kbConfig.learning_configuration) {
+                kbConfig.learning_configuration['generative_model'] = contextBoxModel;
+              } else {
+                kbConfig.learning_configuration = { generative_model: contextBoxModel };
+              }
+            }
+            return kbConfig;
+          }),
+          switchMap((config) => this.onboardingService.createContextBox(account.slug, account.id, config, this.zone)),
+        )
+      : this.onboardingService.createKb(account.slug, account.id, kbConfig, this.zone);
+
+    kbCreationRequest.subscribe(() => this.analytics.logTrialActivation());
   }
 }

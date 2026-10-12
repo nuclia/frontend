@@ -22,7 +22,8 @@
     "noFallthroughCasesInSwitch": true,
     "target": "es2020",
     "module": "preserve",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     "strictInjectionParameters": true,

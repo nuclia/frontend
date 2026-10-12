@@ -2,16 +2,15 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
+  awsGuard,
+  AwsOnboardingComponent,
   BaseComponent,
   EmptyComponent,
   PageNotFoundComponent,
-  PageNotFoundModule,
   rootGuard,
-  awsGuard,
-  AwsOnboardingComponent,
 } from '@flaps/common';
-import { RedirectComponent, FarewellComponent, FeedbackComponent, InviteComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
+import { FarewellComponent, FeedbackComponent, InviteComponent, RedirectComponent } from '@nuclia/user';
 import { fallbackRedirectGuard } from './fallback-redirect.guard';
 
 const routes: Routes = [
@@ -63,7 +62,7 @@ const routerOptions: ExtraOptions = {
 };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, routerOptions), PageNotFoundModule],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

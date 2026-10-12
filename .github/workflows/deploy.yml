@@ -37,7 +37,6 @@ jobs:
       deploy-rao: ${{ steps.check-deploy.outputs.deploy-rao }}
       deploy-auth: ${{ steps.check-deploy.outputs.deploy-auth }}
       deploy-admin: ${{ steps.check-deploy.outputs.deploy-admin }}
-      deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
@@ -66,7 +65,7 @@ jobs:
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         if: github.ref == 'refs/heads/main'
         with:
           role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
@@ -158,7 +157,6 @@ jobs:
           (test -d dist/apps/rao && echo "deploy-rao=yes" >> $GITHUB_OUTPUT) || echo "RAO app unchanged"
           (test -d dist/apps/auth && echo "deploy-auth=yes" >> $GITHUB_OUTPUT) || echo "auth app unchanged"
           (test -d dist/apps/admin && echo "deploy-admin=yes" >> $GITHUB_OUTPUT) || echo "Admin app unchanged"
-          (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
@@ -221,8 +219,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -250,18 +248,8 @@ jobs:
           aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
-
-      - name: Publish NucliaDB admin app
-        if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
-        run: |-
-          sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/nucliadb-admin/assets/deployment/app-config.json
-          cp -r dist/apps/nucliadb-admin/* tools/python-nucliadb-admin-dist/nucliadb_admin_assets/
-          make -C tools/python-nucliadb-admin-dist/ publish ARGS="--build=${{github.run_number}}"
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push manager image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -278,8 +266,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push RAO image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -296,8 +284,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push auth image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -314,8 +302,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' || steps.check-deploy.outputs.deploy-rao == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Push admin image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -332,8 +320,8 @@ jobs:
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' || steps.check-deploy.outputs.deploy-rao == 'yes' || steps.check-deploy.outputs.deploy-auth == 'yes' }}
           push: true
           tag-latest: main
-          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
@@ -347,7 +335,7 @@ jobs:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
-        uses: getsentry/action-release@ff07929a6537bac57790c3451cf4d364aca38528 # v3.7.0
+        uses: getsentry/action-release@6fb9aeade7061441cf3864e34fbe11a1457ad7dc # v3.7.1
         if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -402,8 +390,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -484,8 +472,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -566,8 +554,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -648,8 +636,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -730,8 +718,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: tooling
           permission-contents: read
@@ -780,8 +768,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
+          private-key: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_PK }}
           owner: nuclia
           repositories: core-apps
           # POST /repos/{owner}/{repo}/dispatches requires contents: write

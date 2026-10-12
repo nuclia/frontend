@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IError } from '@nuclia/core';
@@ -8,6 +8,7 @@ import { IError } from '@nuclia/core';
   selector: 'stf-warning-modal',
   imports: [CommonModule, PaModalModule, PaTableModule, TranslateModule, PaButtonModule],
   templateUrl: './warning-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './warning-modal.component.scss',
 })
 export class WarningModalComponent {

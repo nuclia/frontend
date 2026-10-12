@@ -1,15 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MetricsMonthRange } from '../metrics-column.model';
 import { DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
-import { UserFeedbackPageService } from './user-feedback-page.service';
+import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
+import { MetricsPageComponent } from '../metrics-page.component';
 import { USER_FEEDBACK_COLUMNS, USER_FEEDBACK_SIDEBAR_FIELDS } from './user-feedback-page.config';
+import { UserFeedbackPageService } from './user-feedback-page.service';
 
 @Component({
   selector: 'app-user-feedback-page',
   templateUrl: './user-feedback-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [UserFeedbackPageService],
+  imports: [MetricsPageComponent, MetricsFiltersComponent],
 })
 export class UserFeedbackPageComponent {
   protected service = inject(UserFeedbackPageService);

@@ -14,8 +14,8 @@ import { filter, of, Subject, take } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { convertEnumProperties, keyProviders } from '../ai-models.utils';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
-import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
 import { ModelSelectorComponent } from './model-selector/model-selector.component';
+import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
 
 @Component({
   selector: 'stf-answer-generation',
@@ -163,25 +163,11 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
       };
     }
 
-    // TODO: remove this block once "PATCH /configuration" endpoint no longer requires passing all the prompts
-    kbConfig['user_prompts'] = Object.entries(user_prompts).reduce(
-      (acc, curr: [string, any]) => {
-        const prompts = {
-          prompt: curr[1].prompt?.trim(),
-          system: curr[1].system?.trim(),
-        };
-        acc[curr[0]] = prompts.prompt || prompts.system ? prompts : undefined;
-        return acc;
-      },
-      {} as { [key: string]: any },
-    );
-    // End of the block to remove
-
     if (this.currentGenerativeModel?.user_prompt) {
       const userPromptKey = this.currentGenerativeModel.user_prompt;
       const prompts = {
-        prompt: user_prompts[userPromptKey].prompt?.trim() || '',
-        system: user_prompts[userPromptKey].system?.trim() || '',
+        prompt: user_prompts[userPromptKey]?.prompt?.trim() || '',
+        system: user_prompts[userPromptKey]?.system?.trim() || '',
       };
       const promptPayload = { [userPromptKey]: prompts.prompt || prompts.system ? prompts : null };
       kbConfig['user_prompts'] = kbConfig['user_prompts']

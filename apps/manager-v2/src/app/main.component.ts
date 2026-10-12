@@ -1,9 +1,18 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { RouterOutlet } from '@angular/router';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
@@ -11,7 +20,8 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
   selector: 'nma-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterOutlet],
 })
 export class MainComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;

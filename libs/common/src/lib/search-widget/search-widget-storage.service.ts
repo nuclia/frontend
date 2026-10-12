@@ -1,12 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { getChatOptions, getFindOptions, SearchAndWidgets } from './search-widget.models';
 import { SDKService } from '@flaps/core';
-import { forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { catchError, distinctUntilKeyChanged, map, startWith, switchMap, take, tap } from 'rxjs/operators';
-import { compareDesc } from 'date-fns';
-import { StandaloneService } from '../services';
 import { AgenticConfig, SearchConfig, SearchConfigs, Widget } from '@nuclia/core';
+import { compareDesc } from 'date-fns';
+import { forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { catchError, distinctUntilKeyChanged, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { getChatOptions, getFindOptions, SearchAndWidgets } from './search-widget.models';
 
 const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
@@ -17,7 +16,6 @@ const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 export class SearchWidgetStorageService {
   private sdk = inject(SDKService);
   private storage = inject(LOCAL_STORAGE);
-  private standaloneService = inject(StandaloneService);
 
   private storageUpdated = new Subject<void>();
   private searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets | undefined));
@@ -30,34 +28,25 @@ export class SearchWidgetStorageService {
     startWith(true),
     switchMap(() => this.sdk.currentKb.pipe(take(1))),
     switchMap((kb) => {
-      if (this.standaloneService.standalone) {
-        const configMap: { [kbId: string]: Widget.SearchConfiguration[] } = JSON.parse(
-          this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
-        );
-        return of(
-          (configMap[kb.id] || []).map((config) => ({ ...config, type: 'config' }) as Widget.TypedSearchConfiguration),
-        );
-      } else {
-        return this.searchAPIConfigs.pipe(
-          map((searchOptions) => {
-            const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []).map(
-              (config) =>
-                ({
-                  ...config,
-                  type: 'config',
-                }) as Widget.TypedSearchConfiguration,
-            );
-            const missingConfigs: Widget.SearchAPIConfig[] = Object.entries(searchOptions)
-              .filter(([key]) => !searchConfigs.some((config) => config.id === key))
-              .map(([id, value]) => ({
-                id,
-                value,
-                type: 'api',
-              }));
-            return [...searchConfigs, ...missingConfigs];
-          }),
-        );
-      }
+      return this.searchAPIConfigs.pipe(
+        map((searchOptions) => {
+          const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []).map(
+            (config) =>
+              ({
+                ...config,
+                type: 'config',
+              }) as Widget.TypedSearchConfiguration,
+          );
+          const missingConfigs: Widget.SearchAPIConfig[] = Object.entries(searchOptions)
+            .filter(([key]) => !searchConfigs.some((config) => config.id === key))
+            .map(([id, value]) => ({
+              id,
+              value,
+              type: 'api',
+            }));
+          return [...searchConfigs, ...missingConfigs];
+        }),
+      );
     }),
   );
 
@@ -65,14 +54,7 @@ export class SearchWidgetStorageService {
     startWith(true),
     switchMap(() => this.sdk.currentKb.pipe(take(1))),
     map((kb) => {
-      if (this.standaloneService.standalone) {
-        const widgetsMap: { [kbId: string]: Widget.Widget[] } = JSON.parse(
-          this.storage.getItem(SAVED_WIDGETS_KEY) || '{}',
-        );
-        return widgetsMap[kb.id] || [];
-      } else {
-        return (kb.search_configs as SearchAndWidgets)?.widgets || [];
-      }
+      return (kb.search_configs as SearchAndWidgets)?.widgets || [];
     }),
     map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))),
   );
@@ -194,58 +176,41 @@ export class SearchWidgetStorageService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
-        if (this.standaloneService.standalone) {
-          const configMap: { [kbId: string]: Widget.SearchConfiguration[] } = JSON.parse(
-            this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
-          );
-          configMap[kb.id] = configs;
-          this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
-          return of(undefined);
-        } else {
-          return this.searchAndWidgets.pipe(
-            take(1),
-            switchMap((data) => kb.modify({ search_configs: { ...data, searchConfigurations: configs } })),
-            switchMap(() => this.sdk.refreshCurrentKb()),
-          );
-        }
+        return this.searchAndWidgets.pipe(
+          take(1),
+          switchMap((data) => kb.modify({ search_configs: { ...data, searchConfigurations: configs } })),
+          switchMap(() => this.sdk.refreshCurrentKb()),
+        );
       }),
     );
   }
 
   private _storeSearchOptions(name: string, config: SearchConfig) {
-    if (this.standaloneService.standalone) {
-      return of(undefined);
-    } else {
-      return this.sdk.currentKb.pipe(
-        take(1),
-        switchMap((kb) =>
-          this.searchAPIConfigs.pipe(
-            take(1),
-            switchMap((configs) =>
-              configs[name] ? kb.updateSearchConfig(name, config) : kb.createSearchConfig(name, config),
-            ),
-            switchMap(() => this.refreshSearchConfigs()),
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        this.searchAPIConfigs.pipe(
+          take(1),
+          switchMap((configs) =>
+            configs[name] ? kb.updateSearchConfig(name, config) : kb.createSearchConfig(name, config),
           ),
+          switchMap(() => this.refreshSearchConfigs()),
         ),
-      );
-    }
+      ),
+    );
   }
 
   private _deleteSearchOptions(name: string) {
-    if (this.standaloneService.standalone) {
-      return of(undefined);
-    } else {
-      return this.sdk.currentKb.pipe(
-        take(1),
-        switchMap((kb) =>
-          this.searchAPIConfigs.pipe(
-            take(1),
-            switchMap((configs) => (configs[name] ? kb.deleteSearchConfig(name) : of(undefined))),
-            switchMap(() => this.refreshSearchConfigs()),
-          ),
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        this.searchAPIConfigs.pipe(
+          take(1),
+          switchMap((configs) => (configs[name] ? kb.deleteSearchConfig(name) : of(undefined))),
+          switchMap(() => this.refreshSearchConfigs()),
         ),
-      );
-    }
+      ),
+    );
   }
 
   private _storeAgenticConfig(id: string, config: AgenticConfig | undefined) {
@@ -301,20 +266,11 @@ export class SearchWidgetStorageService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
-        if (this.standaloneService.standalone) {
-          const widgetsMap: { [kbId: string]: Widget.Widget[] } = JSON.parse(
-            this.storage.getItem(SAVED_WIDGETS_KEY) || '{}',
-          );
-          widgetsMap[kb.id] = updatedWidgets;
-          this.storage.setItem(SAVED_WIDGETS_KEY, JSON.stringify(widgetsMap));
-          return of(undefined);
-        } else {
-          return this.searchAndWidgets.pipe(
-            take(1),
-            switchMap((data) => kb.modify({ search_configs: { ...data, widgets: updatedWidgets } })),
-            switchMap(() => this.sdk.refreshCurrentKb()),
-          );
-        }
+        return this.searchAndWidgets.pipe(
+          take(1),
+          switchMap((data) => kb.modify({ search_configs: { ...data, widgets: updatedWidgets } })),
+          switchMap(() => this.sdk.refreshCurrentKb()),
+        );
       }),
       tap(() => this.storageUpdated.next()),
     );

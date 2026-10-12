@@ -1,7 +1,12 @@
-import { ChangeDetectionStrategy, Component, ViewChild, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { take } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ViewChild, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FeaturesService } from '@flaps/core';
+import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ActivityLogItem, RemiAnswerStatus } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { take } from 'rxjs';
 import { MetricsMonthRange, UsageAnalyticsItem } from '../metrics-column.model';
 import {
   BooleanCondition,
@@ -11,24 +16,31 @@ import {
   NumericCondition,
   NumericOperation,
 } from '../metrics-filters';
-import { UsageAnalyticsPageService } from './usage-analytics-page.service';
-import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-analytics-page.config';
+import { MetricsFiltersComponent } from '../metrics-filters/metrics-filters.component';
+import { MetricsPageComponent } from '../metrics-page.component';
 import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
-import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MetricsPageComponent } from '../metrics-page.component';
 import { RemiCellPlugin, RemiSidebarPlugin } from '../remi-cell-plugin';
+import { RemiScoreDisplayComponent } from '../remi-score-display/remi-score-display.component';
+import { RemiSidebarGroupComponent } from '../remi-sidebar-group/remi-sidebar-group.component';
+import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-analytics-page.config';
+import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 
 @Component({
   selector: 'app-usage-analytics-page',
   templateUrl: './usage-analytics-page.component.html',
   styleUrl: './usage-analytics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
   providers: [UsageAnalyticsPageService],
+  imports: [
+    MetricsPageComponent,
+    MetricsFiltersComponent,
+    PaButtonModule,
+    PaTooltipModule,
+    RemiScoreDisplayComponent,
+    RemiSidebarGroupComponent,
+    TranslatePipe,
+  ],
 })
 export class UsageAnalyticsPageComponent {
   protected service = inject(UsageAnalyticsPageService);

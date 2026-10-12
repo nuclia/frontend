@@ -97,7 +97,7 @@ export enum BlockedFeature {
 export type WorkflowType = 'classic' | 'cowork';
 
 export interface AccountCreation {
-  slug: string;
+  slug?: string;
   title: string;
   description?: string;
   email?: string;
@@ -111,6 +111,7 @@ export interface SamlConfig {
   entity_id: string;
   sso_url: string;
   x509_cert: string;
+  idp_initiated_target?: string;
   authn_context?: 'exact' | 'minimum' | 'better' | 'maximum';
 }
 
@@ -490,6 +491,7 @@ export interface ModelConfigurationItem {
   description?: string;
   assume_role?: AssumeRole;
   kbids?: string[];
+  nua_client_ids?: string[];
 }
 
 export interface ModelConfiguration extends ModelConfigurationItem {
@@ -500,3 +502,18 @@ export interface ModelConfiguration extends ModelConfigurationItem {
 export type ModelConfigurationCreation = Omit<ModelConfiguration, 'id'>;
 
 export type KnowledgeBoxMode = 'kb' | 'agent' | 'agent_no_memory' | 'agents';
+
+export interface NuaGuardPolicy {
+  id: string;
+  name: string;
+  description?: string;
+  instruction: string;
+  query: string;
+  target: 'QUERY';
+  zone: string;
+  enabled: boolean;
+  blocking: boolean;
+}
+
+export type NuaGuardPolicyPayload = Omit<NuaGuardPolicy, 'id' | 'zone'>;
+export type NuaGuardPolicyResponse = Omit<NuaGuardPolicy, 'zone'>;

@@ -4,6 +4,8 @@ import {
   DEFAULT_ROUTING_CONFIG,
   DEFAULT_SEARCH_BOX_CONFIG,
   GenerativeProviders,
+  getFeatures,
+  NUCLIA_STANDARD_SEARCH_CONFIG,
   Widget,
 } from '@nuclia/core';
 import { cloneDeep } from '@flaps/core';
@@ -166,5 +168,25 @@ describe('search widget editor normalization', () => {
     ] as Widget.Widget[];
 
     expect(findLinkedWidget(widgets, 'shared-config', 'chat-embed')?.widgetConfig?.widgetMode).toBe('chat');
+  });
+});
+
+describe('Chat submit button configuration', () => {
+  it('includes the opt-in variant in generated widget features', () => {
+    const features = getFeatures(NUCLIA_STANDARD_SEARCH_CONFIG, {
+      ...DEFAULT_WIDGET_CONFIG,
+      widgetMode: 'chat',
+      displaySearchButton: true,
+      chatSubmitButton: true,
+    }).split(',');
+
+    expect(features).toContain('displaySearchButton');
+    expect(features).toContain('chatSubmitButton');
+  });
+
+  it('does not enable the variant for existing widget configurations', () => {
+    expect(getFeatures(NUCLIA_STANDARD_SEARCH_CONFIG, DEFAULT_WIDGET_CONFIG).split(',')).not.toContain(
+      'chatSubmitButton',
+    );
   });
 });

@@ -18,6 +18,6 @@ jobs:
           persist-credentials: false
       
       - name: TruffleHog
-        uses: trufflesecurity/trufflehog@363923b901c911a9164f50b6c423f47c15372b1c # v3.97.4
+        uses: trufflesecurity/trufflehog@b2b0a92070f206ab7b5a1105d82a7f2f48d92341 # v3.99.0
         with:
           extra_args: --results=verified,unknown

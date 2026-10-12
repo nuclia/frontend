@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { NodeConfig } from '../../../../workflow.models';
   templateUrl: './array-string-field.component.html',
   styleUrls: ['./array-string-field.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
 })
 export class ArrayStringFieldComponent implements OnInit {

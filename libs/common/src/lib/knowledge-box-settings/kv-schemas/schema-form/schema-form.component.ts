@@ -1,4 +1,3 @@
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -11,9 +10,22 @@ import {
   output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { KVFieldType, KVSchema, KVSchemaField } from '@nuclia/core';
-import { KvSchemasService } from '../kv-schemas.service';
+import { ButtonMiniComponent } from '@nuclia/sistema';
 import { KV_SCHEMA_FORM_CONFIG, KvSchemaFormColumn } from '../kv-schemas.config';
+import { KvSchemasService } from '../kv-schemas.service';
 
 function uniqueKeysValidator(control: AbstractControl): ValidationErrors | null {
   const arr = control as FormArray;
@@ -24,10 +36,19 @@ function uniqueKeysValidator(control: AbstractControl): ValidationErrors | null 
 
 @Component({
   selector: 'app-schema-form',
-  standalone: false,
   templateUrl: './schema-form.component.html',
   styleUrl: './schema-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    PaDropdownModule,
+    PaButtonModule,
+    ButtonMiniComponent,
+    TranslatePipe,
+  ],
 })
 export class SchemaFormComponent {
   private kvService = inject(KvSchemasService);

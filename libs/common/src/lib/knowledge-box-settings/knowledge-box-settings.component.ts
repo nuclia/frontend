@@ -1,8 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { SDKService, STFUtils } from '@flaps/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ParametersTableComponent, SDKService, STFUtils } from '@flaps/core';
 import {
   IErrorMessages,
   PaButtonModule,
@@ -13,11 +22,10 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { WritableKnowledgeBox } from '@nuclia/core';
+import { ProcessingHook, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { filter, merge, Observable, of, Subject } from 'rxjs';
+import { filter, forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { StandaloneService } from '../services';
 import { Sluggable } from '../validators';
 
 @Component({
@@ -35,9 +43,12 @@ import { Sluggable } from '../validators';
     PaTextFieldModule,
     PaTogglesModule,
     PaExpanderModule,
+    ParametersTableComponent,
   ],
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  embedded = !!this.route.snapshot.data['embedded'];
   unsubscribeAll = new Subject<void>();
 
   kb?: WritableKnowledgeBox;
@@ -52,6 +63,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     hidden_resources_enabled: new FormControl<boolean>(false, { nonNullable: true }),
     hidden_resources_hide_on_creation: new FormControl<boolean>(false, { nonNullable: true }),
     enforce_security: new FormControl<boolean>(false, { nonNullable: true }),
+    webhookUri: new FormControl<string>('', { nonNullable: true, validators: Validators.pattern(/^http(s?):\/\//) }),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -59,6 +71,23 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       required: 'validation.required',
     },
   };
+
+  webhookBackup = signal<ProcessingHook | undefined>(undefined);
+  headers = signal<{ key: string; value: string }[]>([]);
+  headersMap = computed(() => {
+    return this.headers().reduce(
+      (acc, { key, value }) => {
+        if (key.trim() && value.trim()) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as { [key: string]: string },
+    );
+  });
+  headersPristine = computed(() => {
+    return JSON.stringify(this.headersMap()) === JSON.stringify(this.webhookBackup()?.headers || {});
+  });
 
   // accessors
   get zoneValue() {
@@ -69,11 +98,11 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   saving = false;
-  standalone = this.standaloneService.standalone;
   ipAddress = this.sdk.nuclia.auth.getAuthInfo(true).pipe(
     map((info) => info.ip_info?.client),
     shareReplay(1),
   );
+  isArag = this.sdk.isArag;
 
   constructor(
     private sdk: SDKService,
@@ -82,14 +111,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private router: Router,
     private toast: SisToastService,
     private modal: SisModalService,
-    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit(): void {
-    merge(this.sdk.currentKb, this.sdk.currentArag)
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((kb) => {
+    this.sdk.currentKb
+      .pipe(
+        switchMap((kb) => kb.getProcessingHook().pipe(map((webhook) => ({ kb, webhook })))),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(({ kb, webhook }) => {
         this.kb = kb;
+        this.webhookBackup.set(webhook);
         this.resetKbForm();
       });
   }
@@ -112,7 +144,9 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         hidden_resources_enabled: this.kb.hidden_resources_enabled || false,
         hidden_resources_hide_on_creation: this.kb.hidden_resources_hide_on_creation || false,
         enforce_security: this.kb.enforce_security || false,
+        webhookUri: this.webhookBackup()?.uri || '',
       });
+      this.headers.set(Object.entries(this.webhookBackup()?.headers || {}).map(([key, value]) => ({ key, value })));
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
     }
@@ -138,20 +172,38 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       ?.split('\n')
       .map((origin) => origin.trim())
       .filter((origin) => !!origin);
+    const newWebhook = kbDetails.webhookUri.trim()
+      ? { uri: kbDetails.webhookUri.trim(), headers: this.headersMap() }
+      : undefined;
 
-    kbBackup
-      .modify({
-        title: kbDetails.title,
-        description: kbDetails.description,
-        slug: newSlug,
-        allowed_origins: !!origins && origins.length > 0 ? origins : null,
-        allowed_ip_addresses: !!ipAddresses && ipAddresses.length > 0 ? ipAddresses : null,
-        hidden_resources_enabled: kbDetails.hidden_resources_enabled,
-        hidden_resources_hide_on_creation: kbDetails.hidden_resources_enabled
-          ? kbDetails.hidden_resources_hide_on_creation
-          : false,
-        enforce_security: kbDetails.enforce_security,
-      })
+    const modifyKb = kbBackup.modify({
+      title: kbDetails.title,
+      description: kbDetails.description,
+      slug: newSlug,
+      allowed_origins: !!origins && origins.length > 0 ? origins : null,
+      allowed_ip_addresses: !!ipAddresses && ipAddresses.length > 0 ? ipAddresses : null,
+      hidden_resources_enabled: kbDetails.hidden_resources_enabled,
+      hidden_resources_hide_on_creation: kbDetails.hidden_resources_enabled
+        ? kbDetails.hidden_resources_hide_on_creation
+        : false,
+      enforce_security: kbDetails.enforce_security,
+    });
+    const modifyWebhook = this.isArag.pipe(
+      take(1),
+      switchMap((isArag) => {
+        if (isArag) {
+          return of(null);
+        } else {
+          return newWebhook
+            ? kbBackup.updateProcessingHook(newWebhook)
+            : this.webhookBackup()
+              ? kbBackup.deleteProcessingHook()
+              : of(null);
+        }
+      }),
+    );
+
+    forkJoin([modifyKb, modifyWebhook])
       .pipe(
         tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),
         catchError((error) => {
@@ -179,29 +231,25 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  toggleKbState() {
+  unpublishKb() {
     if (!this.kb) {
       return;
     }
     const kb = this.kb;
-    const isPublished = kb.state === 'PUBLISHED';
-    const label = isPublished ? 'retire' : 'publish';
-    const state = isPublished ? 'PRIVATE' : 'PUBLISHED';
-
     (
       this.modal.openConfirm({
-        title: `stash.${label}.title`,
-        description: this.translate.instant(`stash.${label}.warning`, { kb: kb.title }),
+        title: 'stash.retire.title',
+        description: this.translate.instant('stash.retire.warning', { kb: kb.title }),
       }).onClose as Observable<boolean>
     )
       .pipe(
         filter((confirm) => confirm),
-        switchMap(() => kb.publish(state === 'PUBLISHED').pipe(tap(() => this.sdk.refreshKbList(true)))),
+        switchMap(() => kb.publish(false).pipe(tap(() => this.sdk.refreshKbList(true)))),
         take(1),
       )
       .subscribe({
         next: () => this.cdr.markForCheck(),
-        error: () => this.toast.error(`stash.${label}.error`),
+        error: () => this.toast.error('stash.retire.error'),
       });
   }
 }

@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PasswordInputComponent } from './password-input.component';
-import { MockModule, ngMocks } from 'ng-mocks';
 import { ButtonComponent, PaButtonModule, PaFormFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { ReactiveFormsModule } from '@angular/forms';
+import { MockModule, ngMocks } from 'ng-mocks';
+import { PasswordInputComponent } from './password-input.component';
 
 describe('PasswordInputComponent', () => {
   let component: PasswordInputComponent;
@@ -11,8 +10,7 @@ describe('PasswordInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaFormFieldModule), MockModule(PaButtonModule), MockModule(ReactiveFormsModule)],
-      declarations: [PasswordInputComponent],
+      imports: [PasswordInputComponent, MockModule(PaFormFieldModule), MockModule(PaButtonModule)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PasswordInputComponent);

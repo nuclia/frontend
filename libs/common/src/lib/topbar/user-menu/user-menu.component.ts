@@ -64,7 +64,7 @@ export class UserMenuComponent implements OnInit {
   @Input() set userInfo(userInfo: Welcome | undefined | null) {
     if (userInfo) {
       this.accounts = userInfo.accounts || [];
-      this.showSwitchAccount$.next(this.accounts.length > 1 || !!this.standalone);
+      this.showSwitchAccount$.next(this.accounts.length > 1);
       if (userInfo.preferences) {
         this.avatar = {
           userName: userInfo.preferences.name,
@@ -101,41 +101,38 @@ export class UserMenuComponent implements OnInit {
     ),
   );
 
-  private readonly standalone = this.sdk.nuclia.options.standalone;
   private readonly noStripe = this.backendConfig.noStripe();
 
   private readonly isAccountManager = this.features.isAccountManager;
   private readonly isBillingEnabled = this.features.unstable.billing;
   private readonly isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   private readonly isModelManagementEnabled = this.features.unstable.modelManagement;
+  private readonly isNuaGuardManagementEnabled = this.features.unstable.nuaGuardsManagement;
 
   private readonly isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
     shareReplay(1),
   );
 
-  private readonly simpleMode = this.navigation.simpleMode;
+  private readonly contextBoxMode = this.navigation.contextBoxMode;
 
   private readonly isKbAdmin = this.features.isKbAdmin;
 
-  private readonly showAccountGroup = this.isAccountManager.pipe(
-    map((isAccountManager) => !this.standalone && !!isAccountManager),
-    shareReplay(1),
-  );
+  private readonly showAccountGroup = this.isAccountManager.pipe(shareReplay(1));
 
   // True in advanced (non-simple) mode AND user has account-level access
   private readonly showAdvancedAccountSections = combineLatest([
-    this.simpleMode.pipe(map((s) => !s)),
+    this.contextBoxMode.pipe(map((s) => !s)),
     this.showAccountGroup,
   ]).pipe(
     map(([advanced, group]) => advanced && group),
     shareReplay(1),
   );
 
-  private readonly showSwitchAccount$ = new BehaviorSubject<boolean>(!!this.standalone);
+  private readonly showSwitchAccount$ = new BehaviorSubject<boolean>(false);
 
   private readonly showBillingGroup = combineLatest([this.isAccountManager, this.billing.isSubscribedToStripe]).pipe(
-    map(([manager, subscribed]) => !this.standalone && !!manager && (subscribed || !this.noStripe)),
+    map(([manager, subscribed]) => !!manager && (subscribed || !this.noStripe)),
     shareReplay(1),
   );
 
@@ -159,14 +156,14 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'open-notifications',
           action: () => this.showNotifications(),
           count$: this.unreadCount$,
-          visible$: this.simpleMode.pipe(map((simple) => !simple)),
+          visible$: this.contextBoxMode.pipe(map((simple) => !simple)),
         },
         {
           label: 'account.consumption',
           icon: 'chart',
           dataCy: 'go-to-consumption',
           action: () => this.go('home/consumption'),
-          visible$: this.isAccountManager.pipe(map((m) => !this.standalone && !!m)),
+          visible$: this.isAccountManager,
         },
         {
           label: 'account.manage',
@@ -174,7 +171,7 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'go-to-account-settings',
           action: () => this.go('home/account-settings'),
           visible$: combineLatest([this.isAccountManager, this.isCowork]).pipe(
-            map(([manager, cowork]) => !this.standalone && !!manager && !cowork),
+            map(([manager, cowork]) => !!manager && !cowork),
           ),
         },
       ],
@@ -297,6 +294,13 @@ export class UserMenuComponent implements OnInit {
           action: () => this.go('configuration/nua'),
         },
         {
+          label: 'navbar.nua-guard',
+          icon: 'forbidden',
+          dataCy: 'go-to-nua-guard',
+          action: () => this.go('configuration/nua-guard'),
+          visible$: this.isNuaGuardManagementEnabled,
+        },
+        {
           label: 'navbar.models',
           icon: 'settings',
           dataCy: 'go-to-models',
@@ -323,7 +327,7 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'delete-account',
           destructive: true,
           action: () => this.openDeleteAccount(),
-          visible$: combineLatest([this.simpleMode, this.isAccountManager]).pipe(
+          visible$: combineLatest([this.contextBoxMode, this.isAccountManager]).pipe(
             map(([simple, manager]) => !!simple && !!manager),
           ),
         },

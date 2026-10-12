@@ -1,17 +1,20 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, filter, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AccountService } from '../../account.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
+import { combineLatest, filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { ProjectDetails } from '../../account-ui.models';
+import { AccountService } from '../../account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
 
 @Component({
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [FormsModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule, FormFooterComponent, AsyncPipe],
 })
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

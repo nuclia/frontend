@@ -1,14 +1,22 @@
-<pa-tabs>
-  <pa-tab
-    [active]="!isKvSchemasActive()"
-    (click)="navigateTo('general')">
-    {{ 'kb.kv-schemas.tab-general' | translate }}
-  </pa-tab>
-  <pa-tab
-    [active]="isKvSchemasActive()"
-    (click)="navigateTo('kv-schemas')">
-    {{ 'kb.kv-schemas.tab' | translate }}
-  </pa-tab>
-</pa-tabs>
+<div class="kb-settings-layout page-spacing">
+  <header>
+    <h1 class="page-title">{{ 'stash.profile' | translate }}</h1>
+  </header>
 
-<router-outlet></router-outlet>
+  <pa-tabs notFullWidth>
+    <pa-tab
+      [active]="!isKvSchemasActive()"
+      (click)="navigateTo('general')">
+      {{ 'kb.kv-schemas.tab-general' | translate }}
+    </pa-tab>
+    <pa-tab
+      [active]="isKvSchemasActive()"
+      (click)="navigateTo('kv-schemas')">
+      {{ 'kb.kv-schemas.tab' | translate }}
+    </pa-tab>
+  </pa-tabs>
+
+  <div class="settings-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

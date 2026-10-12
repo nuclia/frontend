@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -9,6 +9,7 @@ import { UserType } from '@nuclia/core';
 @Component({
   templateUrl: 'add-user.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
 })
 export class AddUserComponent {

@@ -7,14 +7,13 @@
 
 - [Before Installation](#before-installation)
 - [Installation](#installation)
+- [Dependencies Updates](#dependencies-updates)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
-- [RAO Widget](#rao-widget)
-- [Auth app](#auth-app)
+- [Auth app and onboarding flow](#auth-app-and-onboarding-flow)
 - [Admin app](#admin-app)
 - [SDK](#sdk)
 - [Sistema](#sistema)
-- [NucliaDB admin](#nucliadb-admin)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
 - [Linters](#linters)
@@ -85,6 +84,47 @@ cd libs
 git clone git@github.com:plone/pastanaga-angular.git
 ```
 
+## Dependencies Updates
+
+It's important to keep all our dependencies up-to-date, and we use nx migration tool in order to update our nx and angular dependencies.
+Now we have an npm harness in place in order to protect our repo from supply chain attacks, with a minimal age gate of two weeks for new packages.
+
+When running the migration command, you may encounter the following error:
+
+```sh
+nx migrate 23.2 --verbose
+
+ NX   An error occurred while checking the provenance of nx@latest. This might be due to a custom registry configuration (https://pkg.harness.io/pkg/ct8onj8YTdaXtKaFsYCRLg/org-nuclia-npm/npm/). Please check whether provenance is correctly configured for your registry. To disable this check at your own risk, you can set the NX_SKIP_PROVENANCE_CHECK environment variable to true.
+
+ Error: No attestation URL found
+Error: An error occurred while checking the provenance of nx@latest. This might be due to a custom registry configuration (https://pkg.harness.io/pkg/ct8onj8YTdaXtKaFsYCRLg/org-nuclia-npm/npm/). Please check whether provenance is correctly configured for your registry. To disable this check at your own risk, you can set the NX_SKIP_PROVENANCE_CHECK environment variable to true.
+ Error: No attestation URL found
+    at ensurePackageHasProvenance (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/utils/provenance.js:40:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async nxCliPath (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/command-line/migrate/migrate.js:2415:5)
+    at async /Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/command-line/migrate/migrate.js:2333:23
+    at async handleErrors (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/utils/handle-errors.js:9:24)
+    at async Object.handler (/Users/pellerin/Workspace/nuclia/frontend/node_modules/nx/dist/src/command-line/migrate/command-object.js:15:39)
+```
+
+In which case, simply add the env variable at the beginning of the command:
+
+```sh
+NX_SKIP_PROVENANCE_CHECK=true nx migrate 23.2 --verbose
+```
+
+You may still have an error message in case some packages are not old enough:
+
+```sh
+NX_SKIP_PROVENANCE_CHECK=true nx migrate 23.2 --verbose
+
+ NX   All versions satisfying "23.2" are quarantined
+
+Wait until a matching version is older than the configured window, lower yarn npmMinimalAgeGate (20160 min), or add nx to npmPreapprovedPackages in .yarnrc.yml.
+```
+
+in which case you just have to check the release date of the targetted packages and try again once they're more than 2 weeks old.
+
 ## Dashboard
 
 Start by creating an account with an email and password (as SSO doesn't work locally).
@@ -132,75 +172,95 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 - build the widget
 - copy the resulting `nuclia-widget.umd.js` to `assets` folder of dashboard app
-- in `app.init.service.ts`, replace the line `injectWidget(config.backend.cdn);` to `injectWidget('/assets');`
+- in `app.init.service.ts`, replace the line
 
-## Auth app
+```ts
+injectWidget(`${config.backend.cdn}/nuclia-widget.umd.js`);
+```
+
+by `injectWidget('/assets/nuclia-widget.umd.js');`
+
+## Auth app and onboarding flow
 
 The auth app supports the OAuth workflow and other auth related features.
 
-As the backend is redirecting to the server, it might be painful to work locally.
+As the backend is redirecting to the server, it might be painful to work locally on features using auth app, like onboarding flow for example.
 
-If needed you can run the auth app on port 4201:
+When we need to test features like onboarding flow, they are two solutions:
 
-```
-nx serve auth --port 4201 -c local-dev --host 127.0.0.1
-```
+- either deploy your branch to the dev cluster to test it in integration (but deployments take time, so that's not always the best)
+- or run both auth and dashboard apps locally with a proxy allowing to let the browser think that real auth/dashboard URL are actually pointing to your local computer.
 
-And proxy auth.gcp-global-dev-1.nuclia.io calls to this local port with the following setup:
+### Setup certificates and nginx server for the apps
 
-```
+Install brew first if you don't already have it https://brew.sh/.
+Then you need to install a few dependencies:
+
+```sh
 brew install nginx mkcert nss
-cd ~/wherever
+```
+
+Create the certificates needed for both auth and dashboard apps. The following commands are for working with dev cluster as a backend, if you want to work with stage, replace `auth.gcp-global-dev-1.nuclia.io` by `auth.stashify.cloud` in all the commands and in the nginx template.
+
+**Note**:
+
+- We created new local-stage-proxy and local-dev-proxy configurations for dashboard app, ask a supervisor to give it to you.
+- Make sure you have a `siteKey` property in your `app-config.json` on local-dev and local-stage of all your apps in order to have the OAuth working well with local proxy. If you don't have `siteKey`, ask a supervisor to provide them to you.
+
+Commands to create the certificates:
+
+```bash
+cd ./local_server
 mkcert -install
 mkcert auth.gcp-global-dev-1.nuclia.io
-mkdir logs
+mkcert rag.gcp-global-dev-1.nuclia.io
+mkcert admin.gcp-global-dev-1.nuclia.io
 ```
 
-In /etc/hosts, add:
+Then copy `local_server/nginx.template.conf` to a `nginx.conf` and use your local certificates in it.
 
-```
-127.0.0.1   localhost auth.gcp-global-dev-1.nuclia.io
-```
+Finally, using sudo, in `/etc/hosts`, add commented proxies for stage and dev clusters:
 
-Note: do not forget to undo that once finished, else you will not be able to access the real auth.gcp-global-dev-1.nuclia.io.
-
-nginx.conf
-
-```
-# Required top-level block (even if empty)
-events {}
-
-http {
-  # Keep logs local to this temp project (optional)
-  access_log logs/access.log;
-  error_log  logs/error.log;
-
-  # Recommended: tighter proxy defaults
-  proxy_http_version 1.1;
-  proxy_set_header Host $host;
-  proxy_set_header X-Forwarded-Proto https;
-  proxy_set_header X-Forwarded-For $remote_addr;
-
-  server {
-    # You'll need sudo to bind to 443 on macOS
-    listen 443 ssl;
-    server_name auth.gcp-global-dev-1.nuclia.io;
-
-    # >>> Replace these with your mkcert outputs <<<
-    ssl_certificate     auth.gcp-global-dev-1.nuclia.io.pem;
-    ssl_certificate_key auth.gcp-global-dev-1.nuclia.io-key.pem;
-
-    # Forward EVERYTHING under this host to your Angular dev server
-    location / {
-      proxy_pass http://127.0.0.1:4201;
-    }
-  }
-}
+```bash
+# ----- Local Auth Proxy -----
+#127.0.0.1   localhost auth.stashify.cloud
+#127.0.0.1   localhost rag.stashify.cloud
+#127.0.0.1   localhost admin.stashify.cloud
+#127.0.0.1   localhost auth.gcp-global-dev-1.nuclia.io
+#127.0.0.1   localhost rag.gcp-global-dev-1.nuclia.io
+#127.0.0.1   localhost admin.gcp-global-dev-1.nuclia.io
 ```
 
-```
+You will uncomment the lines corresponding to the cluster (dev or stage) you want to use whenever you need it.
+
+Those steps need to be done only once.
+
+### Setup a proxy to work locally with auth and dashboard apps
+
+Finally, you should run the apps specifying the host.
+When working with dev cluster as a backend:
+
+- dashboard: `nx run dashboard:serve:local-dev-proxy  --host 127.0.0.1`
+- admin: `nx run admin:serve:local-dev  --host 127.0.0.1`
+- auth: `nx run auth:serve:local-dev --host 127.0.0.1`
+
+When working with stage as a backend:
+
+- dashboard: `nx run dashboard:serve:local-stage-proxy  --host 127.0.0.1`
+- admin: `nx run admin:serve:local-stage  --host 127.0.0.1`
+- auth: `nx run auth:serve:local-stage --host 127.0.0.1`
+
+Finally, enable your proxy and launch the nginx local server from `local_server` folder:
+
+```bash
+cd local_server
+sudo nano /etc/hosts  # uncomment the 3 lines corresponding to the environment you're using then save
 sudo nginx -p $(pwd) -c nginx.conf -g 'daemon off;'
 ```
+
+**Notes**:
+Do not forget to comment the lines added in `/etc/hosts` once finished, else you will not be able to access the real cluster.
+In case of trouble accessing the dashboard after the proxy has been removed from `/etc/hosts`, reboot your browser (working on private window is a good way to avoid troubles).
 
 ## Admin app
 
@@ -233,33 +293,6 @@ To update the glyphs sprite:
 
 ```shell
 ./libs/sistema/scripts/update_icons.sh
-```
-
-## NucliaDB admin
-
-To run it locally for dev purpose:
-
-```
-docker network create nucliadb-network
-docker run -it -d --name pg --network nucliadb-network \
-  -p 5432:5432 \
-  -e POSTGRES_USER=nucliadb \
-  -e POSTGRES_PASSWORD=nucliadb \
-  -e POSTGRES_DB=nucliadb \
-  postgres:latest
-docker pull nuclia/nucliadb:latest --platform linux/amd64
-docker build --platform linux/amd64 -t nucliadb-server -f ./tools/nucliadb-admin/Dockerfile .
-docker run --network nucliadb-network \
-    --name nucliadb-server \
-    --platform linux/amd64 \
-    -p 8080:8080 \
-    -v nucliadb-standalone:/data \
-    -e NUCLIA_PUBLIC_URL="https://europe-1.stashify.cloud" \
-    -e NUA_API_KEY=<NUA_KEY> \
-    -e LOG_LEVEL=DEBUG \
-    -e DRIVER=PG \
-    -e DRIVER_PG_URL="postgresql://nucliadb:nucliadb@pg:5432/nucliadb" \
-    nucliadb-server
 ```
 
 ## CI/CD Deployment

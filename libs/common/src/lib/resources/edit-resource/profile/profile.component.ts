@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,23 +8,56 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
+import { FeaturesService, FileDropDirective, FileSelectDirective, SDKService } from '@flaps/core';
+import {
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionItemComponent,
+  PaButtonModule,
+  PaDatePickerModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
+import { ExpandableTextareaComponent, JsonViewerComponent, SpinnerComponent } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { delay, shareReplay, take, takeUntil } from 'rxjs/operators';
+import { HintComponent } from '../../../hint/hint.component';
 import { JsonValidator } from '../../../validators';
 import { Thumbnail } from '../edit-resource.helpers';
 import { EditResourceService } from '../edit-resource.service';
 import { ResourceNavigationService } from '../resource-navigation.service';
+import { ThumbnailComponent } from './thumbnail/thumbnail.component';
 
 @Component({
   templateUrl: 'profile.component.html',
   styleUrls: ['../common-page-layout.scss', 'profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    SpinnerComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    AccordionComponent,
+    AccordionItemComponent,
+    AccordionBodyDirective,
+    PaTextFieldModule,
+    ExpandableTextareaComponent,
+    PaTogglesModule,
+    FileDropDirective,
+    FileSelectDirective,
+    ThumbnailComponent,
+    PaDatePickerModule,
+    PaTableModule,
+    PaButtonModule,
+    JsonViewerComponent,
+    HintComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ResourceProfileComponent implements OnInit, OnDestroy {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
@@ -252,7 +286,7 @@ export class ResourceProfileComponent implements OnInit, OnDestroy {
           {} as { [key: string]: string },
         ),
       },
-        extra,
+      extra,
       security: security ? { access_groups: security } : undefined,
     };
   }

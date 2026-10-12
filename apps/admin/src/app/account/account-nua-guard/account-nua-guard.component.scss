@@ -1,0 +1,33 @@
+@use 'apps/dashboard/src/variables' as *;
+@use 'libs/common/src/lib/account/account';
+
+h2 {
+  margin: 0 0 rhythm(1) 0;
+}
+
+.create-policy-button {
+  display: block;
+  margin-top: rhythm(3);
+}
+
+.limit-reached {
+  color: $color-secondary-stronger;
+  margin-top: rhythm(2);
+}
+
+h3 {
+  margin: 0 0 rhythm(1) 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin-top: rhythm(3);
+  margin-bottom: rhythm(3);
+}
+
+pa-table-cell-menu {
+  .pa-table-grid--menu-cell {
+    gap: rhythm(0.5);
+  }
+}

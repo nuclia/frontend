@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import {
   PaButtonModule,
   PaDatePickerModule,
@@ -8,20 +8,19 @@ import {
   PaTabsModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { NucliaTokensMetric } from '@nuclia/core';
+import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { isBefore, isFuture, set, subDays } from 'date-fns';
-import { AccountService } from '../../account.service';
-import { ManagerStore } from '../../../manager.store';
 import { BehaviorSubject, filter, map, switchMap, take } from 'rxjs';
+import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
+import { AccountService } from '../../account.service';
 
 @Component({
   selector: 'nma-token-consumption',
   imports: [
     CommonModule,
     PaTableModule,
-    DropdownButtonComponent,
     PaDropdownModule,
     PaDatePickerModule,
     PaTextFieldModule,

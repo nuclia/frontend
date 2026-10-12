@@ -15,7 +15,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IResource, Resource, RESOURCE_STATUS, SortField } from '@nuclia/core';
-import { SisIconsModule, SisModalService } from '@nuclia/sistema';
+import { MimeIconPipe, SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, startWith, switchMap, take } from 'rxjs';
 
 @Component({
@@ -34,8 +34,8 @@ import { combineLatest, filter, map, Observable, startWith, switchMap, take } fr
     TranslateModule,
     RouterModule,
     PaDateTimeModule,
-    SisIconsModule,
     PaTooltipModule,
+    MimeIconPipe,
   ],
 })
 export class LastResourcesComponent implements OnInit {
@@ -48,8 +48,7 @@ export class LastResourcesComponent implements OnInit {
   currentKb = this.sdk.currentKb;
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
     map(([account, kb]) => {
-      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      const url = this.navigationService.getKbUrl(account.slug, kbSlug);
+      const url = this.navigationService.getKbUrl(account.slug, kb.slug);
       return url;
     }),
   );

@@ -16,6 +16,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha-2';
+import { CallbackComponent } from './callback/callback.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
 import { ConsentComponent } from './consent/consent.component';
 import { consentResolver } from './consent/consent.resolver';
@@ -24,10 +25,10 @@ import { loginResolver } from './login/login.resolver';
 import { MagicComponent } from './magic/magic.component';
 import { RecoverComponent } from './recover/recover.component';
 import { ResetComponent } from './reset/reset.component';
+import { SamlLoginComponent } from './saml-login/saml-login.component';
 import { SignupComponent } from './signup/signup.component';
-import { UserContainerComponent } from './user-container';
-import { CallbackComponent } from './callback/callback.component';
 import { SsoButtonsComponent } from './sso/sso-buttons.component';
+import { UserContainerComponent } from './user-container';
 
 export const authRoutes: Routes = [
   { path: 'callback', component: CallbackComponent },
@@ -51,6 +52,7 @@ export const authRoutes: Routes = [
     component: CallbackComponent,
     data: { microsoft: true },
   },
+  { path: 'saml-login', component: SamlLoginComponent },
   { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
@@ -63,15 +65,6 @@ export const authRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-    RecoverComponent,
-    MagicComponent,
-    ResetComponent,
-    ConsentComponent,
-    SignupComponent,
-    CheckMailComponent,
-  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -90,6 +83,14 @@ export const authRoutes: Routes = [
     PaButtonModule,
     LowerCaseInputDirective,
     SsoButtonsComponent,
+    LoginComponent,
+    RecoverComponent,
+    MagicComponent,
+    ResetComponent,
+    ConsentComponent,
+    SignupComponent,
+    CheckMailComponent,
+    SamlLoginComponent,
   ],
   exports: [RouterModule, SignupComponent, CheckMailComponent],
   providers: [

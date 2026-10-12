@@ -1,7 +1,10 @@
+import { AsyncPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { BillingService, InvoicesList } from '@flaps/core';
-import { concatMap, filter, map, shareReplay, Subject, takeUntil, tap } from 'rxjs';
+import { PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { concatMap, filter, map, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 
 const PAGE_SIZE = 25;
 
@@ -9,7 +12,7 @@ const PAGE_SIZE = 25;
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaTableModule, PaButtonModule, AsyncPipe, CurrencyPipe, DatePipe, TranslatePipe],
 })
 export class HistoryComponent implements OnDestroy {
   invoices: InvoicesList = { items: [], pagination: { has_more: true } };

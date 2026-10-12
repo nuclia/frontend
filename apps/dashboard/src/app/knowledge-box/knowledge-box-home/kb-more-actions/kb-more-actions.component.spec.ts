@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
-import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { NavigationService, SDKService } from '@flaps/core';
-import { SisModalService } from '@nuclia/sistema';
+import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
-import { KbMoreActionsComponent } from './kb-more-actions.component';
 import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
 import { TestPageModalComponent } from '../test-page-modal/test-page-modal.component';
+import { KbMoreActionsComponent } from './kb-more-actions.component';
 
 function createTranslateLoader() {
   return { getTranslation: () => of(EN) };
@@ -46,7 +46,7 @@ describe('KbMoreActionsComponent', () => {
         MockProvider(SDKService, {
           currentKb: of(kb),
           currentAccount: of({ id: 'account-id', slug: 'account-slug' } as unknown as Account),
-          nuclia: { options: { standalone: false } } as unknown as SDKService['nuclia'],
+          nuclia: {} as unknown as SDKService['nuclia'],
         }),
         MockProvider(NavigationService, {
           getKbUrl: (accountSlug: string, kbSlug: string) => `/at/${accountSlug}/${kbSlug}`,

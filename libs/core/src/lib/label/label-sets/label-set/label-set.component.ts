@@ -3,13 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MutableLabelSet } from '../model';
+import { LabelSetFormComponent } from './label-set-form/label-set-form.component';
 
 @Component({
   selector: 'app-label-set',
   templateUrl: './label-set.component.html',
   styleUrls: ['./label-set.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [LabelSetFormComponent],
 })
 export class LabelSetComponent implements OnInit, OnDestroy {
   labelSet?: MutableLabelSet;

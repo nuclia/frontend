@@ -73,6 +73,9 @@
         rows="3">
         {{ 'account.saml.x509-cert' | translate }}
       </pa-textarea>
+      <pa-input formControlName="idp_initiated_target">
+        {{ 'account.saml.idp-initiated-target' | translate }}
+      </pa-input>
       <pa-select
         formControlName="authn_context"
         [label]="'account.saml.authn_context' | translate">

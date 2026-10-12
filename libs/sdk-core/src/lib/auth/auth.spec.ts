@@ -138,32 +138,6 @@ describe('Authentication', () => {
     });
   });
 
-  describe('standalone auth headers', () => {
-    it('should return READER by default', () => {
-      auth = new Authentication(createNuclia({ options: { standalone: true, knowledgeBox: 'kb' } }));
-      expect(auth.getAuthHeaders()).toEqual({ 'X-NUCLIADB-ROLES': 'READER' });
-    });
-
-    it('should return WRITER for write methods', () => {
-      auth = new Authentication(createNuclia({ options: { standalone: true, knowledgeBox: 'kb' } }));
-      expect(auth.getAuthHeaders('POST', '/kb/something')).toEqual({ 'X-NUCLIADB-ROLES': 'WRITER' });
-    });
-
-    it('should return MANAGER for kbs and kb management paths', () => {
-      auth = new Authentication(createNuclia({ options: { standalone: true, knowledgeBox: 'kb' } }));
-      expect(auth.getAuthHeaders('PATCH', '/kbs')).toEqual({ 'X-NUCLIADB-ROLES': 'MANAGER' });
-      expect(auth.getAuthHeaders('DELETE', '/kb/my-kb')).toEqual({ 'X-NUCLIADB-ROLES': 'MANAGER' });
-    });
-
-    it('should force READER for search endpoints', () => {
-      auth = new Authentication(createNuclia({ options: { standalone: true, knowledgeBox: 'kb' } }));
-      expect(auth.getAuthHeaders('POST', '/kb/my-kb/search')).toEqual({ 'X-NUCLIADB-ROLES': 'READER' });
-      expect(auth.getAuthHeaders('POST', '/kb/my-kb/find')).toEqual({ 'X-NUCLIADB-ROLES': 'READER' });
-      expect(auth.getAuthHeaders('POST', '/kb/my-kb/catalog')).toEqual({ 'X-NUCLIADB-ROLES': 'READER' });
-      expect(auth.getAuthHeaders('POST', '/kb/my-kb/ask')).toEqual({ 'X-NUCLIADB-ROLES': 'READER' });
-    });
-  });
-
   describe('OAuth and token exchange', () => {
     beforeEach(() => {
       auth = new Authentication(
@@ -185,12 +159,12 @@ describe('Authentication', () => {
     it('should redirect to OAuth and store state, nonce and code verifier', async () => {
       const getRandomValuesSpy = jest
         .spyOn(crypto, 'getRandomValues')
-        .mockImplementation((arr: ArrayBufferView<ArrayBufferLike>) => {
-          const view = arr as Uint8Array;
+        .mockImplementation((arr: ArrayBufferView<ArrayBuffer>) => {
+          const view = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength);
           for (let i = 0; i < view.length; i += 1) {
             view[i] = i + 1;
           }
-          return view;
+          return arr;
         });
       const generateChallengeSpy = jest
         .spyOn(auth as any, 'generateCodeChallenge')

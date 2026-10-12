@@ -1,7 +1,6 @@
+import { AsyncPipe, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { combineLatest, filter, forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
 import {
   AccountService,
   BillingService,
@@ -11,14 +10,32 @@ import {
   SDKService,
   SubscriptionStatus,
 } from '@flaps/core';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaDateTimeModule,
+  PaIconModule,
+  PaTableModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
 import { UnsubscribeComponent, UnsubscribeModalData } from './unsubscribe.component';
 
 @Component({
   templateUrl: './my-subscription.component.html',
   styleUrls: ['./my-subscription.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTableModule,
+    PaDateTimeModule,
+    PaButtonModule,
+    PaIconModule,
+    AsyncPipe,
+    DecimalPipe,
+    CurrencyPipe,
+    TranslatePipe,
+  ],
 })
 export class MySubscriptionComponent {
   type = this.billingService.type;

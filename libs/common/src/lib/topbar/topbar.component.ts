@@ -1,15 +1,18 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountEntryContextService, BrandService, NavigationService, SDKService, UserService } from '@flaps/core';
-import { combineLatest, map, of, shareReplay, switchMap, take } from 'rxjs';
-import { StandaloneService } from '../services/standalone.service';
+import { combineLatest, map, of, switchMap, take } from 'rxjs';
+import { KbSwitchComponent } from './kb-switch/kb-switch.component';
+import { PlanStatusComponent } from './plan-status/plan-status.component';
+import { UserMenuComponent } from './user-menu/user-menu.component';
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [KbSwitchComponent, PlanStatusComponent, UserMenuComponent, AsyncPipe],
 })
 export class TopbarComponent {
   @Output() openNotificationPanel = new EventEmitter<void>();
@@ -17,22 +20,17 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
 
   inAdminApp = this.navigationService.inAdminApp;
-  standalone = this.standaloneService.standalone;
+  showKbSwitch =
+    !this.inAdminApp || this.navigationService.fromApp('rao') || this.navigationService.fromApp('dashboard');
 
   private brandService = inject(BrandService);
   private entryContext = inject(AccountEntryContextService);
   brandName = this.brandService.brandName;
-  simpleMode = this.navigationService.simpleMode;
-  private isCowork = this.sdk.currentAccount.pipe(
-    map((account) => account.workflow === 'cowork'),
-    shareReplay(1),
-  );
-  logoPath = combineLatest([this.isCowork, this.brandService.logoPath]).pipe(
+  contextBoxMode = this.navigationService.contextBoxMode;
+  logoPath = combineLatest([this.contextBoxMode, this.brandService.logoPath]).pipe(
     map(([isCowork, logoPath]) => {
       if (isCowork) {
         return 'assets/logos/logo-context-box.svg';
-      } else if (this.standalone) {
-        return 'assets/logos/nucliadb.svg';
       } else {
         return logoPath;
       }
@@ -44,7 +42,6 @@ export class TopbarComponent {
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private standaloneService: StandaloneService,
   ) {}
 
   goToHome(): void {
@@ -53,14 +50,14 @@ export class TopbarComponent {
       return;
     }
 
-    const simpleHomeUrl$ = this.sdk.isKbLoaded
+    const contextBoxHomeUrl$ = this.sdk.isKbLoaded
       ? this.navigationService.kbUrl
       : of(this.navigationService.getAccountSelectUrl());
 
-    this.simpleMode
+    this.contextBoxMode
       .pipe(
         take(1),
-        switchMap((simpleMode) => (simpleMode ? simpleHomeUrl$ : this.navigationService.homeUrl)),
+        switchMap((contextBoxMode) => (contextBoxMode ? contextBoxHomeUrl$ : this.navigationService.homeUrl)),
         take(1),
       )
       .subscribe((url) => this.router.navigate([url]));

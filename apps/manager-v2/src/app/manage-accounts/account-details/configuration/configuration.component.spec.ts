@@ -1,23 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ConfigurationComponent } from './configuration.component';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { AccountDetailsStore } from '../account-details.store';
-import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockComponent, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
-import { ExtendedAccount } from '../../global-account.models';
-import {
-  PaButtonModule,
-  PaDatePickerModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ManagerStore } from '../../../manager.store';
-import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
-import { ACCOUNT_DETAILS } from '../../test-utils';
+import { AccountService } from '../../account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
+import { ExtendedAccount } from '../../global-account.models';
 import { GlobalAccountService } from '../../global-account.service';
+import { ACCOUNT_DETAILS } from '../../test-utils';
+import { AccountDetailsStore } from '../account-details.store';
+import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
+import { ConfigurationComponent } from './configuration.component';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
@@ -25,18 +19,7 @@ describe('ConfigurationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MockModule(PaButtonModule),
-        MockModule(ReactiveFormsModule),
-        MockModule(PaTextFieldModule),
-        MockModule(PaTogglesModule),
-        MockModule(PaDatePickerModule),
-      ],
-      declarations: [
-        ConfigurationComponent,
-        MockComponent(FormFooterComponent),
-        MockComponent(BlockedFeaturesComponent),
-      ],
+      imports: [ConfigurationComponent, MockComponent(FormFooterComponent), MockComponent(BlockedFeaturesComponent)],
       providers: [
         MockProvider(AccountDetailsStore, {
           getAccount: jest.fn(() => of({} as ExtendedAccount)),
@@ -49,6 +32,14 @@ describe('ConfigurationComponent', () => {
         MockProvider(AccountService),
         MockProvider(SisToastService),
         MockProvider(GlobalAccountService),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
 

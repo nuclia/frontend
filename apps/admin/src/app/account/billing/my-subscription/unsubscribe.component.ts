@@ -1,6 +1,8 @@
+import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { Currency } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaDateTimeModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface UnsubscribeModalData {
   currency: Currency;
@@ -12,7 +14,7 @@ export interface UnsubscribeModalData {
   templateUrl: './unsubscribe.component.html',
   styleUrls: ['./unsubscribe.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaModalModule, PaDateTimeModule, PaButtonModule, CurrencyPipe, TranslatePipe],
 })
 export class UnsubscribeComponent {
   data = this.modal.config.data;

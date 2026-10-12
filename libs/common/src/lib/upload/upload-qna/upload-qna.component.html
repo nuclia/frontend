@@ -4,17 +4,9 @@
   </pa-modal-title>
   <pa-modal-content>
     <div class="upload-qna-content">
-      @if (standalone) {
-        @if ((hasValidKey | async) === false) {
-          <div
-            class="warning body-s"
-          [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-        }
-      }
-
       <p
         class="body-m"
-      [innerHTML]="'upload.qna_csv_description' | translate"></p>
+        [innerHTML]="'upload.qna_csv_description' | translate"></p>
 
       <pa-input [formControl]="resourceTitle">Resource title</pa-input>
 
@@ -40,7 +32,7 @@
       <app-csv-select
         [buttonKind]="qna.length === 0 ? 'primary' : 'secondary'"
         [fields]="2"
-      (csvSelect)="displayCsv($event)"></app-csv-select>
+        (csvSelect)="displayCsv($event)"></app-csv-select>
 
       @if (qna.length > 0) {
         <pa-table

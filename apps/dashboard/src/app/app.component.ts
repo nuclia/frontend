@@ -1,21 +1,32 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef, DOCUMENT } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DOCUMENT,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 
-import { TranslateService } from '@ngx-translate/core';
+import { AsyncPipe } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+import { ChatAdviceBubbleComponent, FeaturesModalComponent } from '@flaps/common';
 import {
   BackendConfigurationService,
+  FeaturesService,
   LabelsService,
+  PendoService,
   SDKService,
   STFSplashScreenService,
   STFUtils,
   UserService,
-  FeaturesService,
-  PendoService,
 } from '@flaps/core';
-import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
-import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesModalComponent } from '@flaps/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency
@@ -25,7 +36,8 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterOutlet, ChatAdviceBubbleComponent, AsyncPipe],
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
@@ -61,7 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.pendo.init();
-    this.redirectToSyncCreation();
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
@@ -120,23 +131,6 @@ export class AppComponent implements OnInit, OnDestroy {
           access_token,
           refresh_token: querystring.get('refresh_token') || '',
         });
-      }
-    }
-  }
-
-  private redirectToSyncCreation() {
-    const params = location.search;
-    if (params.includes('external_connection_id')) {
-      const querystring = new URLSearchParams(params.split('?')[1]);
-      const external_connection_id = querystring.get('external_connection_id');
-      const redirect = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}')['redirect'];
-      if (external_connection_id && redirect) {
-        location.href = `${redirect}/${external_connection_id}`;
-      } else {
-        // DEV PURPOSE
-        // when working on localhost, the oauth flow redirect to stage, we need to know external_connection_id
-        // so we can pass it manuallly to localhost
-        console.info('external_connection_id', external_connection_id);
       }
     }
   }

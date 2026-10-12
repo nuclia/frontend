@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit } from '@angular/core';
+import { Component, computed, effect, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   AccordionBodyDirective,
@@ -14,6 +14,7 @@ import { distinctUntilChanged } from 'rxjs';
   selector: 'app-registered-agent-subform',
   templateUrl: 'registered-agent-subform.component.html',
   styleUrls: ['./registered-agent-subform.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaTextFieldModule, ReactiveFormsModule, TranslateModule, AccordionBodyDirective, AccordionItemComponent],
 })
 export class RegisteredAgentSubformComponent implements OnInit {

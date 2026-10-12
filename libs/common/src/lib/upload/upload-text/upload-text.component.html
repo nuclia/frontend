@@ -18,22 +18,15 @@
         {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
       </nsi-info-card>
     }
-    @if (standalone && (hasValidKey | async) === false) {
-      <div
-        class="warning-key body-s"
-      [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-    }
+
     <app-csv-select
       [help]="['upload.csv_description', 'upload.csv_format', 'upload.csv_labels']"
       [fields]="4"
-    (csvSelect)="checkCsv($event)"></app-csv-select>
+      (csvSelect)="checkCsv($event)"></app-csv-select>
     @if (csv.length > 0) {
-      <div
-        class="uploads"
-        >
+      <div class="uploads">
         @for (row of csv; track row) {
-          <div
-            class="upload">
+          <div class="upload">
             <span paEllipsisTooltip>{{ row.title }}</span>
             <code>{{ row.format }}</code>
           </div>
@@ -41,8 +34,7 @@
       </div>
     }
     @if (isUploading) {
-      <nsi-spinner
-      size="small"></nsi-spinner>
+      <nsi-spinner size="small"></nsi-spinner>
     }
   </pa-modal-content>
   <pa-modal-footer>

@@ -14,11 +14,11 @@ import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } fr
 import { PaButtonModule, PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { GenerativeProviders, LearningConfigurations, Widget } from '@nuclia/core';
-import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { SearchWidgetStorageService } from '../../search-widget-storage.service';
 import { ModelSelectorComponent } from '../../../ai-models';
+import { SearchWidgetStorageService } from '../../search-widget-storage.service';
 
 @Component({
   selector: 'stf-routing-form',
@@ -28,8 +28,6 @@ import { ModelSelectorComponent } from '../../../ai-models';
     TranslateModule,
     PaTogglesModule,
     PaTextFieldModule,
-    InfoCardComponent,
-    BadgeComponent,
     PaSliderModule,
     PaButtonModule,
     ExpandableTextareaComponent,

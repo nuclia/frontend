@@ -1,15 +1,33 @@
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { UserService } from '../user.service';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
-import { UserSummary } from '../user.models';
-import { ManagerStore } from '../../manager.store';
+import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDateTimeModule,
+  PaScrollModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
+import { ManagerStore } from '../../manager.store';
+import { UserSummary } from '../user.models';
+import { UserService } from '../user.service';
 
 @Component({
   templateUrl: './user-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaTextFieldModule,
+    PaButtonModule,
+    RouterLink,
+    PaScrollModule,
+    PaTableModule,
+    PaDateTimeModule,
+    AsyncPipe,
+    SlicePipe,
+  ],
 })
 export class UserListComponent {
   private _allUsers: BehaviorSubject<UserSummary[]> = new BehaviorSubject<UserSummary[]>([]);

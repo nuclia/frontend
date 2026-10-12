@@ -1,5 +1,32 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ColoredLabel } from '@flaps/common';
+import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
+import {
+  BrowseOptions,
+  ExternalConnection,
+  ExternalConnectionCredentials,
+  Job,
+  JobsPage,
+  NucliaOptions,
+  StorageSite,
+  StorageStructure,
+  SyncConfiguration,
+  SyncConfigurationCreate,
+  SyncConfigurationUpdate,
+  WritableKnowledgeBox,
+} from '@nuclia/core';
+import { compareDesc } from 'date-fns';
 import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { ConfluenceConnector } from './connectors/confluence';
+import { FolderConnector } from './connectors/folder';
+import { OAuthConnector } from './connectors/oauth';
+import { ONEDRIVE_CONNECTOR_ID, OneDriveImpl } from './connectors/onedrive';
+import { RSSConnector } from './connectors/rss';
+import { S3Impl } from './connectors/s3';
+import { SharepointImpl } from './connectors/sharepoint';
+import { SitefinityConnector } from './connectors/sitefinity';
+import { SitemapConnector } from './connectors/sitemap';
 import {
   baseLogoPath,
   ConnectorDefinition,
@@ -9,32 +36,6 @@ import {
   SearchResults,
   SyncBasicData,
 } from './models';
-import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
-import { SitemapConnector } from './connectors/sitemap';
-import {
-  BrowseOptions,
-  Job,
-  NucliaOptions,
-  WritableKnowledgeBox,
-  SyncConfiguration,
-  SyncConfigurationCreate,
-  SyncConfigurationUpdate,
-  ExternalConnectionCredentials,
-  ExternalConnection,
-  StorageSite,
-  StorageStructure,
-  JobsPage,
-} from '@nuclia/core';
-import { ColoredLabel } from '@flaps/common';
-import { HttpClient } from '@angular/common/http';
-import { FolderConnector } from './connectors/folder';
-import { ConfluenceConnector } from './connectors/confluence';
-import { RSSConnector } from './connectors/rss';
-import { OAuthConnector } from './connectors/oauth';
-import { compareDesc } from 'date-fns';
-import { SitefinityConnector } from './connectors/sitefinity';
-import { SharepointImpl } from './connectors/sharepoint';
-import { S3Impl } from './connectors/s3';
 
 export type SyncServerType = 'desktop' | 'server' | 'cloud';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -96,6 +97,18 @@ export class SyncService {
         permanentSyncOnly: true,
         cloud: true,
         factory: (settings) => new SharepointImpl(settings?.['id'] || '', this.config.getSyncOAuthServer()),
+      },
+    },
+    'onedrive-me': {
+      definition: {
+        id: ONEDRIVE_CONNECTOR_ID,
+        oauth_provider: 'azure_oauth',
+        title: 'OneDrive',
+        logo: `${baseLogoPath}/onedrive.svg`,
+        description: 'Microsoft OneDrive personal file storage',
+        permanentSyncOnly: true,
+        cloud: true,
+        factory: (settings) => new OneDriveImpl(settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     dropbox: {
@@ -197,7 +210,16 @@ export class SyncService {
     return instances[instance];
   }
 
-  getConnectorIdForProvider(provider: string): string | undefined {
+  getConnectorIdForProvider(provider: string, driveType?: string): string | undefined {
+    // "personal"/"business" = the user's own OneDrive; "documentLibrary" = a SharePoint site.
+    if (
+      provider === 'azure_oauth' &&
+      driveType &&
+      driveType !== 'documentLibrary' &&
+      this.connectors[ONEDRIVE_CONNECTOR_ID]
+    ) {
+      return ONEDRIVE_CONNECTOR_ID;
+    }
     return Object.entries(this.connectors).find(
       ([, data]) => data.definition.oauth_provider === provider || data.definition.apikey_provider === provider,
     )?.[0];
@@ -211,7 +233,7 @@ export class SyncService {
   }
 
   private syncConfigtoISyncEntity(config: SyncConfiguration): ISyncEntity {
-    const connectorId = this.getConnectorIdForProvider(config.external_connection.provider);
+    const connectorId = this.getConnectorIdForProvider(config.external_connection.provider, config.drive_type);
     return {
       id: config.id,
       title: config.name,
@@ -240,7 +262,7 @@ export class SyncService {
         map((config) => ({
           ...this.syncConfigtoISyncEntity(config),
           kbId: config.kb_id,
-          connectorId: this.getConnectorIdForProvider(config.external_connection.provider),
+          connectorId: this.getConnectorIdForProvider(config.external_connection.provider, config.drive_type),
         })),
         tap((entity) =>
           this._syncCache.next({
@@ -266,26 +288,19 @@ export class SyncService {
   addSync(sync: ISyncEntity): Observable<void> {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => {
-        if (this.sdk.nuclia.options.standalone) {
-          return of({
+      switchMap((kb) =>
+        this.getNucliaKey(kb).pipe(
+          map((data) => ({
             ...sync,
-            kb: { ...this.sdk.nuclia.options, knowledgeBox: kb.id },
-          });
-        } else {
-          return this.getNucliaKey(kb).pipe(
-            map((data) => ({
-              ...sync,
-              kb: {
-                zone: this.sdk.nuclia.options.zone,
-                backend: this.sdk.nuclia.options.backend,
-                knowledgeBox: data.kbid,
-                apiKey: data.token,
-              } as NucliaOptions,
-            })),
-          );
-        }
-      }),
+            kb: {
+              zone: this.sdk.nuclia.options.zone,
+              backend: this.sdk.nuclia.options.backend,
+              knowledgeBox: data.kbid,
+              apiKey: data.token,
+            } as NucliaOptions,
+          })),
+        ),
+      ),
       switchMap((sync) =>
         this.http.post<void>(`${this._syncServer.getValue().serverUrl}/sync`, sync, {
           headers: this.serverHeaders,
@@ -389,7 +404,10 @@ export class SyncService {
               configs
                 .filter((config) => config.kb_id === kbId)
                 .map((config) => {
-                  const connectorId = this.getConnectorIdForProvider(config.external_connection.provider);
+                  const connectorId = this.getConnectorIdForProvider(
+                    config.external_connection.provider,
+                    config.drive_type,
+                  );
                   return {
                     id: config.id,
                     kbId: config.kb_id,

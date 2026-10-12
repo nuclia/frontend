@@ -1,8 +1,28 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe, KeyValuePipe, SlicePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LabelsService, NavigationService, SDKService } from '@flaps/core';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FeaturesService, LabelModule, LabelsService, NavigationService, SDKService } from '@flaps/core';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaChipsModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
+  PaTabsModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   Classification,
   ExtractConfig,
@@ -21,7 +41,15 @@ import {
   trimLabelSets,
   TypeParagraph,
 } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
+import {
+  BadgeComponent,
+  DelayedSpinnerComponent,
+  DropdownButtonComponent,
+  InfoCardComponent,
+  NsiSkeletonComponent,
+  SisModalService,
+  SpinnerComponent,
+} from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -35,6 +63,7 @@ import {
   Subject,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
 import { shareReplay, takeUntil } from 'rxjs/operators';
 import {
@@ -47,7 +76,10 @@ import {
 } from '../edit-resource.helpers';
 import { EditResourceService } from '../edit-resource.service';
 import { ParagraphService } from '../paragraph.service';
+import { ThumbnailComponent } from '../profile/thumbnail/thumbnail.component';
 import { ResourceNavigationService } from '../resource-navigation.service';
+import { KeyValueFieldComponent } from './key-value-field/key-value-field.component';
+import { PreviewTableComponent } from './preview-table.component';
 import { PreviewService } from './preview.service';
 import { WarningModalComponent } from './warning-modal/warning-modal.component';
 
@@ -55,7 +87,31 @@ import { WarningModalComponent } from './warning-modal/warning-modal.component';
   templateUrl: './preview.component.html',
   styleUrls: ['../common-page-layout.scss', './preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    PaIconModule,
+    NsiSkeletonComponent,
+    PaTabsModule,
+    InfoCardComponent,
+    RouterLink,
+    DropdownButtonComponent,
+    PaDropdownModule,
+    PaTogglesModule,
+    LabelModule,
+    PaChipsModule,
+    PreviewTableComponent,
+    PaTooltipModule,
+    BadgeComponent,
+    PaButtonModule,
+    KeyValueFieldComponent,
+    ThumbnailComponent,
+    PaTableModule,
+    DelayedSpinnerComponent,
+    AsyncPipe,
+    SlicePipe,
+    KeyValuePipe,
+    TranslatePipe,
+    SpinnerComponent,
+  ],
 })
 export class PreviewComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);
@@ -63,6 +119,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   private labelsService = inject(LabelsService);
   private modalService = inject(SisModalService);
   private navigationService = inject(NavigationService);
+  private featuresService = inject(FeaturesService);
 
   unsubscribeAll = new Subject<void>();
   isArag = this.route.data.pipe(
@@ -77,6 +134,20 @@ export class PreviewComponent implements OnInit, OnDestroy {
         : '',
     ),
   );
+  agenticQuestion: Observable<{ question: string; answer?: string; agentic_config_id: string }> =
+    this.featuresService.unstable.agenticDAGeneration.pipe(
+      switchMap((agenticDAGeneration) =>
+        this.jsonTextField.pipe(
+          map((t) => JSON.parse(t)),
+          // if the `agentic_config_id` attribute exists in the JSON text field, we consider it
+          // as a marker to render it as a question that must be answered with the given agentic config
+          filter((data) => agenticDAGeneration && data.agentic_config_id),
+          tap((data) => this.currentAgenticAnswer.set(data.answer || '')),
+        ),
+      ),
+    );
+  currentAgenticAnswer = signal('');
+  agenticProcessing = signal(false);
   extractConfigId: Observable<string | undefined> = this.editResourceService.fieldExtractedData.pipe(
     map((field) => (field?.value as FileField)?.extract_strategy),
   );
@@ -396,5 +467,22 @@ export class PreviewComponent implements OnInit, OnDestroy {
       WarningModalComponent,
       new ModalConfig({ data: { errors: this.dataAugmentationErrors } }),
     );
+  }
+
+  processAgenticQuestion() {
+    const field = this.currentFieldId;
+    if (field) {
+      this.agenticProcessing.set(true);
+      forkJoin([this.editResourceService.resource.pipe(take(1)), this.agenticQuestion.pipe(take(1))])
+        .pipe(
+          switchMap(([resource, data]) =>
+            this.previewService.processAgenticQuestion(resource, field, data.question, data.agentic_config_id),
+          ),
+        )
+        .subscribe((answer) => {
+          this.currentAgenticAnswer.set(answer);
+          this.agenticProcessing.set(false);
+        });
+    }
   }
 }

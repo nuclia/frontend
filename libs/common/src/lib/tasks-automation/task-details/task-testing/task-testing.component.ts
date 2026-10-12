@@ -1,13 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  InfoCardComponent,
-  SisProgressModule,
-  SisToastService,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -16,10 +9,17 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { AugmentedField, IResource, Resource } from '@nuclia/core';
+import {
+  InfoCardComponent,
+  SisToastService,
+  SpinnerComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { debounceTime, forkJoin, map, of, Subject, switchMap, take } from 'rxjs';
+import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
 import { TestResultsComponent } from './test-results/test-results.component';
-import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../../tasks-automation.models';
 
 export type TestResults = { resource: Resource; results: { [key: string]: AugmentedField } };
 
@@ -34,7 +34,7 @@ export type TestResults = { resource: Resource; results: { [key: string]: Augmen
     PaTableModule,
     PaTextFieldModule,
     PaTogglesModule,
-    SisProgressModule,
+    SpinnerComponent,
     TestResultsComponent,
     TwoColumnsConfigurationItemComponent,
     TranslateModule,

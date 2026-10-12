@@ -1,14 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { BackendConfigurationService, BillingService, injectScript } from '@flaps/core';
+import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AccountPageBase } from '../account-page-base';
+import { AccountPageLayoutComponent } from '../account-page-layout/account-page-layout.component';
 
 @Component({
   selector: 'app-account-billing',
   templateUrl: './account-billing.component.html',
   styleUrl: './account-billing.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [AccountPageLayoutComponent, PaTabsModule, RouterLink, RouterLinkActive, AsyncPipe, TranslatePipe],
 })
 export class AccountBillingComponent extends AccountPageBase implements OnInit, OnDestroy {
   private readonly billing = inject(BillingService);

@@ -1,8 +1,9 @@
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { NavigationService, SDKService, ZoneService, SelectAccountKbService } from '@flaps/core';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { NavigationService, SDKService, SelectAccountKbService, ZoneService } from '@flaps/core';
 import { combineLatest, filter, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { OnboardingService } from '../onboarding';
 
 export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
@@ -10,12 +11,9 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   const sdk: SDKService = inject(SDKService);
   const router: Router = inject(Router);
   const zoneService: ZoneService = inject(ZoneService);
+  const onboardingService = inject(OnboardingService);
 
   const accountSlug = route.paramMap.get('account');
-
-  if (sdk.nuclia.options.standalone) {
-    selectService.selectAccount('local').subscribe();
-  }
 
   const isListReady = sdk.currentAccount.pipe(
     filter((account) => account.slug === accountSlug),
@@ -23,8 +21,8 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
     filter(([refreshingKbs, refreshingArags]) => !refreshingKbs && !refreshingArags),
   );
 
-  const zoneList = selectService.standalone ? of([]) : zoneService.getZones();
-  const aragList = selectService.standalone ? of([]) : sdk.aragList;
+  const zoneList = zoneService.getZones();
+  const aragList = sdk.aragList;
 
   return accountSlug
     ? zoneList.pipe(
@@ -33,32 +31,29 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
             switchMap(() => combineLatest([sdk.kbList, aragList]).pipe(map(([kbs, arags]) => ({ kbs, arags, zones })))),
           ),
         ),
-        switchMap(({ kbs, arags, zones }) => {
+        switchMap(({ kbs, arags }) => {
           const total = kbs.length + arags.length;
           if (total === 0) {
-            return selectService.standalone
-              ? of(true)
-              : sdk.currentAccount.pipe(
-                  map((account) =>
-                    account.can_manage_account
-                      ? navigation.resolveGuardRedirect(navigation.getAccountManageUrl(accountSlug), {
-                          withFromApp: true,
-                        })
-                      : true,
-                  ),
-                );
+            return sdk.currentAccount.pipe(
+              map((account) =>
+                account.can_manage_account
+                  ? navigation.resolveGuardRedirect(navigation.getAccountManageUrl(accountSlug), {
+                      withFromApp: true,
+                    })
+                  : true,
+              ),
+            );
           } else if (
             !navigation.inRaoApp &&
-            total === 1 &&
             kbs.length === 1 &&
-            !selectService.standalone &&
+            (total === 1 || kbs[0].title === onboardingService.contextBoxKbName) &&
             !!kbs[0].role_on_kb
           ) {
-            // if there's only one KB, and we're not in NucliaDB admin app or RAO app, then we automatically select the KB
+            // if there's only one KB (or a Context box), and we're not in NucliaDB admin app or RAO app, then we automatically select the KB
             sdk.nuclia.options.zone = kbs[0].zone;
 
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));
-          } else if (total === 1 && arags.length === 1 && !selectService.standalone && !!arags[0].role_on_kb) {
+          } else if (total === 1 && arags.length === 1 && !!arags[0].role_on_kb) {
             // if there's only one ARAG, and we're not in NucliaDB admin app, then we automatically select the ARAG
             sdk.nuclia.options.zone = arags[0].zone;
 

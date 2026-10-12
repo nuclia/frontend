@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {
   AccessibilityPageComponent,
   AccordionItemPageComponent,
@@ -186,6 +186,7 @@ export const menu: IDemoMenuSection[] = [
       [logo]="logo"></pa-demo>
   `,
   styles: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent {

@@ -1,14 +1,18 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { BudgetComponent } from '@flaps/common';
 import { AccountBudget, BillingService } from '@flaps/core';
-import { map } from 'rxjs';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-aws-subscription',
   templateUrl: './aws-subscription.component.html',
   styleUrls: ['./aws-subscription.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [BudgetComponent, PaButtonModule, AsyncPipe, TranslatePipe],
 })
 export class AwsSubscriptionComponent {
   budget?: Partial<AccountBudget>;

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,17 +9,16 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FeaturesService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { GenerativeProviders, LearningConfigurations, RAG_METADATAS, Widget } from '@nuclia/core';
-import { FindResourceModalComponent } from '../find-resource-modal';
+import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { ModelSelectorComponent } from '../../../ai-models';
+import { FindResourceModalComponent } from '../find-resource-modal';
 
 @Component({
   selector: 'stf-generative-answer-form',
@@ -30,7 +30,6 @@ import { ModelSelectorComponent } from '../../../ai-models';
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
-    UnauthorizedFeatureDirective,
     PaTextFieldModule,
     BadgeComponent,
     ExpandableTextareaComponent,

@@ -1,16 +1,18 @@
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { AccountService } from '../account.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { BackendConfigurationService, FeaturesService } from '@flaps/core';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { filter, map, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../manager.store';
-import { BackendConfigurationService, FeaturesService } from '@flaps/core';
+import { AccountService } from '../account.service';
 
 @Component({
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaButtonModule, RouterLink, RouterLinkActive, PaIconModule, RouterOutlet, AsyncPipe, DatePipe],
 })
 export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

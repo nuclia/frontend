@@ -13,8 +13,9 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
   if (signup_token) {
     authService.setSignUpToken(signup_token);
   }
+  const isSamlIdpLogin = params.has('saml_ref') && params.has('nonce');
   const routeHasMagicToken = params.has('token') && !params.has('signup_token');
-  if (localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || routeHasMagicToken) {
+  if ((localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || routeHasMagicToken) && !isSamlIdpLogin) {
     return true;
   }
 

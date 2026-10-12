@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
@@ -17,6 +17,7 @@ interface PlanStatusVm {
   daysLeft: number | null;
   used: number | null;
   limit: number | null;
+  isContextBox: boolean;
 }
 
 @Component({
@@ -33,7 +34,6 @@ export class PlanStatusComponent {
   private billing = inject(BillingService);
   private navigation = inject(NavigationService);
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
 
   private accountType$ = this.sdk.currentAccount.pipe(map((account) => account.type));
   private isTypeEnforced$ = combineLatest([
@@ -48,8 +48,13 @@ export class PlanStatusComponent {
     ),
   );
 
-  vm$ = combineLatest([this.features.isTrial, this.sdk.currentAccount, this.features.isAccountManager]).pipe(
-    switchMap(([isTrial, account, isAccountManager]) => {
+  vm$ = combineLatest([
+    this.features.isTrial,
+    this.sdk.currentAccount,
+    this.features.isAccountManager,
+    this.navigation.contextBoxMode,
+  ]).pipe(
+    switchMap(([isTrial, account, isAccountManager, contextBoxMode]) => {
       if (!isAccountManager) {
         return of(null);
       }
@@ -57,16 +62,23 @@ export class PlanStatusComponent {
         isTrial && account.trial_expiration_date
           ? Math.max(differenceInDays(new Date(`${account.trial_expiration_date}+00:00`), new Date()) + 1, 0)
           : null;
+      const labelKey = isTrial ? `account.type.${account.type}_trial` : `account.type.${account.type}`;
+
+      if (contextBoxMode) {
+        return of({ isTrial, labelKey, daysLeft, used: null, limit: null, isContextBox: true });
+      }
+
       const usage$ = isTrial ? this.billing.getTrialTokenUsage() : this.billing.getPlanTokenUsage();
 
       return usage$.pipe(
         map(
           (usage): PlanStatusVm => ({
             isTrial,
-            labelKey: isTrial ? `account.type.${account.type}_trial` : `account.type.${account.type}`,
+            labelKey,
             daysLeft,
             used: usage?.used ?? null,
             limit: usage?.limit ?? null,
+            isContextBox: false,
           }),
         ),
       );
@@ -76,7 +88,7 @@ export class PlanStatusComponent {
 
   goToSubscriptions() {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
-      this.router.navigate([this.navigation.getBillingUrl(account.slug)]);
+      this.navigation.navigateExternal(this.navigation.getBillingUrl(account.slug), { withFromApp: true });
     });
   }
 }

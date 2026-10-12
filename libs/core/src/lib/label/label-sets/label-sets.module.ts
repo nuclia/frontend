@@ -53,8 +53,6 @@ const ROUTES: Routes = [
     PaTooltipModule,
     SisLabelModule,
     LabelSetFormComponent,
-  ],
-  declarations: [
     ColorPickerComponent,
     LabelSetsComponent,
     LabelSetListComponent,

@@ -20,7 +20,6 @@ apps/manager-v2/src/
 ├── styles.scss / _variables.scss   # imports sistema + pastanaga; $header-height: rhythm(8)
 ├── environments/ environments_config/production/
 └── app/
-    ├── app.module.ts               # Root NgModule
     ├── app.routes.ts               # Top-level routes
     ├── app.component.ts            # Thin config-ready shell: shows Loading… until AppInitService resolves, then renders MainComponent
     ├── main.component.ts           # Bootstraps translations/remote-login and hosts the router-outlet + toast container; no header/nav (that's AppLayoutComponent)
@@ -147,7 +146,7 @@ Runtime config: `assets/deployment/app-config.json` (local: `environments_config
 
 ## Important Conventions
 
-1. **NgModule-based with selective standalone** — `TokenConsumptionComponent`, `ModelsComponent`, `AddModelComponent`, `ModelDetailsComponent` are standalone (no `standalone: false`, Angular 19+ default). They're referenced only via `component:` in the lazy `Routes` array — not added to the feature module's `declarations[]` or `imports[]` at all. `ZoneListComponent` and `ZoneDetailsComponent` explicitly opt out with `standalone: false` and are declared in `ManageZonesModule`.
+1. **Standalone-first** — components are standalone by default (Angular 22); `ManageZonesModule` and the other feature modules under `manage-accounts/`, `manage-users/`, `manage-zones/` are kept only as lazy-route-grouping `@NgModule` wrappers (`RouterModule.forChild()` + imports) — they no longer `declarations:` their components.
 2. **ManagerStore as permissions bus** — always read permissions from `ManagerStore` (`canEdit`, `canDelete`, etc.).
 3. **Lazy-loaded feature modules** — `accounts`, `users`, `zones` all use `loadChildren`. Keep it that way.
 4. **Two-layer account service** — `GlobalAccountService` for global mutations; `RegionalAccountService` for zone-aware reads; `AccountService` orchestrates both.

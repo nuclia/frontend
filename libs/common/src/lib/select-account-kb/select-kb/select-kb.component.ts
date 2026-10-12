@@ -1,9 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, SelectAccountKbService } from '@flaps/core';
+import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
-import { combineLatest, filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
+import { BackButtonComponent, ButtonMiniComponent, SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -11,11 +14,18 @@ import { map } from 'rxjs/operators';
   templateUrl: './select-kb.component.html',
   styleUrls: ['./select-kb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    BackButtonComponent,
+    ButtonMiniComponent,
+    PaTooltipModule,
+    PaButtonModule,
+    PaIconModule,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class SelectKbComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
-  standalone = this.selectService.standalone;
 
   kbs: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay());
   arags: Observable<IRetrievalAgentItem[] | null> = this.sdk.aragList.pipe(shareReplay());
@@ -31,11 +41,11 @@ export class SelectKbComponent implements OnDestroy {
         account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
     ),
   );
-  canAddKb = this.standalone ? of(true) : this._canAddKb;
+  canAddKb = this._canAddKb;
 
   isRetrievalAgentEnabled = this.features.unstable.retrievalAgents;
   canAddArag: Observable<boolean> = combineLatest([this.isRetrievalAgentEnabled, this._canAddKb]).pipe(
-    map(([aragEnabled, canAddKb]) => !this.standalone && aragEnabled && canAddKb),
+    map(([aragEnabled, canAddKb]) => aragEnabled && canAddKb),
   );
   inRaoApp = this.navigation.inRaoApp;
 
@@ -51,14 +61,17 @@ export class SelectKbComponent implements OnDestroy {
   createKb() {
     this.account
       .pipe(take(1))
-      .subscribe((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)]));
+      .subscribe((account) =>
+        this.navigation.navigateExternal(this.navigation.getKbCreationUrl(account.slug), { withFromApp: true }),
+      );
   }
   createArag() {
-    this.account
-      .pipe(take(1))
-      .subscribe((account) =>
-        this.router.navigate([this.navigation.getAragCreationUrl(account.slug)], { queryParams: { create: true } }),
-      );
+    this.account.pipe(take(1)).subscribe((account) =>
+      this.navigation.navigateExternal(this.navigation.getAragCreationUrl(account.slug), {
+        queryParams: { create: 'true' },
+        withFromApp: true,
+      }),
+    );
   }
 
   goToAccountManage() {
@@ -73,17 +86,10 @@ export class SelectKbComponent implements OnDestroy {
     if (kb.slug && kb.role_on_kb) {
       const kbSlug = kb.slug;
       this.sdk.nuclia.options.knowledgeBox = kb.id;
-
-      if (this.standalone) {
-        this.account
-          .pipe(take(1))
-          .subscribe((account) => this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]));
-      } else {
-        this.sdk.nuclia.options.zone = kb.zone;
-        forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([zones, account]) =>
-          this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]),
-        );
-      }
+      this.sdk.nuclia.options.zone = kb.zone;
+      forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([zones, account]) =>
+        this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]),
+      );
     }
   }
 
@@ -92,12 +98,10 @@ export class SelectKbComponent implements OnDestroy {
       const raSlug = arag.slug;
       this.sdk.nuclia.options.knowledgeBox = arag.id;
 
-      if (!this.standalone) {
-        this.sdk.nuclia.options.zone = arag.zone;
-        forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([, account]) =>
-          this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, raSlug)]),
-        );
-      }
+      this.sdk.nuclia.options.zone = arag.zone;
+      forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([, account]) =>
+        this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, raSlug)]),
+      );
     }
   }
 

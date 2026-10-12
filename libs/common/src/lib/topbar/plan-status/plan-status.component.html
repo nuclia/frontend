@@ -1,5 +1,5 @@
 @if (vm$ | async; as vm) {
-  <pa-chip class="plan-summary">
+  <ng-template #label>
     <span
       class="plan-summary__label"
       [class.plan-summary__label--no-days]="vm.daysLeft === null">
@@ -14,19 +14,27 @@
         </span>
       }
     </span>
-    @if (vm.used !== null) {
-      <span class="plan-summary__tokens">
-        @if (vm.limit !== null) {
-          {{
-            'account.trial.token-usage-value'
-              | translate: { used: (vm.used | number: '1.0-0'), limit: (vm.limit | number: '1.0-0') }
-          }}
-        } @else {
-          {{ 'account.trial.token-usage-unlimited' | translate: { used: (vm.used | number: '1.0-0') } }}
-        }
-      </span>
-    }
-  </pa-chip>
+  </ng-template>
+
+  @if (vm.isContextBox) {
+    <ng-container [ngTemplateOutlet]="label"></ng-container>
+  } @else {
+    <pa-chip class="plan-summary">
+      <ng-container [ngTemplateOutlet]="label"></ng-container>
+      @if (vm.used !== null) {
+        <span class="plan-summary__tokens">
+          @if (vm.limit !== null) {
+            {{
+              'account.trial.token-usage-value'
+                | translate: { used: (vm.used | number: '1.0-0'), limit: (vm.limit | number: '1.0-0') }
+            }}
+          } @else {
+            {{ 'account.trial.token-usage-unlimited' | translate: { used: (vm.used | number: '1.0-0') } }}
+          }
+        </span>
+      }
+    </pa-chip>
+  }
   @if (showUpgrade$ | async) {
     <a
       class="upgrade-link"

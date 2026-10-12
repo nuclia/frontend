@@ -118,7 +118,7 @@
               (selectOption)="toggleColumn(column, $event)"
               dontCloseOnSelect>
               <pa-checkbox
-                [value]="(selectedColumns | async)?.includes(column.id)"
+                [value]="$safeNavigationMigration((selectedColumns | async)?.includes(column.id))"
                 (valueChange)="toggleColumn(column)">
                 {{ column.label | translate }}
               </pa-checkbox>

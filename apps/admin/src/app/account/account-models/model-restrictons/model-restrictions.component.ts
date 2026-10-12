@@ -4,7 +4,7 @@ import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
-import { SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { combineLatest, forkJoin, of } from 'rxjs';
 import { map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { CustomModelsComponent } from '../custom-models/custom-models.component';
@@ -17,7 +17,7 @@ import { CustomModelsComponent } from '../custom-models/custom-models.component'
     PaButtonModule,
     PaTableModule,
     PaTogglesModule,
-    SisProgressModule,
+    SpinnerComponent,
     TranslateModule,
   ],
   templateUrl: './model-restrictions.component.html',

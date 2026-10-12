@@ -2,11 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { AccountVerificationService, NavigationService, SDKService, UserService } from '@flaps/core';
-import { map, shareReplay, switchMap, take, tap } from 'rxjs';
-import { SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
+import { map, shareReplay, switchMap, take, tap } from 'rxjs';
 import { OtpInputComponent } from './otp-input/otp-input.component';
 
 @Component({
@@ -17,7 +17,7 @@ import { OtpInputComponent } from './otp-input/otp-input.component';
     PaModalModule,
     PaButtonModule,
     PaTogglesModule,
-    SisProgressModule,
+    SpinnerComponent,
     OtpInputComponent,
   ],
   templateUrl: './account-delete.component.html',

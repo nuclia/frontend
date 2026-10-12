@@ -14,7 +14,7 @@
       <h4
         qa="confirmation-title"
         [id]="'dialog-' + id + '-title'">
-        {{ ref.config.data?.['title'] | translate }}
+        {{ $safeNavigationMigration(ref.config.data?.['title']) | translate }}
       </h4>
     </header>
 
@@ -22,10 +22,10 @@
       class="pa-modal-description body-s"
       qa="confirmation-description"
       [id]="'dialog-' + id + '-description'"
-      [innerHTML]="ref.config.data?.['description'] | translate"></div>
+      [innerHTML]="$safeNavigationMigration(ref.config.data?.['description']) | translate"></div>
 
     <footer class="pa-modal-footer">
-      <nsi-progress-bar [progress]="ref.config.data?.['progress'] | async"></nsi-progress-bar>
+      <nsi-progress-bar [progress]="$safeNavigationMigration(ref.config.data?.['progress']) | async"></nsi-progress-bar>
     </footer>
   </dialog>
 </div>

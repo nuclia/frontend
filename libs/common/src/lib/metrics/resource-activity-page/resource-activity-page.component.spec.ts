@@ -1,12 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MockModule, MockPipe, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, UserService } from '@flaps/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
-import { ResourceActivityPageComponent } from './resource-activity-page.component';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { MockPipe, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
+import { ResourceActivityPageComponent } from './resource-activity-page.component';
 
 describe('ResourceActivityPageComponent', () => {
   let component: ResourceActivityPageComponent;
@@ -21,8 +22,7 @@ describe('ResourceActivityPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ResourceActivityPageComponent, MockPipe(CompactNumberPipe)],
-      imports: [MockModule(TranslateModule)],
+      imports: [TranslateModule.forRoot(), ResourceActivityPageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),
@@ -31,7 +31,14 @@ describe('ResourceActivityPageComponent', () => {
         }),
         MockProvider(UserService),
         MockProvider(SisToastService),
-        MockProvider(TranslateService, { instant: (key: string) => key }),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

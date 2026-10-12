@@ -4,7 +4,7 @@ description: >
   Reviews code for correctness and defects in this monorepo. Use this agent when the user says
   "review", "code review", "review this PR", "review this diff", "review these changes", "review
   this file", "find bugs", "check for bugs", "is this correct?", or "what could go wrong?". The
-  agent checks changed code against all repo standards (Angular 21, RxJS, design system, SDK,
+  agent checks changed code against all repo standards (Angular 22, RxJS, design system, SDK,
   module boundaries, test coverage, TypeScript hygiene) AND scans for runtime defects (memory
   leaks, race conditions, null dereference, change detection bugs, signal misuse, silent error
   swallowing). Style and architecture findings are separated from genuine bugs in the output.

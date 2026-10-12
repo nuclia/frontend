@@ -13,13 +13,17 @@
   },
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@angular/build:application",
+      "defaultConfiguration": "production",
+      "outputs": ["{options.outputPath.base}"],
       "options": {
-        "outputPath": "dist/apps/admin",
-        "subresourceIntegrity": true,
+        "outputPath": {
+          "base": "dist/apps/admin",
+          "browser": ""
+        },
+        "subresourceIntegrity": false,
         "index": "apps/admin/src/index.html",
-        "main": "apps/admin/src/main.ts",
-        "polyfills": "apps/admin/src/polyfills.ts",
+        "polyfills": ["apps/admin/src/polyfills.ts"],
         "tsConfig": "apps/admin/tsconfig.app.json",
         "allowedCommonJsDependencies": [],
         "assets": [
@@ -59,10 +63,9 @@
         ],
         "styles": ["apps/admin/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/admin/src"]
+          "includePaths": ["apps/admin/src", "."]
         },
         "scripts": [],
-        "ngswConfigPath": "apps/admin/src/ngsw-config.json",
         "budgets": [
           {
             "type": "initial",
@@ -74,7 +77,9 @@
             "maximumWarning": "50kb",
             "maximumError": "100kb"
           }
-        ]
+        ],
+        "browser": "apps/admin/src/main.ts",
+        "serviceWorker": false
       },
       "configurations": {
         "production": {
@@ -87,7 +92,7 @@
             "fonts": true
           },
           "outputHashing": "all",
-          "serviceWorker": true,
+          "serviceWorker": "apps/admin/src/ngsw-config.json",
           "fileReplacements": [
             {
               "replace": "apps/admin/src/environments/environment.ts",
@@ -133,9 +138,7 @@
         "local-stage": {
           "aot": false,
           "subresourceIntegrity": false,
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -178,9 +181,7 @@
         "local-dev": {
           "aot": false,
           "subresourceIntegrity": false,
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -223,9 +224,7 @@
         "local-prod": {
           "aot": false,
           "subresourceIntegrity": false,
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
@@ -265,15 +264,16 @@
             }
           ]
         }
-      },
-      "defaultConfiguration": "production",
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "local-stage",
+      "continuous": true,
       "options": {
         "buildTarget": "admin:build",
-        "port": 4300
+        "port": 4300,
+        "allowedHosts": ["admin.stashify.cloud", "admin.gcp-global-dev-1.nuclia.io"]
       },
       "configurations": {
         "production": {
@@ -288,22 +288,23 @@
         "local-prod": {
           "buildTarget": "admin:build:local-prod"
         }
-      },
-      "defaultConfiguration": "local-stage",
-      "continuous": true
+      }
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@angular/build:extract-i18n",
       "options": {
         "buildTarget": "admin:build"
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/admin"],
       "options": {
-        "jestConfig": "apps/admin/jest.config.js",
-        "tsConfig": "apps/admin/tsconfig.spec.json"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     },
     "lint": {

@@ -18,11 +18,6 @@
         {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
       </nsi-info-card>
     }
-    @if (standalone && (hasValidKey | async) === false) {
-      <div
-        class="warning body-s"
-        [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-    }
 
     <form
       id="link-form"
@@ -92,7 +87,7 @@
             </pa-expander-body>
           </pa-expander>
         }
-        @if ((extractConfigEnabled | async) && !standalone && linkForm.value.type !== 'csv') {
+        @if ((extractConfigEnabled | async) && linkForm.value.type !== 'csv') {
           <pa-expander
             [contentLoaded]="updateOptionsExpander"
             [expanded]="false">

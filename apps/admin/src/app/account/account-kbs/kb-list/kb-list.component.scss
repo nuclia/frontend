@@ -40,9 +40,11 @@
   }
 
   &-counter {
-    font-weight: var(--stf-font-weight-semibold);
-    margin-top: rhythm(4);
-    margin-bottom: rhythm(2);
+    margin: rhythm(2) 0;
+  }
+
+  .max-kbs {
+    color: $color-neutral-light;
   }
 
   .add-kb-button {

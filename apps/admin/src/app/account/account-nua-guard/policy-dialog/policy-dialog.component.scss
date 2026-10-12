@@ -1,0 +1,12 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.policy-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  padding: rhythm(1) 0 rhythm(4);
+}
+
+.limit-reached {
+  color: $color-secondary-stronger;
+}

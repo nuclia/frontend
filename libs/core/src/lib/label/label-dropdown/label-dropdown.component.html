@@ -13,7 +13,7 @@
   <pa-dropdown
     #labelSelection
     [dontAdjustPosition]="!fullWidth"
-    [companionElement]="level2Element?.nativeElement"
+    [companionElement]="$safeNavigationMigration(level2Element?.nativeElement)"
     (onClose)="closeDropdowns()"
     (onOpen)="open = true">
     @for (labelSet of labelSets | keyvalue; track labelSet) {

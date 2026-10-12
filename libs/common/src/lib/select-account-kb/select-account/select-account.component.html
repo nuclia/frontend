@@ -2,8 +2,8 @@
   <div class="select-container">
     <div class="logo">
       <img
-        [src]="!standalone ? (logoPath | async) : 'assets/logos/nucliadb.svg'"
-        [alt]="!standalone ? (brandName | async) : 'NucliaDB'" />
+        [src]="logoPath | async"
+        [alt]="brandName | async" />
     </div>
     <div
       class="select-content"
@@ -27,15 +27,14 @@
               </div>
             }
           </div>
-          @if (!standalone) {
-            <div class="select-account-footer">
-              <pa-button
-                aspect="basic"
-                (click)="logout()">
-                {{ 'user.logout' | translate }}
-              </pa-button>
-            </div>
-          }
+
+          <div class="select-account-footer">
+            <pa-button
+              aspect="basic"
+              (click)="logout()">
+              {{ 'user.logout' | translate }}
+            </pa-button>
+          </div>
         </div>
       }
 

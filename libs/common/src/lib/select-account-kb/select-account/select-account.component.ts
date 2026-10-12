@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,18 +8,14 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { NavigationStart, Router, Scroll } from '@angular/router';
-import { filter, Observable, of, Subject } from 'rxjs';
-import {
-  BrandService,
-  standaloneSimpleAccount,
-  StaticEnvironmentConfiguration,
-  SelectAccountKbService,
-  SDKService,
-} from '@flaps/core';
-import { selectAnimations } from '../utils';
+import { NavigationStart, Router, RouterLink, RouterOutlet, Scroll } from '@angular/router';
+import { BrandService, SDKService, SelectAccountKbService, StaticEnvironmentConfiguration } from '@flaps/core';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
+import { filter, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { selectAnimations } from '../utils';
 
 @Component({
   selector: 'app-select-account',
@@ -26,7 +23,7 @@ import { map, takeUntil } from 'rxjs/operators';
   styleUrls: ['./select-account.component.scss'],
   animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [RouterLink, PaIconModule, PaButtonModule, RouterOutlet, AsyncPipe, TranslatePipe],
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
   accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(
@@ -37,8 +34,6 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   private brandService = inject(BrandService);
   logoPath = this.brandService.logoPath;
   brandName = this.brandService.brandName;
-
-  standalone = this.environment.standalone;
 
   constructor(
     private selectService: SelectAccountKbService,
@@ -64,10 +59,6 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
         }
         this.cdr.markForCheck();
       });
-
-    if (this.standalone) {
-      this.accounts = of([standaloneSimpleAccount]);
-    }
   }
 
   logout() {

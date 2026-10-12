@@ -1,18 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BaseComponent } from './base.component';
-import { TopbarModule } from '../topbar';
-import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
-import { NavbarModule } from '../navbar';
-import { CommonModule } from '@angular/common';
-import { PaSideNavModule } from '@guillotinaweb/pastanaga-angular';
 import { NotificationsPanelComponent } from '@flaps/core';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { PaSideNavModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { NavbarModule } from '../navbar';
+import { TopbarModule } from '../topbar';
 import { UploadBarComponent } from '../upload';
+import { BaseComponent } from './base.component';
+import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
 
 @NgModule({
-  declarations: [BaseComponent, DashboardLayoutComponent],
   exports: [BaseComponent, DashboardLayoutComponent],
   imports: [
     CommonModule,
@@ -24,6 +23,8 @@ import { UploadBarComponent } from '../upload';
     InfoCardComponent,
     TranslateModule,
     UploadBarComponent,
+    BaseComponent,
+    DashboardLayoutComponent,
   ],
 })
 export class BaseModule {}

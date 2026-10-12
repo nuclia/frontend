@@ -1,8 +1,8 @@
 # AGENTS.md — `admin` app
 
-Angular 21 app that hosts all account-management pages (`/at/:account/**`) as their own
-standalone app/subdomain, separate from `dashboard` — the same pattern `apps/auth` uses for
-login/signup.
+Angular 22 app (standalone components) that hosts all account-management pages
+(`/at/:account/**`) as their own app/subdomain, separate from `dashboard` — the same pattern
+`apps/auth` uses for login/signup.
 
 Nx project name: **admin**. Selector prefix: **app-**.
 
@@ -35,9 +35,8 @@ nx test admin                    # Jest tests
 ```
 apps/admin/src/
 ├── app/
-│   ├── app.module.ts              # Root NgModule — mounts AccountModule + friends
 │   ├── app.component.ts           # Root component — minimal shell (same as auth/dashboard)
-│   ├── app-routing.module.ts      # Root routes (see below)
+│   ├── app-routing.module.ts      # Root routes as a legacy NgModule wrapper (see below)
 │   ├── app-title.strategy.ts      # Page title strategy
 │   └── fallback-redirect.guard.ts # Catch-all: redirects unknown routes to dashboard
 ├── environments/

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'account-kbs',
@@ -6,6 +7,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     <router-outlet></router-outlet>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [RouterOutlet],
 })
 export class AccountKbsComponent {}

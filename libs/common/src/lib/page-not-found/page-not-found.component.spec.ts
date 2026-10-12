@@ -1,19 +1,19 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PageNotFoundComponent } from './page-not-found.component';
-import { MockProvider } from 'ng-mocks';
 import { BrandService } from '@flaps/core';
+import { MockProvider } from 'ng-mocks';
+import { PageNotFoundComponent } from './page-not-found.component';
 
 describe('PageNotFoundComponent', () => {
   let component: PageNotFoundComponent;
   let fixture: ComponentFixture<PageNotFoundComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [PageNotFoundComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PageNotFoundComponent],
       providers: [MockProvider(BrandService)],
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PageNotFoundComponent);

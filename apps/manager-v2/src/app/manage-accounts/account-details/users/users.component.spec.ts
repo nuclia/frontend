@@ -1,11 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UsersComponent } from './users.component';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { AccountDetailsStore } from '../account-details.store';
-import { AccountService } from '../../account.service';
-import { SisToastService } from '@nuclia/sistema';
-import { UserService } from '../../../manage-users/user.service';
-import { of } from 'rxjs';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -14,10 +9,15 @@ import {
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ReactiveFormsModule } from '@angular/forms';
+import { SisToastService } from '@nuclia/sistema';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
+import { AccountService } from '../../account.service';
 import { ACCOUNT_DETAILS } from '../../test-utils';
-import { RouterModule } from '@angular/router';
+import { AccountDetailsStore } from '../account-details.store';
+import { UsersComponent } from './users.component';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;
@@ -26,6 +26,8 @@ describe('UsersComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        UsersComponent,
+        RouterModule.forRoot([]),
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
         MockModule(PaIconModule),
@@ -33,10 +35,7 @@ describe('UsersComponent', () => {
         MockModule(PaTableModule),
         MockModule(PaTextFieldModule),
         MockModule(ReactiveFormsModule),
-        MockModule(PaTableModule),
-        MockModule(RouterModule),
       ],
-      declarations: [UsersComponent],
       providers: [
         MockProvider(AccountDetailsStore, {
           accountDetails: of(null),

@@ -1,38 +1,36 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, OnDestroy, Output } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
+import { PaDropdownModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Account, IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
-import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
+import { DropdownButtonComponent } from '@nuclia/sistema';
+import { combineLatest, map, Observable, Subject, take } from 'rxjs';
 
 @Component({
   selector: 'app-kb-switch',
   templateUrl: './kb-switch.component.html',
   styleUrls: ['./kb-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [DropdownButtonComponent, PaDropdownModule, PaTooltipModule, PaIconModule, AsyncPipe, TranslatePipe],
 })
 export class KbSwitchComponent implements OnDestroy {
-  unsubscribeAll = new Subject<void>();
+  private readonly unsubscribeAll = new Subject<void>();
+  private readonly sdk = inject(SDKService);
+  private readonly navigation = inject(NavigationService);
 
   @Output() switchClose = new EventEmitter<void>();
 
-  kb$ = this.sdk.currentKb;
-  account: Observable<Account> = this.sdk.currentAccount;
-  isCowork = this.account.pipe(map((account) => account.workflow === 'cowork'));
+  readonly kb$ = this.sdk.currentKb;
+  readonly account: Observable<Account> = this.sdk.currentAccount;
+  readonly isCowork = this.navigation.contextBoxMode;
 
-  standalone: boolean = this.sdk.nuclia.options.standalone || false;
-  knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
-  arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
-  showKbSelector: Observable<boolean> = this.standalone
-    ? of(true)
-    : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length + arags.length > 1));
-  inRaoApp = this.navigation.inRaoApp;
-
-  constructor(
-    private sdk: SDKService,
-    private router: Router,
-    private navigation: NavigationService,
-  ) {}
+  readonly knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
+  readonly arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
+  readonly showKbSelector: Observable<boolean> = combineLatest([this.knowledgeBoxes, this.arags, this.isCowork]).pipe(
+    map(([kbs, arags, isCowork]) => !isCowork && kbs.length + arags.length > 1),
+  );
+  readonly inRaoApp = this.navigation.inRaoApp;
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
@@ -42,14 +40,14 @@ export class KbSwitchComponent implements OnDestroy {
   goToKb(kb: IKnowledgeBoxItem) {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = kb.zone;
-      this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id)]);
+      this.navigation.navigateExternal(this.navigation.getKbUrl(account.slug, kb.slug || kb.id));
       this.switchClose.emit();
     });
   }
   goToArag(arag: IRetrievalAgentItem) {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = arag.zone;
-      this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, arag.slug)]);
+      this.navigation.navigateExternal(this.navigation.getRetrievalAgentUrl(account.slug, arag.slug));
       this.switchClose.emit();
     });
   }

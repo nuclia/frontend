@@ -1,0 +1,183 @@
+<div class="search-bar">
+  <nsi-search-input
+    icon="search"
+    [value]="historyTableService.query()"
+    (valueChange)="historyTableService.onQueryChange($event)"
+    (keyup.enter)="historyTableService.search()">
+    {{ 'context-box.search-by-question' | translate }}
+  </nsi-search-input>
+  <pa-button
+    aspect="basic"
+    icon="search"
+    iconAndText
+    (click)="historyTableService.search()">
+    {{ 'generic.search' | translate }}
+  </pa-button>
+</div>
+<pa-table
+  border
+  columns="1fr 1fr 140px 140px 70px">
+  <pa-table-header role="presentation">
+    @for (column of columns; track column) {
+      <pa-table-cell header>
+        <span class="title-s">{{ 'context-box.column.' + column | translate }}</span>
+      </pa-table-cell>
+    }
+  </pa-table-header>
+  @if (historyTableService.loading()) {
+    @for (_ of skeletonRows(); track $index) {
+      <pa-table-row>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="180px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="220px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="90px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="90px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+        <pa-table-cell>
+          <nsi-skeleton
+            width="50px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  } @else {
+    @for (row of rows(); track row.resourceId + row.questionIdent) {
+      @let rowId = row.resourceId + row.questionIdent;
+      <pa-table-row
+        clickable
+        hoverable
+        (click)="openConversation.emit(row.resourceId)">
+        <pa-table-cell
+          clickable
+          [ariaLabel]="'context-box.open-conversation' | translate: { question: row.questionShort || row.question }"
+          (keyup.enter)="openConversation.emit(row.resourceId)">
+          @if (expanded()['question-' + rowId]) {
+            <span class="body-m">{{ row.question }}</span>
+          } @else {
+            <span class="body-m">{{ row.questionShort || row.question }}</span>
+          }
+          @if (!!row.questionShort) {
+            <pa-button
+              class="expander"
+              size="small"
+              [icon]="expanded()['question-' + rowId] ? 'chevron-up' : 'chevron-down'"
+              (click)="toggleExpanded('question-' + rowId, $event)"
+              aspect="basic">
+              {{
+                (expanded()['question-' + rowId] ? 'context-box.collapse-question' : 'context-box.expand-question')
+                  | translate
+              }}
+            </pa-button>
+          }
+        </pa-table-cell>
+        <pa-table-cell>
+          @if (expanded()['answer-' + rowId]) {
+            <span class="body-s">{{ row.answer }}</span>
+          } @else {
+            <span class="body-s">{{ row.answerShort || row.answer || '-' }}</span>
+          }
+          @if (!!row.answerShort) {
+            <pa-button
+              class="expander"
+              aspect="basic"
+              size="small"
+              [icon]="expanded()['answer-' + rowId] ? 'chevron-up' : 'chevron-down'"
+              (click)="toggleExpanded('answer-' + rowId, $event)">
+              {{
+                (expanded()['answer-' + rowId] ? 'context-box.collapse-answer' : 'context-box.expand-answer')
+                  | translate
+              }}
+            </pa-button>
+          }
+        </pa-table-cell>
+        <pa-table-cell>
+          @if (row.failed) {
+            <span class="title-xxs error">
+              {{ 'context-box.failed' | translate }}
+            </span>
+          } @else {
+            <span class="title-xxs success">
+              {{ 'context-box.successful' | translate }}
+              <pa-icon
+                name="check"
+                size="small"
+                aria-hidden="true"></pa-icon>
+            </span>
+          }
+        </pa-table-cell>
+        <pa-table-cell>
+          <span class="body-s">{{ (row.created | date: 'mediumDate') || '-' }}</span>
+        </pa-table-cell>
+        <pa-table-cell>
+          <pa-button
+            aspect="basic"
+            icon="trash"
+            (click)="deleteQuestion(row, $event)"
+            size="small">
+            {{ 'context-box.delete' | translate }}
+          </pa-button>
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  }
+</pa-table>
+<nsi-sticky-footer>
+  <div class="history-pagination">
+    <div class="page-size">
+      <span class="body-m">{{ 'context-box.pagination.rows-per-page' | translate }}</span>
+      <nsi-dropdown-button
+        aspect="basic"
+        [popupRef]="sizeDropdown">
+        {{ historyTableService.pageSize() }}
+      </nsi-dropdown-button>
+      <pa-dropdown #sizeDropdown>
+        @for (size of pageSizes; track size) {
+          <pa-option (selectOption)="historyTableService.setPageSize(size)">{{ size }}</pa-option>
+        }
+      </pa-dropdown>
+    </div>
+    <div class="pages">
+      <pa-button
+        aspect="basic"
+        [disabled]="historyTableService.page() === 0"
+        (click)="historyTableService.loadPage(historyTableService.page() - 1)">
+        <pa-icon
+          name="arrow-left"
+          size="small"></pa-icon>
+      </pa-button>
+      <span class="body-m page-label">
+        {{ 'context-box.pagination.page' | translate: { page: historyTableService.page() + 1 } }}
+      </span>
+      <pa-button
+        aspect="basic"
+        [disabled]="!historyTableService.hasMore()"
+        (click)="historyTableService.loadPage(historyTableService.page() + 1)">
+        <pa-icon
+          name="arrow-right"
+          size="small"></pa-icon>
+      </pa-button>
+    </div>
+  </div>
+</nsi-sticky-footer>
+@if (!historyTableService.loading() && rows().length === 0) {
+  <div class="empty body-m">{{ 'context-box.no-questions' | translate }}</div>
+}

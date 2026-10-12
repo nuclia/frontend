@@ -57,7 +57,7 @@ Each library that owns translation files has a `.babel` project file at its root
 | `libs/sync`          | `libs/sync/sync.babel`            |
 | `libs/user`          | `libs/user/user.babel`            |
 
-> Apps (`dashboard`, `rao`, `manager-v2`, `nucliadb-admin`) do not own translation files —
+> Apps (`dashboard`, `rao`, `manager-v2`) do not own translation files —
 > they aggregate translations from the libs above.
 
 **To add a new key (agent / programmatic workflow):**

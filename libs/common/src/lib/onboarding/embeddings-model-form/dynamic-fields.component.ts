@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { LearningConfigurationProperty } from '@nuclia/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -41,6 +41,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
     </form>
   `,
   styleUrl: './dynamic-fields.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaTextFieldModule, ReactiveFormsModule],
 })
 export class DynamicFieldsComponent {

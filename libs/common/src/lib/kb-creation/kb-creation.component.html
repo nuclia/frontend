@@ -33,7 +33,7 @@
     </div>
   </header>
 
-  @if (standalone || (zones | async)) {
+  @if (zones | async) {
     <form
       [formGroup]="form"
       (ngSubmit)="create()">
@@ -58,26 +58,23 @@
         </div>
       </nsi-two-columns-configuration-item>
 
-      @if (!standalone) {
-        <nsi-two-columns-configuration-item
-          itemTitle="user.kb.creation-form.zone.title"
-          description="user.kb.creation-form.zone.description">
-          <pa-radio-group
-            formControlName="zone"
-            [errorMessages]="validationMessages['zone']">
-            @for (zone of zones | async; track zone.slug) {
-              <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
-            }
-          </pa-radio-group>
-        </nsi-two-columns-configuration-item>
-      }
+      <nsi-two-columns-configuration-item
+        itemTitle="user.kb.creation-form.zone.title"
+        description="user.kb.creation-form.zone.description">
+        <pa-radio-group
+          formControlName="zone"
+          [errorMessages]="validationMessages['zone']">
+          @for (zone of zones | async; track zone.slug) {
+            <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
+          }
+        </pa-radio-group>
+      </nsi-two-columns-configuration-item>
 
       <nsi-two-columns-configuration-item
         itemTitle="user.kb.creation-form.models.title"
         description="user.kb.creation-form.models.description">
         @if (learningSchema | async; as learningSchema) {
           <nus-embeddings-model-form
-            [standalone]="standalone"
             [learningSchema]="learningSchema"
             [disabled]="saving"
             (learningConfiguration)="updateModel($event)"></nus-embeddings-model-form>

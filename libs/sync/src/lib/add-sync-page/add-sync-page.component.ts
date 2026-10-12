@@ -4,19 +4,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { ExternalConnection } from '@nuclia/core';
 import {
   BackButtonComponent,
-  InfoCardComponent,
   SisModalService,
-  SisProgressModule,
   SisToastService,
+  SpinnerComponent,
   StickyFooterComponent,
 } from '@nuclia/sistema';
 import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
-import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
-import { ExternalConnection } from '@nuclia/core';
 import {
   CloudSyncOptionsPayload,
   getCloudSyncOptionsPayload,
@@ -24,7 +23,7 @@ import {
   SyncOptionsFormComponent,
 } from '../sync-options-form';
 
-// Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
+// Warning: this key name is declared in both dashboard app.init and in @nuclia/sync
 // to avoid making a dependency
 const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
 @Component({
@@ -32,13 +31,12 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
   imports: [
     CommonModule,
     BackButtonComponent,
-    InfoCardComponent,
     PaButtonModule,
     PaIconModule,
     StickyFooterComponent,
     TranslateModule,
     ConfigurationFormComponent,
-    SisProgressModule,
+    SpinnerComponent,
     PaTogglesModule,
     CloudFolderComponent,
     SyncOptionsFormComponent,
@@ -56,10 +54,13 @@ export class AddSyncPageComponent implements OnInit {
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
   private uploadEventService = inject(UploadEventService);
-  selectedFolder = signal<{ sync_root_path?: string; folder_id?: string; drive_id: string } | undefined>(undefined);
+  selectedFolder = signal<
+    | { sync_root_path?: string; folder_id?: string; drive_id: string; sharepoint_site_pages_site_id?: string }
+    | undefined
+  >(undefined);
   isFolderSelectionValid = computed(() => {
     const folder = this.selectedFolder();
-    return !!(folder?.folder_id || folder?.sync_root_path);
+    return !!(folder?.folder_id || folder?.sync_root_path || folder?.sharepoint_site_pages_site_id);
   });
 
   connectorId = this.currentRoute.params.pipe(
@@ -86,15 +87,6 @@ export class AddSyncPageComponent implements OnInit {
   loading = false;
   saving = false;
   useOAuth = false;
-
-  shareFileNotSupported = this.connectorId.pipe(
-    map((connectorId) => {
-      const ua = navigator.userAgent;
-      const isSafari =
-        /safari/i.test(ua) && !/(chrome|chromium|android|crios|fxios|edg|opr|opera|samsungbrowser)/i.test(ua);
-      return connectorId === 'sharefile' && isSafari;
-    }),
-  );
 
   get backPath() {
     return this.syncId ? '../../..' : '../..';
@@ -307,7 +299,12 @@ export class AddSyncPageComponent implements OnInit {
     this.toaster.error('sync.add-page.toast.generic-error');
   }
 
-  selectFolder(folder: { sync_root_path?: string; folder_id?: string; drive_id: string }) {
+  selectFolder(folder: {
+    sync_root_path?: string;
+    folder_id?: string;
+    drive_id: string;
+    sharepoint_site_pages_site_id?: string;
+  }) {
     this.selectedFolder.set(folder);
   }
 }

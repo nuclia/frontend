@@ -47,7 +47,7 @@ State the test runner and exact command (`nx test <name>`), the test file conven
 
 ### Gotchas & Non-obvious Patterns
 
-This is often the most valuable section. Explain any pattern that looks wrong but is intentional — an agent without this context will "fix" it. Examples from this repo: hash routing in `nucliadb-admin` (required by the deployment environment), signal-based workflow state in `rao` and `dashboard` (intentional architectural choice). Also document feature flags with their defaults if the project uses them.
+This is often the most valuable section. Explain any pattern that looks wrong but is intentional — an agent without this context will "fix" it. Examples from this repo: signal-based workflow state in `rao` and `dashboard` (intentional architectural choice). Also document feature flags with their defaults if the project uses them.
 
 ### Freshness
 
@@ -69,7 +69,7 @@ Every token in an AGENTS.md is loaded on demand. Content must earn its place.
 - **File structure tree with one-line annotations** — Agents use this to know where to add files without reading every directory.
 - **Run commands** — `nx serve`, `nx test`, `nx build` with the exact project name. Agents hunt `project.json` every time without this.
 - **Flag interactions and mutual exclusions** — e.g. `semanticOnly` and `relations` are mutually exclusive and throw at `initNuclia` time. Cannot be found without running code.
-- **Intentional divergence from workspace norms** — Hash routing in `nucliadb-admin`, Svelte 5 runes coexisting with Svelte 3 in the same lib, eslint-disable on intentional circular imports.
+- **Intentional divergence from workspace norms** — Svelte 5 runes coexisting with Svelte 3 in the same lib, eslint-disable on intentional circular imports.
 - **Critical API usage distinctions** — When to use `db.getKnowledgeBox()` vs `nuclia.knowledgeBox`, when `synchronous: true` is needed, why `ask()` emits multiple values and how to get the final answer.
 
 ### Low ROI — Skip These

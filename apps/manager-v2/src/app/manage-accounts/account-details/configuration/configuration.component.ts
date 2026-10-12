@@ -1,22 +1,45 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaDatePickerModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
 import { catchError, take, takeUntil } from 'rxjs/operators';
+import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
-import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
-import { GlobalAccountService } from '../../global-account.service';
+import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { AccountBudget, ActionOnBudgetExhausted } from '../../global-account.models';
+import { GlobalAccountService } from '../../global-account.service';
+import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 
 @Component({
   templateUrl: './configuration.component.html',
   styleUrls: ['configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaDropdownModule,
+    PaDatePickerModule,
+    PaButtonModule,
+    PaTogglesModule,
+    PaTooltipModule,
+    FormFooterComponent,
+    BlockedFeaturesComponent,
+    AsyncPipe,
+  ],
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -70,7 +93,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private budgetBackup: AccountBudget | null = null;
   budgetForm = new FormGroup({
     custom_budget: new FormControl<'unlimited' | 'limit'>('limit', { nonNullable: true }),
-    budget_value: new FormControl<number | null>(0, { validators: [Validators.min(1)] }),
+    budget_value: new FormControl<number | null>(1, { validators: [Validators.min(1)] }),
     action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: true }),
   });
 
@@ -112,19 +135,28 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               }),
               take(1),
             ),
-            this.globalAccountService.getBudget(accountDetails.id).pipe(
-              catchError(() => {
-                this.toast.error('An error occurred when loading the budget');
-                return of(null);
-              }),
-              tap((budget) => {
-                if (budget) {
-                  this.budgetBackup = budget;
-                  this.patchBudget(budget);
-                  this.cdr.markForCheck();
+            this.canFullyEditAccount.pipe(
+              take(1),
+              switchMap((canFullyEditAccount) => {
+                if (canFullyEditAccount) {
+                  return this.globalAccountService.getBudget(accountDetails.id).pipe(
+                    catchError(() => {
+                      this.toast.error('An error occurred when loading the budget');
+                      return of(null);
+                    }),
+                    tap((budget) => {
+                      if (budget) {
+                        this.budgetBackup = budget;
+                        this.patchBudget(budget);
+                        this.cdr.markForCheck();
+                      }
+                    }),
+                    take(1),
+                  );
+                } else {
+                  return of(null);
                 }
               }),
-              take(1),
             ),
           ]),
         ),
