@@ -22,7 +22,6 @@
   margin: 0;
 }
 
-.paste-emails-row,
 .warning {
   max-width: rhythm(90) * 0.75;
 }
@@ -33,14 +32,48 @@
 
 .paste-emails-row {
   align-items: flex-start;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: rhythm(1.5);
-  grid-template-columns: 1fr auto;
   margin-bottom: rhythm(2);
   margin-top: rhythm(4);
 
   &:first-child {
     margin-top: 0;
+  }
+
+  nsi-expandable-textarea {
+    flex: 1 1 rhythm(30);
+    max-width: rhythm(90) * 0.75;
+  }
+}
+
+.invite-batch {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-card;
+  margin-top: rhythm(4);
+  padding: rhythm(2);
+}
+
+.invite-batch-footer {
+  align-items: center;
+  border-top: 1px solid $color-neutral-lighter;
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1.5);
+  margin-top: rhythm(2);
+  padding-top: rhythm(2);
+}
+
+.invite-as {
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+  gap: rhythm(1);
+
+  pa-select {
+    min-width: rhythm(18);
+    width: rhythm(20);
   }
 }
 
@@ -102,14 +135,6 @@
   gap: rhythm(3);
   margin-top: rhythm(1);
   min-height: rhythm(3);
-
-  .clear-button {
-    color: $color-neutral-regular;
-
-    &.invite-hint-error {
-      color: $color-secondary-stronger;
-    }
-  }
 }
 
 .invite-summary-actions {
@@ -117,7 +142,7 @@
   display: flex;
   flex: 0 0 auto;
   flex-wrap: nowrap;
-  gap: rhythm(2);
+  gap: rhythm(1);
 }
 
 .invite-summary {
@@ -142,6 +167,7 @@
 }
 
 .invite-summary-row,
+.invite-summary-actions,
 .invite-hint {
   .clear-button {
     border: none;
@@ -168,19 +194,6 @@
 
 .invite-hint-error {
   color: $color-secondary-strong;
-}
-
-.invite-actions-row {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: rhythm(1.5);
-  flex-shrink: 0;
-
-  pa-select {
-    min-width: rhythm(18);
-    width: rhythm(20);
-  }
 }
 
 .users-list-header {
@@ -216,7 +229,7 @@
   }
 
   .paste-emails-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .invite-summary-row {
@@ -234,13 +247,14 @@
     white-space: normal;
   }
 
-  .invite-actions-row {
+  .invite-batch-footer,
+  .invite-as {
     align-items: stretch;
+    margin-left: 0;
     flex-direction: column;
-    width: 100%;
+  }
 
-    pa-select {
-      width: 100%;
-    }
+  .invite-as pa-select {
+    width: 100%;
   }
 }
