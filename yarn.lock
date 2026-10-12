@@ -6657,6 +6657,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ng-icons/core@npm:>=32.0.0 <34.0.0":
+  version: 33.4.0
+  resolution: "@ng-icons/core@npm:33.4.0"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular-devkit/schematics": ">=21.0.0"
+    "@angular/common": ">=21.0.0"
+    "@angular/core": ">=21.0.0"
+    "@schematics/angular": ">=21.0.0"
+    rxjs: ^6.5.3 || ^7.4.0
+  checksum: 10/8622f65a4fa045e7060bc0032574ff420e30217f3e56f2101962a888a952f13e71d511c28fc45d8df5c4023a566d71890f89ea3a706473f25dad304785f3dfc1
+  languageName: node
+  linkType: hard
+
+"@ng-icons/lucide@npm:>=32.0.0 <34.0.0":
+  version: 33.4.0
+  resolution: "@ng-icons/lucide@npm:33.4.0"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  checksum: 10/56ede4c0c44e23c9228012fd01f075a74f169cbe4cce076ccd8c6fa8e7f681b3a2da5062699f32b96965ebcf088662cfa40c512904a75e49eaed1dce04cf7502
+  languageName: node
+  linkType: hard
+
 "@ng-web-apis/common@npm:^2.1.0":
   version: 2.2.0
   resolution: "@ng-web-apis/common@npm:2.2.0"
@@ -22647,6 +22671,8 @@ __metadata:
     "@angular/service-worker": "npm:22.1.5"
     "@babel/core": "npm:^7.29.6"
     "@eslint/js": "npm:^9.35.0"
+    "@ng-icons/core": "npm:>=32.0.0 <34.0.0"
+    "@ng-icons/lucide": "npm:>=32.0.0 <34.0.0"
     "@ng-web-apis/common": "npm:^2.1.0"
     "@ngneat/spectator": "npm:^22.1.0"
     "@ngx-translate/core": "npm:18"
