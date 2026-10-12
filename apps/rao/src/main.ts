@@ -1,31 +1,21 @@
-import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
-
 import { OverlayModule } from '@angular/cdk/overlay';
 import { registerLocaleData } from '@angular/common';
-import { HttpBackend, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TitleStrategy } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
 import { BackendConfigurationService, LabelSetsModule, STFConfigModule, STFPipesModule } from '@flaps/core';
 import { PaToastModule, SPRITE_CACHE_VERSION } from '@guillotinaweb/pastanaga-angular';
-import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { provideTranslateService, TranslatePipe } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { AppTitleStrategy } from './app/app-title.strategy';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
-
-function createTranslateLoader(http: HttpBackend, config: BackendConfigurationService) {
-  const suffix = `.json?version=${config.getVersion()}`;
-  return new MultiTranslateHttpLoader(http, [
-    { prefix: 'assets/i18n/user/', suffix },
-    { prefix: 'assets/i18n/common/', suffix },
-    { prefix: 'assets/i18n/sync/', suffix },
-  ]);
-}
 
 import localeCa from '@angular/common/locales/ca';
 import localeEn from '@angular/common/locales/en';
@@ -60,13 +50,7 @@ bootstrapApplication(AppComponent, {
       EntitiesModule,
       LabelSetsModule,
       UploadModule,
-      TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useFactory: createTranslateLoader,
-          deps: [HttpBackend, BackendConfigurationService],
-        },
-      }),
+
       PaToastModule,
     ),
     {
@@ -78,5 +62,16 @@ bootstrapApplication(AppComponent, {
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideZonelessChangeDetection(),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        resources: [
+          { prefix: 'assets/i18n/user/', suffix: '.json' },
+          { prefix: 'assets/i18n/common/', suffix: '.json' },
+          { prefix: 'assets/i18n/sync/', suffix: '.json' },
+        ],
+        enforceLoading: true,
+        useHttpBackend: true,
+      }),
+    }),
   ],
 }).catch((err) => console.error(err));
