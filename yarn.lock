@@ -9752,6 +9752,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-themes@npm:^10":
+  version: 10.6.0
+  resolution: "@storybook/addon-themes@npm:10.6.0"
+  dependencies:
+    ts-dedent: "npm:^2.0.0"
+  peerDependencies:
+    storybook: ^10.6.0
+  checksum: 10/22843de98943ac27b0cd71b46f48c751de9acc759821a76ffc78ab2c13bb680f3231f9413b319de736f5440df704b8c9c0a03bc8d1544c7f63e8a2bede9be7d9
+  languageName: node
+  linkType: hard
+
 "@storybook/angular@npm:^10.5.0":
   version: 10.6.0
   resolution: "@storybook/angular@npm:10.6.0"
@@ -22755,6 +22766,7 @@ __metadata:
     "@spartan-ng/brain": "npm:^1.4.1"
     "@spartan-ng/cli": "npm:^1.4.1"
     "@storybook/addon-docs": "npm:^10.6.0"
+    "@storybook/addon-themes": "npm:^10"
     "@storybook/angular": "npm:^10.5.0"
     "@sveltejs/adapter-auto": "npm:^7.0.1"
     "@sveltejs/package": "npm:^2.0.0"
