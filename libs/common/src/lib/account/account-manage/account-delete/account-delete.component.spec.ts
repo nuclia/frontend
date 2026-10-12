@@ -1,13 +1,13 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { ModalRef, ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { AccountVerificationService, NavigationService, SDKService, UserService } from '@flaps/core';
+import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
 import { AccountDeleteComponent } from './account-delete.component';
 
 function makeModalRef(): ModalRef {
@@ -47,7 +47,7 @@ describe('AccountDeleteComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [AccountDeleteComponent, MockModule(TranslateModule)],
+      imports: [AccountDeleteComponent],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(SDKService, {
@@ -78,7 +78,7 @@ describe('AccountDeleteComponent', () => {
     })
       .overrideComponent(AccountDeleteComponent, {
         set: {
-          imports: [AsyncPipe, MockModule(TranslateModule)],
+          imports: [AsyncPipe, TranslatePipe],
           schemas: [CUSTOM_ELEMENTS_SCHEMA],
         },
       })

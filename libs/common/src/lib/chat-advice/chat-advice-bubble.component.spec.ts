@@ -1,14 +1,15 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { FeaturesService } from '@flaps/core';
+import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
-import { RouterModule } from '@angular/router';
-import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { FeaturesService } from '@flaps/core';
 
 import { ChatAdviceBubbleComponent } from './chat-advice-bubble.component';
-import { ChatAdviceService } from './chat-advice.service';
 import { ChatMessage } from './chat-advice.models';
+import { ChatAdviceService } from './chat-advice.service';
 
 describe('ChatAdviceBubbleComponent', () => {
   let component: ChatAdviceBubbleComponent;
@@ -23,10 +24,11 @@ describe('ChatAdviceBubbleComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
         MockModule(PaTooltipModule),
-        MockModule(TranslateModule),
+        ,
       ],
       providers: [
         MockProvider(TranslateService, {
+          translate: (key) => signal(typeof key === 'function' ? key().toString() : key.toString()),
           instant: (key: string) => key,
           get: (key: string) => of(key),
         }),

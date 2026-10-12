@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, BrandService, OAuthService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ConsentComponent } from './consent.component';
 
@@ -11,7 +10,7 @@ describe('ConsentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConsentComponent, RouterModule.forRoot([]), TranslateModule.forRoot()],
+      imports: [ConsentComponent, RouterModule.forRoot([])],
       providers: [
         {
           provide: OAuthService,

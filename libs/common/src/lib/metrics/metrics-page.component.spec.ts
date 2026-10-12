@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MetricsPageComponent } from './metrics-page.component';
 import { MetricsPageService } from './metrics-page.service';
@@ -12,7 +11,7 @@ describe('MetricsPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), MetricsPageComponent],
+      imports: [MetricsPageComponent],
       providers: [
         DatePipe,
         {

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { SDKService, ZoneService } from '@flaps/core';
 import {
   ModalConfig,
   ModalRef,
@@ -8,9 +7,9 @@ import {
   PaModalModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { SDKService, ZoneService } from '@flaps/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 
 import { DeveloperIntegrationsModalComponent } from './developer-integrations-modal.component';
 
@@ -41,7 +40,7 @@ describe('DeveloperIntegrationsModalComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaModalModule),
         MockModule(PaTextFieldModule),
-        TranslateModule.forRoot(),
+        ,
       ],
       providers: [
         { provide: ModalRef, useValue: modalRef },

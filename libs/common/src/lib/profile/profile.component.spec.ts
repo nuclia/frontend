@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginService, TranslatePipeMock, UserService } from '@flaps/core';
-import { TranslateLoader, TranslateModule, TranslateNoOpLoader, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { provideRouter } from '@angular/router';
@@ -22,16 +21,9 @@ describe('ProfileComponent', () => {
         MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useClass: TranslateNoOpLoader,
-          },
-        }),
       ],
       providers: [
         provideRouter([]),
-        TranslateService,
         {
           provide: UserService,
           useValue: { userPrefs: of({ email: '', type: 'USER' }) },

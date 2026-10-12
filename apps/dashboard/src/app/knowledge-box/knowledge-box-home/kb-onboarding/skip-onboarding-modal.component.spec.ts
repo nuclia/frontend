@@ -1,10 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MockModule, MockProvider } from 'ng-mocks';
 import { ModalConfig, ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { MockModule, MockProvider } from 'ng-mocks';
 
-import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 import { KbOnboardingStateService } from './kb-onboarding-state.service';
+import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 
 describe('SkipOnboardingModalComponent', () => {
   let component: SkipOnboardingModalComponent;
@@ -17,12 +16,7 @@ describe('SkipOnboardingModalComponent', () => {
     jest.spyOn(modalRef, 'close');
 
     await TestBed.configureTestingModule({
-      imports: [
-        SkipOnboardingModalComponent,
-        MockModule(PaButtonModule),
-        MockModule(PaModalModule),
-        MockModule(TranslateModule),
-      ],
+      imports: [SkipOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule), ,],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(KbOnboardingStateService, {

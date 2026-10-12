@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FeaturesService, SDKService, UserService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockPipe, MockProvider } from 'ng-mocks';
@@ -30,7 +29,7 @@ describe('UsageAnalyticsPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
+      imports: [, UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),

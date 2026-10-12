@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { SsoService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -15,7 +15,7 @@ describe('SsoButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SsoButtonComponent, TranslateModule.forRoot()],
+      imports: [SsoButtonComponent],
       providers: [
         MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => of(`sso/login/${provider}`)) }),
         MockProvider(WINDOW, { location: { href: '' } } as Window),
@@ -28,6 +28,7 @@ describe('SsoButtonComponent', () => {
           },
         },
         MockProvider(TranslateService, {
+          translate: (key) => signal(`translate--${typeof key === 'function' ? key() : key}`),
           instant: jest.fn((key) => `translate--${key}`),
           get: jest.fn((key) => of(`translate--${key}`)),
           onTranslationChange: new EventEmitter(),

@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
-import { SDKService, NavigationService, FeaturesService } from '@flaps/core';
 import { PreviewService } from '../../resources';
 import { RemiAnalyticsPageComponent } from './remi-analytics-page.component';
 
@@ -29,7 +29,10 @@ describe('RemiAnalyticsPageComponent', () => {
           currentAccount: of({ creation_date: '2025-01-01' } as any),
         }),
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(false) } }),
-        MockProvider(TranslateService, { instant: (key: string) => key }),
+        MockProvider(TranslateService, {
+          instant: (key: string) => key,
+          translate: (key) => signal(typeof key === 'function' ? key().toString() : key.toString()),
+        }),
         MockProvider(PreviewService, { viewerWidget: of('') }),
         MockProvider(NavigationService, { kbUrl: '' }),
         MockProvider(Router, { navigate: jest.fn() }),
@@ -38,7 +41,7 @@ describe('RemiAnalyticsPageComponent', () => {
     })
       .overrideComponent(RemiAnalyticsPageComponent, {
         set: {
-          imports: [CommonModule, MockModule(TranslateModule)],
+          imports: [CommonModule, TranslatePipe],
           schemas: [NO_ERRORS_SCHEMA],
         },
       })

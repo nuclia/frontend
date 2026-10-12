@@ -4,7 +4,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, SDKService, SelectAccountKbService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -16,13 +15,7 @@ describe('SelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule,
-        RouterModule.forRoot([]),
-        MockModule(PaButtonModule),
-        TranslateModule.forRoot(),
-        SelectAccountComponent,
-      ],
+      imports: [NoopAnimationsModule, RouterModule.forRoot([]), MockModule(PaButtonModule), SelectAccountComponent],
       providers: [
         {
           provide: SelectAccountKbService,
