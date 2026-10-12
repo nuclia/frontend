@@ -24,7 +24,7 @@ const meta: Meta<ButtonStoryArgs> = {
     docs: {
       description: {
         component: `Style actions and links with consistent variants, sizes, and disabled states.
-Import <code>HlmButton</code> from <code>@nuclia/ui/button</code> and apply <code>hlmBtn</code> to a native button or anchor; icon-only buttons should include an accessible label.`,
+    Import <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> and apply <code>hlmBtn</code> to a native button or anchor; icon-only buttons should include an accessible label.`,
       },
     },
   },

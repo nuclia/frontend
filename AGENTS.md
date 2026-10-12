@@ -27,18 +27,18 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 
 ### Libraries
 
-| Path alias                         | Nx name             | Stack      | Role                                                                                             |
-| ---------------------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------------ |
-| `@nuclia/core`                     | `sdk-core`          | TypeScript | Nuclia JS/TS SDK — all REST/WS API calls                                                         |
-| `@flaps/core`                      | `core`              | Angular    | App bootstrap, SDK wrapper, guards, auth, feature flags, analytics                               |
-| `@flaps/common`                    | `common`            | Angular    | Shared feature modules used by dashboard, rao + admin                                            |
-| `@nuclia/ui`                       | `ui`                | Angular    | Spartan/Helm primitives and Tailwind utilities (`avatar`, `button`, `utils` subpaths)            |
-| `@nuclia/sistema`                  | `sistema`           | Angular    | Nuclia design system (prefix `nsi-`)                                                             |
-| `@nuclia/user`                     | `user`              | Angular    | Auth/identity flows for `apps/auth` (mixed selector prefixes; onboarding now in `@flaps/common`) |
-| `@nuclia/sync`                     | `sync`              | Angular    | Data source sync UI (prefix `nsy-`)                                                              |
-| `@nuclia/widget`                   | `search-widget`     | Svelte 5   | Embeddable search/chat web components                                                            |
-| `@guillotinaweb/pastanaga-angular` | `pastanaga-angular` | Angular    | Base component library (prefix `pa-`)                                                            |
-| `@nuclia/chrome-ext`               | `chrome-ext`        | Plain JS   | Chrome extension (no Angular/React)                                                              |
+| Path alias                           | Nx name             | Stack      | Role                                                                                                  |
+| ------------------------------------ | ------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| `@nuclia/core`                       | `sdk-core`          | TypeScript | Nuclia JS/TS SDK — all REST/WS API calls                                                              |
+| `@flaps/core`                        | `core`              | Angular    | App bootstrap, SDK wrapper, guards, auth, feature flags, analytics                                    |
+| `@flaps/common`                      | `common`            | Angular    | Shared feature modules used by dashboard, rao + admin                                                 |
+| `@nuclia/ui`, `@nuclia/ui-spartan/*` | `ui`                | Angular    | Spartan/Helm primitives and Tailwind utilities (`accordion`, `avatar`, `button`, `utils` entrypoints) |
+| `@nuclia/sistema`                    | `sistema`           | Angular    | Nuclia design system (prefix `nsi-`)                                                                  |
+| `@nuclia/user`                       | `user`              | Angular    | Auth/identity flows for `apps/auth` (mixed selector prefixes; onboarding now in `@flaps/common`)      |
+| `@nuclia/sync`                       | `sync`              | Angular    | Data source sync UI (prefix `nsy-`)                                                                   |
+| `@nuclia/widget`                     | `search-widget`     | Svelte 5   | Embeddable search/chat web components                                                                 |
+| `@guillotinaweb/pastanaga-angular`   | `pastanaga-angular` | Angular    | Base component library (prefix `pa-`)                                                                 |
+| `@nuclia/chrome-ext`                 | `chrome-ext`        | Plain JS   | Chrome extension (no Angular/React)                                                                   |
 
 All aliases are declared in `tsconfig.base.json`. Internal consumers **never** import built artifacts — they compile directly against source via these aliases.
 

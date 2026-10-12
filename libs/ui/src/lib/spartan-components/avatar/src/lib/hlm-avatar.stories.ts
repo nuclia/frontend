@@ -23,7 +23,7 @@ const meta: Meta<AvatarStoryArgs> = {
     docs: {
       description: {
         component: `Display a user image with a text fallback when the image is unavailable.
-Import <code>HlmAvatar</code>, <code>HlmAvatarImage</code>, and <code>HlmAvatarFallback</code> from <code>@nuclia/ui/avatar</code>; choose from three sizes to fit your layout.`,
+    Import <code>HlmAvatar</code>, <code>HlmAvatarImage</code>, and <code>HlmAvatarFallback</code> from <code>@nuclia/ui-spartan/avatar</code>; choose from three sizes to fit your layout.`,
       },
     },
   },
