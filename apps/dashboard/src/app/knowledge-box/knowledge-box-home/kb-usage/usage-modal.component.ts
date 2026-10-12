@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChartData } from '@flaps/common';
 import { ModalRef, OptionModel, PaDropdownModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { Observable } from 'rxjs';
 import { UsageChartsComponent } from './usage-charts.component';
-import { ChartData } from '@flaps/common';
 
 export interface UsageModalConfig {
   processingChart: Observable<ChartData>;
@@ -24,7 +24,7 @@ export interface UsageModalConfig {
     CommonModule,
     PaModalModule,
     PaDropdownModule,
-    TranslateModule,
+    TranslatePipe,
     DropdownButtonComponent,
     UsageChartsComponent,
   ],

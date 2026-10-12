@@ -20,7 +20,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, Subject } from 'rxjs';
@@ -34,7 +34,7 @@ import { FilterAssistantModalComponent } from '../filter-assistant';
     CommonModule,
     ReactiveFormsModule,
     PaTogglesModule,
-    TranslateModule,
+    TranslatePipe,
     PaTextFieldModule,
     PaIconModule,
     PaPopupModule,

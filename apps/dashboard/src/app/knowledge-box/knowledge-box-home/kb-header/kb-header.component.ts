@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { AppService, UploadDialogService, UploadType } from '@flaps/common';
 import { SDKService, STFPipesModule } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Counters } from '@nuclia/core';
 import { map } from 'rxjs';
 import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
@@ -25,7 +25,7 @@ import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.compo
     PaPopupModule,
     PaTooltipModule,
     STFPipesModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './kb-header.component.html',
   styleUrl: './kb-header.component.scss',

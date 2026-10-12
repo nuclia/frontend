@@ -1,11 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaExpanderModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SDKService } from '../../../api';
-import { catchError, concatMap, forkJoin, map, Observable, of, shareReplay, switchMap, take, toArray } from 'rxjs';
-import { LabelsService } from '../../labels.service';
-import { LABEL_MAIN_COLORS } from '../utils';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   getLabelFromFilter,
   getLabelSetFromFilter,
@@ -15,11 +11,15 @@ import {
   LabelSetKind,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
+import { catchError, concatMap, forkJoin, map, Observable, of, shareReplay, switchMap, take, toArray } from 'rxjs';
+import { SDKService } from '../../../api';
+import { LabelsService } from '../../labels.service';
+import { LABEL_MAIN_COLORS } from '../utils';
 
 @Component({
   templateUrl: './missing-labels-dialog.component.html',
   styleUrl: './missing-labels-dialog.component.scss',
-  imports: [PaModalModule, TranslateModule, CommonModule, PaButtonModule, PaExpanderModule],
+  imports: [PaModalModule, TranslatePipe, CommonModule, PaButtonModule, PaExpanderModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MissingLabelsDialogComponent {

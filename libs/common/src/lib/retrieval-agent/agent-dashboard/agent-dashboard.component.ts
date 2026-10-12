@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -10,7 +11,9 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FeaturesService, SDKService } from '@flaps/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -18,16 +21,19 @@ import {
   PaPopupModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { BadgeComponent, DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { auditTime, combineLatest, filter, fromEvent, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { DashboardLayoutService } from '../../base';
+import { WorkflowsService } from '../workflows';
+import { WorkflowModalComponent } from '../workflows/workflow-modal';
 import {
   activeSideBar,
   aragUrl,
   ConnectableEntryComponent,
   LinkService,
-  sideBarBadge,
   selectedNode,
+  sideBarBadge,
   sideBarClosing,
   sideBarDescription,
   sideBarLarge,
@@ -40,14 +46,8 @@ import {
   WorkflowRootComponent,
   WorkflowService,
 } from './workflow';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { CommonModule } from '@angular/common';
 import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.component';
 import { ImportPanelComponent } from './workflow/sidebar/import';
-import { BadgeComponent, DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { WorkflowsService } from '../workflows';
-import { WorkflowModalComponent } from '../workflows/workflow-modal';
-import { toObservable } from '@angular/core/rxjs-interop';
 
 const OVERFLOW_SIDEBARS: SidebarType[] = ['rules', 'import', 'export'];
 
@@ -60,7 +60,7 @@ const OVERFLOW_SIDEBARS: SidebarType[] = ['rules', 'import', 'export'];
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
-    TranslateModule,
+    TranslatePipe,
     WorkflowRootComponent,
   ],
   templateUrl: './agent-dashboard.component.html',

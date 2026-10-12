@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
-import { TranslateModule } from '@ngx-translate/core';
 
 import { Driver, DriverCreation } from '@nuclia/core';
-import { DriverFieldConfigService, DriverFieldConfig } from './driver-field-config.service';
-import { DriverFieldRendererComponent } from './driver-field-renderer/driver-field-renderer.component';
 import { DriversService } from '../drivers.service';
+import { DriverFieldConfig, DriverFieldConfigService } from './driver-field-config.service';
+import { DriverFieldRendererComponent } from './driver-field-renderer/driver-field-renderer.component';
 
 export interface RenderableDriverField {
   key: string;
@@ -22,7 +22,7 @@ export interface RenderableDriverField {
   styleUrls: ['./dynamic-driver-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, DriverFieldRendererComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, DriverFieldRendererComponent],
 })
 export class DynamicDriverFormComponent implements OnInit {
   @Input() driverKey!: string; // Key from the driver schema (e.g. "BraveDriverConfig")

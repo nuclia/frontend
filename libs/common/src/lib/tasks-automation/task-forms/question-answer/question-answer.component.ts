@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TaskRouteDirective } from '../task-route.directive';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { QAOperation, TaskApplyTo, TaskName } from '@nuclia/core';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, map, take } from 'rxjs';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskRouteDirective } from '../task-route.directive';
 
 @Component({
   imports: [
     CommonModule,
     TaskFormComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     PaTextFieldModule,
     ReactiveFormsModule,

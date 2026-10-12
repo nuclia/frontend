@@ -3,21 +3,21 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { GuardrailsPreconfig, GuardrailsProviderType } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { JsonValidator } from '../../../../../validators';
+import { DriversService } from '../../../../drivers/drivers.service';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { GuardrailsAgentUI } from '../../workflow.models';
 import { aragUrl } from '../../workflow.state';
-import { DriversService } from '../../../../drivers/drivers.service';
 
 @Component({
   selector: 'app-guardrails-form',
   imports: [
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,

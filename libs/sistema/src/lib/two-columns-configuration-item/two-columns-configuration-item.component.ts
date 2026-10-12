@@ -8,12 +8,12 @@ import {
   Output,
 } from '@angular/core';
 
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent } from '../badge';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'nsi-two-columns-configuration-item',
-  imports: [BadgeComponent, TranslateModule],
+  imports: [BadgeComponent, TranslatePipe],
   templateUrl: './two-columns-configuration-item.component.html',
   styleUrl: './two-columns-configuration-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

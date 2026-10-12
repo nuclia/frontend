@@ -1,20 +1,20 @@
-import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import {
   AccordionBodyDirective,
   AccordionItemComponent,
   PaButtonModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { rootSchema } from '../../workflow.state';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ParentNode } from '../../workflow.models';
+import { rootSchema } from '../../workflow.state';
 
 @Component({
   selector: 'app-node-functions',
   templateUrl: 'node-functions.component.html',
   styleUrls: ['./node-functions.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [AccordionBodyDirective, AccordionItemComponent, PaButtonModule, PaTextFieldModule, TranslateModule],
+  imports: [AccordionBodyDirective, AccordionItemComponent, PaButtonModule, PaTextFieldModule, TranslatePipe],
 })
 export class NodeFunctionsComponent {
   node = input<ParentNode>();

@@ -17,7 +17,7 @@ import {
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
 import { InfoCardComponent, LABEL_COLORS, SisLabelModule, SisToastService } from '@nuclia/sistema';
 import { combineLatest, map, Subject, take, tap } from 'rxjs';
@@ -41,7 +41,7 @@ const KINDS = [
     PaTogglesModule,
     ReactiveFormsModule,
     SisLabelModule,
-    TranslateModule,
+    TranslatePipe,
     InfoCardComponent,
   ],
   templateUrl: './label-set-form.component.html',

@@ -1,13 +1,13 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { FOLDER_ICON_PATH } from '../folder-tree';
-import { InfoCardComponent } from '../cards';
-import { TranslateModule } from '@ngx-translate/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { InfoCardComponent } from '../cards';
+import { FOLDER_ICON_PATH } from '../folder-tree';
 
 @Component({
   selector: 'nsi-folder-list',
-  imports: [InfoCardComponent, TranslateModule, PaIconModule],
+  imports: [InfoCardComponent, TranslatePipe, PaIconModule],
   templateUrl: './folder-list.component.html',
   styleUrl: './folder-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

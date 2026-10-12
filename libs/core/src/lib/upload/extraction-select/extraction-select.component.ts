@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { PaIconModule, PaPopupModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { shareReplay, switchMap, take } from 'rxjs';
 import { SDKService } from '../../api';
@@ -18,7 +18,7 @@ import { SDKService } from '../../api';
     PaPopupModule,
     PaTogglesModule,
     PaTextFieldModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ExtractionSelectComponent<T> {

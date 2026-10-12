@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { CloudFolderComponent } from '@nuclia/sync';
 import { ExternalConnection } from '@nuclia/core';
+import { CloudFolderComponent } from '@nuclia/sync';
 
 export interface ShareFileFolderSelection {
   folder_id?: string;
@@ -13,7 +13,7 @@ export interface ShareFileFolderSelection {
 
 @Component({
   selector: 'app-sharefile-folder-modal',
-  imports: [CloudFolderComponent, PaButtonModule, PaModalModule, TranslateModule],
+  imports: [CloudFolderComponent, PaButtonModule, PaModalModule, TranslatePipe],
   templateUrl: './sharefile-folder-modal.component.html',
   styleUrl: './sharefile-folder-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

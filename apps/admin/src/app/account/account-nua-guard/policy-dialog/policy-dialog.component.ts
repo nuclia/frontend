@@ -19,14 +19,14 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NuaGuardPolicy } from '@nuclia/core';
 import { map, take } from 'rxjs';
 import { NuaGuardService } from '../nua-guard.service';
 
 @Component({
   selector: 'app-policy-dialog',
-  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './policy-dialog.component.html',
   styleUrl: './policy-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

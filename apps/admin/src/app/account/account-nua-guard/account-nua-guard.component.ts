@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalConfig, PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NuaGuardPolicy } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { filter, switchMap } from 'rxjs';
@@ -10,7 +10,7 @@ import { PolicyDialogComponent } from './policy-dialog/policy-dialog.component';
 
 @Component({
   selector: 'app-account-nua-guard',
-  imports: [PaButtonModule, TranslateModule, PaTableModule, PaTogglesModule],
+  imports: [PaButtonModule, TranslatePipe, PaTableModule, PaTogglesModule],
   templateUrl: './account-nua-guard.component.html',
   styleUrl: './account-nua-guard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

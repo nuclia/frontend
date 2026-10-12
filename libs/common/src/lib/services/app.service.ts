@@ -8,7 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AppService {
   private currentLocaleSubject = new BehaviorSubject<string>(
-    this.getLocaleFromLang(this.translateService.getCurrentLang()),
+    this.getLocaleFromLang(this.translateService.getCurrentLang() || ''),
   );
   readonly currentLocale = this.currentLocaleSubject.asObservable();
 

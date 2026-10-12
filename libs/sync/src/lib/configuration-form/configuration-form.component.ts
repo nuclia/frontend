@@ -14,7 +14,7 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AssumeRoleModalComponent, HintComponent, ParametersTableComponent, SDKService } from '@flaps/core';
 import { ModalConfig, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AssumeRoleInfo } from '@nuclia/core';
 import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, map, Observable, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
@@ -36,7 +36,7 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
     PaTextFieldModule,
     ParametersTableComponent,
     PaButtonModule,
-    TranslateModule,
+    TranslatePipe,
     PaTogglesModule,
     SyncOptionsFormComponent,
   ],

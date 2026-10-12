@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
-import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { CodeEditorComponent } from '../code-editor.component';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { CodeEditorComponent } from '../code-editor.component';
 
 @Component({
   imports: [
     forwardRef(() => CodeEditorComponent), // Avoid circular dependency
     PaButtonModule,
     PaModalModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './code-editor-modal.component.html',
   styleUrl: './code-editor-modal.component.scss',
@@ -21,7 +21,7 @@ export class CodeEditorModalComponent {
     code: new FormControl<string>('', { nonNullable: true }),
   });
 
-  constructor(public modal: ModalRef<{ title: string, value: string }, string>) {
+  constructor(public modal: ModalRef<{ title: string; value: string }, string>) {
     if (this.modal.config.data) {
       this.title = this.modal.config.data.title;
       this.form.controls.code.setValue(this.modal.config.data.value);

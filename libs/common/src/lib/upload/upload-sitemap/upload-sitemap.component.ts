@@ -20,7 +20,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification } from '@nuclia/core';
 import { InfoCardComponent, SpinnerComponent } from '@nuclia/sistema';
 import { catchError, defer, from, map, of, switchMap, take } from 'rxjs';
@@ -44,7 +44,7 @@ import { SitemapSelectComponent } from './sitemap-select/sitemap-select.componen
     ReactiveFormsModule,
     SpinnerComponent,
     SitemapSelectComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './upload-sitemap.component.html',
   styleUrls: ['./upload-sitemap.component.scss'],

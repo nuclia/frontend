@@ -32,7 +32,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -107,7 +107,7 @@ export interface TaskFormCommonConfig {
     PaTooltipModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
     PaTableModule,
     PaButtonModule,
     ReasoningConfigComponent,

@@ -1,15 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
-import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { SDKService, ZoneService } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of, switchMap } from 'rxjs';
 
 type CopyField = 'endpoint' | 'mcp' | 'uid';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, TranslateModule],
+  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, TranslatePipe],
   templateUrl: './developer-integrations-modal.component.html',
   styleUrl: './developer-integrations-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

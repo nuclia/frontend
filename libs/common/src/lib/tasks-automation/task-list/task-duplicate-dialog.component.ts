@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ModalRef, PaModalModule, PaTextFieldModule, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './task-duplicate-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
 })
 export class TaskDuplicateDialogComponent {
   form = new FormGroup({

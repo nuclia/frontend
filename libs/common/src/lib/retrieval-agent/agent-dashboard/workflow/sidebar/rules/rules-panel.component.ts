@@ -11,7 +11,7 @@ import {
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ExpandableTextareaComponent, SisToastService } from '@nuclia/sistema';
 import { Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConfigurationFormComponent } from '../../basic-elements';
@@ -24,7 +24,7 @@ import { workflowId } from '../../workflow.state';
     PaButtonModule,
     PaTextFieldModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     ExpandableTextareaComponent,
   ],
   templateUrl: './rules-panel.component.html',

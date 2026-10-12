@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { filterTypeList, SimpleFilter } from '../filter-assistant.models';
@@ -20,7 +20,7 @@ import { FilterValueComponent } from './filter-value.component';
 
 @Component({
   selector: 'stf-filter-type-and-value',
-  imports: [FormsModule, ReactiveFormsModule, TranslateModule, PaTextFieldModule, FilterValueComponent],
+  imports: [FormsModule, ReactiveFormsModule, TranslatePipe, PaTextFieldModule, FilterValueComponent],
   templateUrl: './filter-type-and-value.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-node-selector',
-  imports: [BadgeComponent, PaIconModule, TranslateModule],
+  imports: [BadgeComponent, PaIconModule, TranslatePipe],
   templateUrl: './node-selector.component.html',
   styleUrl: './node-selector.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

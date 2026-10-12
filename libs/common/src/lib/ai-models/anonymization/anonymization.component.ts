@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { LearningConfigurationDirective } from '../learning-configuration.direct
   selector: 'stf-anonymization',
   imports: [
     FormsModule,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     ReactiveFormsModule,
     PaTogglesModule,

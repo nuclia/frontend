@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, map } from 'rxjs';
 import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
@@ -16,7 +16,7 @@ import { TestPageModalComponent } from '../test-page-modal/test-page-modal.compo
  */
 @Component({
   selector: 'app-kb-more-actions',
-  imports: [PaButtonModule, PaDropdownModule, PaPopupModule, RouterModule, TranslateModule],
+  imports: [PaButtonModule, PaDropdownModule, PaPopupModule, RouterModule, TranslatePipe],
   templateUrl: './kb-more-actions.component.html',
   styleUrl: './kb-more-actions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

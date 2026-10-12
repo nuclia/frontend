@@ -11,7 +11,6 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { DropdownButtonComponent, InfoCardComponent, SisSearchInputComponent } from '@nuclia/sistema';
 import { CompactNumberPipe } from '../pipes/compact-number.pipe';
 
@@ -42,7 +41,7 @@ const ROUTES = [
 @NgModule({
   imports: [
     CommonModule,
-    TranslateModule.forChild(),
+
     RouterModule.forChild(ROUTES),
     PaButtonModule,
     PaDropdownModule,

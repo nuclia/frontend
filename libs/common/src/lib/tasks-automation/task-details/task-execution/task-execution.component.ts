@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SisToastService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -9,9 +7,11 @@ import {
   PaPopupModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SisToastService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { combineLatest, map, ReplaySubject, shareReplay } from 'rxjs';
-import { TasksAutomationService } from '../../tasks-automation.service';
 import { DataAugmentationTaskOnGoing, OneTimeTask } from '../../tasks-automation.models';
+import { TasksAutomationService } from '../../tasks-automation.service';
 
 @Component({
   selector: 'app-task-execution',
@@ -23,7 +23,7 @@ import { DataAugmentationTaskOnGoing, OneTimeTask } from '../../tasks-automation
     PaPopupModule,
     PaTableModule,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './task-execution.component.html',
   styleUrl: './task-execution.component.scss',

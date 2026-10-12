@@ -1,4 +1,7 @@
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { TableVirtualScrollDirective } from '@flaps/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -10,15 +13,12 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LogEntry, LogValueObject, LogValueString } from './log.models';
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonMiniComponent, DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
 import { unparse } from 'papaparse';
-import { ActivityLogTableModalComponent } from './log-table-modal.component';
 import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from 'rxjs';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { TableVirtualScrollDirective } from '@flaps/core';
+import { ActivityLogTableModalComponent } from './log-table-modal.component';
+import { LogEntry, LogValueObject, LogValueString } from './log.models';
 
 @Component({
   standalone: true,
@@ -36,7 +36,7 @@ import { TableVirtualScrollDirective } from '@flaps/core';
     PaTooltipModule,
     ScrollingModule,
     TableVirtualScrollDirective,
-    TranslateModule,
+    TranslatePipe,
   ],
   selector: 'app-log-table',
   templateUrl: 'log-table.component.html',

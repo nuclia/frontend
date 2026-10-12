@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ModelSelectorComponent } from '../../../../../../../ai-models';
 import { WorkflowService } from '../../../../workflow.service';
 
@@ -14,7 +14,7 @@ let nextId = 0;
   styleUrl: './model-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, ModelSelectorComponent, PaTogglesModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ModelSelectorComponent, PaTogglesModule, ReactiveFormsModule, TranslatePipe],
 })
 export class ModelFieldComponent {
   @Input() label = '';

@@ -22,7 +22,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
 import {
   ExpandableTextareaComponent,
@@ -54,7 +54,7 @@ export interface LabelingConfiguration {
     PaPopupModule,
     PaIconModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './labeling-configuration.component.html',

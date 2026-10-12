@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { getParagraphId, ParagraphWithText, SDKService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   ExtractedDataTypes,
   FIELD_TYPE,
@@ -18,7 +18,7 @@ import { TestResults } from '../task-testing.component';
 
 @Component({
   selector: 'app-labeler-results',
-  imports: [CommonModule, InfoCardComponent, PaButtonModule, SisLabelModule, TranslateModule],
+  imports: [CommonModule, InfoCardComponent, PaButtonModule, SisLabelModule, TranslatePipe],
   templateUrl: './labeler-results.component.html',
   styleUrl: './labeler-results.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

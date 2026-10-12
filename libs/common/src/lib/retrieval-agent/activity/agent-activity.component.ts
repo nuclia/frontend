@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { SDKService, UserService } from '@flaps/core';
 import { PaButtonModule, PaExpanderModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { endOfMonth, format, startOfMonth, subMonths } from 'date-fns';
 import {
@@ -39,7 +39,7 @@ type ActivityDownload = {
     PaIconModule,
     PaTooltipModule,
     SpinnerComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './agent-activity.component.html',
   styleUrls: ['./agent-activity.component.scss'],

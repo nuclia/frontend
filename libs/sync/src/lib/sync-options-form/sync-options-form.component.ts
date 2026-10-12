@@ -18,7 +18,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelSets } from '@nuclia/core';
 import { InfoCardComponent, SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, map, startWith, Subject, take, takeUntil } from 'rxjs';
@@ -30,7 +30,7 @@ import { SyncOptions } from './sync-options.model';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     InfoCardComponent,
     SisLabelModule,

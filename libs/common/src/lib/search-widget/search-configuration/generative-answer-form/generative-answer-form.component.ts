@@ -12,7 +12,7 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { GenerativeProviders, LearningConfigurations, RAG_METADATAS, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
@@ -28,7 +28,7 @@ import { FindResourceModalComponent } from '../find-resource-modal';
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     InfoCardComponent,
     PaTextFieldModule,
     BadgeComponent,

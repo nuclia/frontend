@@ -10,7 +10,7 @@ import {
   PaModalModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AssumeRoleInfo } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
@@ -24,7 +24,7 @@ import { filter } from 'rxjs';
     PaModalModule,
     PaTextFieldModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './assume-role-modal.component.html',
   styleUrls: ['./assume-role-modal.component.scss'],

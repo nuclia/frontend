@@ -1,11 +1,10 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaginationComponent } from './pagination.component';
+import { NgModule } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaginationComponent } from './pagination.component';
 
 @NgModule({
-  imports: [CommonModule, TranslateModule.forChild(), PaButtonModule, PaginationComponent],
+  imports: [CommonModule, PaButtonModule, PaginationComponent],
   exports: [PaginationComponent],
 })
 export class PaginationModule {}

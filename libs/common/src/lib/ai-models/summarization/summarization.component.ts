@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   ExpandableTextareaComponent,
   InfoCardComponent,
@@ -11,8 +11,8 @@ import {
 } from '@nuclia/sistema';
 import { filter, of } from 'rxjs';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
-import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { ModelSelectorComponent } from '../answer-generation';
+import { LearningConfigurationDirective } from '../learning-configuration.directive';
 
 @Component({
   selector: 'stf-summarization',
@@ -21,14 +21,14 @@ import { ModelSelectorComponent } from '../answer-generation';
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
     InfoCardComponent,
-    TranslateModule,
+    TranslatePipe,
     PaTextFieldModule,
     PaTextFieldModule,
     StickyFooterComponent,
     PaButtonModule,
     ExpandableTextareaComponent,
-    ModelSelectorComponent
-],
+    ModelSelectorComponent,
+  ],
   templateUrl: './summarization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

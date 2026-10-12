@@ -10,7 +10,7 @@ import {
   UserService,
 } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Account, KnowledgeBoxCreation, LearningConfigurations, SignUpInfo, WorkflowType } from '@nuclia/core';
 import { UserContainerComponent } from '@nuclia/user';
 import { catchError, map, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
@@ -32,7 +32,7 @@ import { Step1Component } from './step1/step1.component';
     AccountWorkflowComponent,
     CommonModule,
     UserContainerComponent,
-    TranslateModule,
+    TranslatePipe,
     Step1Component,
     SettingUpComponent,
     ZoneStepComponent,

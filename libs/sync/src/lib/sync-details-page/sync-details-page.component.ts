@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavigationService, ResourceHandlingBannerComponent, SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Job } from '@nuclia/core';
 import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import {
@@ -32,7 +32,7 @@ import { SyncSettingsComponent } from './sync-settings';
   imports: [
     CommonModule,
     BackButtonComponent,
-    TranslateModule,
+    TranslatePipe,
     PaIconModule,
     PaButtonModule,
     PaButtonModule,

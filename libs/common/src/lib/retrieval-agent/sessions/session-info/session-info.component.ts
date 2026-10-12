@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { EditResourceService, renderMarkdown } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TextField } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { filter, map, Observable } from 'rxjs';
 import { LineBreakFormatterPipe } from '../../../pipes';
 @Component({
   selector: 'stf-session-info',
-  imports: [CommonModule, InfoCardComponent, TranslateModule, LineBreakFormatterPipe],
+  imports: [CommonModule, InfoCardComponent, TranslatePipe, LineBreakFormatterPipe],
   templateUrl: './session-info.component.html',
   styleUrl: './session-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

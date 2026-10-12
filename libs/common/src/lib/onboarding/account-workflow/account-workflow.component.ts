@@ -1,15 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { map } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { WorkflowType } from '@nuclia/core';
 import { StickyFooterComponent } from '@nuclia/sistema';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'nus-account-workflow',
-  imports: [CommonModule, PaButtonModule, PaTogglesModule, ReactiveFormsModule, StickyFooterComponent, TranslateModule],
+  imports: [CommonModule, PaButtonModule, PaTogglesModule, ReactiveFormsModule, StickyFooterComponent, TranslatePipe],
   templateUrl: './account-workflow.component.html',
   styleUrls: ['../_common-step.scss', './account-workflow.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { SisToastService } from '@nuclia/sistema';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { SisToastService } from '@nuclia/sistema';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sitemap-select',
   templateUrl: './sitemap-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, TranslateModule],
+  imports: [PaButtonModule, TranslatePipe],
 })
 export class SitemapSelectComponent {
   @Output() sitemapSelect = new EventEmitter<string[]>();

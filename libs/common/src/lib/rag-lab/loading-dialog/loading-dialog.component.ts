@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { BaseModalComponent, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProgressBarComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsi-loading-dialog',
-  imports: [CommonModule, PaButtonModule, TranslateModule, ProgressBarComponent],
+  imports: [CommonModule, PaButtonModule, TranslatePipe, ProgressBarComponent],
   templateUrl: './loading-dialog.component.html',
   styleUrls: [
     '../../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/modal/confirmation-dialog/confirmation-dialog.component.scss',

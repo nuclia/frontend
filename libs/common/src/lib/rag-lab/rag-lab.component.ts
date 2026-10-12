@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   PaButtonModule,
   PaIconModule,
@@ -9,20 +9,20 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Widget } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { RouterLink } from '@angular/router';
-import { RagLabService } from './rag-lab.service';
 import { forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
+import { getChatOptions } from '../search-widget';
 import { LabLayoutComponent } from './lab-layout/lab-layout.component';
 import { RequestConfigAndQueries } from './rag-lab.models';
-import { getChatOptions } from '../search-widget';
-import { Widget } from '@nuclia/core';
+import { RagLabService } from './rag-lab.service';
 
 @Component({
   selector: 'stf-rag-lab',
   imports: [
     CommonModule,
-    TranslateModule,
+    TranslatePipe,
     ReactiveFormsModule,
     PaTextFieldModule,
     PaTogglesModule,

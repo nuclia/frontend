@@ -10,7 +10,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
   BackButtonComponent,
@@ -31,7 +31,7 @@ import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '../onbo
     BackButtonComponent,
     ReactiveFormsModule,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     StickyFooterComponent,
     PaButtonModule,

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { StickyFooterComponent } from '@nuclia/sistema';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { StickyFooterComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nus-company-name',
-  imports: [TranslateModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, StickyFooterComponent],
+  imports: [TranslatePipe, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, StickyFooterComponent],
   templateUrl: './company-name.component.html',
   styleUrls: ['../_common-step.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

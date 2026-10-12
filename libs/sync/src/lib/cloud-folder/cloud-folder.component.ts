@@ -16,7 +16,7 @@ import { SyncService } from '../logic';
 import { ONEDRIVE_CONNECTOR_ID } from '../logic/connectors/onedrive';
 
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   ButtonMiniComponent,
   SisToastService,
@@ -29,7 +29,7 @@ import {
   imports: [
     ButtonMiniComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     SpinnerComponent,
     TwoColumnsConfigurationItemComponent,
     PaButtonModule,

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { SDKService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -8,12 +9,11 @@ import {
   PaModalModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LogEntity } from '../../../logic';
-import { SDKService } from '@flaps/core';
-import { switchMap, take } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { JobLog, JobLogsPage } from '@nuclia/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { switchMap, take } from 'rxjs';
+import { LogEntity } from '../../../logic';
 
 @Component({
   imports: [
@@ -24,7 +24,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
     PaModalModule,
     PaTableModule,
     PaButtonModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './logs-modal.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,

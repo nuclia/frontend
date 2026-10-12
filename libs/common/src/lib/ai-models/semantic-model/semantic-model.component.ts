@@ -8,7 +8,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LearningConfigurationOption, SemanticModelMigration, TaskOnBatch } from '@nuclia/core';
 import {
   InfoCardComponent,
@@ -38,7 +38,7 @@ const HUGGING_FACE_MODEL = 'hf_embedding';
     ProgressBarComponent,
     ReactiveFormsModule,
     StickyFooterComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './semantic-model.component.html',

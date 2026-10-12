@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Output } from '@angular/core';
-import { combineLatest, filter, map, switchMap, take } from 'rxjs';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { differenceInDays } from 'date-fns';
-import { SisModalService } from '@nuclia/sistema';
 import { WINDOW } from '@ng-web-apis/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SisModalService } from '@nuclia/sistema';
+import { differenceInDays } from 'date-fns';
+import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 
 const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
 
 @Component({
   selector: 'app-account-status',
-  imports: [CommonModule, RouterModule, TranslateModule, PaButtonModule, PaIconModule],
+  imports: [CommonModule, RouterModule, TranslatePipe, PaButtonModule, PaIconModule],
   standalone: true,
   templateUrl: './account-status.component.html',
   styleUrls: ['./account-status.component.scss'],

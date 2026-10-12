@@ -15,7 +15,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   BadgeComponent,
   DropdownButtonComponent,
@@ -40,7 +40,7 @@ import { ConnectorComponent } from '../connector';
     PaTogglesModule,
     PaTooltipModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaTableModule,
     RouterLink,
     PaIconModule,

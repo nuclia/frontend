@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
 import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CustomModel, ModelType } from '@nuclia/core';
 import { BadgeComponent, SisToastService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { combineLatest, forkJoin, of, ReplaySubject } from 'rxjs';
@@ -28,7 +28,7 @@ type ModelSelection = {
     PaTableModule,
     PaTogglesModule,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './custom-models.component.html',
   styleUrl: './custom-models.component.scss',

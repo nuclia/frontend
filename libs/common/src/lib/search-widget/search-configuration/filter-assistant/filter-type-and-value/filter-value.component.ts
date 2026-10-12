@@ -13,7 +13,7 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LabelModule, NerFamily, NerService, ResourceListService } from '@flaps/core';
 import { PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Classification } from '@nuclia/core';
 import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 import { filter, map, of, Subject, switchMap, take, tap } from 'rxjs';
@@ -27,7 +27,7 @@ import { takeUntil } from 'rxjs/operators';
     PaDropdownModule,
     PaTextFieldModule,
     PaTogglesModule,
-    TranslateModule,
+    TranslatePipe,
     LabelModule,
     InfoCardComponent,
     DropdownButtonComponent,

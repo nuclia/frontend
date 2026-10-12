@@ -11,7 +11,6 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, ButtonMiniComponent } from '@nuclia/sistema';
 
 import { KnowledgeBoxSettingsComponent } from '../knowledge-box-settings.component';
@@ -36,7 +35,7 @@ const ROUTES: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TranslateModule.forChild(),
+
     RouterModule.forChild(ROUTES),
     KnowledgeBoxSettingsComponent,
     PaButtonModule,

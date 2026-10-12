@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild, signal, computed } from '@angular/core';
-import { PaModalModule, PaButtonModule, ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { SisToastService } from '@nuclia/sistema';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Driver, DriverCreation } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 
 import { FormGroup } from '@angular/forms';
-import { DynamicDriverFormComponent } from './dynamic-driver-form.component';
 import { DriversService } from '../drivers.service';
+import { DynamicDriverFormComponent } from './dynamic-driver-form.component';
 
 export interface DynamicDriverModalData {
   driverKey: string;
@@ -20,7 +20,7 @@ export interface DynamicDriverModalData {
   styleUrls: ['./dynamic-driver-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [PaModalModule, PaButtonModule, TranslateModule, DynamicDriverFormComponent],
+  imports: [PaModalModule, PaButtonModule, TranslatePipe, DynamicDriverFormComponent],
 })
 export class DynamicDriverModalComponent implements OnInit {
   @ViewChild(DynamicDriverFormComponent) formComponent!: DynamicDriverFormComponent;

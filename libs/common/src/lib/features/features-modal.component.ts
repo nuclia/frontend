@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { FeatureFlagService, Features } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, take } from 'rxjs';
 
 @Component({
   templateUrl: './features-modal.component.html',
-  imports: [PaModalModule, TranslateModule, CommonModule, PaButtonModule, PaTogglesModule],
+  imports: [PaModalModule, TranslatePipe, CommonModule, PaButtonModule, PaTogglesModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturesModalComponent {

@@ -8,6 +8,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -20,11 +21,8 @@ import {
   PaTabsModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
-import { FilterTypeAndValueComponent } from './filter-type-and-value';
-import { FilterExpressionComponent, FilterExpressionPipe } from './filter-expression';
 import {
   FilterExpression,
   getCombineKey,
@@ -32,6 +30,8 @@ import {
   mapToSimpleFilter,
   SimpleFilter,
 } from './filter-assistant.models';
+import { FilterExpressionComponent, FilterExpressionPipe } from './filter-expression';
+import { FilterTypeAndValueComponent } from './filter-type-and-value';
 
 let id = 0;
 
@@ -39,7 +39,7 @@ let id = 0;
   selector: 'stf-filter-assistant-modal',
   imports: [
     PaModalModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     ReactiveFormsModule,
     PaTabsModule,
@@ -52,8 +52,8 @@ let id = 0;
     AccordionItemComponent,
     AccordionBodyDirective,
     FilterExpressionPipe,
-    AccordionExtraDescriptionDirective
-],
+    AccordionExtraDescriptionDirective,
+  ],
   providers: [FilterExpressionPipe],
   templateUrl: './filter-assistant-modal.component.html',
   styleUrl: './filter-assistant-modal.component.scss',

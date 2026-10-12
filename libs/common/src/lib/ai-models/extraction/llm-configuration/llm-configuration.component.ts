@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ExtractVLLMConfig, GenerativeProviders, LearningConfigurations, ReasoningConfig } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
@@ -26,7 +26,7 @@ import { ModelSelectorComponent, ReasoningConfigComponent } from '../../answer-g
     PaTogglesModule,
     ReactiveFormsModule,
     ReasoningConfigComponent,
-    TranslateModule,
+    TranslatePipe,
     InfoCardComponent,
     ExpandableTextareaComponent,
   ],

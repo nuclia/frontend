@@ -1,22 +1,22 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   EventEmitter,
   Input,
-  OnInit,
   OnDestroy,
+  OnInit,
   Output,
   signal,
-  computed,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
-import { JSONSchema4 } from 'json-schema';
-import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
-import { FormDirective } from '../form.directive';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ARAGSchemas } from '@nuclia/core';
+import { JSONSchema4 } from 'json-schema';
+import { Subscription } from 'rxjs';
+import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
+import { FormDirective } from '../form.directive';
 import { FieldConfig } from './field-config.service';
 import { FieldRendererComponent } from './field-renderer';
 
@@ -34,7 +34,7 @@ export interface RenderableField {
   styleUrls: ['./node-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, ConfigurationFormComponent, CommonModule, FieldRendererComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, ConfigurationFormComponent, CommonModule, FieldRendererComponent],
 })
 export class NodeFormComponent extends FormDirective implements OnInit, OnDestroy {
   @Input() agentType!: keyof ARAGSchemas['agents'];

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { SDKService } from '@flaps/core';
 import {
   ModalRef,
   PaDropdownModule,
@@ -7,12 +8,11 @@ import {
   PaPopupModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, map, of, Subject, switchMap, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
 
 @Component({
-  imports: [CommonModule, PaDropdownModule, PaModalModule, PaPopupModule, PaTextFieldModule, TranslateModule],
+  imports: [CommonModule, PaDropdownModule, PaModalModule, PaPopupModule, PaTextFieldModule, TranslatePipe],
   templateUrl: './find-resource-modal.component.html',
   styleUrl: './find-resource-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

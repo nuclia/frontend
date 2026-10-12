@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SDKService, UserService, SelectAccountKbService } from '@flaps/core';
+import { SDKService, SelectAccountKbService, UserService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { take, map, filter, switchMap, combineLatest, from } from 'rxjs';
+import { combineLatest, filter, from, map, switchMap, take } from 'rxjs';
 
 // Security boundary: fixed allowlist of local origins allowed to receive a live token here.
 // Keep it a literal list — never derive it from the request — to avoid an open redirect.
@@ -18,7 +18,7 @@ const AUTHORIZED_REDIRECTS_REGEX = [/^chrome-extension:\/\/[a-z]+\/options\/opti
   styleUrls: ['./redirect.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaIconModule, TranslateModule, PaTogglesModule],
+  imports: [CommonModule, PaButtonModule, PaIconModule, TranslatePipe, PaTogglesModule],
 })
 export class RedirectComponent {
   fromChromeExtension = false;

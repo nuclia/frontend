@@ -3,13 +3,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { NavigationService, SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 @Component({
-  imports: [PaModalModule, TranslateModule, PaModalModule, PaButtonModule, BadgeComponent, PaIconModule],
+  imports: [PaModalModule, TranslatePipe, PaModalModule, PaButtonModule, BadgeComponent, PaIconModule],
   templateUrl: './unauthorized-feature-modal.component.html',
   styleUrl: './unauthorized-feature-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

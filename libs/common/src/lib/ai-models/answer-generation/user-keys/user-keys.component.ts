@@ -13,7 +13,7 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   getLearningConfigPropType,
   getSubSchema,
@@ -46,7 +46,7 @@ interface UserKeysProperties {
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     ExpandableTextareaComponent,
     InfoCardComponent,
   ],

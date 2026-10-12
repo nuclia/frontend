@@ -12,7 +12,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ExtractConfig, ExtractVLLMConfig, GenerativeProviders, LearningConfigurations } from '@nuclia/core';
 import { LLMConfigurationComponent } from '../llm-configuration/llm-configuration.component';
 
@@ -27,7 +27,7 @@ import { LLMConfigurationComponent } from '../llm-configuration/llm-configuratio
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     LLMConfigurationComponent,
   ],
   templateUrl: './extraction-modal.component.html',

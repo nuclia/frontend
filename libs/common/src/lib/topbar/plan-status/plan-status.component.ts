@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AccountTypes } from '@nuclia/core';
-import { combineLatest, map, of, shareReplay, switchMap, take } from 'rxjs';
 import { differenceInDays } from 'date-fns';
+import { combineLatest, map, of, shareReplay, switchMap, take } from 'rxjs';
 
 // Plans for which upgrading isn't an option
 const NO_UPGRADE_ACCOUNT_TYPES: AccountTypes[] = ['v3enterprise', 'v3pro', 'v3growth'];
@@ -23,7 +23,7 @@ interface PlanStatusVm {
 @Component({
   selector: 'stf-plan-status',
   standalone: true,
-  imports: [CommonModule, TranslateModule, PaChipsModule],
+  imports: [CommonModule, TranslatePipe, PaChipsModule],
   templateUrl: './plan-status.component.html',
   styleUrl: './plan-status.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
