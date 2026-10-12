@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -10,15 +11,15 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import {
-  DropdownButtonComponent,
-  ExpandableTextareaComponent,
-  InfoCardComponent,
-  SisModalService,
-  StickyFooterComponent,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
+  FilterExpressionModalComponent,
+  LabelModule,
+  LabelsService,
+  ParametersTableComponent,
+  SDKService,
+} from '@flaps/core';
 import {
   ModalConfig,
   OptionModel,
@@ -31,28 +32,32 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Classification,
   FIELD_TYPE,
+  GenerativeProviders,
   LearningConfigurations,
   LLMConfig,
   longToShortFieldType,
-  GenerativeProviders,
+  ReasoningConfig,
   TaskFullDefinition,
   TaskName,
   TaskTrigger,
-  ReasoningConfig,
 } from '@nuclia/core';
+import {
+  DropdownButtonComponent,
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  SisModalService,
+  StickyFooterComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { BehaviorSubject, filter, forkJoin, map, Subject, switchMap } from 'rxjs';
 import { delay, take, takeUntil } from 'rxjs/operators';
-import { TasksAutomationService } from '../tasks-automation.service';
 import { ModelSelectorComponent, ReasoningConfigComponent, UserKeysComponent, UserKeysForm } from '../../ai-models';
 import { DataAugmentationTaskOnGoing, getOperationFromTaskName, hasFilters } from '../tasks-automation.models';
-import { RouterModule } from '@angular/router';
-import { FilterExpressionModalComponent } from '../../search-widget/search-configuration/filter-expression-modal';
+import { TasksAutomationService } from '../tasks-automation.service';
 
 const DEFAULT_CHEAP_LLM = 'gemini-2.5-flash-lite';
 

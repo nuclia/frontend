@@ -1,13 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { STFPipesModule } from '@flaps/core';
+import { STFPipesModule, UploadService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FileUploadStatus } from '@nuclia/core';
 import { ProgressBarComponent } from '@nuclia/sistema';
 import { Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { UploadService } from '../upload.service';
 
 @Component({
   selector: 'app-upload-progress',

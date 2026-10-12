@@ -5,7 +5,7 @@ import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldFullId } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { combineLatest, filter, fromEvent, map, Observable, switchMap, take } from 'rxjs';
+import { filter, fromEvent, map, Observable, switchMap, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -188,10 +188,7 @@ export class ResourceViewerService {
   }
 
   private getResourcesBasePath(): Observable<string> {
-    return combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
-      take(1),
-      map(([kb, account]) => `${this.navigationService.getKbUrl(account.slug, kb.slug)}/resources`),
-    );
+    return this.navigationService.getResourceListUrl();
   }
   private navigateTo(path: string) {
     this.router.navigate([path]);

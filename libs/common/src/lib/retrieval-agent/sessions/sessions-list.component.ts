@@ -11,7 +11,16 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import {
+  ColumnHeader,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORTING,
+  PAGE_SIZES,
+  ResourceListParams,
+  ResourceNavigationService,
+  SDKService,
+  searchResources,
+} from '@flaps/core';
 import {
   DropdownComponent,
   HeaderCell,
@@ -36,16 +45,7 @@ import {
 } from '@nuclia/sistema';
 import { endOfDay } from 'date-fns';
 import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { ResourceNavigationService } from '../../resources/edit-resource/resource-navigation.service';
 import { Filters } from '../../resources/resource-filters.utils';
-import {
-  ColumnHeader,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_SORTING,
-  PAGE_SIZES,
-  ResourceListParams,
-  searchResources,
-} from '../../resources/resource-list/resource-list.model';
 import { TablePaginationComponent } from '../../resources/resource-list/table-pagination/table-pagination.component';
 
 @Component({

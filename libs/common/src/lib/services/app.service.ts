@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BackendConfigurationService, SDKService, UploadService } from '@flaps/core';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
-import { UploadService } from '../upload/upload.service';
+import { BehaviorSubject } from 'rxjs';
 
 const EMPTY_KB_ALERT = 'NUCLIA_EMPTY_KB_ALERT';
 

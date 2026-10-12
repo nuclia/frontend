@@ -42,7 +42,7 @@ Follow its workflow exactly. The skill defines:
 
 3. **Update in priority order: CRITICAL → HIGH → MEDIUM → LOW**
    - CRITICAL: missing AGENTS.md for new project, unregistered skill/agent in copilot-instructions
-   - HIGH: routing/guard/state changes in existing projects
+   - HIGH: routing/guard/state changes in existing projects; for dashboard route changes, also check `libs/common/src/lib/chat-advice/pages.json` using `.github/skills/knowledge-sync/pages-json-sync.md`
    - MEDIUM: general source changes in a project
    - LOW: skills/agents with minor outdated references
 

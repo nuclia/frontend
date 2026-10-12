@@ -4,9 +4,7 @@
   @if (currentKb | async; as kb) {
     @if (kbUrl | async; as kbUrl) {
       @if (isKbAdmin | async) {
-        <app-kb-onboarding-header
-          class="fullwidth-container"
-          [kbUrl]="kbUrl"></app-kb-onboarding-header>
+        <app-kb-onboarding-header class="fullwidth-container"></app-kb-onboarding-header>
       }
       @if (configuration | async; as config) {
         <div class="kb-summary-grid fullwidth-container">

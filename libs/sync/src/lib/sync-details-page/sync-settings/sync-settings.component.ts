@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -9,10 +10,8 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IConnector, ISyncEntity, LogEntity, SyncService } from '../../logic';
-import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
+import { ColoredLabel, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import {
   ModalConfig,
   ModalService,
@@ -21,11 +20,11 @@ import {
   PaIconModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
-import { filter, map, switchMap, take } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 import { LabelSets } from '@nuclia/core';
-import { ColoredLabel } from '@flaps/common';
-import { ActivatedRoute } from '@angular/router';
+import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { filter, map, switchMap, take } from 'rxjs';
+import { IConnector, ISyncEntity, LogEntity, SyncService } from '../../logic';
 import { LogsModalComponent } from './logs-modal/logs-modal.component';
 
 @Component({

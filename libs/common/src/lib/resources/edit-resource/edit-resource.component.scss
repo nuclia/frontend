@@ -2,6 +2,9 @@
 @use 'edit-resource.tokens' as tokens;
 
 .edit-resource {
+  /* data page tab content wrapper has a padding top of 3.5rem that we don't want for edit resource pages (because it feels weird with the eidt resource header) */
+  margin-top: calc(rhythm(7) * -1);
+
   header {
     $gap-header-buttons: rhythm(1);
     $button-size: rhythm(5);
@@ -31,7 +34,8 @@
       padding-left: rhythm(9);
       padding-right: rhythm(1);
       max-width: calc(
-        100vw - #{$width-side-panel} - var(--app-layout-padding-left) - ($button-size * 3) - ($button-size * 5) - var(--app-layout-padding-right)
+        100vw - #{$width-side-panel} - var(--app-layout-padding-left) - ($button-size * 3) -
+          ($button-size * 5) - var(--app-layout-padding-right)
       );
     }
 

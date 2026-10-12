@@ -10,7 +10,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FeaturesService, LabelsService, SDKService } from '@flaps/core';
+import { FeaturesService, FilterExpressionModalComponent, LabelsService, SDKService } from '@flaps/core';
 import {
   ModalConfig,
   OptionModel,
@@ -25,9 +25,8 @@ import { Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { FilterAssistantModalComponent } from '../filter-assistant';
-import { FilterExpressionModalComponent } from '../filter-expression-modal';
 import { SearchWidgetService } from '../../search-widget.service';
+import { FilterAssistantModalComponent } from '../filter-assistant';
 
 @Component({
   selector: 'stf-search-box-form',

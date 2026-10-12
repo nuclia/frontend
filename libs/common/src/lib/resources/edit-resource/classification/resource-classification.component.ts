@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LabelModule, LabelsService } from '@flaps/core';
+import { EditResourceService, LabelModule, LabelsService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, LabelSetKind, LabelSets, Resource } from '@nuclia/core';
@@ -12,7 +12,6 @@ import {
 } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, map, Observable, Subject, tap } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
-import { EditResourceService } from '../edit-resource.service';
 
 @Component({
   templateUrl: './resource-classification.component.html',

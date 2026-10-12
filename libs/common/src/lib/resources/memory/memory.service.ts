@@ -1,6 +1,7 @@
+import { formatDate } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { formatDate } from '@angular/common';
+import { EditResourceService } from '@flaps/core';
 import { FIELD_TYPE, Resource, ResourceFieldProperties } from '@nuclia/core';
 import {
   Observable,
@@ -17,7 +18,6 @@ import {
   tap,
   toArray,
 } from 'rxjs';
-import { EditResourceService } from '../edit-resource';
 import { getConversationMessages, getMemorySessionInfos, parseMemoryEntry, parseMemoryFact } from './memory.helpers';
 import { MemoryEntry, MemoryFact, MemorySessionInfo } from './memory.model';
 

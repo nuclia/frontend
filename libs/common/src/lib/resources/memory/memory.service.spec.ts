@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { BehaviorSubject, of, Subject } from 'rxjs';
+import { EditResourceService } from '@flaps/core';
 import { Message, Resource } from '@nuclia/core';
-import { EditResourceService } from '../edit-resource';
-import { MemoryService } from './memory.service';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 import { MemoryEntry } from './memory.model';
+import { MemoryService } from './memory.service';
 
 describe('MemoryService', () => {
   const sessionFieldId = `${MEMORY_SESSION_FIELD_PREFIX}s1`;

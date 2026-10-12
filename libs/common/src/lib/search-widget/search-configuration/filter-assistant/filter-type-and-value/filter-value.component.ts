@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,17 +10,14 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LabelModule, NerFamily, NerService, ResourceListService } from '@flaps/core';
 import { PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { Classification } from '@nuclia/core';
+import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 import { filter, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ResourceListService } from '../../../../resources';
-import { LabelModule } from '@flaps/core';
-import { Classification } from '@nuclia/core';
-import { NerFamily, NerService } from '../../../../entities';
-import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-filter-value',

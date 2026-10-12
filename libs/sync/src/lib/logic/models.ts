@@ -1,6 +1,6 @@
+import { ColoredLabel } from '@flaps/core';
 import { NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
-import { ColoredLabel } from '@flaps/common';
 
 export const baseLogoPath = 'assets/connector-logos';
 

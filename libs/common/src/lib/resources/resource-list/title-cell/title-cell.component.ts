@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { RouterModule } from '@angular/router';
+import { ResourceWithLabels } from '@flaps/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, MimeIconPipe } from '@nuclia/sistema';
 import { isMemoryResource } from '../../memory/memory.helpers';
-import { ResourceWithLabels } from '../resource-list.model';
 
 @Component({
   selector: 'stf-title-cell',

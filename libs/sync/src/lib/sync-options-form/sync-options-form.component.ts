@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,20 +10,18 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { filter, map, startWith, Subject, take, takeUntil } from 'rxjs';
-import { InfoCardComponent, SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ColoredLabel, ExtractionSelectComponent, LabelModule, LabelsService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDatePickerModule,
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelModule, LabelsService } from '@flaps/core';
-import { LabelSets, Classification } from '@nuclia/core';
-import { ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { Classification, LabelSets } from '@nuclia/core';
+import { InfoCardComponent, SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { filter, map, startWith, Subject, take, takeUntil } from 'rxjs';
 import { ISyncEntity } from '../logic';
 import { SyncOptions } from './sync-options.model';
 

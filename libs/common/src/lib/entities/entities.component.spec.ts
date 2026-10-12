@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NerService } from '@flaps/core';
 import { of } from 'rxjs';
-import { NerService } from './ner.service';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';

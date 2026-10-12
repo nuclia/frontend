@@ -8,7 +8,6 @@ import {
   MetricsService,
   RemiMetricsService,
   UploadModule,
-  UploadService,
 } from '@flaps/common';
 import {
   FeaturesService,
@@ -16,6 +15,7 @@ import {
   SDKService,
   STFPipesModule,
   UploadEventService,
+  UploadService,
   ZoneService,
 } from '@flaps/core';
 import {

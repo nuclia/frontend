@@ -1,9 +1,19 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
-import { BulkAction, ColumnHeader, MenuAction, PAGE_SIZES } from './resource-list.model';
-import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
-import { delay, map, switchMap, takeUntil } from 'rxjs/operators';
-import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  BulkAction,
+  ColumnHeader,
+  FeaturesService,
+  MenuAction,
+  PAGE_SIZES,
+  ResourceListService,
+  SDKService,
+  UNAUTHORIZED_ICON,
+} from '@flaps/core';
 import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -20,11 +30,8 @@ import {
   tap,
   toArray,
 } from 'rxjs';
-import { ResourceListService } from './resource-list.service';
+import { delay, map, switchMap, takeUntil } from 'rxjs/operators';
 import { ResourceCacheService } from '../resource-cache.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false },

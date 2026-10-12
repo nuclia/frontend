@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { BehaviorSubject, filter, map, Observable, take, tap } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, map, Observable, take, tap } from 'rxjs';
 import { Zone, ZoneAccountEntry, ZoneAddPayload, ZonePatchPayload, ZoneSummary } from './zone.models';
 
 const ZONES_ENDPOINT = '/manage/@zones';
@@ -74,5 +74,21 @@ export class ZoneService {
 
   revokeZoneFromAccount(zoneId: string, accountId: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`${ZONE_ENDPOINT}/${zoneId}/accounts/${accountId}`);
+  }
+
+  getAccountZonesDict(accountIdorSlug: string): Observable<{ [zoneId: string]: ZoneSummary }> {
+    return forkJoin([this.sdk.nuclia.rest.getAccountZones(accountIdorSlug), this.getZoneDict()]).pipe(
+      map(([accountZones, zones]) =>
+        Object.keys(accountZones).reduce(
+          (map, zoneId) => {
+            if (zones[zoneId]) {
+              map[zoneId] = zones[zoneId];
+            }
+            return map;
+          },
+          {} as { [zoneId: string]: ZoneSummary },
+        ),
+      ),
+    );
   }
 }

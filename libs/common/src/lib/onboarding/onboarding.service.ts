@@ -73,6 +73,10 @@ export class OnboardingService {
     });
   }
 
+  setStep(step: number) {
+    this._onboardingStep.next(step);
+  }
+
   setSteps(workflow: WorkflowType) {
     this.dashboardSteps = workflow === 'cowork' ? of(COWORK_STEPS) : of(CLASSIC_STEPS);
   }

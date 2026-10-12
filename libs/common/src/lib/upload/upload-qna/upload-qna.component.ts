@@ -1,6 +1,6 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UploadService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -12,7 +12,6 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { TextFormat } from '@nuclia/core';
 import { CsvSelectComponent } from '../csv-select/csv-select.component';
-import { UploadService } from '../upload.service';
 
 @Component({
   selector: 'nuclia-upload-qna',
@@ -28,7 +27,6 @@ import { UploadService } from '../upload.service';
     CsvSelectComponent,
     PaTableModule,
     PaButtonModule,
-    AsyncPipe,
     TranslatePipe,
   ],
 })

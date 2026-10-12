@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(4);
+  padding: 0; // sync pages are now part of data page, so we don't want padding as the data page already manage it.
 }
 .page-title {
   align-items: center;

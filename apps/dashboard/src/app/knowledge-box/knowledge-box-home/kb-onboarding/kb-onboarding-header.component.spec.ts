@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BehaviorSubject, of } from 'rxjs';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import {
+  ModalConfig,
   PaButtonModule,
   PaIconModule,
   PaModalModule,
   PaTooltipModule,
-  ModalConfig,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { BehaviorSubject, of } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
@@ -25,13 +25,14 @@ import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
   disconnect() {}
 };
 
-import { KbOnboardingHeaderComponent } from './kb-onboarding-header.component';
-import { KbOnboardingStateService } from './kb-onboarding-state.service';
-import { KbOnboardingEntry } from './kb-onboarding-state.model';
-import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
-import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
+import { UploadButtonComponent } from '@flaps/common';
+import { NavigationService } from '@flaps/core';
 import { KbHeaderComponent } from '../kb-header/kb-header.component';
-import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
+import { KbOnboardingHeaderComponent } from './kb-onboarding-header.component';
+import { KbOnboardingEntry } from './kb-onboarding-state.model';
+import { KbOnboardingStateService } from './kb-onboarding-state.service';
+import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
+import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 
 function createTranslateLoader() {
   return { getTranslation: () => of(EN) };
@@ -60,14 +61,19 @@ describe('KbOnboardingHeaderComponent', () => {
         MockModule(RouterModule),
         MockComponent(InfoCardComponent),
         MockComponent(KbHeaderComponent),
-        MockComponent(KbMoreActionsComponent),
+        MockComponent(UploadButtonComponent),
       ],
       providers: [
         MockProvider(KbOnboardingStateService, {
           onboardingState$: stateSubject.asObservable(),
+          markDone: jest.fn(),
         }),
         MockProvider(SisModalService, {
           openModal: jest.fn(),
+        }),
+        MockProvider(NavigationService, {
+          getResourceListUrl: jest.fn(() => of('/data/resources')),
+          getSearchUrl: jest.fn(() => of('/search')),
         }),
       ],
     }).compileComponents();
@@ -99,18 +105,13 @@ describe('KbOnboardingHeaderComponent', () => {
     });
 
     it('should show the upload button', () => {
-      const btn = fixture.nativeElement.querySelector('pa-button[icon="upload"]');
+      const btn = fixture.nativeElement.querySelector('stf-upload-button');
       expect(btn).toBeTruthy();
     });
 
     it('should show the skip button', () => {
       const skipBtn = fixture.nativeElement.querySelector('pa-button[aspect="basic"]');
       expect(skipBtn).toBeTruthy();
-    });
-
-    it('should show the more actions menu', () => {
-      const moreBtn = fixture.nativeElement.querySelector('app-kb-more-actions');
-      expect(moreBtn).toBeTruthy();
     });
   });
 
@@ -146,6 +147,15 @@ describe('KbOnboardingHeaderComponent', () => {
       const btn = fixture.nativeElement.querySelector('pa-button[icon="search"]');
       expect(btn).toBeTruthy();
     });
+
+    it('should exit onboarding when Try Search is clicked', () => {
+      const btn = fixture.nativeElement.querySelector('pa-button[icon="search"]');
+      btn.click();
+      fixture.detectChanges();
+
+      const onboardingService = TestBed.inject(KbOnboardingStateService);
+      expect(onboardingService.markDone).toHaveBeenCalled();
+    });
   });
 
   describe('state: uploading-data (skipped)', () => {
@@ -160,18 +170,13 @@ describe('KbOnboardingHeaderComponent', () => {
     });
 
     it('should show the upload button', () => {
-      const btn = fixture.nativeElement.querySelector('pa-button[icon="upload"]');
+      const btn = fixture.nativeElement.querySelector('stf-upload-button');
       expect(btn).toBeTruthy();
     });
 
     it('should show the restart button', () => {
       const restartBtn = fixture.nativeElement.querySelector('pa-button[icon="help"]');
       expect(restartBtn).toBeTruthy();
-    });
-
-    it('should show the more actions menu', () => {
-      const moreBtn = fixture.nativeElement.querySelector('app-kb-more-actions');
-      expect(moreBtn).toBeTruthy();
     });
   });
 

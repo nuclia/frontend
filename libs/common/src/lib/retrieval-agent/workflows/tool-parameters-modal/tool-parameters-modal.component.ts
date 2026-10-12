@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { HintComponent } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Workflow } from '@nuclia/core';
-import { HintModule } from '../../../hint';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { JsonValidator } from '../../../validators';
 
@@ -12,7 +12,7 @@ import { JsonValidator } from '../../../validators';
   imports: [
     CommonModule,
     ExpandableTextareaComponent,
-    HintModule,
+    HintComponent,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,

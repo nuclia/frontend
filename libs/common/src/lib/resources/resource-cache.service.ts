@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SDKService } from '@flaps/core';
+import { SDKService, UploadService } from '@flaps/core';
 import { Search } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -16,7 +16,6 @@ import {
   tap,
   timer,
 } from 'rxjs';
-import { UploadService } from '../upload/upload.service';
 
 @Injectable({
   providedIn: 'root',

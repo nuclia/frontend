@@ -11,14 +11,18 @@ import {
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   DroppedFile,
+  ExtractionSelectComponent,
   FeaturesService,
   FileDropDirective,
   FileSelectDirective,
+  getFilesGroupedByType,
+  HintComponent,
   LabelModule,
   NavigationService,
   SDKService,
   STFPipesModule,
   STFUtils,
+  UploadService,
 } from '@flaps/core';
 import {
   PaButtonModule,
@@ -31,10 +35,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { take } from 'rxjs';
-import { HintComponent } from '../../hint/hint.component';
-import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
-import { UploadService } from '../upload.service';
-import { getFilesGroupedByType } from '../upload.utils';
 
 const GENERAL_LABELSET = 'General';
 
@@ -63,6 +63,11 @@ const GENERAL_LABELSET = 'General';
   ],
 })
 export class UploadFilesComponent {
+  private cdr = inject(ChangeDetectorRef);
+  private uploadService = inject(UploadService);
+  private sdk = inject(SDKService);
+  private features = inject(FeaturesService);
+
   @Input() folderMode = false;
   @Output() uploadClose = new EventEmitter<{ cancel: boolean }>();
   @Output() upload = new EventEmitter<void>();
@@ -93,12 +98,7 @@ export class UploadFilesComponent {
     return this.files.filter((item) => !item.aboveLimit).map((item) => item.file);
   }
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private uploadService: UploadService,
-    private sdk: SDKService,
-    private features: FeaturesService,
-  ) {
+  constructor() {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.limits) {
         this.maxFileSize = account.limits.upload.upload_limit_max_non_media_file_size;

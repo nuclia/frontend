@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { STATUS_FACET, UploadService } from '@flaps/common';
-import { NotificationService, SDKService, STFUtils } from '@flaps/core';
+import { NotificationService, SDKService, STATUS_FACET, STFUtils, UploadService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Ask,
@@ -26,8 +25,8 @@ import {
   Subject,
   switchMap,
   take,
-  throwError,
   throttleTime,
+  throwError,
 } from 'rxjs';
 
 export const HISTORY_LABEL: Classification = {

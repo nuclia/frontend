@@ -1,6 +1,6 @@
-import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { PENDING_RESOURCES_LIMIT, SDKService, UploadService } from '@flaps/core';
 import {
   markForCheck,
   ModalRef,
@@ -14,8 +14,6 @@ import { InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/si
 import { switchMap, take } from 'rxjs';
 import { parseCsvLabels } from '../csv-parser';
 import { CsvSelectComponent } from '../csv-select/csv-select.component';
-import { UploadService } from '../upload.service';
-import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
 const FORMATS: Set<TextFormat> = new Set(['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST']);
 
@@ -38,7 +36,6 @@ interface Row {
     CsvSelectComponent,
     PaTooltipModule,
     SpinnerComponent,
-    AsyncPipe,
     DecimalPipe,
     TranslatePipe,
   ],

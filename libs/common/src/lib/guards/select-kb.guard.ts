@@ -35,13 +35,20 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
           const total = kbs.length + arags.length;
           if (total === 0) {
             return sdk.currentAccount.pipe(
-              map((account) =>
-                account.can_manage_account
-                  ? navigation.resolveGuardRedirect(navigation.getAccountManageUrl(accountSlug), {
+              map((account) => {
+                if (account.can_manage_account) {
+                  if (account.workflow === 'cowork') {
+                    // If there's no Context box, redirect to the onboarding to create one
+                    return router.createUrlTree(['/user/onboarding'], { queryParams: { account_slug: account.slug } });
+                  } else {
+                    return navigation.resolveGuardRedirect(navigation.getAccountManageUrl(accountSlug), {
                       withFromApp: true,
-                    })
-                  : true,
-              ),
+                    });
+                  }
+                } else {
+                  return true;
+                }
+              }),
             );
           } else if (
             !navigation.inRaoApp &&

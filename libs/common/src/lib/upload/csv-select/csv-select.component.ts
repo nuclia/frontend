@@ -1,19 +1,18 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
-import { parseCsv } from '../csv-parser';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { HintComponent } from '@flaps/core';
 import { ConfirmationData, Kind, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
-
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { HintModule } from '../../hint';
+import { parseCsv } from '../csv-parser';
 
 @Component({
   selector: 'app-csv-select',
   templateUrl: './csv-select.component.html',
   styleUrls: ['./csv-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HintModule, PaButtonModule, TranslateModule],
+  imports: [HintComponent, TranslatePipe, PaButtonModule],
 })
 export class CsvSelectComponent<T> {
   @Input()

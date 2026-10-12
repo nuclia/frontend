@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InfoCardComponent, SisLabelModule } from '@nuclia/sistema';
-import { SDKService } from '@flaps/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { getParagraphId, ParagraphWithText, SDKService } from '@flaps/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TestResults } from '../task-testing.component';
 import {
   ExtractedDataTypes,
   FIELD_TYPE,
@@ -12,11 +11,10 @@ import {
   shortToLongFieldType,
   TaskApplyTo,
 } from '@nuclia/core';
+import { InfoCardComponent, SisLabelModule } from '@nuclia/sistema';
 import { map, ReplaySubject, switchMap, take } from 'rxjs';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { getParagraphId, ParagraphWithText } from 'libs/common/src/lib/resources';
 import { DataAugmentationTaskOnGoing } from '../../../tasks-automation.models';
+import { TestResults } from '../task-testing.component';
 
 @Component({
   selector: 'app-labeler-results',

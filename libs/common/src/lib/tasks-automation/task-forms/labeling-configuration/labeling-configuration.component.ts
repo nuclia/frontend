@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,31 +10,29 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FilterExpressionModalComponent, LabelModule, LabelSetFormModalComponent, LabelsService } from '@flaps/core';
+import {
+  ModalConfig,
+  OptionModel,
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { Classification, LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
 import {
   ExpandableTextareaComponent,
   InfoCardComponent,
   SisModalService,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { LabelModule, LabelSetFormModalComponent, LabelsService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
-import {
-  ModalConfig,
-  PaButtonModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-  PaDropdownModule,
-  PaPopupModule,
-  PaIconModule,
-  OptionModel,
-} from '@guillotinaweb/pastanaga-angular';
-import { Classification, LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, Subject } from 'rxjs';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { shareReplay, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
 import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
-import { FilterExpressionModalComponent } from '../../../search-widget';
 
 export interface LabelingConfiguration {
   operations: LabelOperation[];

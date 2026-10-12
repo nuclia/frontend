@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { STATUS_FACET } from '@flaps/common';
-import { SDKService } from '@flaps/core';
+import { SDKService, STATUS_FACET } from '@flaps/core';
 import { KBRoles, Nuclia } from '@nuclia/core';
 import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ZoneSummary } from '../manage-zones/zone.models';
@@ -322,7 +321,7 @@ export class RegionalAccountService {
   }
 
   getProjects(accountId: string): Observable<ProjectDetails[]> {
-    return this.zoneService.getZoneDict().pipe(
+    return this.zoneService.getAccountZonesDict(accountId).pipe(
       take(1),
       switchMap((zones) =>
         forkJoin(
@@ -341,7 +340,7 @@ export class RegionalAccountService {
   }
 
   getProject(accountId: string, projectId: string, zoneId: string): Observable<ProjectDetails> {
-    return this.zoneService.getZoneDict().pipe(
+    return this.zoneService.getAccountZonesDict(accountId).pipe(
       take(1),
       switchMap((zones) =>
         this.sdk.nuclia.rest
@@ -357,7 +356,7 @@ export class RegionalAccountService {
     zoneId: string,
     data: { name: string; description?: string },
   ): Observable<ProjectDetails> {
-    return this.zoneService.getZoneDict().pipe(
+    return this.zoneService.getAccountZonesDict(accountId).pipe(
       take(1),
       switchMap((zones) =>
         this.sdk.nuclia.rest

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -10,19 +11,17 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IConnector, ISyncEntity, Filters, Section } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { filter, map, Observable, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { AssumeRoleInfo } from '@nuclia/core';
-import { ParametersTableComponent, SDKService } from '@flaps/core';
-import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { AssumeRoleModalComponent, HintComponent, ParametersTableComponent, SDKService } from '@flaps/core';
 import { ModalConfig, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { AssumeRoleModalComponent, HintModule } from '@flaps/common';
-import { ConfigurationForm } from './configuration.model';
+import { AssumeRoleInfo } from '@nuclia/core';
+import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { filter, map, Observable, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { Filters, IConnector, ISyncEntity, Section } from '../logic';
 import { S3_IAM_POLICY } from '../logic/connectors/s3';
 import { SyncOptions, SyncOptionsFormComponent } from '../sync-options-form';
+import { ConfigurationForm } from './configuration.model';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
@@ -30,7 +29,7 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
   selector: 'nsy-configuration-form',
   imports: [
     CommonModule,
-    HintModule,
+    HintComponent,
     InfoCardComponent,
     TwoColumnsConfigurationItemComponent,
     ReactiveFormsModule,

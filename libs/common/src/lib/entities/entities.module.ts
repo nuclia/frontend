@@ -12,7 +12,6 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 
-import { HintModule } from '../hint';
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
 
@@ -26,7 +25,6 @@ import { EntityListComponent } from './entity-list/entity-list.component';
     PaButtonModule,
     PaIconModule,
     PaTooltipModule,
-    HintModule,
     PaTableModule,
     EntitiesComponent,
     EntityListComponent,

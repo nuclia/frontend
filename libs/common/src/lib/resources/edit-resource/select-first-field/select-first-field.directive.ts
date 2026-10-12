@@ -1,10 +1,9 @@
 import { Directive, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EditResourceService, ResourceNavigationService } from '@flaps/core';
 import { FIELD_TYPE, FieldId, IFieldData, Resource, ResourceField } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { EditResourceService } from '../edit-resource.service';
-import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Directive({ selector: '[appSelectFirstField]' })
 export class SelectFirstFieldDirective implements OnDestroy {

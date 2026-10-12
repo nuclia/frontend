@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
+  EditResourceService,
   EntityGroup,
   getAnnotatedText,
   getGeneratedFieldAnnotations,
@@ -7,11 +8,10 @@ import {
   getParagraphAnnotations,
   getParagraphText,
   ParagraphWithTextAndAnnotations,
-} from '../../edit-resource.helpers';
-import { EditResourceService } from '../../edit-resource.service';
+} from '@flaps/core';
 import { FieldId, IFieldData, Paragraph } from '@nuclia/core';
-import { ParagraphService } from '../../paragraph.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ParagraphService } from '../../paragraph.service';
 
 @Injectable({
   providedIn: 'root',

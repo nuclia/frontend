@@ -1,0 +1,30 @@
+@use 'apps/dashboard/src/variables' as *;
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  margin-bottom: rhythm(5);
+}
+
+.page-title {
+  justify-content: space-between;
+}
+
+pa-tabs {
+  background: $color-light-stronger;
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+#data-page-panel {
+  padding-top: rhythm(7);
+}
+
+.tab-with-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: rhythm(1);
+}

@@ -10,7 +10,16 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { FeaturesService, FileDropDirective, FileSelectDirective, SDKService } from '@flaps/core';
+import {
+  EditResourceService,
+  FeaturesService,
+  FileDropDirective,
+  FileSelectDirective,
+  HintComponent,
+  ResourceNavigationService,
+  SDKService,
+  Thumbnail,
+} from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -26,11 +35,7 @@ import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { ExpandableTextareaComponent, JsonViewerComponent, SpinnerComponent } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { delay, shareReplay, take, takeUntil } from 'rxjs/operators';
-import { HintComponent } from '../../../hint/hint.component';
 import { JsonValidator } from '../../../validators';
-import { Thumbnail } from '../edit-resource.helpers';
-import { EditResourceService } from '../edit-resource.service';
-import { ResourceNavigationService } from '../resource-navigation.service';
 import { ThumbnailComponent } from './thumbnail/thumbnail.component';
 
 @Component({

@@ -1,6 +1,6 @@
 import { AsyncPipe, DatePipe, KeyValuePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LabelModule } from '@flaps/core';
+import { LabelModule, UploadService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -19,7 +19,6 @@ import {
   StickyFooterComponent,
 } from '@nuclia/sistema';
 import { map } from 'rxjs';
-import { UploadService } from '../../../upload';
 import { ResourcesTableComponent } from '../resources-table/resources-table.component';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 import { TitleCellComponent } from '../title-cell/title-cell.component';

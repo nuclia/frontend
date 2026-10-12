@@ -1,38 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, ViewChild } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FeaturesService } from '@flaps/core';
-import { BadgeComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [CommonModule, BadgeComponent, PaTabsModule, RouterModule, TranslateModule],
-  templateUrl: './home-page.component.html',
-  styleUrl: './home-page.component.scss',
+  imports: [RouterOutlet],
+  template: '<router-outlet></router-outlet>',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent {
-  private elementRef = inject(ElementRef<HTMLElement>);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private features = inject(FeaturesService);
-
-  private currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((e) => e instanceof NavigationEnd),
-      map(() => this.router.url),
-      startWith(this.router.url),
-    ),
-  );
-
-  isAgenticSearchEnabled = toSignal(this.features.unstable.agenticSearch, { initialValue: false });
-  isConnectActive = computed(() => (this.currentUrl() ?? '').includes('/connect'));
-
-  navigateTo(tab: 'synchronize' | 'connect') {
-    this.router.navigate([tab === 'connect' ? tab : './'], { relativeTo: this.route });
-    this.elementRef.nativeElement.scrollIntoView();
-  }
-}
+export class HomePageComponent {}
