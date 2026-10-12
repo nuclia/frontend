@@ -23,7 +23,7 @@
 }
 
 .warning {
-  max-width: rhythm(90) * 0.75;
+  max-width: rhythm(60);
 }
 
 .invite-form {
@@ -44,7 +44,7 @@
 
   nsi-expandable-textarea {
     flex: 1 1 rhythm(30);
-    max-width: rhythm(90) * 0.75;
+    max-width: rhythm(60);
   }
 }
 
@@ -68,8 +68,8 @@
 .invite-as {
   align-items: center;
   display: flex;
-  margin-left: auto;
   gap: rhythm(1);
+  margin-left: auto;
 
   pa-select {
     min-width: rhythm(18);
@@ -160,25 +160,6 @@
 .invite-hint {
   color: $color-neutral-regular;
   height: auto;
-
-  .clear-button {
-    color: $color-secondary-strong;
-  }
-}
-
-.invite-summary-row,
-.invite-summary-actions,
-.invite-hint {
-  .clear-button {
-    border: none;
-    background: none;
-    font-weight: $font-weight-semi-bold;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
 }
 
 .hint-with-action {
@@ -250,8 +231,8 @@
   .invite-batch-footer,
   .invite-as {
     align-items: stretch;
-    margin-left: 0;
     flex-direction: column;
+    margin-left: 0;
   }
 
   .invite-as pa-select {

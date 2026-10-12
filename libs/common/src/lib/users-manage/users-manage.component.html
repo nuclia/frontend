@@ -15,7 +15,7 @@
         <div class="paste-emails-row">
           <nsi-expandable-textarea
             formControlName="bulkInput"
-            [rows]="2"
+            [rows]="3"
             [placeholder]="'stash.users.bulk_input_placeholder' | translate"
             [modalTitle]="'stash.users.bulk_input_label' | translate"
             [help]="'stash.users.bulk_input_hint' | translate"
@@ -150,7 +150,6 @@
               }
               <div class="invite-as">
                 <pa-select
-                  class="invite-role"
                   formControlName="role"
                   label="{{ 'generic.role' | translate }}">
                   @for (role of roles; track role) {
