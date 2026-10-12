@@ -1,0 +1,67 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+The Storybook preview loads the typefaces from `theme/fonts.css`. These specimens use the
+preview's font and weight variables, so they follow the active theme without copying token values.
+
+## Font families
+
+<div style={{ display: 'grid', gap: '1.5rem', color: 'var(--foreground)' }}>
+  <div>
+    <h4 style={{ marginBottom: '0.25rem', color: 'var(--muted-foreground)' }}>Text - `--font-sans`</h4>
+    <p style={{ margin: 0, fontFamily: 'var(--font-sans)' }}>
+      Progress Sans Text - The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+  <div>
+    <h4 style={{ marginBottom: '0.25rem', color: 'var(--muted-foreground)' }}>Display</h4>
+    <p style={{ margin: 0, fontFamily: "'Progress Sans Display', sans-serif" }}>
+      Progress Sans Display - The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+  <div>
+    <h4 style={{ marginBottom: '0.25rem', color: 'var(--muted-foreground)' }}>Code</h4>
+    <p style={{ margin: 0, fontFamily: "'Source Code Pro', monospace" }}>const typography = 'Source Code Pro';</p>
+  </div>
+</div>
+
+## Text weights
+
+<div
+  style={{
+    display: 'grid',
+    gap: '0.75rem',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--foreground)',
+  }}>
+  <p style={{ margin: 0, fontWeight: 'var(--font-weight-normal)' }}>
+    Regular - The quick brown fox jumps over the lazy dog.
+  </p>
+  <p style={{ margin: 0, fontWeight: 'var(--font-weight-medium)' }}>
+    Medium - The quick brown fox jumps over the lazy dog.
+  </p>
+  <p style={{ margin: 0, fontWeight: 'var(--font-weight-bold)' }}>
+    Bold - The quick brown fox jumps over the lazy dog.
+  </p>
+  <p style={{ margin: 0, fontWeight: 'var(--font-weight-extrabold)' }}>
+    Extra bold - The quick brown fox jumps over the lazy dog.
+  </p>
+</div>
+
+## Type hierarchy
+
+<div style={{ color: 'var(--foreground)' }}>
+  <h1 style={{ fontFamily: "'Progress Sans Display', sans-serif" }}>Heading one</h1>
+  <h2 style={{ fontFamily: "'Progress Sans Display', sans-serif" }}>Heading two</h2>
+  <h3 style={{ fontFamily: "'Progress Sans Display', sans-serif" }}>Heading three</h3>
+  <p style={{ fontFamily: 'var(--font-sans)' }}>
+    Body text uses the text family for comfortable reading across paragraphs and interface content.
+  </p>
+  <p style={{ fontFamily: 'var(--font-sans)' }}>
+    Inline code looks like <code style={{ fontFamily: "'Source Code Pro', monospace" }}>font-family</code> in a
+    sentence.
+  </p>
+</div>
