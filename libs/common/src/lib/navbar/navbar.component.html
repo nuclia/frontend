@@ -35,8 +35,7 @@
                 class="nav-link"
                 data-cy="go-to-search"
                 routerLinkActive="active"
-                [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
-                [class.disabled]="invalidKey | async">
+                [routerLink]="kbUrl + '/search'">
                 <pa-icon name="search-plus"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.search' | translate }}</span>
               </a>
