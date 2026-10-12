@@ -6719,27 +6719,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngx-translate/core@npm:^16.0.4":
-  version: 16.0.4
-  resolution: "@ngx-translate/core@npm:16.0.4"
+"@ngx-translate/core@npm:^17":
+  version: 17.0.0
+  resolution: "@ngx-translate/core@npm:17.0.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/common": ">=16"
     "@angular/core": ">=16"
-  checksum: 10/1c03119f2361b3d49a0e14e590e606b6202971d11d52ab9d62c4704821fe21b367bf70a156c0e78d8e53f008d00ca5b39f78b466d4159929e1c7a7947f5e823f
+  checksum: 10/a05b86347675b2e841e9bf598ada046f6563159330dfda821df7231025d1f276be54a4a3748170245e23e98288e509428ed1dd77a80fbb3cb191ee93f22c432a
   languageName: node
   linkType: hard
 
-"@ngx-translate/http-loader@npm:^16.0.1":
-  version: 16.0.1
-  resolution: "@ngx-translate/http-loader@npm:16.0.1"
+"@ngx-translate/http-loader@npm:^17":
+  version: 17.0.0
+  resolution: "@ngx-translate/http-loader@npm:17.0.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/common": ">=16"
     "@angular/core": ">=16"
-  checksum: 10/380b293b75a3dbee482d49cfe2affabc977965dcf0036a01f024049e6046039b1de2adeed9f702ef4839125b3211ed204bd9cf1782643c67c745da735b97421e
+  checksum: 10/e6fe6a03336e8aaab182cf7c29b311490ab7cc2f299c8205355aa1f7b36952f50ae73af19d16f9e7c1fe8127d7694d9a37a74825cf55a640f6dbfb5b09a46bc2
   languageName: node
   linkType: hard
 
@@ -22766,8 +22766,8 @@ __metadata:
     "@eslint/js": "npm:^9.35.0"
     "@ng-web-apis/common": "npm:^2.1.0"
     "@ngneat/spectator": "npm:^22.1.0"
-    "@ngx-translate/core": "npm:^16.0.4"
-    "@ngx-translate/http-loader": "npm:^16.0.1"
+    "@ngx-translate/core": "npm:^17"
+    "@ngx-translate/http-loader": "npm:^17"
     "@nx/angular": "npm:23.2.0"
     "@nx/eslint": "npm:23.2.0"
     "@nx/eslint-plugin": "npm:23.2.0"

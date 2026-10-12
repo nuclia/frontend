@@ -35,8 +35,7 @@ describe('KbHeaderComponent', () => {
         KbHeaderComponent,
         TranslateModule.forRoot({
           loader: { provide: TranslateLoader, useFactory: createTranslateLoader },
-          useDefaultLang: true,
-          defaultLanguage: 'en',
+          fallbackLang: 'en',
         }),
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
