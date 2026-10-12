@@ -6709,7 +6709,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngx-translate/http-loader@npm:18":
+"@ngx-translate/http-loader@npm:^18.0.0":
   version: 18.0.0
   resolution: "@ngx-translate/http-loader@npm:18.0.0"
   dependencies:
@@ -22390,20 +22390,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-translate-multi-http-loader@npm:^18.2.0":
-  version: 18.2.0
-  resolution: "ngx-translate-multi-http-loader@npm:18.2.0"
-  dependencies:
-    tslib: "npm:^2.6.3"
-  peerDependencies:
-    "@angular/common": ">=13.0.0"
-    "@angular/core": ">=13.0.0"
-    "@ngx-translate/core": ">=15.0.0"
-    rxjs: ^7.8.1
-  checksum: 10/b7e4447e9ff26761a94e3c6e7d132e904b5e95d3675f04e65bf09147590a6759f9d4c1d241f70f3cae8eceb3508706b7851cf319016bd297a0a399545b0ab814
-  languageName: node
-  linkType: hard
-
 "no-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "no-case@npm:3.0.4"
@@ -22663,7 +22649,7 @@ __metadata:
     "@ng-web-apis/common": "npm:^2.1.0"
     "@ngneat/spectator": "npm:^22.1.0"
     "@ngx-translate/core": "npm:18"
-    "@ngx-translate/http-loader": "npm:18"
+    "@ngx-translate/http-loader": "npm:^18.0.0"
     "@nx/angular": "npm:23.2.0"
     "@nx/eslint": "npm:23.2.0"
     "@nx/eslint-plugin": "npm:23.2.0"
@@ -22757,7 +22743,6 @@ __metadata:
     ng-mocks: "npm:14.17.3"
     ng-packagr: "npm:22.1.1"
     ng-recaptcha-2: "npm:^22.0.1"
-    ngx-translate-multi-http-loader: "npm:^18.2.0"
     node-fetch: "npm:^3.3.1"
     nodemon: "npm:^2.0.22"
     nx: "npm:23.2.0"
@@ -28106,7 +28091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.6.2, tslib@npm:^2.6.3, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
+"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.6.2, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
