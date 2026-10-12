@@ -16,7 +16,7 @@ describe('SkipOnboardingModalComponent', () => {
     jest.spyOn(modalRef, 'close');
 
     await TestBed.configureTestingModule({
-      imports: [SkipOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule), ,],
+      imports: [SkipOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule)],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(KbOnboardingStateService, {

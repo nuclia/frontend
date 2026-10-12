@@ -16,7 +16,7 @@ describe('RestartOnboardingModalComponent', () => {
     jest.spyOn(modalRef, 'close');
 
     await TestBed.configureTestingModule({
-      imports: [RestartOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule), ,],
+      imports: [RestartOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule)],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(KbOnboardingStateService, {

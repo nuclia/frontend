@@ -16,7 +16,6 @@ describe('AppLayoutComponent', () => {
       imports: [
         AppLayoutComponent,
         RouterModule.forRoot([]),
-        ,
         MockModule(PaAvatarModule),
         MockModule(PaDropdownModule),
         MockModule(PaPopupModule),

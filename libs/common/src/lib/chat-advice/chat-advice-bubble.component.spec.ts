@@ -24,7 +24,6 @@ describe('ChatAdviceBubbleComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
         MockModule(PaTooltipModule),
-        ,
       ],
       providers: [
         MockProvider(TranslateService, {

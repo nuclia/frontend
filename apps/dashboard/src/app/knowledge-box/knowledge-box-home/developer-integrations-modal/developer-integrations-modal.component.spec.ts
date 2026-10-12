@@ -40,7 +40,6 @@ describe('DeveloperIntegrationsModalComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaModalModule),
         MockModule(PaTextFieldModule),
-        ,
       ],
       providers: [
         { provide: ModalRef, useValue: modalRef },
