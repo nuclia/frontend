@@ -77,7 +77,9 @@ export class ManageWidgetsModalComponent {
     map(([widgets, searchConfigs, defaultModel]) => {
       const configs = [{ ...NUCLIA_STANDARD_SEARCH_CONFIG }, ...searchConfigs];
       return configs.flatMap((config) => {
-        const linkedWidgets = widgets.filter((widget) => widget.searchConfigId === config.id);
+        const isDefault = config.id === NUCLIA_STANDARD_SEARCH_CONFIG.id;
+        // The built-in default is listed once: embeds must be created from a saved configuration.
+        const linkedWidgets = isDefault ? [] : widgets.filter((widget) => widget.searchConfigId === config.id);
         return (linkedWidgets.length > 0 ? linkedWidgets : [undefined]).map((widget) => ({
           config,
           displayName:

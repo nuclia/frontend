@@ -77,7 +77,7 @@ import { SearchWidgetService } from '../search-widget.service';
 import { AgenticConfigurationComponent } from './agentic-configuration';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
-import { SaveConfigModalComponent, SaveConfigModalReason } from './save-config-modal/save-config-modal.component';
+import { SaveConfigModalComponent, SaveConfigModalData } from './save-config-modal/save-config-modal.component';
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
@@ -230,6 +230,13 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
    * configuration (see `_persistWidgetDeployment`).
    */
   private currentWidgetOptions = signal<Widget.WidgetConfiguration>(DEFAULT_WIDGET_CONFIG);
+
+  private get savedConfigNames(): string[] {
+    return this.configurations
+      .filter((option): option is OptionModel => option instanceof OptionModel)
+      .map((option) => option.id)
+      .filter((id) => !id.startsWith('nuclia-'));
+  }
 
   get isNucliaConfig() {
     return this.savedConfig?.id.startsWith('nuclia-');
@@ -624,7 +631,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
     if (this.isNucliaConfig) {
       this.modalService
-        .openModal(SaveConfigModalComponent, new ModalConfig<SaveConfigModalReason>({ data: 'default-embed' }))
+        .openModal(
+          SaveConfigModalComponent,
+          new ModalConfig<SaveConfigModalData>({
+            data: { reason: 'default-embed', existingNames: this.savedConfigNames },
+          }),
+        )
         .onClose.pipe(
           filter((configName): configName is string => !!configName),
           switchMap((configName) =>
@@ -714,9 +726,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       this.modalService
         .openModal(
           SaveConfigModalComponent,
-          this.isNucliaConfig
-            ? new ModalConfig<SaveConfigModalReason>({ data: 'default-readonly' })
-            : undefined,
+          new ModalConfig<SaveConfigModalData>({
+            data: {
+              reason: this.isNucliaConfig ? 'default-readonly' : undefined,
+              existingNames: this.savedConfigNames,
+            },
+          }),
         )
         .onClose.pipe(
           filter((confirm) => !!confirm),

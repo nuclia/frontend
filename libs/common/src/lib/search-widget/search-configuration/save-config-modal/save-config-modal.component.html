@@ -16,6 +16,7 @@
       <pa-input
         hasFocus
         [formControl]="name"
+        [errorMessages]="validationMessages.name"
         (enter)="submitName()">
         {{ 'generic.name' | translate }}
       </pa-input>
