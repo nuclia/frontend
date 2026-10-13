@@ -1,18 +1,18 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   ViewChild,
   ViewContainerRef,
-  ChangeDetectionStrategy,
 } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService as PaTranslateService, TranslationEntries } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { RouterOutlet } from '@angular/router';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
@@ -55,7 +55,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private initTranslate(userLocale?: string | null) {
-    this.ngxTranslate.setDefaultLang('en');
+    this.ngxTranslate.setFallbackLang('en');
     const browserLang = this.ngxTranslate.getBrowserLang();
 
     if (userLocale && userLocale !== '') {
@@ -68,7 +68,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
     this.ngxTranslate.onLangChange.pipe(takeUntil(this.unsubscribeAll)).subscribe((event) => {
       localStorage.setItem(userLocaleKey, event.lang);
-      this.paTranslate.initTranslationsAndUse(event.lang, event.translations);
+      this.paTranslate.initTranslationsAndUse(event.lang, event.translations as any as TranslationEntries);
     });
   }
 

@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ARAGSchemas, Driver, NucliaDBDriver } from '@nuclia/core';
 import { JSONSchema4 } from 'json-schema';
+import { NodeCategory, NodeType } from '../../workflow.models';
+import { WorkflowService } from '../../workflow.service';
 import {
   ConfigBlockComponent,
   ConfigBlockItem,
@@ -8,10 +12,6 @@ import {
   NodeBoxComponent,
   NodeDirective,
 } from '../index';
-import { WorkflowService } from '../../workflow.service';
-import { NodeCategory, NodeType } from '../../workflow.models';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ARAGSchemas, Driver, NucliaDBDriver } from '@nuclia/core';
 
 const CONNECTABLES = new Set(['then', 'else_', 'next_agent', 'alternative', 'fallback', 'agents', 'registered_agents']);
 
@@ -30,7 +30,7 @@ interface SchemaEntry {
 
 @Component({
   selector: 'app-dynamic-node',
-  imports: [ConfigBlockComponent, ConnectableEntryComponent, NodeBoxComponent, TranslateModule],
+  imports: [ConfigBlockComponent, ConnectableEntryComponent, NodeBoxComponent, TranslatePipe],
   templateUrl: './dynamic-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

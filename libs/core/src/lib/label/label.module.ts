@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 
 import { FormsModule } from '@angular/forms';
 import {
@@ -20,7 +19,7 @@ import { LabelListComponent } from './label-list/label-list.component';
 @NgModule({
   imports: [
     CommonModule,
-    TranslateModule.forChild(),
+
     PaChipsModule,
     PaButtonModule,
     PaIconModule,

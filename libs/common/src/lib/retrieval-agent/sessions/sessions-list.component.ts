@@ -33,7 +33,7 @@ import {
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { getFilterFromDate, getFilterFromVisibility, Session, SortField, SortOption } from '@nuclia/core';
 import {
   DropdownButtonComponent,
@@ -52,7 +52,7 @@ import { TablePaginationComponent } from '../../resources/resource-list/table-pa
   selector: 'app-sessions-list',
   imports: [
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     InfoCardComponent,
     PaButtonModule,
     PaDropdownModule,

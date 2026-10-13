@@ -4,21 +4,21 @@ import {
   Component,
   computed,
   DestroyRef,
+  DOCUMENT,
   ElementRef,
   inject,
   OnDestroy,
   signal,
   viewChild,
   ViewEncapsulation,
-  DOCUMENT,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { UploadEventService } from '@flaps/core';
 import { filter, map, switchMap } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { DEFAULT_WIDGET_CONFIG } from './search-widget.models';
@@ -27,7 +27,7 @@ import { CreateWidgetDialogComponent } from './widgets';
 
 @Component({
   selector: 'stf-search-page',
-  imports: [CommonModule, TranslateModule, SearchConfigurationComponent, PaIconModule, PaButtonModule],
+  imports: [CommonModule, TranslatePipe, SearchConfigurationComponent, PaIconModule, PaButtonModule],
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss', '_common-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

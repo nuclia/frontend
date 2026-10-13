@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { UploadService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProgressBarComponent, SisModalService } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { UploadProgressDialogComponent } from '../upload-progress/upload-progress-dialog.component';
@@ -12,7 +12,7 @@ import { UploadProgressDialogComponent } from '../upload-progress/upload-progres
   templateUrl: './upload-bar.component.html',
   styleUrls: ['./upload-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, PaButtonModule, ProgressBarComponent, TranslateModule],
+  imports: [CommonModule, PaButtonModule, ProgressBarComponent, TranslatePipe],
 })
 export class UploadBarComponent {
   private modalService = inject(SisModalService);

@@ -15,13 +15,13 @@ import {
   PopupDirective,
   transitionDuration,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
-  ModelInfo,
+  DataResidencyStatus,
   GenerativeProvider,
   GenerativeProviders,
-  DataResidencyStatus,
   LearningConfigurations,
+  ModelInfo,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { map, shareReplay } from 'rxjs';
@@ -40,7 +40,7 @@ import { isGeminiPriorityModel } from '../../ai-models.utils';
     PaTogglesModule,
     PaTooltipModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './model-selector.component.html',
   styleUrls: ['./model-selector.component.scss'],

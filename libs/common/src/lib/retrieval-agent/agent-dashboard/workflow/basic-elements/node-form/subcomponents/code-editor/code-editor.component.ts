@@ -1,22 +1,22 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  Input,
-  signal,
-  OnDestroy,
   ElementRef,
-  ViewChild,
-  AfterViewInit,
   inject,
+  Input,
+  OnDestroy,
+  signal,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { TranslateModule } from '@ngx-translate/core';
-import { JSONSchema4 } from 'json-schema';
-import { Subject, takeUntil, debounceTime } from 'rxjs';
-import DOMPurify from 'dompurify';
-import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SisModalService } from '@nuclia/sistema';
+import DOMPurify from 'dompurify';
+import { JSONSchema4 } from 'json-schema';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { CodeEditorModalComponent } from './code-editor-modal/code-editor-modal.component';
 
 @Component({
@@ -24,7 +24,7 @@ import { CodeEditorModalComponent } from './code-editor-modal/code-editor-modal.
   templateUrl: './code-editor.component.html',
   styleUrls: ['./code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, ReactiveFormsModule, TranslatePipe],
 })
 export class CodeEditorComponent implements OnDestroy, AfterViewInit {
   private modalService = inject(SisModalService);

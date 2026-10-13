@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BadgeComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { map, switchMap, take } from 'rxjs';
+import { PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   AskOperation,
   FIELD_TYPE,
@@ -16,7 +15,8 @@ import {
   TaskApplyTo,
   TaskTrigger,
 } from '@nuclia/core';
-import { PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { BadgeComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { map, switchMap, take } from 'rxjs';
 import { DataAugmentationTaskOnGoing, hasFilters } from '../../tasks-automation.models';
 
 interface Trigger {
@@ -32,7 +32,7 @@ interface Trigger {
     LabelModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
     BadgeComponent,
     ParametersTableComponent,
     InfoCardComponent,

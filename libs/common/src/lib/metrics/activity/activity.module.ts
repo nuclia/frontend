@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
 import {
   PaButtonModule,
@@ -12,9 +11,9 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { InfoCardComponent } from '@nuclia/sistema';
 import { ActivityDownloadComponent } from './activity-download.component';
 import { ActivityLogTableComponent } from './log-table.component';
-import { InfoCardComponent } from '@nuclia/sistema';
 
 const ROUTES = [
   {
@@ -27,7 +26,7 @@ const ROUTES = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    TranslateModule.forChild(),
+
     RouterModule.forChild(ROUTES),
     PaButtonModule,
     PaTabsModule,

@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { BudgetComponent } from '@flaps/common';
+import { STFPipesModule } from '@flaps/core';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -14,24 +14,22 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent, CountrySelectComponent } from '@nuclia/sistema';
-import { STFPipesModule } from '@flaps/core';
-import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 import { CheckoutComponent } from './checkout/checkout.component';
-import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
 import { HistoryComponent } from './history/history.component';
-import { UsageTableComponent } from './usage/usage-table.component';
-import { RedirectComponent } from './redirect.component';
 import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
 import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
+import { RedirectComponent } from './redirect.component';
+import { ReviewComponent } from './review/review.component';
 import { AwsSubscriptionComponent } from './subscriptions/aws-subscription/aws-subscription.component';
 import { ManualSubscriptionComponent } from './subscriptions/manual-subscription/manual-subscription.component';
-import { BudgetComponent } from '@flaps/common';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { UsageTableComponent } from './usage/usage-table.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    TranslateModule.forChild(),
     AngularSvgIconModule,
     ReactiveFormsModule,
     RouterModule,

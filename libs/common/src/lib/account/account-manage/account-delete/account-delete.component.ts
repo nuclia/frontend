@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AccountVerificationService, NavigationService, SDKService, UserService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { map, shareReplay, switchMap, take, tap } from 'rxjs';
 import { OtpInputComponent } from './otp-input/otp-input.component';
@@ -13,7 +13,7 @@ import { OtpInputComponent } from './otp-input/otp-input.component';
   selector: 'app-account-delete',
   imports: [
     AsyncPipe,
-    TranslateModule,
+    TranslatePipe,
     PaModalModule,
     PaButtonModule,
     PaTogglesModule,

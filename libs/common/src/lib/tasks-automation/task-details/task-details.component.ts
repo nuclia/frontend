@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -8,21 +8,21 @@ import {
   PaPopupModule,
   PaTabsModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, StickyFooterComponent } from '@nuclia/sistema';
-import { TaskSettingsComponent } from './task-settings/task-settings.component';
-import { TaskTestingComponent } from './task-testing/task-testing.component';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TaskName } from '@nuclia/core';
+import { SisModalService, StickyFooterComponent } from '@nuclia/sistema';
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
+import { TASK_ICONS } from '../tasks-automation.models';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { TaskExecutionComponent } from './task-execution/task-execution.component';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TASK_ICONS } from '../tasks-automation.models';
+import { TaskSettingsComponent } from './task-settings/task-settings.component';
+import { TaskTestingComponent } from './task-testing/task-testing.component';
 
 @Component({
   imports: [
     CommonModule,
     PaButtonModule,
-    TranslateModule,
+    TranslatePipe,
     PaIconModule,
     PaPopupModule,
     PaDropdownModule,

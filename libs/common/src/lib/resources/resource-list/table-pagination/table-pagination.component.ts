@@ -12,14 +12,14 @@ import {
 } from '@angular/core';
 import { ResourceListService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { RESOURCE_STATUS } from '@nuclia/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-table-pagination',
   standalone: true,
-  imports: [PaButtonModule, PaIconModule, TranslateModule, DropdownButtonComponent, PaDropdownModule],
+  imports: [PaButtonModule, PaIconModule, TranslatePipe, DropdownButtonComponent, PaDropdownModule],
   templateUrl: './table-pagination.component.html',
   styleUrl: './table-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

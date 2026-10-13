@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ExternalConnection } from '@nuclia/core';
 import {
   BackButtonComponent,
@@ -34,7 +34,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
     PaButtonModule,
     PaIconModule,
     StickyFooterComponent,
-    TranslateModule,
+    TranslatePipe,
     ConfigurationFormComponent,
     SpinnerComponent,
     PaTogglesModule,

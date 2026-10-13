@@ -3,13 +3,13 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ResourceWithLabels } from '@flaps/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent, MimeIconPipe } from '@nuclia/sistema';
 import { isMemoryResource } from '../../memory/memory.helpers';
 
 @Component({
   selector: 'stf-title-cell',
-  imports: [RouterModule, PaIconModule, MimeIconPipe, TranslateModule, BadgeComponent],
+  imports: [RouterModule, PaIconModule, MimeIconPipe, TranslatePipe, BadgeComponent],
   templateUrl: './title-cell.component.html',
   styleUrl: './title-cell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

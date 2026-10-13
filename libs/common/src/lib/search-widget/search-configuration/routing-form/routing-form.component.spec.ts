@@ -1,9 +1,9 @@
 import { CommonModule, NO_ERRORS_SCHEMA } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
+import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 
 import { SearchWidgetStorageService } from '../../search-widget-storage.service';
 import { RoutingFormComponent } from './routing-form.component';
@@ -66,7 +66,7 @@ describe('RoutingFormComponent', () => {
       // NO_ERRORS_SCHEMA suppresses all remaining template errors.
       .overrideComponent(RoutingFormComponent, {
         set: {
-          imports: [CommonModule, MockModule(TranslateModule)],
+          imports: [CommonModule, TranslatePipe],
           schemas: [NO_ERRORS_SCHEMA],
         },
       })

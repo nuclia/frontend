@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, signal, computed, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { JSONSchema4, JSONSchema4Type } from 'json-schema';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -18,7 +18,7 @@ let nextId = 0;
   templateUrl: './enum-select.component.html',
   styleUrls: ['./enum-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
 })
 export class EnumSelectComponent implements OnInit, OnDestroy {
   @Input() form!: FormGroup;

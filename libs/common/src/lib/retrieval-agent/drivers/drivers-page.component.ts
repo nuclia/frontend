@@ -1,24 +1,24 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  computed,
+  inject,
   OnDestroy,
   OnInit,
-  inject,
-  computed,
   ViewChild,
-  ChangeDetectorRef,
 } from '@angular/core';
 import {
+  DropdownComponent,
   PaButtonModule,
   PaDropdownModule,
   PaPopupModule,
   PaTableModule,
-  DropdownComponent,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Driver } from '@nuclia/core';
 import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 
 import { DriversService } from './drivers.service';
 
@@ -31,7 +31,7 @@ import { DriversService } from './drivers.service';
     PaTableModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',

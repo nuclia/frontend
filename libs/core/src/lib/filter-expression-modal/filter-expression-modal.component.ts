@@ -14,7 +14,7 @@ import {
   PaPopupModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   And,
   FieldFilterExpression,
@@ -72,7 +72,7 @@ export type KeyValueFilterExpressionWithProps =
     PaModalModule,
     PaPopupModule,
     PaTextFieldModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './filter-expression-modal.component.html',
   styleUrl: './filter-expression-modal.component.scss',

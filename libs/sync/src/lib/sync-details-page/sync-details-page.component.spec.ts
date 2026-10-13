@@ -1,15 +1,25 @@
-import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
-import { SyncDetailsPageComponent } from './sync-details-page.component';
-import { SyncService } from '../logic';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { of } from 'rxjs';
+import { signal } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
-import { TranslateFakeLoader, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { ITranslateService, Language, TranslateService } from '@ngx-translate/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
+import { of } from 'rxjs';
+import { SyncService } from '../logic';
+import { SyncDetailsPageComponent } from './sync-details-page.component';
 
 describe('SyncDetailsPageComponent', () => {
   let spectator: SpectatorRouting<SyncDetailsPageComponent>;
   let syncService: SyncService;
+
+  const fakeTranslateService: Partial<ITranslateService> = {
+    currentLang: signal<Language | null>('en'),
+    fallbackLang: signal<Language | null>('en'),
+    translate: (key: string | string[] | (() => string | string[])) =>
+      signal(`[${typeof key === 'function' ? key() : key}]`),
+    instant: (key: string | string[]) => `[${key as string}]`,
+    get: (key: string | string[]) => of(`[${key as string}]`),
+  };
 
   global.ResizeObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),
@@ -20,17 +30,9 @@ describe('SyncDetailsPageComponent', () => {
   const createService = createRoutingFactory({
     component: SyncDetailsPageComponent,
     params: { syncId: '123' },
-    imports: [
-      TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useClass: TranslateFakeLoader,
-        },
-      }),
-    ],
     mocks: [SisToastService],
     providers: [
-      TranslateService,
+      { provide: TranslateService, useValue: fakeTranslateService as unknown as TranslateService },
       mockProvider(SDKService, {
         currentKb: of({
           id: 'testKb',

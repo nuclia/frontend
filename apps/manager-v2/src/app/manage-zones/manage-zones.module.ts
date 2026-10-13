@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import {
   PaButtonModule,
@@ -9,11 +10,10 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ManageZonesComponent } from './manage-zones.component';
-import { ZoneListComponent } from './zone-list/zone-list.component';
 import { ZoneDetailsComponent } from './zone-details/zone-details.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { ZoneListComponent } from './zone-list/zone-list.component';
 
 const ROUTES: Routes = [
   {
@@ -43,7 +43,7 @@ const ROUTES: Routes = [
     PaTogglesModule,
     ReactiveFormsModule,
     PaScrollModule,
-    TranslateModule,
+    TranslatePipe,
     ManageZonesComponent,
     ZoneDetailsComponent,
     ZoneListComponent,

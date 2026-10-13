@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { switchMap, take } from 'rxjs';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  imports: [PaModalModule, PaButtonModule, PaTogglesModule, TranslateModule],
+  imports: [PaModalModule, PaButtonModule, PaTogglesModule, TranslatePipe],
   templateUrl: './eula-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

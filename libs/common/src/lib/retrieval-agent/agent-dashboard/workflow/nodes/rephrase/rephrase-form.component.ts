@@ -12,23 +12,23 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ARAGSchemas, NucliaDBDriver } from '@nuclia/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ARAGSchemas, NucliaDBDriver } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { JSONSchema4Object } from 'json-schema';
 import { map } from 'rxjs';
+import { DriversService } from '../../../../drivers/drivers.service';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { SynonymsFieldComponent } from '../../basic-elements/node-form/subcomponents';
-import { aragUrl } from '../../workflow.state';
-import { DriversService } from '../../../../drivers/drivers.service';
-import { JSONSchema4Object } from 'json-schema';
 import { ModelFieldComponent } from '../../basic-elements/node-form/subcomponents/model-field/model-field.component';
+import { aragUrl } from '../../workflow.state';
 
 @Component({
   selector: 'app-rephrase-form',
   imports: [
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,

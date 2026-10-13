@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,10 +11,12 @@ import {
   signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ParametersTableComponent, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
 import { ProgressBarComponent } from '@nuclia/sistema';
+import { getFormattedCost } from '../../../../arag.utils';
 import {
   resetTestAgent,
   testAgentAnswers,
@@ -24,9 +27,6 @@ import {
 } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
-import { ParametersTableComponent, SDKService } from '@flaps/core';
-import { CommonModule } from '@angular/common';
-import { getFormattedCost } from '../../../../arag.utils';
 
 @Component({
   selector: 'app-test-panel',
@@ -36,7 +36,7 @@ import { getFormattedCost } from '../../../../arag.utils';
     PaTextFieldModule,
     ChipComponent,
     AgentBlockComponent,
-    TranslateModule,
+    TranslatePipe,
     ProgressBarComponent,
     PaTogglesModule,
     ParametersTableComponent,

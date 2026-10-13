@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaModalModule, TranslateModule],
+  imports: [CommonModule, PaButtonModule, PaModalModule, TranslatePipe],
   template: `
     <pa-modal-advanced
       fitContentHeight

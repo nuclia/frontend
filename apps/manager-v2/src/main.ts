@@ -1,26 +1,16 @@
 import { importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 
 import { registerLocaleData } from '@angular/common';
-import { HttpBackend } from '@angular/common/http';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
-import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
+import { STFConfigModule } from '@flaps/core';
 import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { provideTranslateService, TranslatePipe } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
 import { environment } from './environments/environment';
-
-function createTranslateLoader(http: HttpBackend, config: BackendConfigurationService) {
-  const suffix = `.json?version=${config.getVersion()}`;
-  return new MultiTranslateHttpLoader(http, [
-    { prefix: 'assets/i18n/user/', suffix },
-    { prefix: 'assets/i18n/common/', suffix },
-    { prefix: 'assets/i18n/sync/', suffix },
-  ]);
-}
 
 import localeCa from '@angular/common/locales/ca';
 import localeEn from '@angular/common/locales/en';
@@ -34,13 +24,6 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       BrowserModule,
       STFConfigModule.forRoot(environment),
-      TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useFactory: createTranslateLoader,
-          deps: [HttpBackend, BackendConfigurationService],
-        },
-      }),
       AngularSvgIconModule.forRoot(),
       PaAvatarModule,
       PaDropdownModule,
@@ -49,5 +32,16 @@ bootstrapApplication(AppComponent, {
     TranslatePipe,
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideZonelessChangeDetection(),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        resources: [
+          { prefix: 'assets/i18n/user/', suffix: '.json' },
+          { prefix: 'assets/i18n/common/', suffix: '.json' },
+          { prefix: 'assets/i18n/sync/', suffix: '.json' },
+        ],
+        enforceLoading: true,
+        useHttpBackend: true,
+      }),
+    }),
   ],
 }).catch((err) => console.error(err));

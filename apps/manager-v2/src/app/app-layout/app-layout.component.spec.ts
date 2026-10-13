@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../manager.store';
@@ -17,7 +16,6 @@ describe('AppLayoutComponent', () => {
       imports: [
         AppLayoutComponent,
         RouterModule.forRoot([]),
-        TranslateModule.forRoot(),
         MockModule(PaAvatarModule),
         MockModule(PaDropdownModule),
         MockModule(PaPopupModule),

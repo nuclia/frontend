@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   PaButtonModule,
   PaIconModule,
@@ -15,11 +16,10 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LearningConfigurationForm } from '../../embeddings-model-form';
-import { StickyFooterComponent } from '@nuclia/sistema';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LearningConfigurationOption, LearningConfigurations } from '@nuclia/core';
+import { StickyFooterComponent } from '@nuclia/sistema';
+import { LearningConfigurationForm } from '../../embeddings-model-form';
 
 const MODELS = ['MULTILINGUAL', 'ENGLISH', 'MULTILINGUAL_ALPHA'];
 const DEFAULT_MODEL = 'MULTILINGUAL';
@@ -31,7 +31,7 @@ const DEFAULT_MODEL = 'MULTILINGUAL';
     PaIconModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaPopupModule,
     PaTextFieldModule,
     StickyFooterComponent,

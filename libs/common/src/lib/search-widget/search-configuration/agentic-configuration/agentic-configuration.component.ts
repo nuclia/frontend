@@ -13,7 +13,14 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
-import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import {
+  OptionModel,
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   AgenticConfig,
   AgenticConfigDefaults,
@@ -25,14 +32,7 @@ import {
   SearchConfigs,
   Widget,
 } from '@nuclia/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  PaButtonModule,
-  PaDropdownModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-  OptionModel,
-} from '@guillotinaweb/pastanaga-angular';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { ModelSelectorComponent } from '../../../ai-models';
 
@@ -47,7 +47,7 @@ import { ModelSelectorComponent } from '../../../ai-models';
     PaTextFieldModule,
     PaTogglesModule,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './agentic-configuration.component.html',
   styleUrl: './agentic-configuration.component.scss',

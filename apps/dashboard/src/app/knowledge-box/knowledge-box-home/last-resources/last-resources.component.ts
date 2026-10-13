@@ -13,7 +13,7 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IResource, Resource, RESOURCE_STATUS, SortField } from '@nuclia/core';
 import { MimeIconPipe, SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, startWith, switchMap, take } from 'rxjs';
@@ -31,7 +31,7 @@ import { combineLatest, filter, map, Observable, startWith, switchMap, take } fr
     PaPopupModule,
     PaTableModule,
     PaTabsModule,
-    TranslateModule,
+    TranslatePipe,
     RouterModule,
     PaDateTimeModule,
     PaTooltipModule,

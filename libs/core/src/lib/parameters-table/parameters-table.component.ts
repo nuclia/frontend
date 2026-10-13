@@ -9,9 +9,9 @@ import {
   Output,
 } from '@angular/core';
 
-import { TranslateModule } from '@ngx-translate/core';
-import { PaButtonModule, PaTableModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { PaButtonModule, PaTableModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, distinctUntilChanged, startWith, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -20,14 +20,14 @@ import { combineLatest, distinctUntilChanged, startWith, Subject, takeUntil } fr
   styleUrls: ['parameters-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TranslateModule,
+    TranslatePipe,
     PaTableModule,
     PaTextFieldModule,
     PaButtonModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    PaButtonModule
-],
+    PaButtonModule,
+  ],
 })
 export class ParametersTableComponent implements OnInit, OnDestroy {
   form = new FormGroup({

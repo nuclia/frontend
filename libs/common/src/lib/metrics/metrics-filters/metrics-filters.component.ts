@@ -8,10 +8,9 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { endOfMonth, format, min, parseISO } from 'date-fns';
-import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { MetricsFiltersService } from './metrics-filters.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { endOfMonth, format, min, parseISO } from 'date-fns';
 import {
   BooleanCondition,
   DateCondition,
@@ -21,6 +20,7 @@ import {
   FilterColumnConfig,
   NumericCondition,
 } from './metrics-filters.model';
+import { MetricsFiltersService } from './metrics-filters.service';
 
 @Component({
   selector: 'app-metrics-filters',
@@ -28,7 +28,7 @@ import {
   styleUrl: './metrics-filters.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MetricsFiltersService],
-  imports: [TranslateModule, PaButtonModule, PaTextFieldModule, PaTogglesModule],
+  imports: [TranslatePipe, PaButtonModule, PaTextFieldModule, PaTogglesModule],
 })
 export class MetricsFiltersComponent {
   protected service = inject(MetricsFiltersService);

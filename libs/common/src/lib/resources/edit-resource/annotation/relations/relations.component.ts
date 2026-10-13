@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { BehaviorSubject, combineLatest, forkJoin, map, take, tap } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { TasksAutomationService } from '../../../../tasks-automation';
 
 @Component({
   selector: 'app-relations',
-  imports: [CommonModule, EntityComponent, PaTogglesModule, TranslateModule],
+  imports: [CommonModule, EntityComponent, PaTogglesModule, TranslatePipe],
   templateUrl: './relations.component.html',
   styleUrls: ['./relations.component.scss', '../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -17,7 +17,7 @@ import {
   PaFocusableModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Welcome } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
@@ -44,7 +44,7 @@ interface MenuSection {
 
 @Component({
   selector: 'app-user-menu',
-  imports: [CommonModule, TranslateModule, PaAvatarModule, PaDropdownModule, PaFocusableModule, PaPopupModule],
+  imports: [CommonModule, TranslatePipe, PaAvatarModule, PaDropdownModule, PaFocusableModule, PaPopupModule],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

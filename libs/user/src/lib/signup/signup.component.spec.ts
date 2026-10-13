@@ -12,7 +12,6 @@ import {
   SignupResponse,
   StaticEnvironmentConfiguration,
 } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockComponent, MockProvider } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -51,11 +50,7 @@ describe('SignupComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [
-        SignupComponent,
-        TranslateModule.forRoot(),
-        RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }]),
-      ],
+      imports: [SignupComponent, RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }])],
       declarations: [SignupComponent, MockComponent(UserContainerComponent), MockComponent(SsoButtonsComponent)],
       providers: [
         MockProvider(ReCaptchaV3Service, {

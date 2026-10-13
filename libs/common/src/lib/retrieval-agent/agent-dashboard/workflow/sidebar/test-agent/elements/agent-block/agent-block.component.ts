@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, viewChildren } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { SDKService } from '@flaps/core';
 import { AccordionBodyDirective, AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AragAnswer, AragModule, Driver, IKnowledgeBoxItem, NucliaDBDriver } from '@nuclia/core';
 import { LineBreakFormatterPipe } from '../../../../../../../pipes';
 import { getFormattedCost } from '../../../../../../arag.utils';
 import { AragAnswerUi, NodeCategory } from '../../../../workflow.models';
+import { WorkflowService } from '../../../../workflow.service';
+import { getNodeByAgentId } from '../../../../workflow.state';
 import { AgentContextComponent } from '../agent-context';
 import { AgentStepComponent } from '../agent-step';
 import { BlockquoteComponent } from '../blockquote';
 import { ChipComponent } from '../chip';
-import { getNodeByAgentId } from '../../../../workflow.state';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { SDKService } from '@flaps/core';
-import { WorkflowService } from '../../../../workflow.service';
 
 @Component({
   selector: 'app-agent-block',
@@ -25,7 +25,7 @@ import { WorkflowService } from '../../../../workflow.service';
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './agent-block.component.html',
   styleUrl: './agent-block.component.scss',

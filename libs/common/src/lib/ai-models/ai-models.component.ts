@@ -10,7 +10,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { GenerativeProviders, LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
@@ -31,7 +31,7 @@ import { SummarizationComponent } from './summarization/summarization.component'
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaIconModule,
     PaTabsModule,
     AnswerGenerationComponent,

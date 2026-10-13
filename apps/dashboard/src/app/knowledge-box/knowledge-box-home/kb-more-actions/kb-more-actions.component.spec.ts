@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { MockModule, MockProvider } from 'ng-mocks';
@@ -32,11 +31,6 @@ describe('KbMoreActionsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         KbMoreActionsComponent,
-        TranslateModule.forRoot({
-          loader: { provide: TranslateLoader, useFactory: createTranslateLoader },
-          useDefaultLang: true,
-          defaultLanguage: 'en',
-        }),
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
         MockModule(PaPopupModule),

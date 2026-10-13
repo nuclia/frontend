@@ -7,12 +7,11 @@ import {
   PaModalModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
 // nsi-badge uses ResizeObserver via paEllipsisTooltip
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,10 +33,6 @@ import { KbOnboardingStateService } from './kb-onboarding-state.service';
 import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
 import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 
-function createTranslateLoader() {
-  return { getTranslation: () => of(EN) };
-}
-
 describe('KbOnboardingHeaderComponent', () => {
   let component: KbOnboardingHeaderComponent;
   let fixture: ComponentFixture<KbOnboardingHeaderComponent>;
@@ -49,11 +44,6 @@ describe('KbOnboardingHeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         KbOnboardingHeaderComponent,
-        TranslateModule.forRoot({
-          loader: { provide: TranslateLoader, useFactory: createTranslateLoader },
-          useDefaultLang: true,
-          defaultLanguage: 'en',
-        }),
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
         MockModule(PaModalModule),
@@ -64,6 +54,7 @@ describe('KbOnboardingHeaderComponent', () => {
         MockComponent(UploadButtonComponent),
       ],
       providers: [
+        provideTranslateService({ fallbackLang: 'en' }),
         MockProvider(KbOnboardingStateService, {
           onboardingState$: stateSubject.asObservable(),
           markDone: jest.fn(),
@@ -77,6 +68,22 @@ describe('KbOnboardingHeaderComponent', () => {
         }),
       ],
     }).compileComponents();
+
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', {
+      onboarding: {
+        header: {
+          step1: { title: "Let's upload your data first" },
+          step2: { title: 'Your data is being processed' },
+          step3: { title: "Now let's get some answers from your data" },
+          skipped: {
+            step1: { title: 'You need to upload some data first' },
+            step2: { title: 'Your data is being processed' },
+          },
+        },
+      },
+    });
+    await firstValueFrom(translate.use('en'));
 
     fixture = TestBed.createComponent(KbOnboardingHeaderComponent);
     component = fixture.componentInstance;

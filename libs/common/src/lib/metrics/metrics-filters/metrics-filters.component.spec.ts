@@ -1,7 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MockModule } from 'ng-mocks';
-import { TranslateModule } from '@ngx-translate/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MetricsFiltersComponent } from './metrics-filters.component';
 import { MetricsFiltersService } from './metrics-filters.service';
 
@@ -15,7 +14,7 @@ describe('MetricsFiltersComponent', () => {
     })
       .overrideComponent(MetricsFiltersComponent, {
         set: {
-          imports: [MockModule(TranslateModule)],
+          imports: [TranslatePipe],
           schemas: [CUSTOM_ELEMENTS_SCHEMA],
         },
       })

@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
-import { TranslateService } from '@ngx-translate/core';
 import { RouterOutlet } from '@angular/router';
+import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
+import { TranslateService as PaTranslateService, TranslationEntries } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -61,7 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initTranslate(userLocale?: string) {
-    this.ngxTranslate.setDefaultLang('en');
+    this.ngxTranslate.setFallbackLang('en');
     const browserLang = this.ngxTranslate.getBrowserLang();
 
     if (userLocale && userLocale !== '') {
@@ -74,7 +74,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.ngxTranslate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => this.paTranslate.initTranslationsAndUse(event.lang, event.translations));
+      .subscribe((event) =>
+        this.paTranslate.initTranslationsAndUse(event.lang, event.translations as any as TranslationEntries),
+      );
   }
 
   private preventDefault(e: DragEvent) {

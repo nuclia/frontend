@@ -1,11 +1,11 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  imports: [PaModalModule, TranslateModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
+  imports: [PaModalModule, TranslatePipe, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
   templateUrl: './save-config-modal.component.html',
   styleUrl: './save-config-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

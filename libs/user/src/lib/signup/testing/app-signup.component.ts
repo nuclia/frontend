@@ -1,9 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { injectScript, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { UserContainerComponent } from '../../user-container';
 import { TestingSignupService } from './testing-signup.service';
 
@@ -12,7 +12,7 @@ import { TestingSignupService } from './testing-signup.service';
   templateUrl: './app-signup.component.html',
   styleUrl: './app-signup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, TranslateModule, UserContainerComponent],
+  imports: [CommonModule, PaButtonModule, PaTextFieldModule, TranslatePipe, UserContainerComponent],
   providers: [TestingSignupService],
 })
 export class TestingAppSignupComponent implements OnInit {

@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { TaskApplyTo, TaskName } from '@nuclia/core';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { filter, take } from 'rxjs';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TaskRouteDirective } from '../task-route.directive';
-import { TaskApplyTo, TaskName } from '@nuclia/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { filter, take } from 'rxjs';
 
 @Component({
   imports: [
@@ -16,7 +16,7 @@ import { filter, take } from 'rxjs';
     PaTogglesModule,
     ReactiveFormsModule,
     TaskFormComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './llm-security.component.html',

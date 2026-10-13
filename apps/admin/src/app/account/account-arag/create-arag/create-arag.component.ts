@@ -9,7 +9,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { combineLatest, map, take } from 'rxjs';
 
@@ -22,7 +22,7 @@ import { combineLatest, map, take } from 'rxjs';
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './create-arag.component.html',
   styleUrl: './create-arag.component.scss',

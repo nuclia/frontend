@@ -14,7 +14,6 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
-import { TranslateModule } from '@ngx-translate/core';
 import {
   BackButtonComponent,
   CountrySelectComponent,
@@ -86,7 +85,6 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SisSearchInputComponent,
     ReactiveFormsModule,
     SisLabelModule,
-    TranslateModule.forRoot(),
   ],
   exports: [SistemaSkeletonComponent, SistemaSpinnerComponent],
 })

@@ -2,10 +2,10 @@ import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core
 
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  imports: [PaModalModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaModalModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './rename-widget-dialog.component.html',
   styleUrl: './rename-widget-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

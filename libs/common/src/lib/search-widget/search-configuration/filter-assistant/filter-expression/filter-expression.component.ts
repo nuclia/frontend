@@ -18,7 +18,7 @@ import {
   PaPopupModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonMiniComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -34,7 +34,7 @@ let id = 0;
     ReactiveFormsModule,
     PaTextFieldModule,
     PaButtonModule,
-    TranslateModule,
+    TranslatePipe,
     ButtonMiniComponent,
     PaPopupModule,
     PaDropdownModule,

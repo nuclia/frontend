@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -10,12 +8,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SourceFormDirective } from '../source-form.directive';
 import { ParametersTableComponent } from '@flaps/core';
+import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SourceFormDirective } from '../source-form.directive';
 
 @Component({
   selector: 'nsy-mcp-source',
-  imports: [CommonModule, ParametersTableComponent, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ParametersTableComponent, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
   styleUrl: './../_common-source.scss',
   templateUrl: './mcp-source.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

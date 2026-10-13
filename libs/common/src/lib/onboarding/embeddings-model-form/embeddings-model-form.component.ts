@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -14,10 +15,8 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, take, takeUntil } from 'rxjs';
+import { FeaturesService, getSemanticModels } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -29,9 +28,10 @@ import {
   PaTogglesModule,
   transitionDuration,
 } from '@guillotinaweb/pastanaga-angular';
-import { FeaturesService, getSemanticModels } from '@flaps/core';
-import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LearningConfigurationProperty, LearningConfigurations } from '@nuclia/core';
+import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
+import { Subject, take, takeUntil } from 'rxjs';
 import { DynamicFieldsComponent } from './dynamic-fields.component';
 
 export interface LearningConfigurationForm {
@@ -44,7 +44,7 @@ export interface LearningConfigurationForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaTogglesModule,
     BadgeComponent,
     PaTextFieldModule,

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { SourceFormDirective } from '../source-form.directive';
-import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PerplexitySource } from '@nuclia/core';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { SourceFormDirective } from '../source-form.directive';
 
 @Component({
   selector: 'nsy-perplexity-source',
@@ -14,7 +14,7 @@ import { PerplexitySource } from '@nuclia/core';
     ExpandableTextareaComponent,
     PaTextFieldModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     ExpandableTextareaComponent,
   ],
   styleUrl: './../_common-source.scss',

@@ -1,16 +1,37 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  QueryList,
-  OnDestroy,
-  ViewChildren,
   Input,
+  OnDestroy,
   Output,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { MetricsService, NUCLIA_TOKENS_BILLED_METRIC } from '@flaps/common';
 import { SDKService } from '@flaps/core';
+import {
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionItemComponent,
+  PaExpanderModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import {
+  IKnowledgeBoxItem,
+  KnowledgeBox,
+  LearningConfigurations,
+  NUAClient,
+  NucliaTokensDetails,
+  UsagePoint,
+} from '@nuclia/core';
+import { InfoCardComponent, NsiSkeletonComponent } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -26,27 +47,6 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import {
-  IKnowledgeBoxItem,
-  KnowledgeBox,
-  LearningConfigurations,
-  NUAClient,
-  NucliaTokensDetails,
-  UsagePoint,
-} from '@nuclia/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  AccordionBodyDirective,
-  AccordionComponent,
-  AccordionItemComponent,
-  PaExpanderModule,
-  PaIconModule,
-  PaTableModule,
-  PaTextFieldModule,
-  PaPopupModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent, NsiSkeletonComponent } from '@nuclia/sistema';
-import { MetricsService, NUCLIA_TOKENS_BILLED_METRIC } from '@flaps/common';
 
 const groups = {
   processing: ['sentence', 'extract_tables', 'vllm_extraction', 'token', 'relations'],
@@ -82,7 +82,7 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
     PaTableModule,
     PaTextFieldModule,
     PaPopupModule,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class NucliaTokensComponent implements OnDestroy {

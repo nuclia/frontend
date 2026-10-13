@@ -19,7 +19,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { NodeState } from '../../workflow.models';
 import { ConnectableEntryComponent } from '../connectable-entry/connectable-entry.component';
@@ -29,7 +29,7 @@ let boxIndex = 0;
 
 @Component({
   selector: 'app-node-box',
-  imports: [TranslateModule, PaButtonModule],
+  imports: [TranslatePipe, PaButtonModule],
   templateUrl: './node-box.component.html',
   styleUrl: './node-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

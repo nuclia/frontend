@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { OptionModel, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -10,15 +8,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SourceFormDirective } from '../source-form.directive';
-import { SyncService } from '../../logic';
 import { SDKService } from '@flaps/core';
-import { map, switchMap, take } from 'rxjs';
+import { OptionModel, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { map, switchMap, take } from 'rxjs';
+import { SyncService } from '../../logic';
+import { SourceFormDirective } from '../source-form.directive';
 
 @Component({
   selector: 'nsy-sync-source',
-  imports: [CommonModule, InfoCardComponent, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, InfoCardComponent, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
   styleUrl: './../_common-source.scss',
   templateUrl: './sync-source.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

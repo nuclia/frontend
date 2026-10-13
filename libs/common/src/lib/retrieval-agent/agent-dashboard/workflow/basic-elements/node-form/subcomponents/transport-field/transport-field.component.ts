@@ -14,8 +14,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { Driver, McpSseDriver, McpStdioDriver, McpHttpDriver } from '@nuclia/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Driver, McpHttpDriver, McpSseDriver, McpStdioDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { DriversService } from '../../../../../../drivers/drivers.service';
 import { aragUrl } from '../../../../workflow.state';
@@ -32,7 +32,7 @@ export interface TransportChangeEvent {
 @Component({
   selector: 'app-transport-field',
   standalone: true,
-  imports: [ReactiveFormsModule, PaButtonModule, PaTogglesModule, TranslateModule, RouterLink],
+  imports: [ReactiveFormsModule, PaButtonModule, PaTogglesModule, TranslatePipe, RouterLink],
   templateUrl: './transport-field.component.html',
   styleUrl: './transport-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

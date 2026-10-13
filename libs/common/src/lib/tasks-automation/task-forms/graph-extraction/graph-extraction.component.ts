@@ -1,21 +1,21 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { TaskRouteDirective } from '../task-route.directive';
-import { PaButtonModule, PaIconModule, PaPopupModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GraphOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { STFUtils } from '@flaps/core';
+import { PaButtonModule, PaIconModule, PaPopupModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { GraphOperation, TaskApplyTo, TaskName } from '@nuclia/core';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, map, take } from 'rxjs';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskRouteDirective } from '../task-route.directive';
 
 @Component({
   selector: 'stf-graph-extraction',
   imports: [
     CommonModule,
     TaskFormComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     PaIconModule,
     ReactiveFormsModule,

@@ -15,6 +15,7 @@ import {
   Self,
   SimpleChanges,
 } from '@angular/core';
+import { NgControl, ReactiveFormsModule } from '@angular/forms';
 import {
   ControlModel,
   NativeTextFieldDirective,
@@ -24,10 +25,9 @@ import {
   PaTextFieldModule,
   TextFieldUtilityService,
 } from '@guillotinaweb/pastanaga-angular';
-import { NgControl, ReactiveFormsModule } from '@angular/forms';
 
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent } from '../badge';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'nsi-search-input',
@@ -42,8 +42,8 @@ import { TranslateModule } from '@ngx-translate/core';
     BadgeComponent,
     PaPopupModule,
     PaDropdownModule,
-    TranslateModule
-],
+    TranslatePipe,
+  ],
 })
 export class SisSearchInputComponent
   extends NativeTextFieldDirective

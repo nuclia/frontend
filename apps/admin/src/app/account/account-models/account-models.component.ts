@@ -18,7 +18,7 @@ import {
   PaTableModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ModelConfigurationItem } from '@nuclia/core';
 import {
   SisModalService,
@@ -50,7 +50,7 @@ interface BedrockIntegration extends BedrockStatus {
     PaTableModule,
     PaTooltipModule,
     SpinnerComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './account-models.component.html',

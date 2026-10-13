@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -13,12 +14,11 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { Subject, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs';
-import { ConnectorComponent } from '../connector';
 import { SourcesService } from '../../logic/sources.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ConnectorComponent } from '../connector';
 
 @Component({
   selector: 'nsy-connect',
@@ -35,7 +35,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     PaTogglesModule,
     PaTooltipModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     RouterLink,
   ],
   templateUrl: './connect.component.html',

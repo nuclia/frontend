@@ -1,5 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { LowerCaseInputDirective, NavigationService, SDKService, UserService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -7,14 +11,10 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { Router, RouterLink } from '@angular/router';
-import { LowerCaseInputDirective, NavigationService, SDKService, UserService } from '@flaps/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { forkJoin, map, of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-invite-collaborators-modal',
@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
     PaButtonModule,
     RouterLink,
     PaTogglesModule,
-    TranslateModule,
+    TranslatePipe,
     ReactiveFormsModule,
     LowerCaseInputDirective,
   ],

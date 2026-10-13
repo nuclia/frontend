@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NavigationService, SDKService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -8,14 +9,13 @@ import {
   PaPopupModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { CreateWidgetDialogComponent } from './dialogs';
-import { combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap, take } from 'rxjs';
-import { DEFAULT_RAO_WIDGET_CONFIG, DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
-import { NavigationService, SDKService } from '@flaps/core';
-import { SearchWidgetService } from '../search-widget.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, map, Observable, shareReplay, switchMap, take } from 'rxjs';
+import { DEFAULT_RAO_WIDGET_CONFIG, DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
+import { SearchWidgetService } from '../search-widget.service';
+import { CreateWidgetDialogComponent } from './dialogs';
 
 interface WidgetWithModel extends Widget.Widget {
   generativeModel?: string;
@@ -25,7 +25,7 @@ interface WidgetWithModel extends Widget.Widget {
   selector: 'stf-widget-list',
   imports: [
     CommonModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     InfoCardComponent,
     PaTableModule,

@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { AppService } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -33,11 +32,6 @@ describe('KbHeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         KbHeaderComponent,
-        TranslateModule.forRoot({
-          loader: { provide: TranslateLoader, useFactory: createTranslateLoader },
-          useDefaultLang: true,
-          defaultLanguage: 'en',
-        }),
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
         MockModule(PaPopupModule),

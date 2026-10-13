@@ -1,15 +1,11 @@
-import { NgModule } from '@angular/core';
+import { A11yModule } from '@angular/cdk/a11y';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { A11yModule } from '@angular/cdk/a11y';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { LabelSetsComponent } from './label-sets.component';
-import { LabelSetListComponent } from './label-set-list/label-set-list.component';
-import { ColorPickerComponent, LabelComponent, LabelSetComponent, LabelSetFormComponent } from './label-set';
 import {
   PaButtonModule,
   PaIconModule,
@@ -17,8 +13,11 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelListPipe } from './label-list.pipe';
 import { SisLabelModule } from '@nuclia/sistema';
+import { LabelListPipe } from './label-list.pipe';
+import { ColorPickerComponent, LabelComponent, LabelSetComponent, LabelSetFormComponent } from './label-set';
+import { LabelSetListComponent } from './label-set-list/label-set-list.component';
+import { LabelSetsComponent } from './label-sets.component';
 
 const ROUTES: Routes = [
   {
@@ -41,7 +40,7 @@ const ROUTES: Routes = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    TranslateModule.forChild(),
+
     ReactiveFormsModule,
     RouterModule.forChild(ROUTES),
     DragDropModule,

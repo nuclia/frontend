@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Memory } from '@nuclia/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
@@ -8,7 +8,7 @@ import { BlockquoteComponent } from '../blockquote';
 
 @Component({
   selector: 'stf-agent-context',
-  imports: [LineBreakFormatterPipe, TranslateModule, BlockquoteComponent, PaExpanderModule],
+  imports: [LineBreakFormatterPipe, TranslatePipe, BlockquoteComponent, PaExpanderModule],
   templateUrl: './agent-context.component.html',
   styleUrl: './agent-context.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

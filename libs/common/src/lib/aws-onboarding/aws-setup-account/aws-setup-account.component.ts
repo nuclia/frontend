@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, in
 import { ActivatedRoute } from '@angular/router';
 import { SDKService, STFUtils } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Account, AuthTokens } from '@nuclia/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { switchMap, take, tap } from 'rxjs';
@@ -17,7 +17,7 @@ interface SetupAccountPayload {
 
 @Component({
   selector: 'app-aws-setup-account',
-  imports: [CommonModule, TranslateModule, PaTextFieldModule, PaButtonModule, SpinnerComponent, Step1Component],
+  imports: [CommonModule, TranslatePipe, PaTextFieldModule, PaButtonModule, SpinnerComponent, Step1Component],
   templateUrl: './aws-setup-account.component.html',
   styleUrl: './aws-setup-account.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

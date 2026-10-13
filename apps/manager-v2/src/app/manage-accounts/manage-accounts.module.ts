@@ -1,11 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ManageAccountsComponent } from './manage-accounts.component';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { STFPipesModule } from '@flaps/core';
 import {
   PaButtonModule,
-  PaDateTimeModule,
   PaDatePickerModule,
+  PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -15,29 +16,28 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { InfoCardComponent } from '@nuclia/sistema';
 import { AccountDetailsComponent } from './account-details/account-details.component';
-import { AccountListComponent } from './account-list/account-list.component';
+import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
+import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
 import { ConfigurationComponent } from './account-details/configuration/configuration.component';
 import { ContainersComponent } from './account-details/containers/containers.component';
-import { LimitsComponent } from './account-details/limits/limits.component';
-import { UsersComponent } from './account-details/users/users.component';
 import { KbDetailsComponent } from './account-details/kb-details/kb-details.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
-import { FormFooterComponent } from './form-footer/form-footer.component';
-import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
-import { TokenConsumptionComponent } from './account-details/token-consumption/token-consumption.component';
-import { PaymentLinksComponent } from './account-details/payment-links/payment-links.component';
-import { SubscriptionsComponent } from './account-details/subscriptions/subscriptions.component';
-import { STFPipesModule } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { InfoCardComponent } from '@nuclia/sistema';
-import { AddAccountComponent } from './add-account/add-account.component';
-import { ModelsComponent } from './account-details/models/models.component';
-import { ModelDetailsComponent } from './account-details/models/model-details/model-details.component';
+import { LimitsComponent } from './account-details/limits/limits.component';
 import { AddModelComponent } from './account-details/models/add-model/add-model.component';
+import { ModelDetailsComponent } from './account-details/models/model-details/model-details.component';
+import { ModelsComponent } from './account-details/models/models.component';
+import { PaymentLinksComponent } from './account-details/payment-links/payment-links.component';
 import { ProjectDetailsComponent } from './account-details/projects/project-details.component';
 import { ProjectListComponent } from './account-details/projects/project-list.component';
+import { SubscriptionsComponent } from './account-details/subscriptions/subscriptions.component';
+import { TokenConsumptionComponent } from './account-details/token-consumption/token-consumption.component';
+import { UsersComponent } from './account-details/users/users.component';
+import { AccountListComponent } from './account-list/account-list.component';
+import { AddAccountComponent } from './add-account/add-account.component';
+import { FormFooterComponent } from './form-footer/form-footer.component';
+import { ManageAccountsComponent } from './manage-accounts.component';
 
 const ROUTES: Routes = [
   {
@@ -148,7 +148,7 @@ const ROUTES: Routes = [
     PaDateTimeModule,
     PaDatePickerModule,
     STFPipesModule,
-    TranslateModule,
+    TranslatePipe,
     InfoCardComponent,
     PaTogglesModule,
     ManageAccountsComponent,

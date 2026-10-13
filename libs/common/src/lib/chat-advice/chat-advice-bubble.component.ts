@@ -9,17 +9,17 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FeaturesService } from '@flaps/core';
-import { ChatAdviceService } from './chat-advice.service';
+import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ChatMessage, ChatState } from './chat-advice.models';
+import { ChatAdviceService } from './chat-advice.service';
 
 @Component({
   selector: 'stf-chat-advice-bubble',
-  imports: [RouterLink, TranslateModule, PaButtonModule, PaIconModule, PaTooltipModule],
+  imports: [RouterLink, TranslatePipe, PaButtonModule, PaIconModule, PaTooltipModule],
   host: {
     '[class.minimized]': 'isMinimized()',
   },
