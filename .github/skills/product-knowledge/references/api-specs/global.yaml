@@ -1198,6 +1198,10 @@ components:
           type: boolean
           title: Allow Access Non Enterprise Models
           default: true
+        allow_access_external_models:
+          type: boolean
+          title: Allow Access External Models
+          default: true
         saml_config:
           anyOf:
           - $ref: '#/components/schemas/SAMLConfig'
@@ -1305,6 +1309,11 @@ components:
           - type: boolean
           - type: 'null'
           title: Allow Access Non Enterprise Models
+        allow_access_external_models:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Allow Access External Models
         workflow:
           anyOf:
           - $ref: '#/components/schemas/WorkflowMode'
@@ -1618,6 +1627,10 @@ components:
           type: boolean
           title: Allow Access Non Enterprise Models
           default: true
+        allow_access_external_models:
+          type: boolean
+          title: Allow Access External Models
+          default: true
       type: object
       required:
       - max_kbs
@@ -1792,6 +1805,10 @@ components:
         allow_access_non_enterprise_models:
           type: boolean
           title: Allow Access Non Enterprise Models
+          default: true
+        allow_access_external_models:
+          type: boolean
+          title: Allow Access External Models
           default: true
       type: object
       required:

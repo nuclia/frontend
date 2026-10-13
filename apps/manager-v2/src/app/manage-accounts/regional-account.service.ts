@@ -242,6 +242,7 @@ export class RegionalAccountService {
       created: account.created,
       workflow: account.workflow ?? 'classic',
       allowAccessNonEnterpriseModels: account.allow_access_non_enterprise_models,
+      allowAccessExternalModels: account.allow_access_external_models,
       zoneVisibility: account.zone_visibility ?? 'DEFAULT',
       labels: account.labels,
     };

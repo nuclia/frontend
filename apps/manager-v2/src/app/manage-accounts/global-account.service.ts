@@ -48,6 +48,7 @@ export class GlobalAccountService {
       agents: data.maxAgents,
       workflow: data.workflow ?? undefined,
       allow_access_non_enterprise_models: data.allowAccessNonEnterpriseModels,
+      allow_access_external_models: data.allowAccessExternalModels,
       labels: data.labels,
       zone_visibility: data.zoneVisibility,
     };
