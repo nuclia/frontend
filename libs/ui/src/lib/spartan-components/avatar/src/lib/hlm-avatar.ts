@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { BrnAvatar } from '@spartan-ng/brain/avatar';
-import { classes } from '@nuclia/ui/utils';
+import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
 	selector: 'hlm-avatar',

@@ -13,11 +13,20 @@ interface AvatarStoryArgs {
 const meta: Meta<AvatarStoryArgs> = {
   title: 'Spartan/Avatar',
   component: HlmAvatar,
+  tags: ['autodocs'],
   decorators: [
     moduleMetadata({
       imports: [HlmAvatarFallback, HlmAvatarImage],
     }),
   ],
+  parameters: {
+    docs: {
+      description: {
+        component: `Display a user image with a text fallback when the image is unavailable.
+    Import <code>HlmAvatar</code>, <code>HlmAvatarImage</code>, and <code>HlmAvatarFallback</code> from <code>@nuclia/ui-spartan/avatar</code>; choose from three sizes to fit your layout.`,
+      },
+    },
+  },
   args: {
     size: 'default',
     src: 'https://github.com/shadcn.png',

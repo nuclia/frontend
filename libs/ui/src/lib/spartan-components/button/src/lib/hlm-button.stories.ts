@@ -14,11 +14,20 @@ interface ButtonStoryArgs {
 const meta: Meta<ButtonStoryArgs> = {
   title: 'Spartan/Button',
   component: HlmButton,
+  tags: ['autodocs'],
   decorators: [
     moduleMetadata({
       imports: [HlmButton],
     }),
   ],
+  parameters: {
+    docs: {
+      description: {
+        component: `Style actions and links with consistent variants, sizes, and disabled states.
+    Import <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> and apply <code>hlmBtn</code> to a native button or anchor; icon-only buttons should include an accessible label.`,
+      },
+    },
+  },
   args: {
     variant: 'default',
     size: 'default',

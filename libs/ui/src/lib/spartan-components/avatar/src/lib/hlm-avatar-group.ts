@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui/utils';
+import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
 	selector: '[hlmAvatarGroup],hlm-avatar-group',

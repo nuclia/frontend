@@ -23,7 +23,7 @@ description: >
 dashboard / rao / manager-v2 / admin
 ```
 
-`@nuclia/ui` is a separate Spartan/Helm primitive library with Tailwind utilities. Its component entry points are `@nuclia/ui/avatar`, `@nuclia/ui/button`, and `@nuclia/ui/utils`; see `libs/ui/AGENTS.md` for its exports.
+`@nuclia/ui-spartan` is the Spartan/Helm primitive entrypoint with Tailwind utilities. Import components from `@nuclia/ui-spartan/accordion`, `@nuclia/ui-spartan/avatar`, `@nuclia/ui-spartan/button`, or `@nuclia/ui-spartan/utils`; do not import primitives from the root entrypoints. The `libs/ui` Storybook documents design foundations under `Foundations` (colors and typography) and component stories under `Spartan`; see `libs/ui/AGENTS.md` for its structure.
 
 **Key rule:** Always prefer `SisModalService` / `SisToastService` (from `@nuclia/sistema`) over the
 raw Pastanaga equivalents. They apply opinionated defaults (`cancelAspect: 'basic'`, toast titles).
