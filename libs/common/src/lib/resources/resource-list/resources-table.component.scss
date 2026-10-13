@@ -69,10 +69,28 @@ table {
 .row-container {
   display: flex;
   gap: rhythm(0.5);
+  // Keep labels on one line and scroll within the cell
+  overflow-x: auto;
+  padding-bottom: rhythm(0.5);
+
+  // Non-overlay scrollbar so the thumb can be revealed on hover (see below) instead of only while scrolling
+  @include scrollbar-style(rhythm(1), transparent, transparent, transparent, transparent, rhythm(0.5), 0);
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
-.classification-cell ::ng-deep .pa-table-grid--cell {
-  overflow-x: auto;
+.classification-cell:hover .row-container {
+  @include scrollbar-style(
+    rhythm(1),
+    transparent,
+    transparent,
+    $color-neutral-regular,
+    $color-neutral-regular,
+    rhythm(0.5),
+    0
+  );
 }
 
 .loading-shade {
