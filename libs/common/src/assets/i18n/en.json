@@ -771,6 +771,7 @@
 	"context-box.upload-from-computer": "From your computer",
 	"context-box.upload-from-sharefile": "From ShareFile",
 	"context-box.uploading": "Uploading…",
+	"context-box.uploading-sharefile": "Uploading ShareFile files...",
 	"context-box.your-resources": "Your resources",
 	"dashboard-home.blocked.generative": "Your generative answers quota has been reached",
 	"dashboard-home.blocked.title": "You must upgrade your account",

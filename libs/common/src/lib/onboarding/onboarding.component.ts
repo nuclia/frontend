@@ -134,7 +134,7 @@ export class OnboardingComponent implements OnInit {
       switchMap((account) => {
         this.account = account;
         this.creatingAccount = false;
-        this.cdr.markForCheck;
+        this.cdr.markForCheck();
         // Register the new account in SDKService so zone-scoped API calls (e.g. zone list) work
         return this.sdk.setCurrentAccount(account.slug);
       }),
