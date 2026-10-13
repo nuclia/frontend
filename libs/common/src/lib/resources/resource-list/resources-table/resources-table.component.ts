@@ -83,7 +83,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     {
       id: 'classification',
       label: 'resource.classification-column',
-      size: 'minmax(200px, 1.5fr)',
+      size: '280px',
       optional: true,
     },
     {
