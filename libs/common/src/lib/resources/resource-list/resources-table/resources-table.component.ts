@@ -79,17 +79,17 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   protected override defaultColumns: ColumnHeader[] = [
-    { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: true },
+    { id: 'title', label: 'resource.title', size: 'minmax(200px, 3fr)', sortable: true },
     {
       id: 'classification',
       label: 'resource.classification-column',
-      size: 'minmax(304px, 1fr)',
+      size: 'minmax(200px, 1.5fr)',
       optional: true,
     },
     {
       id: 'created',
       label: 'resource.created',
-      size: '128px',
+      size: '104px',
       sortable: true,
       centered: true,
       optional: true,
@@ -97,7 +97,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     {
       id: 'modified',
       label: 'resource.modified',
-      size: '128px',
+      size: '104px',
       sortable: true,
       centered: true,
       optional: true,
@@ -105,14 +105,14 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     {
       id: 'language',
       label: 'generic.language',
-      size: '112px',
+      size: '88px',
       centered: true,
       optional: true,
     },
     {
       id: 'key-value-fields',
       label: 'resource.field-key_value',
-      size: 'minmax(256px, 1.5fr)',
+      size: 'minmax(176px, 1fr)',
       optional: true,
     },
   ];
@@ -138,10 +138,10 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
         .filter((column) => !column.optional || selectedColumns.includes(column.id));
       const extraColumns: ColumnHeader[] = [];
       if (hiddenResourcesEnabled) {
-        extraColumns.push({ id: 'visibility', label: 'resource.visibility', size: '96px' });
+        extraColumns.push({ id: 'visibility', label: 'resource.visibility', size: '80px' });
       }
       if (canEdit) {
-        extraColumns.push({ id: 'menu', label: 'generic.actions', size: '96px' });
+        extraColumns.push({ id: 'menu', label: 'generic.actions', size: '80px' });
       }
       return [...visibleColumns, ...extraColumns];
     }),
