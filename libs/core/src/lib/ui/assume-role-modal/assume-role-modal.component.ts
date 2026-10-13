@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+// eslint-disable-next-line @nx/enforce-module-boundaries -- importing from this lib's own public API (not a relative self-import issue, just the barrel)
 import { BedrockService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,

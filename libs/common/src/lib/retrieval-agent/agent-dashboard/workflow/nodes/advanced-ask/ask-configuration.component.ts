@@ -23,9 +23,9 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { INITIAL_CITATION_THRESHOLD, RAG_METADATAS, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { CommonModule } from '@angular/common';
 import { FeaturesService } from '@flaps/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries -- absolute path used instead of relative import; same project
 import { JsonValidator } from 'libs/common/src/lib/validators';
 import { map, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { WorkflowService } from '../../workflow.service';

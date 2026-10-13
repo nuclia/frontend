@@ -29,7 +29,7 @@ describe('UsageAnalyticsPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [, UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
+      imports: [UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),
