@@ -4,10 +4,10 @@ import { ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/fo
 import { FeaturesService, HintComponent, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
+import { ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { catchError, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { combineLatest, Observable, Subject, throwError } from 'rxjs';
+import { catchError, filter, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { ExpirationModalComponent, TokenDialogComponent } from '../../token-dialog';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 
@@ -21,10 +21,24 @@ import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 })
 export class ServiceAccessComponent implements OnInit, OnDestroy {
   isTrial = this.features.isTrial;
-  account: Account | undefined;
-  kb: KnowledgeBox | undefined;
   serviceAccess: ServiceAccount[] | undefined;
   expandedSAs: string[] = [];
+  isContextBox = this.sdk.currentAccount.pipe(map((account) => account.workflow === 'cowork'));
+  contextBoxArag = combineLatest([this.sdk.currentAccount, this.sdk.aragList]).pipe(
+    take(1),
+    switchMap(([account, arags]) => {
+      const arag = arags[0];
+      this.sdk.nuclia.options.zone = arag?.zone;
+      return arag
+        ? this.sdk.nuclia.db.getRetrievalAgent(account.id, arag.id, arag.zone)
+        : throwError(() => new Error('No Retrieval Agent found for this Content Box'));
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+  kb = this.isContextBox.pipe(
+    take(1),
+    switchMap((isContextBox) => (isContextBox ? this.contextBoxArag : this.sdk.currentKb)),
+  );
 
   addForm = this.formBuilder.group({
     title: ['', [Validators.required]],
@@ -46,18 +60,9 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
-      .pipe(
-        tap(([account, kb]) => {
-          this.account = account;
-          this.kb = kb;
-        }),
-        switchMap(() => this.updateServiceAccess()),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => {
-        this.cdr?.markForCheck();
-      });
+    this.updateServiceAccess().subscribe(() => {
+      this.cdr?.markForCheck();
+    });
   }
 
   ngOnDestroy() {
@@ -66,7 +71,8 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   }
 
   updateServiceAccess(): Observable<ServiceAccount[]> {
-    return this.sdk.currentKb.pipe(
+    return this.kb.pipe(
+      take(1),
       switchMap((kb) => kb.getServiceAccounts()),
       tap((list) => (this.serviceAccess = list)),
     );
@@ -76,11 +82,11 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
     if (this.addForm.invalid) return;
 
     const data: ServiceAccountCreation = this.addForm.getRawValue();
-    this.sdk.currentKb
+    this.kb
       .pipe(
+        take(1),
         switchMap((kb) => kb.createServiceAccount(data)),
         switchMap(() => this.updateServiceAccess()),
-        take(1),
         tap(() => {
           this.addForm.get('title')?.reset();
           this.cdr?.markForCheck();
@@ -94,11 +100,11 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   }
 
   deleteServiceAccess(sa: ServiceAccount) {
-    this.sdk.currentKb
+    this.kb
       .pipe(
+        take(1),
         switchMap((kb) => kb.deleteServiceAccount(sa.id)),
         switchMap(() => this.updateServiceAccess()),
-        take(1),
       )
       .subscribe(() => {
         this.cdr?.markForCheck();
@@ -113,7 +119,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
     return this.modalService.openModal(ExpirationModalComponent).onClose.pipe(
       filter((expiration) => !!expiration),
       switchMap(({ expiration }) =>
-        this.sdk.currentKb.pipe(
+        this.kb.pipe(
           take(1),
           switchMap((kb) => kb.createKey(id, this.getTimestamp(expiration))),
           tap((data) => this.showToken(data.token)),
@@ -134,11 +140,11 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   }
 
   deleteKey(sa: ServiceAccount, saKey: { id: string }) {
-    this.sdk.currentKb
+    this.kb
       .pipe(
+        take(1),
         switchMap((kb) => kb.deleteKey(sa.id, saKey.id)),
         switchMap(() => this.updateServiceAccess()),
-        take(1),
       )
       .subscribe(() => {
         this.cdr?.markForCheck();
