@@ -61,12 +61,12 @@
       display: flex;
       gap: rhythm(1);
       justify-content: space-between;
-      &:hover {
-        background-color: $color-neutral-lightest;
-      }
       nsi-badge {
         margin: rhythm(0.5);
       }
+    }
+    p.with-hover:hover {
+      background-color: $color-neutral-lightest;
     }
     .labels-container {
       align-items: center;

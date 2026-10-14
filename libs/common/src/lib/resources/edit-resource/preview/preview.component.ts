@@ -64,6 +64,7 @@ import {
   SisModalService,
   SpinnerComponent,
 } from '@nuclia/sistema';
+import DOMPurify from 'dompurify';
 import {
   BehaviorSubject,
   catchError,
@@ -273,15 +274,18 @@ export class PreviewComponent implements OnInit, OnDestroy {
     map(([labels, types]) => labels.length > 0 || types.length > 0),
   );
 
-  renderedParagraphs: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
-    this.paragraphs,
-    this.fieldId,
-    this.editResourceService.fieldExtractedData,
-  ]).pipe(
+  renderedParagraphs: Observable<
+    (ParagraphWithTextAndImage & { url?: Observable<string>; textWithFormat?: string })[]
+  > = combineLatest([this.paragraphs, this.fieldId, this.editResourceService.fieldExtractedData]).pipe(
     map(([paragraphs, fieldType, fieldData]) => {
       paragraphs = paragraphs.sort((a, b) => (a.start || 0) - (b.start || 0));
       if (fieldData && [FIELD_TYPE.file, FIELD_TYPE.link].includes(fieldType.field_type)) {
         return getParagraphsWithImages(paragraphs, fieldData as FileFieldData | LinkFieldData);
+      } else if (fieldType.field_type === 'text') {
+        return paragraphs.map((paragraph) => ({
+          ...paragraph,
+          textWithFormat: DOMPurify.sanitize(paragraph.text.replace(/\n/g, '<br>')),
+        }));
       } else {
         return paragraphs;
       }
