@@ -7,7 +7,6 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
-  OnboardingComponent,
   PageNotFoundComponent,
   rootGuard,
   SelectAccountComponent,
@@ -77,7 +76,6 @@ const routes: Routes = [
   },
   { path: 'user/callback', component: CallbackComponent },
   { path: 'user/login-redirect', component: AppLoginComponent },
-  { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
   // TEMPORARY: expose saml callback for IDP-initiated SAML clients whose RelayState points here.
   // Remove once those clients are updated to use the auth app's URL
   { path: 'user/callbacks/saml', component: CallbackComponent, data: { saml: true } },
@@ -85,7 +83,6 @@ const routes: Routes = [
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
   { path: 'user/test-signup', component: TestingAppSignupComponent },
   { path: 'user/contextbox-signup', component: TemporaryContextBoxSignupComponent },
-  { path: 'user/onboarding', component: OnboardingComponent },
   { path: 'user/set-password', component: SetPasswordComponent },
   {
     path: 'user/login',

@@ -19,6 +19,7 @@ import {
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
   KnowledgeBoxUsersComponent,
+  OnboardingComponent,
   PageNotFoundComponent,
   PreviewComponent,
   ProfileComponent,
@@ -44,9 +45,15 @@ import {
   WorkflowsComponent,
   WorkflowsListComponent,
 } from '@flaps/common';
-import { CallbackComponent, FarewellComponent, FeedbackComponent, RedirectComponent } from '@nuclia/user';
+import {
+  AppLoginComponent,
+  CallbackComponent,
+  FarewellComponent,
+  FeedbackComponent,
+  RedirectComponent,
+} from '@nuclia/user';
 
-import { authGuard } from '@flaps/core';
+import { authGuard, redirectToSignUp } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 
 const routes: Routes = [
@@ -299,6 +306,9 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   { path: 'user/callback', component: CallbackComponent },
+  { path: 'user/login-redirect', component: AppLoginComponent },
+  { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
+  { path: 'user/onboarding', component: OnboardingComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
 

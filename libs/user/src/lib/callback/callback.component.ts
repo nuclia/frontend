@@ -1,13 +1,13 @@
-import { Component, Inject, OnInit, DOCUMENT, ChangeDetectionStrategy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DOCUMENT, inject, OnInit, signal } from '@angular/core';
 
-import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthTokens } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { take } from 'rxjs';
-import { UserContainerComponent } from '../user-container';
-import { TranslateService } from '@ngx-translate/core';
 import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
+import { UserContainerComponent } from '../user-container';
 
 @Component({
   selector: 'stf-user-callback',
@@ -17,21 +17,19 @@ import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
   imports: [UserContainerComponent],
 })
 export class CallbackComponent implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private samlService: SAMLService,
-    private ssoService: SsoService,
-    private config: BackendConfigurationService,
-    @Inject(DOCUMENT) private document: Document,
-    private sdk: SDKService,
-    private router: Router,
-    private toaster: SisToastService,
-    private translate: TranslateService,
-  ) {}
+  private readonly route = inject(ActivatedRoute);
+  private readonly samlService = inject(SAMLService);
+  private readonly ssoService = inject(SsoService);
+  private readonly config = inject(BackendConfigurationService);
+  private readonly document = inject(DOCUMENT);
+  private readonly sdk = inject(SDKService);
+  private readonly router = inject(Router);
+  private readonly toaster = inject(SisToastService);
+  private readonly translate = inject(TranslateService);
 
   // The SDK's auth client subscribes outside Angular's Router/HttpClient-instrumented paths,
   // so this must be a signal to auto-notify the zoneless CD scheduler on write.
-  message = signal<string | undefined>(undefined);
+  readonly message = signal<string | undefined>(undefined);
 
   ngOnInit() {
     const queryParams = this.route.snapshot.queryParams;
