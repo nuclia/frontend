@@ -2,4 +2,9 @@
 
 .setting-up {
   min-height: rhythm(24);
+
+  p {
+    display: flex;
+    justify-content: space-between;
+  }
 }
