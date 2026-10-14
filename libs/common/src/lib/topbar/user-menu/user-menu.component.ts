@@ -354,10 +354,12 @@ export class UserMenuComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    if (this.accountVerification.hasPendingDelete() && this.accountVerification.isRecentlyVerified()) {
-      this.accountVerification.clearPendingDelete();
-      this.modalService.openModal(AccountDeleteComponent);
-    }
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      if (this.accountVerification.hasPendingDelete(account.id) && this.accountVerification.isRecentlyVerified()) {
+        this.accountVerification.clearPendingDelete(account.id);
+        this.modalService.openModal(AccountDeleteComponent);
+      }
+    });
   }
 
   private showNotifications(): void {

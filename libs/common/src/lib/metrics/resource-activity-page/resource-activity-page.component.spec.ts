@@ -21,7 +21,7 @@ describe('ResourceActivityPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [, ResourceActivityPageComponent, MockPipe(CompactNumberPipe)],
+      imports: [ResourceActivityPageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),

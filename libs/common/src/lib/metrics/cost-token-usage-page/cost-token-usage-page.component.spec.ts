@@ -20,7 +20,7 @@ describe('CostTokenUsagePageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [, CostTokenUsagePageComponent, MockPipe(CompactNumberPipe)],
+      imports: [CostTokenUsagePageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),

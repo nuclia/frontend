@@ -98,7 +98,9 @@ export class AccountDeleteComponent implements OnInit {
 
   forceReauth() {
     this.modal.close();
-    this.accountVerification.forceReauth(window.location.href);
+    this.account.pipe(take(1)).subscribe((account) => {
+      this.accountVerification.forceReauth(window.location.href, account.id);
+    });
   }
 
   delete(): void {

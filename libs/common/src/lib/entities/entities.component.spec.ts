@@ -13,7 +13,7 @@ describe('EntitiesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [, MockModule(ReactiveFormsModule), EntitiesComponent],
+      imports: [MockModule(ReactiveFormsModule), EntitiesComponent],
       providers: [
         MockProvider(NerService, {
           entities: of({}),

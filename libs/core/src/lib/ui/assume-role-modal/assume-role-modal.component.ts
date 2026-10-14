@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BedrockService, SDKService } from '@flaps/core';
+import { BedrockService } from '../../api/bedrock.service';
+import { SDKService } from '../../api/sdk.service';
 import {
   AccordionBodyDirective,
   AccordionComponent,
