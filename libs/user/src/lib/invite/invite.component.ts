@@ -19,7 +19,7 @@ export class InviteComponent {
 
   setPassword() {
     this.navigationService.navigateExternal(`${this.navigationService.getAdminOrigin()}/user/set-password`, {
-      withFromApp: true,
+      queryParams: { came_from: this.magicService.cameFrom },
     });
   }
 

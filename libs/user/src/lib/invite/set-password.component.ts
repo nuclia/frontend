@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 
 @Component({
@@ -6,8 +7,15 @@ import { SDKService } from '@flaps/core';
   template: '',
 })
 export class SetPasswordComponent implements OnInit {
-  private sdk = inject(SDKService);
+  private readonly sdk = inject(SDKService);
+  private readonly route = inject(ActivatedRoute);
+
   ngOnInit() {
-    this.sdk.nuclia.auth.redirectToOAuth({ initial_setpassword: true });
+    const cameFrom = this.route.snapshot.queryParams['came_from'];
+    const params: { [key: string]: string | boolean } = { initial_setpassword: true };
+    if (cameFrom) {
+      params['came_from'] = cameFrom;
+    }
+    this.sdk.nuclia.auth.redirectToOAuth(params);
   }
 }
