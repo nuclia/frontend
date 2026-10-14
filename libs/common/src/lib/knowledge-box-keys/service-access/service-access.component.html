@@ -93,7 +93,7 @@
     </div>
   }
 </div>
-@if (isTrial | async) {
+@if ((isTrial | async) && !(isContextBox | async)) {
   <ncom-hint
     label="How to use your API key in the API"
     learnMore="https://docs.nuclia.dev/docs/ingestion/resource#how-to-create-a-resource">

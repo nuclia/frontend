@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { combineLatest, map, shareReplay, switchMap, take } from 'rxjs';
+import { map, shareReplay, switchMap, take } from 'rxjs';
 import { ContextBoxService } from '../context-box/context-box.service';
 
 @Component({
@@ -41,10 +41,10 @@ export class McpEndpointModalComponent {
 
   goToApiKeys() {
     this.modal.close();
-    combineLatest([this.sdk.currentAccount, this.agent])
-      .pipe(take(1))
-      .subscribe(([account, agent]) => {
-        this.navigation.navigateExternal(`${this.navigation.getRetrievalAgentUrl(account.slug, agent.slug)}/keys`);
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      this.navigation.navigateExternal(`${this.navigation.getAccountManageUrl(account.slug)}/home/api-keys`, {
+        withFromApp: true,
       });
+    });
   }
 }
