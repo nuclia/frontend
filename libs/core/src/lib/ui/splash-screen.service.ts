@@ -1,23 +1,18 @@
-import { Inject, Injectable, DOCUMENT } from '@angular/core';
-
-import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
+import { DOCUMENT, inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-
 import { filter, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class STFSplashScreenService {
-  splashScreenEl: any;
-  player: AnimationPlayer | undefined;
+  private readonly _document = inject(DOCUMENT);
+  private readonly _router = inject(Router);
+
+  splashScreenEl: HTMLElement | null = null;
   shown: boolean;
 
-  constructor(
-    private _animationBuilder: AnimationBuilder,
-    @Inject(DOCUMENT) private _document: any,
-    private _router: Router,
-  ) {
+  constructor() {
     // Initialize
     this._init();
     this.shown = false;
@@ -29,7 +24,7 @@ export class STFSplashScreenService {
 
   private _init(): void {
     // Get the splash screen element
-    this.splashScreenEl = this._document.body.querySelector('#stf-splash-screen');
+    this.splashScreenEl = this._document.body.querySelector<HTMLElement>('#stf-splash-screen');
 
     // If the splash screen element exists...
     if (this.splashScreenEl) {
@@ -56,20 +51,7 @@ export class STFSplashScreenService {
 
   show(): void {
     this.shown = true;
-    this.player = this._animationBuilder
-      .build([
-        style({
-          opacity: '0',
-          zIndex: '99999',
-        }),
-        animate('400ms ease', style({ opacity: '1' })),
-      ])
-      .create(this.splashScreenEl);
-
-    setTimeout(() => {
-      this.player?.onStart(() => (this.splashScreenEl.style.display = 'block'));
-      this.player?.play();
-    }, 0);
+    this.splashScreenEl?.classList.remove('stf-splash-screen-hidden');
   }
 
   /**
@@ -77,22 +59,6 @@ export class STFSplashScreenService {
    */
   hide(): void {
     this.shown = false;
-    this.player = this._animationBuilder
-      .build([
-        style({ opacity: '1' }),
-        animate(
-          '400ms ease',
-          style({
-            opacity: '0',
-            zIndex: '-10',
-          }),
-        ),
-      ])
-      .create(this.splashScreenEl);
-
-    setTimeout(() => {
-      this.player?.onDone(() => (this.splashScreenEl.style.display = 'none'));
-      this.player?.play();
-    }, 0);
+    this.splashScreenEl?.classList.add('stf-splash-screen-hidden');
   }
 }
