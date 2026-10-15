@@ -87,8 +87,6 @@ describe('KbOnboardingHeaderComponent', () => {
 
     fixture = TestBed.createComponent(KbOnboardingHeaderComponent);
     component = fixture.componentInstance;
-    // Required signal input must be set before first detectChanges()
-    fixture.componentRef.setInput('kbUrl', '/kb/test');
     fixture.detectChanges();
   }
 

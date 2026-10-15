@@ -1,36 +1,87 @@
 @use 'apps/dashboard/src/variables' as *;
 
-h3 {
-  margin-bottom: rhythm(2);
+.invite-header {
+  align-items: flex-start;
+  display: flex;
+  gap: rhythm(3);
+  justify-content: space-between;
+  margin-bottom: rhythm(3);
+}
+
+.invite-heading {
+  min-width: 0;
+
+  h2 {
+    margin-bottom: rhythm(1);
+  }
 }
 
 .invite-description {
   color: $color-neutral-regular;
   font-size: $font-size-body-m;
-  margin: 0 0 rhythm(2.5);
+  margin: 0;
 }
 
-.users-invite-form {
-  max-width: rhythm(90);
+.warning {
+  max-width: rhythm(60);
 }
 
 .invite-form {
-  margin-bottom: rhythm(6);
+  margin-bottom: rhythm(4);
 }
 
 .paste-emails-row {
   align-items: flex-start;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: rhythm(1.5);
-  grid-template-columns: 1fr auto;
-  margin-bottom: rhythm(3);
+  margin-bottom: rhythm(2);
+  margin-top: rhythm(4);
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  nsi-expandable-textarea {
+    flex: 1 1 rhythm(30);
+    max-width: rhythm(60);
+  }
+}
+
+.invite-batch {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-card;
+  margin-top: rhythm(4);
+  padding: rhythm(2);
+}
+
+.invite-batch-footer {
+  align-items: center;
+  border-top: 1px solid $color-neutral-lighter;
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1.5);
+  margin-top: rhythm(2);
+  padding-top: rhythm(2);
+}
+
+.invite-as {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  margin-left: auto;
+
+  pa-select {
+    min-width: rhythm(18);
+    width: rhythm(20);
+  }
 }
 
 .chips-list {
   display: flex;
   flex-wrap: wrap;
   gap: rhythm(1);
-  margin-top: rhythm(2);
+  margin-top: 0;
 }
 
 .chip-email {
@@ -47,26 +98,8 @@ h3 {
   text-transform: uppercase;
 }
 
-::ng-deep pa-chip-closeable.chip-error {
-  .pa-chip {
-    background: $color-secondary-lightest;
-    border: 2px solid $color-secondary-strong;
-  }
-
-  .chip-status {
-    color: $color-secondary-strong;
-  }
-}
-
-::ng-deep pa-chip-closeable.chip-warning {
-  .pa-chip {
-    background: $color-neutral-lighter;
-    border-color: $color-neutral-regular;
-  }
-
-  .chip-status {
-    color: $color-neutral-regular;
-  }
+:host ::ng-deep .chip-issue .pa-button:not(:disabled) {
+  color: $color-secondary-stronger;
 }
 
 .invite-progress {
@@ -98,40 +131,35 @@ h3 {
 .invite-summary-row {
   align-items: center;
   display: flex;
-  gap: rhythm(1);
-  margin-top: rhythm(2);
-  height: rhythm(5);
+  flex-wrap: wrap;
+  gap: rhythm(3);
+  margin-top: rhythm(1);
+  min-height: rhythm(3);
+}
 
-  .clear-button {
-    color: $color-neutral-regular;
-  }
+.invite-summary-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: rhythm(1);
 }
 
 .invite-summary {
+  align-items: center;
   color: $color-neutral-regular;
+  display: flex;
+  gap: rhythm(1);
+  white-space: nowrap;
+}
+
+.summary-separator {
+  font-weight: $font-weight-bold;
 }
 
 .invite-hint {
   color: $color-neutral-regular;
-  height: rhythm(5);
-
-  .clear-button {
-    color: $color-secondary-strong;
-  }
-}
-
-.invite-summary-row,
-.invite-hint {
-  .clear-button {
-    border: none;
-    background: none;
-    font-weight: $font-weight-semi-bold;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+  height: auto;
 }
 
 .hint-with-action {
@@ -147,19 +175,6 @@ h3 {
 
 .invite-hint-error {
   color: $color-secondary-strong;
-}
-
-.invite-actions-row {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: rhythm(1.5);
-  margin-top: rhythm(2);
-
-  pa-select {
-    min-width: rhythm(18);
-    width: rhythm(20);
-  }
 }
 
 .users-list-header {
@@ -190,21 +205,37 @@ h3 {
 }
 
 @media (max-width: $size-viewport-medium-max) {
+  .invite-header {
+    flex-direction: column;
+  }
+
   .paste-emails-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .invite-summary-row {
     align-items: flex-start;
     flex-direction: column;
+    flex-wrap: wrap;
   }
 
-  .invite-actions-row {
+  .invite-summary-actions {
+    flex-wrap: wrap;
+  }
+
+  .invite-summary {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .invite-batch-footer,
+  .invite-as {
     align-items: stretch;
     flex-direction: column;
+    margin-left: 0;
+  }
 
-    pa-select {
-      width: 100%;
-    }
+  .invite-as pa-select {
+    width: 100%;
   }
 }
