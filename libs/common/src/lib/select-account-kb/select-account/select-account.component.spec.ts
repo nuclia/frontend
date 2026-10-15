@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, SDKService, SelectAccountKbService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
@@ -15,7 +13,7 @@ describe('SelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, RouterModule.forRoot([]), MockModule(PaButtonModule), SelectAccountComponent],
+      imports: [RouterModule.forRoot([]), MockModule(PaButtonModule), SelectAccountComponent],
       providers: [
         {
           provide: SelectAccountKbService,

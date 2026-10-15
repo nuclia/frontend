@@ -22,21 +22,72 @@
 
     img {
       height: auto;
+      margin-inline: auto;
       width: rhythm(26);
     }
   }
+  // Both panels share one grid cell and slide horizontally. The hidden one is made invisible and collapsed
+  // once its slide ends, so it neither takes space nor receives focus.
   .select-content {
-    flex: 1 1 auto;
-    height: fit-content;
-    transition: height $transition-response;
+    display: grid;
+    overflow-x: clip;
 
+    .select-account,
     .outlet-container {
-      opacity: 0;
+      grid-area: 1 / 1;
+      min-width: 0;
     }
 
-    &.select-kb-visible .outlet-container {
-      opacity: 1;
-      transition: opacity $duration-superfast 350ms;
+    .select-account {
+      transition:
+        transform tokens.$slide-transition,
+        opacity tokens.$slide-transition;
+    }
+
+    .outlet-container {
+      max-height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      opacity: 0;
+      transform: translateX(100%);
+      transition:
+        transform tokens.$slide-transition,
+        opacity tokens.$slide-transition,
+        max-height 0s tokens.$slide-duration,
+        visibility 0s tokens.$slide-duration;
+    }
+
+    &.select-kb-visible {
+      .select-account {
+        max-height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateX(-100%);
+        transition:
+          transform tokens.$slide-transition,
+          opacity tokens.$slide-transition,
+          max-height 0s tokens.$slide-duration,
+          visibility 0s tokens.$slide-duration;
+      }
+
+      .outlet-container {
+        max-height: none;
+        overflow: visible;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        transition:
+          transform tokens.$slide-transition,
+          opacity tokens.$slide-transition;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .select-account,
+      .outlet-container {
+        transition: none !important;
+      }
     }
   }
 }

@@ -7,39 +7,40 @@
     </div>
     <div
       class="select-content"
-      [class.select-kb-visible]="selectKb"
-      [@slideInOut]="selectKb">
-      @if (!selectKb) {
-        <div class="select-account">
-          <div class="select-account-list">
-            @for (account of accounts | async; track account.id) {
-              <div class="select-account-item">
-                <a
-                  class="account"
-                  [routerLink]="'/select/' + account.slug"
-                  (click)="selectAccount(account)">
-                  {{ account.title }}
-                  <pa-icon
-                    class="account-arrow"
-                    name="chevron-right"
-                    size="small"></pa-icon>
-                </a>
-              </div>
-            }
-          </div>
-
-          <div class="select-account-footer">
-            <pa-button
-              aspect="basic"
-              (click)="logout()">
-              {{ 'user.logout' | translate }}
-            </pa-button>
-          </div>
+      [class.select-kb-visible]="selectKb">
+      <div
+        class="select-account"
+        [attr.inert]="selectKb ? '' : null">
+        <div class="select-account-list">
+          @for (account of accounts | async; track account.id) {
+            <div class="select-account-item">
+              <a
+                class="account"
+                [routerLink]="'/select/' + account.slug"
+                (click)="selectAccount(account)">
+                {{ account.title }}
+                <pa-icon
+                  class="account-arrow"
+                  name="chevron-right"
+                  size="small"></pa-icon>
+              </a>
+            </div>
+          }
         </div>
-      }
 
-      <div class="outlet-container">
-        <router-outlet></router-outlet>
+        <div class="select-account-footer">
+          <pa-button
+            aspect="basic"
+            (click)="logout()">
+            {{ 'user.logout' | translate }}
+          </pa-button>
+        </div>
+      </div>
+
+      <div
+        class="outlet-container"
+        [attr.inert]="selectKb ? null : ''">
+        <router-outlet (activate)="showKbs(true)"></router-outlet>
       </div>
     </div>
   </div>
