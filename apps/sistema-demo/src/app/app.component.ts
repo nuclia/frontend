@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   AccessibilityPageComponent,
   AccordionItemPageComponent,
@@ -190,6 +190,6 @@ export const menu: IDemoMenuSection[] = [
   standalone: false,
 })
 export class AppComponent {
-  logo = './assets/logos/logo-horizontal.svg';
+  logo = './assets/logos/logo-pdp.svg';
   menu: IDemoMenuSection[] = menu;
 }
