@@ -203,7 +203,7 @@ export class ContextBoxComponent implements OnDestroy {
   onFilesSelected(files: File[] | FileList | DroppedFile[]) {
     const fileTypes = getFilesGroupedByType(files);
     const mediaFilesNotSupported = this.maxMediaFileSize === 1;
-    if (mediaFilesNotSupported) {
+    if (mediaFilesNotSupported && fileTypes.mediaFiles.length > 0) {
       fileTypes.mediaFiles = [];
       this.toaster.warning(this.translate.instant('context-box.no-media-files'));
     }
