@@ -191,21 +191,17 @@
                         </pa-dropdown>
                       </span>
                     </p>
-                  } @else if (currentFieldId?.field_type === 'text') {
+                  } @else {
                     <p [class.with-hover]="hasLabels">
                       <span [innerHTML]="paragraph.textWithFormat"></span>
                     </p>
-                  } @else {
-                    <p>{{ paragraph.text }}</p>
                   }
                 } @else {
                   <p class="with-type with-hover">
                     @if (paragraph.kind === 'TABLE') {
                       <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
-                    } @else if (currentFieldId?.field_type === 'text') {
-                      <span [innerHTML]="paragraph.textWithFormat"></span>
                     } @else {
-                      <span>{{ paragraph.text }}</span>
+                      <span [innerHTML]="paragraph.textWithFormat"></span>
                     }
                     <span
                       [paTooltip]="
