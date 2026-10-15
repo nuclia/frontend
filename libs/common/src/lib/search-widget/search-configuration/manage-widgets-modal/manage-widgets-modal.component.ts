@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { SDKService } from '@flaps/core';
 import {
   ModalConfig,
   ModalRef,
@@ -11,14 +11,13 @@ import {
   PaPopupModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent } from '@nuclia/sistema';
-import { combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
-import { SearchWidgetService } from '../../search-widget.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
-import { RenameWidgetDialogComponent, DuplicateWidgetDialogComponent } from '../../widgets/dialogs';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_WIDGET_CONFIG } from '../../search-widget.models';
+import { SearchWidgetService } from '../../search-widget.service';
+import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from '../../widgets/dialogs';
 
 interface ConfigurationListItem {
   config: Widget.AnySearchConfiguration;
@@ -42,7 +41,7 @@ interface ConfigurationListItem {
   selector: 'stf-manage-widgets-modal',
   imports: [
     CommonModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     PaModalModule,
     InfoCardComponent,

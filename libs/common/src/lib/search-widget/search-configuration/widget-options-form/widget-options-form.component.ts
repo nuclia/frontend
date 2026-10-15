@@ -12,7 +12,7 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BadgeComponent } from '@nuclia/sistema';
 import { startWith, Subject } from 'rxjs';
@@ -26,7 +26,7 @@ import { takeUntil } from 'rxjs/operators';
  */
 @Component({
   selector: 'stf-widget-options-form',
-  imports: [CommonModule, ReactiveFormsModule, PaTogglesModule, PaTextFieldModule, TranslateModule, BadgeComponent],
+  imports: [CommonModule, ReactiveFormsModule, PaTogglesModule, PaTextFieldModule, TranslatePipe, BadgeComponent],
   templateUrl: './widget-options-form.component.html',
   styleUrl: './widget-options-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
