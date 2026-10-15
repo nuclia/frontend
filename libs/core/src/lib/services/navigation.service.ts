@@ -178,9 +178,13 @@ export class NavigationService {
     // `admin` mounts `AccountModule` directly at `/at/:account` — no `/manage` segment needed.
     if (this.inAdminApp) return this.getAccountUrl(accountSlug);
 
+    return `${this.getAdminOrigin()}${this.getAccountUrl(accountSlug)}`;
+  }
+
+  getAdminOrigin(): string {
     // backendConfig.getAdminOrigin() is for local testing only
     const adminOrigin = this.backendConfig.getAdminOrigin() || this.sdk.getOriginForApp('admin');
-    return `${adminOrigin}${this.getAccountUrl(accountSlug)}`;
+    return adminOrigin;
   }
 
   /** Navigates to `url`, which may be same-origin (internal route) or cross-origin (a real

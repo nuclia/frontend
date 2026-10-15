@@ -51,9 +51,6 @@ import {
   FarewellComponent,
   FeedbackComponent,
   RedirectComponent,
-  SetPasswordComponent,
-  TemporaryContextBoxSignupComponent,
-  TestingAppSignupComponent,
 } from '@nuclia/user';
 
 import { authGuard, redirectToSignUp } from '@flaps/core';
@@ -309,20 +306,9 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   { path: 'user/callback', component: CallbackComponent },
-  // TEMPORARY: expose saml callback for IDP-initiated SAML clients whose RelayState points here.
-  // Remove once those clients are updated to use the auth app's URL
-  { path: 'user/callbacks/saml', component: CallbackComponent, data: { saml: true } },
   { path: 'user/login-redirect', component: AppLoginComponent },
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
-  { path: 'user/test-signup', component: TestingAppSignupComponent },
-  { path: 'user/contextbox-signup', component: TemporaryContextBoxSignupComponent },
   { path: 'user/onboarding', component: OnboardingComponent },
-  { path: 'user/set-password', component: SetPasswordComponent },
-  {
-    path: 'user/login',
-    redirectTo: '',
-    pathMatch: 'full',
-  },
   { path: '**', component: PageNotFoundComponent },
 ];
 

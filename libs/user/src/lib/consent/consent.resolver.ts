@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
+import { OAuthConsentData, OAuthService } from '@flaps/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { OAuthConsentData, OAuthService } from '@flaps/core';
 
 export const consentResolver: ResolveFn<OAuthConsentData | null> = (
   route: ActivatedRouteSnapshot,
