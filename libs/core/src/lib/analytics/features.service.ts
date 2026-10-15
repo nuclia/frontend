@@ -117,6 +117,10 @@ export class FeaturesService {
     graphSearch: combineLatest([this.featureFlag.isFeatureAuthorized('graph-search'), this.isEnterpriseOrPro]).pipe(
       map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed),
     ),
+    nuaKeys: combineLatest([this.isTrial, this._account]).pipe(
+      map(([isTrial, account]) => !isTrial && account.type !== 'stash-trial'),
+    ),
+
     showDemoButton: this.featureFlag.isFeatureEnabled('demo-button'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),

@@ -18,4 +18,5 @@ export class AccountConfigurationComponent extends AccountPageBase {
   private features = inject(FeaturesService);
   isModelManagementEnabled = this.features.unstable.modelManagement;
   isNuaGuardManagementEnabled = this.features.unstable.nuaGuardsManagement;
+  isNuaKeyAuthorized = this.features.authorized.nuaKeys;
 }
