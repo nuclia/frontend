@@ -108,6 +108,7 @@ export class UserMenuComponent implements OnInit {
   private readonly isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   private readonly isModelManagementEnabled = this.features.unstable.modelManagement;
   private readonly isNuaGuardManagementEnabled = this.features.unstable.nuaGuardsManagement;
+  private readonly isNuaKeyAuthorized = this.features.authorized.nuaKeys;
 
   private readonly isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
@@ -292,6 +293,7 @@ export class UserMenuComponent implements OnInit {
           icon: 'key',
           dataCy: 'go-to-nua-keys',
           action: () => this.go('configuration/nua'),
+          visible$: this.isNuaKeyAuthorized,
         },
         {
           label: 'navbar.nua-guard',
