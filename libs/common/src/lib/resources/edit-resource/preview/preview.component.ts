@@ -64,6 +64,7 @@ import {
   SisModalService,
   SpinnerComponent,
 } from '@nuclia/sistema';
+import DOMPurify from 'dompurify';
 import {
   BehaviorSubject,
   catchError,
@@ -273,29 +274,24 @@ export class PreviewComponent implements OnInit, OnDestroy {
     map(([labels, types]) => labels.length > 0 || types.length > 0),
   );
 
-  renderedParagraphs: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
-    this.paragraphs,
-    this.fieldId,
-    this.editResourceService.fieldExtractedData,
-  ]).pipe(
-    map(([paragraphs, fieldType, fieldData]) => {
-      paragraphs = paragraphs.sort((a, b) => (a.start || 0) - (b.start || 0));
-      if (fieldData && [FIELD_TYPE.file, FIELD_TYPE.link].includes(fieldType.field_type)) {
-        return getParagraphsWithImages(paragraphs, fieldData as FileFieldData | LinkFieldData);
-      } else {
-        return paragraphs;
-      }
-    }),
-    map((paragraphs) => {
-      return (paragraphs as ParagraphWithTextAndImage[]).map((paragraph) => {
-        if (paragraph.imagePath) {
-          return { ...paragraph, url: this.getGeneratedFileUrl(paragraph.imagePath) };
+  renderedParagraphs: Observable<(ParagraphWithTextAndImage & { url?: Observable<string>; textWithFormat: string })[]> =
+    combineLatest([this.paragraphs, this.fieldId, this.editResourceService.fieldExtractedData]).pipe(
+      map(([paragraphs, fieldType, fieldData]) => {
+        paragraphs = paragraphs.sort((a, b) => (a.start || 0) - (b.start || 0));
+        if (fieldData && [FIELD_TYPE.file, FIELD_TYPE.link].includes(fieldType.field_type)) {
+          return getParagraphsWithImages(paragraphs, fieldData as FileFieldData | LinkFieldData);
         } else {
-          return paragraph;
+          return paragraphs;
         }
-      });
-    }),
-  );
+      }),
+      map((paragraphs) => {
+        return (paragraphs as ParagraphWithTextAndImage[]).map((paragraph) => ({
+          ...paragraph,
+          url: paragraph.imagePath ? this.getGeneratedFileUrl(paragraph.imagePath) : undefined,
+          textWithFormat: DOMPurify.sanitize(paragraph.text.replace(/\n/g, '<br>')),
+        }));
+      }),
+    );
   filteredParagraphs = combineLatest([this.renderedParagraphs, this.selectedTypes, this.selectedLabels]).pipe(
     map(([paragraphs, types, labels]) => {
       if (types.length > 0) {

@@ -159,6 +159,7 @@
             <p>{{ agenticQuestion.agentic_config_id }}</p>
           } @else {
             @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
+              @let hasLabels = paragraph.activeClassifications.length > 0;
               <div class="paragraph-container">
                 @if (paragraph.url) {
                   <p>
@@ -191,14 +192,16 @@
                       </span>
                     </p>
                   } @else {
-                    <p>{{ paragraph.text }}</p>
+                    <p [class.with-hover]="hasLabels">
+                      <span [innerHTML]="paragraph.textWithFormat"></span>
+                    </p>
                   }
                 } @else {
-                  <p class="with-type">
+                  <p class="with-type with-hover">
                     @if (paragraph.kind === 'TABLE') {
                       <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
                     } @else {
-                      <span>{{ paragraph.text }}</span>
+                      <span [innerHTML]="paragraph.textWithFormat"></span>
                     }
                     <span
                       [paTooltip]="
@@ -210,7 +213,7 @@
                     </span>
                   </p>
                 }
-                @if (paragraph.activeClassifications.length > 0) {
+                @if (hasLabels) {
                   <div class="labels-container">
                     <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
                     @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
