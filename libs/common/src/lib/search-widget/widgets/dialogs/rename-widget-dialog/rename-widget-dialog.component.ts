@@ -14,7 +14,7 @@ export class RenameWidgetDialogComponent implements AfterViewInit {
   name = new FormControl<string>('', { validators: [Validators.required], nonNullable: true });
   initialized = false;
 
-  constructor(public modal: ModalRef<{ name: string }>) {}
+  constructor(public modal: ModalRef<{ name: string; entity?: 'configuration' }>) {}
 
   ngAfterViewInit() {
     this.initialized = true;

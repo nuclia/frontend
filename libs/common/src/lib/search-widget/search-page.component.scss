@@ -6,18 +6,100 @@
   display: flex;
 
   .search-preview-container {
+    --preview-content-width: #{rhythm(80)};
+
     display: flex;
     flex-direction: column;
-    gap: $spacing;
+    gap: rhythm(2);
     height: calc(100vh - var(--app-topbar-height));
-    overflow-y: auto;
+    min-width: 0;
+    overflow: hidden;
+    padding-inline: var(--app-layout-padding-right);
     width: 100%;
     transition: width $transition-slide;
+
+    &.mode-page {
+      --preview-content-width: #{rhythm(56)};
+    }
+
+    header {
+      align-self: center;
+      width: min(100%, var(--preview-content-width));
+    }
+
+    .preview-stage {
+      align-items: flex-start;
+      background-color: $color-light-stronger;
+      display: grid;
+      flex: 1;
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      min-height: 0;
+      overflow: hidden;
+      padding: 0 rhythm(5) rhythm(5);
+      position: relative;
+
+      // A transformed ancestor is the containing block for the widget's fixed popup/FAB elements.
+      // This keeps every preview mode inside the stage instead of underneath the config panel.
+      transform: translateZ(0);
+
+      &.dark-mode {
+        --custom-container-background-color: #{$color-dark-stronger};
+
+        background-color: $color-dark-stronger;
+      }
+
+      &.mode-page {
+        overflow-y: auto;
+        padding-top: rhythm(1.5);
+
+        .preview-content {
+          width: min(100%, var(--preview-content-width));
+        }
+      }
+
+      &.mode-chat {
+        --custom-height-container: min(#{rhythm(70)}, calc(100vh - var(--app-topbar-height) - #{rhythm(18)}));
+        --custom-margin-side-input-container: auto;
+        --custom-width-input-container: 100%;
+
+        overflow-y: auto;
+
+        .preview-content {
+          width: min(100%, var(--preview-content-width));
+        }
+      }
+
+      &.mode-popup {
+        align-items: center;
+
+        .preview-content {
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      &.mode-floating-chat {
+        .preview-content {
+          height: 100%;
+          max-width: none;
+        }
+      }
+    }
 
     .preview-content {
       display: flex;
       flex-direction: column;
       gap: $spacing;
+      min-width: 0;
+      width: 100%;
+
+      nuclia-chat,
+      nuclia-search-bar,
+      nuclia-search-results {
+        display: block;
+        width: 100%;
+      }
     }
 
     &.panel-open {
@@ -44,6 +126,9 @@
 
   .search-configuration-container {
     background-color: $color-light-stronger;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
     height: calc(100vh - var(--app-topbar-height));
     overflow-y: auto;
     padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom);
@@ -57,11 +142,26 @@
       transform: translateX(var(--panel-width));
     }
 
-    .close-button {
-      display: block;
-      position: absolute;
-      right: var(--app-layout-padding-right);
-      top: rhythm(2);
+    .configuration-drawer-header {
+      align-items: center;
+      display: flex;
+      flex: 0 0 auto;
+      gap: rhythm(2);
+      justify-content: flex-end;
+
+      .modification-warning {
+        flex: 1 1 auto;
+        margin-right: auto;
+        min-width: 0;
+        padding: rhythm(0.5) rhythm(1.5);
+
+        &::ng-deep .body-s,
+        &::ng-deep .body-m {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
 
     /* Resizer area is 2px each side of the border to make it easily clickable */

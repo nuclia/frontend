@@ -1,9 +1,19 @@
 <pa-modal-dialog>
   <pa-modal-title>
-    {{ 'search.widgets.dialog.duplicate-as-new.title' | translate: { name: modal.config.data?.name || '' } }}
+    {{
+      (modal.config.data?.entity === 'configuration'
+        ? 'search.configuration.duplicate-dialog.title'
+        : 'search.widgets.dialog.duplicate-as-new.title'
+      ) | translate: { name: modal.config.data?.name || '' }
+    }}
   </pa-modal-title>
   <pa-modal-description>
-    {{ 'search.widgets.dialog.duplicate-as-new.description' | translate }}
+    {{
+      (modal.config.data?.entity === 'configuration'
+        ? 'search.configuration.duplicate-dialog.description'
+        : 'search.widgets.dialog.duplicate-as-new.description'
+      ) | translate
+    }}
   </pa-modal-description>
 
   <pa-modal-content>

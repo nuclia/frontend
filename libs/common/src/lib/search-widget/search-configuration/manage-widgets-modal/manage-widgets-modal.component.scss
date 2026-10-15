@@ -1,0 +1,42 @@
+@use 'apps/dashboard/src/variables' as *;
+
+pa-modal-title {
+  white-space: nowrap;
+}
+
+.dialog-title-with-button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+:host ::ng-deep pa-modal-dialog .pa-modal.pa-modal-dialog {
+  width: min(1120px, calc(100vw - rhythm(6)));
+}
+
+pa-modal-content {
+  width: 100%;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.table-link {
+  @include body-s();
+  background: none;
+  border: none;
+  color: $color-dark-stronger;
+  cursor: pointer;
+  font-weight: $font-weight-semi-bold;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+}
+
+pa-table {
+  .title-xxs,
+  pa-button ::ng-deep svg {
+    color: $color-neutral-regular;
+  }
+}

@@ -1,5 +1,15 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{ 'search.widgets.dialog.code-snippet.title' | translate }}</pa-modal-title>
+  <pa-modal-title>
+    <div class="dialog-title-with-button">
+      {{ 'search.widgets.dialog.code-snippet.title' | translate }}
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        (click)="modal.close()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-title>
   <pa-modal-description>{{ 'search.widgets.dialog.code-snippet.description' | translate }}</pa-modal-description>
   <pa-modal-content>
     <pre><code>{{synchronize ? synchSnippet : snippet}}</code></pre>

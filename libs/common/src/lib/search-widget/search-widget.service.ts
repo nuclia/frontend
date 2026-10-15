@@ -86,14 +86,16 @@ export class SearchWidgetService {
     }
   }
 
-  saveSearchConfig(kbId: string, name: string, config: Widget.AnySearchConfiguration) {
+  saveSearchConfig(kbId: string, name: string, config: Widget.AnySearchConfiguration, select = true) {
     return this.searchWidgetStorage.storeSearchConfig(name, config).pipe(
       catchError((error) => {
         this.toaster.error('search.configuration.save-error');
         throw error;
       }),
       tap(() => {
-        this.saveSelectedSearchConfig(kbId, name);
+        if (select) {
+          this.saveSelectedSearchConfig(kbId, name);
+        }
       }),
     );
   }
@@ -107,6 +109,17 @@ export class SearchWidgetService {
     return this.searchWidgetStorage.deleteSearchConfig(configId);
   }
 
+  confirmDeleteSearchConfiguration(configId: string) {
+    return this.modalService
+      .openConfirm({
+        title: this.translate.instant('search.configuration.delete-config-confirm.title', { configName: configId }),
+        description: 'search.configuration.delete-config-confirm.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(map((confirmed) => !!confirmed));
+  }
+
   generateWidgetSnippet(
     currentConfig: Widget.AnySearchConfiguration,
     widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
@@ -114,6 +127,15 @@ export class SearchWidgetService {
     scrollContainer?: string,
   ) {
     this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions, widgetId, scrollContainer });
+  }
+
+  generateWidgetSnippetForEmbed(
+    currentConfig: Widget.AnySearchConfiguration,
+    widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+    widgetId?: string,
+    scrollContainer?: string,
+  ) {
+    return this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer);
   }
 
   private _generateWidgetSnippet(
@@ -412,6 +434,17 @@ export class SearchWidgetService {
         filter((confirmed) => !!confirmed),
         switchMap(() => this._deleteWidget(slug)),
       );
+  }
+
+  deleteWidgetsForSearchConfig(searchConfigId: string) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) =>
+        this.searchWidgetStorage.storeWidgets(
+          storedWidgets.filter((widget) => widget.searchConfigId !== searchConfigId),
+        ),
+      ),
+    );
   }
 
   private _deleteWidget(slug: string) {

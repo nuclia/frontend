@@ -1,0 +1,116 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    <div class="dialog-title-with-button">
+      {{ 'search.configuration.manage-embeds-modal.title' | translate }}
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        (click)="modal.close()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-title>
+  <pa-modal-description>{{ 'search.configuration.manage-embeds-modal.description' | translate }}</pa-modal-description>
+
+  <pa-modal-content>
+    @if (emptyList | async) {
+      <nsi-info-card>{{ 'search.configuration.manage-embeds-modal.empty' | translate }}</nsi-info-card>
+    } @else {
+      <pa-table
+        border
+        columns="minmax(180px, 1.25fr) minmax(140px, 1.25fr) minmax(120px, 1fr) minmax(150px, 1.35fr) minmax(110px, 1fr) 96px">
+        <pa-table-header>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">
+              {{ 'search.configuration.manage-embeds-modal.name-column' | translate }}
+            </span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.model' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">
+              {{ 'search.configuration.manage-embeds-modal.search-mode-column' | translate }}
+            </span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">
+              {{ 'search.configuration.manage-embeds-modal.experience-column' | translate }}
+            </span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.date' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs no-wrap">{{ 'search.widgets.table-columns.actions' | translate }}</span>
+          </pa-table-cell>
+        </pa-table-header>
+
+        @for (item of configurationList | async; track item.widget?.slug ?? item.config.id) {
+          <pa-table-row>
+            <pa-table-cell>
+              <button
+                type="button"
+                class="table-link"
+                (click)="selectConfiguration(item)">
+                {{ item.displayName }}
+              </button>
+            </pa-table-cell>
+            <pa-table-cell>
+              @if (item.generativeModel) {
+                <span class="body-s">
+                  {{ (modelNames | async)?.[item.generativeModel] || item.generativeModel }}
+                </span>
+              }
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                {{ 'search.configuration.search-mode.' + item.searchMode | translate }}
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                {{
+                  (item.widgetMode
+                    ? 'search.widgets.form.widget-options.style.' + item.widgetMode
+                    : 'search.configuration.manage-embeds-modal.not-embedded'
+                  ) | translate
+                }}
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              @if (item.creationDate) {
+                <span class="body-s no-wrap"><pa-datetime [datetime]="item.creationDate"></pa-datetime></span>
+              }
+            </pa-table-cell>
+            <pa-table-cell-menu center>
+              @if (!item.builtIn) {
+                <pa-button
+                  icon="more-vertical"
+                  aspect="basic"
+                  size="small"
+                  [paPopup]="itemMenu">
+                  {{ 'search.widgets.action.list-item-menu' | translate }}
+                </pa-button>
+
+                <pa-dropdown #itemMenu>
+                  <pa-option (selectOption)="rename(item)">
+                    {{ 'search.widgets.action.rename' | translate }}
+                  </pa-option>
+                  <pa-option (selectOption)="duplicateAsNew(item)">
+                    {{ 'search.widgets.action.duplicate' | translate }}
+                  </pa-option>
+                  <pa-option
+                    destructive
+                    (selectOption)="delete(item)">
+                    {{ 'search.widgets.action.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
+              }
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    }
+  </pa-modal-content>
+</pa-modal-dialog>

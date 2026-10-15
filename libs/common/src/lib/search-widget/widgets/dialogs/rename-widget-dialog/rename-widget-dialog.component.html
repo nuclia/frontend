@@ -1,7 +1,19 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{ 'search.widgets.dialog.rename-widget.title' | translate }}</pa-modal-title>
+  <pa-modal-title>
+    {{
+      (modal.config.data?.entity === 'configuration'
+        ? 'search.configuration.rename-dialog.title'
+        : 'search.widgets.dialog.rename-widget.title'
+      ) | translate
+    }}
+  </pa-modal-title>
   <pa-modal-description>
-    {{ 'search.widgets.dialog.rename-widget.description' | translate: { name: modal.config.data?.name || '' } }}
+    {{
+      (modal.config.data?.entity === 'configuration'
+        ? 'search.configuration.rename-dialog.description'
+        : 'search.widgets.dialog.rename-widget.description'
+      ) | translate: { name: modal.config.data?.name || '' }
+    }}
   </pa-modal-description>
 
   <pa-modal-content>

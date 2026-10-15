@@ -36,18 +36,8 @@
                 data-cy="go-to-search"
                 routerLinkActive="active"
                 [routerLink]="kbUrl + '/search'">
-                <pa-icon name="search"></pa-icon>
-                <span class="nav-link-title">{{ 'search.title' | translate }}</span>
-              </a>
-              <a
-                data-analytics-id="navbar-enter-widgets"
-                [routerLink]="(isKbAdmin | async) ? kbUrl + '/widgets' : null"
-                routerLinkActive="active"
-                class="nav-link"
-                data-cy="go-to-widget"
-                [class.disabled]="!(isKbAdmin | async)">
-                <pa-icon name="widget"></pa-icon>
-                <span class="nav-link-title">{{ 'search.widgets.title' | translate }}</span>
+                <pa-icon name="search-plus"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.search' | translate }}</span>
               </a>
             </div>
           </div>

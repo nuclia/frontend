@@ -109,6 +109,10 @@ const routes: Routes = [
                 component: SearchPageComponent,
               },
               {
+                path: 'search/:widgetSlug',
+                component: SearchPageComponent,
+              },
+              {
                 path: 'metrics',
                 canActivate: [knowledgeBoxOwnerGuard],
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.MetricsModule),
@@ -144,8 +148,12 @@ const routes: Routes = [
               },
               {
                 path: 'widgets',
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.WIDGETS_ROUTES),
-                canActivate: [knowledgeBoxOwnerGuard],
+                pathMatch: 'full',
+                redirectTo: 'search',
+              },
+              {
+                path: 'widgets/:slug',
+                redirectTo: 'search/:slug',
               },
               {
                 path: 'rag-lab',
