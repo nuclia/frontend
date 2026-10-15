@@ -10,6 +10,7 @@ import { KVSchema, KVValue } from '@nuclia/core';
   styleUrl: './key-value-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PaTableModule, KeyValuePipe],
+  providers: [DatePipe],
 })
 export class KeyValueFieldComponent {
   fieldId = input<string>();
