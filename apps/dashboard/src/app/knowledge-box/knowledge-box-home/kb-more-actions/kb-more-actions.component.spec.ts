@@ -3,7 +3,6 @@ import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/
 import { SisModalService } from '@nuclia/sistema';
 import { MockModule, MockProvider } from 'ng-mocks';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
 import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
 import { TestPageModalComponent } from '../test-page-modal/test-page-modal.component';
@@ -43,8 +42,8 @@ describe('KbMoreActionsComponent', () => {
   it('should show only developer integrations and test page options without a settings link', () => {
     const options: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('pa-option');
     expect(options).toHaveLength(2);
-    expect(options[0].textContent).toContain(EN['home.developer-integrate.title']);
-    expect(options[1].textContent).toContain(EN['dashboard-home.kb-details.test-page']);
+    expect(options[0].textContent.trim()).toContain('home.developer-integrate.title');
+    expect(options[1].textContent.trim()).toContain('dashboard-home.kb-details.test-page');
     expect(fixture.nativeElement.querySelector('[routerLink], a')).toBeNull();
   });
 
