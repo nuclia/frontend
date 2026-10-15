@@ -8,20 +8,18 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { NavigationStart, Router, RouterLink, RouterOutlet, Scroll } from '@angular/router';
+import { NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { BrandService, SDKService, SelectAccountKbService, StaticEnvironmentConfiguration } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
 import { filter, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { selectAnimations } from '../utils';
 
 @Component({
   selector: 'app-select-account',
   templateUrl: './select-account.component.html',
   styleUrls: ['./select-account.component.scss'],
-  animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, PaIconModule, PaButtonModule, RouterOutlet, AsyncPipe, TranslatePipe],
 })
@@ -44,21 +42,20 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // Going back to the account list can slide right away, the list is already rendered
     this.router.events
       .pipe(
-        filter((event) => event instanceof NavigationStart || event instanceof Scroll),
+        filter((event) => event instanceof NavigationStart && event.url === '/select'),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((event) => {
-        // Good animation is done using NavigationStart,
-        // but we also listen to Scroll event because NavigationStart isn't triggered when loading a page directly
-        if (event instanceof NavigationStart) {
-          this.selectKb = event.url !== '/select';
-        } else {
-          this.selectKb = (event as Scroll).routerEvent.url !== '/select';
-        }
-        this.cdr.markForCheck();
-      });
+      .subscribe(() => this.showKbs(false));
+  }
+
+  // Going forward waits for the outlet content: it only exists once the route guards have loaded the KB list,
+  // so sliding earlier would show an empty panel that then pops in.
+  showKbs(visible: boolean) {
+    this.selectKb = visible;
+    this.cdr.markForCheck();
   }
 
   logout() {
