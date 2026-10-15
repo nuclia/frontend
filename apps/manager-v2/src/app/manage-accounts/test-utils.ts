@@ -33,5 +33,6 @@ export const ACCOUNT_DETAILS: AccountDetails = {
     },
   },
   allowAccessNonEnterpriseModels: false,
+  allowAccessExternalModels: true,
   labels: null,
 };
