@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -8,17 +9,16 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { NotificationUI } from '../notification.model';
-import { NotificationComponent } from '../notification/notification.component';
 import { NotificationService } from '../notification.service';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'stf-notifications-panel',
-  imports: [CommonModule, TranslateModule, PaButtonModule, NotificationComponent],
+  imports: [CommonModule, TranslatePipe, PaButtonModule, NotificationComponent],
   templateUrl: './notifications-panel.component.html',
   styleUrl: './notifications-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

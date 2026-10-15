@@ -1,13 +1,13 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input, numberAttribute } from '@angular/core';
 
-import { ChartsModule, ChartData } from '@flaps/common';
+import { ChartData, ChartsModule } from '@flaps/common';
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kb-usage-charts',
   standalone: true,
-  imports: [ChartsModule, TranslateModule],
+  imports: [ChartsModule, TranslatePipe],
   templateUrl: './usage-charts.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

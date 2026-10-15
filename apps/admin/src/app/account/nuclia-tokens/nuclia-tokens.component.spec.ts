@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService } from '@flaps/core';
-import { IKnowledgeBoxItem } from '@nuclia/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
 import { MetricsService } from '@flaps/common';
+import { SDKService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
+import { IKnowledgeBoxItem } from '@nuclia/core';
+import { MockProvider } from 'ng-mocks';
+import { BehaviorSubject, of } from 'rxjs';
 import { NucliaTokensComponent } from './nuclia-tokens.component';
 
 const mockKb = (id: string): IKnowledgeBoxItem =>
@@ -19,7 +19,7 @@ describe('NucliaTokensComponent', () => {
     sdkKbList$ = new BehaviorSubject<IKnowledgeBoxItem[]>([]);
 
     await TestBed.configureTestingModule({
-      imports: [NucliaTokensComponent, MockModule(TranslateModule)],
+      imports: [NucliaTokensComponent],
       providers: [
         MockProvider(SDKService, {
           kbList: sdkKbList$ as any,

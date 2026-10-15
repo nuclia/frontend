@@ -1,20 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DateAfter, SearchWidgetService } from '@flaps/common';
+import { FeatureFlagService, SDKService } from '@flaps/core';
 import {
   ModalRef,
+  PaButtonModule,
+  PaDatePickerModule,
   PaDropdownModule,
   PaModalModule,
-  PaDatePickerModule,
-  PaTextFieldModule,
-  PaButtonModule,
   PaPopupModule,
+  PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { DateAfter, SearchWidgetService } from '@flaps/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeatureFlagService, SDKService } from '@flaps/core';
-import { forkJoin, map, of, switchMap, take } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { forkJoin, map, of, switchMap, take } from 'rxjs';
 
 @Component({
   imports: [
@@ -26,7 +26,7 @@ import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
     PaModalModule,
     PaTextFieldModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaPopupModule,
   ],
   templateUrl: './test-page-modal.component.html',

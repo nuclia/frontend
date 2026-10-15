@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,20 +9,19 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ARAGSchemas, BaseContextAgent, ChatOptions, SearchOptions, Widget } from '@nuclia/core';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { JSONSchema4 } from 'json-schema';
+import { debounceTime, defer, map, of, shareReplay, startWith, switchMap, tap } from 'rxjs';
+import { getChatOptions, getFindOptions, getSearchConfigFromSearchOptions } from '../../../../../search-widget';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { DriverSelectComponent } from '../../basic-elements/node-form/subcomponents/driver-select';
-import { JSONSchema4 } from 'json-schema';
-import { AskConfigurationComponent } from './ask-configuration.component';
-import { getChatOptions, getFindOptions, getSearchConfigFromSearchOptions } from '../../../../../search-widget';
-import { debounceTime, defer, map, of, shareReplay, startWith, switchMap, tap } from 'rxjs';
-import { WorkflowService } from '../../workflow.service';
-import { InfoCardComponent } from '@nuclia/sistema';
 import { ModelFieldComponent } from '../../basic-elements/node-form/subcomponents/model-field/model-field.component';
+import { WorkflowService } from '../../workflow.service';
+import { AskConfigurationComponent } from './ask-configuration.component';
 
 @Component({
   selector: 'app-advanced-ask-form',
@@ -37,7 +37,7 @@ import { ModelFieldComponent } from '../../basic-elements/node-form/subcomponent
     PaTogglesModule,
     ReactiveFormsModule,
     RulesFieldComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './advanced-ask-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

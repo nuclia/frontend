@@ -20,15 +20,14 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { INITIAL_CITATION_THRESHOLD, RAG_METADATAS, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { JsonValidator } from 'libs/common/src/lib/validators';
-import { WorkflowService } from '../../workflow.service';
 import { CommonModule } from '@angular/common';
-import { map, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { FeaturesService } from '@flaps/core';
+import { JsonValidator } from '../../../../../validators';
+import { map, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { WorkflowService } from '../../workflow.service';
 
 @Component({
   selector: 'app-ask-configuration',
@@ -45,7 +44,7 @@ import { FeaturesService } from '@flaps/core';
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './ask-configuration.component.html',
   styleUrls: ['../../../../../search-widget/_common-form.scss'],

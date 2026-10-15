@@ -4,18 +4,18 @@ import {
   Component,
   computed,
   DestroyRef,
+  DOCUMENT,
   ElementRef,
   inject,
   OnDestroy,
   signal,
   viewChild,
   ViewEncapsulation,
-  DOCUMENT,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ModalConfig, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { NavigationService, UploadEventService } from '@flaps/core';
@@ -25,7 +25,7 @@ import { EmbedWidgetDialogComponent } from './widgets';
 
 @Component({
   selector: 'stf-search-page',
-  imports: [CommonModule, TranslateModule, SearchConfigurationComponent, PaIconModule, PaButtonModule, InfoCardComponent],
+  imports: [CommonModule, TranslatePipe, SearchConfigurationComponent, PaIconModule, PaButtonModule, InfoCardComponent],
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss', '_common-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

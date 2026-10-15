@@ -1,20 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgModule } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { TokenDialogComponent } from './token-dialog.component';
 import { PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { TokenDialogComponent } from './token-dialog.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    AngularSvgIconModule,
-    TranslateModule.forChild(),
-    PaButtonModule,
-    PaModalModule,
-    TokenDialogComponent,
-  ],
+  imports: [CommonModule, AngularSvgIconModule, PaButtonModule, PaModalModule, TokenDialogComponent],
   exports: [TokenDialogComponent],
 })
 export class TokenDialogModule {}

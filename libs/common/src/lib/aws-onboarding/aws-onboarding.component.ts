@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { AccountBudget, BillingService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { UserContainerComponent } from '@nuclia/user';
@@ -22,7 +22,7 @@ import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
     UserContainerComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
-    TranslateModule,
+    TranslatePipe,
     SpinnerComponent,
     AwsSetupAccountComponent,
   ],

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NotificationsPanelComponent, ResourceHandlingBannerComponent } from '@flaps/core';
 import { PaSideNavModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { NavbarModule } from '../navbar';
 import { TopbarModule } from '../topbar';
@@ -21,7 +21,7 @@ import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.co
     PaSideNavModule,
     NotificationsPanelComponent,
     InfoCardComponent,
-    TranslateModule,
+    TranslatePipe,
     UploadBarComponent,
     BaseComponent,
     DashboardLayoutComponent,

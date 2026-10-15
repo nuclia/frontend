@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { BackendConfigurationService, LowerCaseInputDirective } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
 import {
@@ -71,7 +70,7 @@ export const authRoutes: Routes = [
     ReactiveFormsModule,
     RecaptchaV3Module,
     AngularSvgIconModule,
-    TranslateModule.forChild(),
+
     RouterModule.forChild(authRoutes),
     PaButtonModule,
     PaIconModule,

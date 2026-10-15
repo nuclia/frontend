@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { METRICS_PAGE_SIZES } from '../metrics.config';
 
 @Component({
   selector: 'app-metrics-pagination',
-  imports: [TranslateModule, PaButtonModule, PaIconModule, PaDropdownModule, DropdownButtonComponent],
+  imports: [TranslatePipe, PaButtonModule, PaIconModule, PaDropdownModule, DropdownButtonComponent],
   templateUrl: './metrics-pagination.component.html',
   styleUrl: './metrics-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

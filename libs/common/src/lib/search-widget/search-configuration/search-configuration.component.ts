@@ -31,24 +31,24 @@ import {
   OptionType,
   PaButtonModule,
   PaDropdownModule,
+  PaIconModule,
   PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
-  PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
-  LearningConfigurations,
-  GenerativeProviders,
-  SearchConfig,
-  Widget,
   AgenticSource,
-  WritableKnowledgeBox,
-  DEFAULT_SEARCH_BOX_CONFIG,
   DEFAULT_GENERATIVE_ANSWER_CONFIG,
   DEFAULT_RESULT_DISPLAY_CONFIG,
   DEFAULT_ROUTING_CONFIG,
+  DEFAULT_SEARCH_BOX_CONFIG,
+  GenerativeProviders,
+  LearningConfigurations,
+  SearchConfig,
+  Widget,
+  WritableKnowledgeBox,
 } from '@nuclia/core';
 import {
   BadgeComponent,
@@ -114,7 +114,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     ResultsDisplayFormComponent,
     RoutingFormComponent,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
     PaTooltipModule,
     PaTogglesModule,
     PaIconModule,

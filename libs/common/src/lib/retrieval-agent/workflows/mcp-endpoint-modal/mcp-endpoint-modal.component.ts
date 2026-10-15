@@ -1,13 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
-import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { SDKService, ZoneService } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of, switchMap } from 'rxjs';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, TranslateModule],
+  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, TranslatePipe],
   templateUrl: './mcp-endpoint-modal.component.html',
   styleUrl: './mcp-endpoint-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

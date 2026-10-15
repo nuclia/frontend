@@ -10,7 +10,7 @@ import {
   PaTableModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Account, IRetrievalAgentItem, RetrievalAgent, RetrievalAgentCreation } from '@nuclia/core';
 import { BadgeComponent, InfoCardComponent, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { forkJoin, Subject, throwError } from 'rxjs';
@@ -26,10 +26,10 @@ import { CreateAragComponent } from '../create-arag/create-arag.component';
     PaDropdownModule,
     PaPopupModule,
     PaTableModule,
-    TranslateModule,
     PaTooltipModule,
     BadgeComponent,
     InfoCardComponent,
+    TranslatePipe,
   ],
   templateUrl: './arag-list.component.html',
   styleUrl: './arag-list.component.scss',

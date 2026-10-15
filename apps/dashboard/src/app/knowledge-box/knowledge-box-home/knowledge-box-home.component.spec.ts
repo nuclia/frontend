@@ -27,25 +27,17 @@ import {
   PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
-import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
+import { firstValueFrom, of } from 'rxjs';
 import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
 import { KbOnboardingHeaderComponent } from './kb-onboarding/kb-onboarding-header.component';
 import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
+import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { LastResourcesComponent } from './last-resources/last-resources.component';
-
-function createTranslateLoader() {
-  return {
-    getTranslation: () => of(EN),
-  };
-}
 
 describe('KnowledgeBoxHomeComponent', () => {
   let component: KnowledgeBoxHomeComponent;
@@ -55,14 +47,6 @@ describe('KnowledgeBoxHomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         KnowledgeBoxHomeComponent,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-          },
-          useDefaultLang: true,
-          defaultLanguage: 'en',
-        }),
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
         MockModule(PaIconModule),
@@ -83,6 +67,7 @@ describe('KnowledgeBoxHomeComponent', () => {
         MockComponent(LastResourcesComponent),
       ],
       providers: [
+        provideTranslateService({ fallbackLang: 'en' }),
         MockProvider(AppService, {
           currentLocale: of('en'),
         }),
@@ -188,10 +173,19 @@ describe('KnowledgeBoxHomeComponent', () => {
     }).compileComponents();
   }, 20000);
 
-  beforeEach(() => {
-    // `defaultLanguage` alone never sets `currentLang`; the pipe's translation lookup then
-    // relies on a fallback path that can race with its own onDefaultLangChange subscription.
-    TestBed.inject(TranslateService).use('en');
+  beforeEach(async () => {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', {
+      'dashboard-home': {
+        'kb-details': {
+          region: 'Region',
+          'generative-model': 'Generative model',
+          status: 'Knowledge Box status',
+        },
+      },
+      kb: { 'ai-models': { tabs: { 'semantic-model': 'Embeddings model' } } },
+    });
+    await firstValueFrom(translate.use('en'));
     fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);
     component = fixture.componentInstance;
   });

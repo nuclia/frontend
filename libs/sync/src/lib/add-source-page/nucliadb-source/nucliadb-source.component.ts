@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { FilterExpressionModalComponent, SDKService } from '@flaps/core';
 import { ModalConfig, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FilterExpression } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, map, take } from 'rxjs';
@@ -18,7 +18,7 @@ import { SourceFormDirective } from '../source-form.directive';
     InfoCardComponent,
     PaTextFieldModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   styleUrl: './../_common-source.scss',
   templateUrl: './nucliadb-source.component.html',

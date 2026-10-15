@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -9,12 +10,11 @@ import {
   OnDestroy,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import * as d3 from 'd3';
 import { BaseChartDirective } from '../base-chart.directive';
 import { DatedRangeChartData } from '../range-chart/range.models';
-import * as d3 from 'd3';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface EvolutionSeriesData {
   /** Machine key — maps to a metric like 'answer_relevance' */
@@ -33,7 +33,7 @@ let nextUniqueId = 0;
 
 @Component({
   selector: 'stf-multi-series-evolution-chart',
-  imports: [CommonModule, PaTogglesModule, TranslateModule],
+  imports: [CommonModule, PaTogglesModule, TranslatePipe],
   templateUrl: './multi-series-evolution-chart.component.html',
   styleUrl: './multi-series-evolution-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

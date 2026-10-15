@@ -9,7 +9,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { GenerativeProvider, Prompts, Widget } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { combineLatest, Observable, tap } from 'rxjs';
@@ -28,7 +28,7 @@ import { RagLabService } from '../rag-lab.service';
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaCardModule,
     LabLayoutComponent,
     ExpandableTextareaComponent,

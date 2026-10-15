@@ -1,3 +1,9 @@
 @import '../theme/tailwind.css';
 @import '../theme/theme.css';
 @import '../theme/fonts.css';
+
+body.sb-show-main,
+.sbdocs .docs-story {
+  background-color: var(--background);
+  color: var(--foreground);
+}

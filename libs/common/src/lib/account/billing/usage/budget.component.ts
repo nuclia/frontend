@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountBudget, BillingService } from '@flaps/core';
 import { filter, map, startWith, Subject, takeUntil } from 'rxjs';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 const DEFAULT_BUDGET = 60000; // Around $480
 
 @Component({
   selector: 'app-budget',
-  imports: [PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './budget.component.html',
   styleUrls: ['./budget.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

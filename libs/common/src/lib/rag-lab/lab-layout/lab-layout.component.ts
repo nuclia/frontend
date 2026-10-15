@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,7 +11,6 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   AccordionBodyDirective,
@@ -19,13 +19,13 @@ import {
   PaButtonModule,
   PaExpanderModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Prompts } from '@nuclia/core';
-import { QuestionBlockComponent } from '../question-block';
-import { RagLabService } from '../rag-lab.service';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { QuestionBlockComponent } from '../question-block';
 import { ResultEntry } from '../rag-lab.models';
+import { RagLabService } from '../rag-lab.service';
 
 @Component({
   selector: 'stf-lab-layout',
@@ -36,7 +36,7 @@ import { ResultEntry } from '../rag-lab.models';
     AccordionBodyDirective,
     ReactiveFormsModule,
     QuestionBlockComponent,
-    TranslateModule,
+    TranslatePipe,
     PaExpanderModule,
     PaButtonModule,
   ],

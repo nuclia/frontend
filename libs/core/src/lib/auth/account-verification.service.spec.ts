@@ -107,9 +107,20 @@ describe('AccountVerificationService', () => {
   // ─── forceReauth ────────────────────────────────────────────────────────────
 
   describe('forceReauth()', () => {
-    it('stores the returnUrl in localStorage under PENDING_ACCOUNT_DELETE_KEY', () => {
-      service.forceReauth('https://app.example.com/account');
-      expect(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY)).toBe('https://app.example.com/account');
+    it('stores the accountId with a timestamp in localStorage under PENDING_ACCOUNT_DELETE_KEY', () => {
+      service.forceReauth('https://app.example.com/account', 'account-1');
+      const stored = JSON.parse(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY) || '{}');
+      expect(typeof stored['account-1']).toBe('number');
+    });
+
+    it('preserves other accounts already pending while adding the new one', () => {
+      const now = Date.now();
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-2': now }));
+
+      service.forceReauth('https://app.example.com/account', 'account-1');
+
+      const stored = JSON.parse(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY) || '{}');
+      expect(Object.keys(stored).sort()).toEqual(['account-1', 'account-2']);
     });
 
     it('sets the next URL to the returnUrl pathname and redirects through OAuth', () => {
@@ -117,36 +128,70 @@ describe('AccountVerificationService', () => {
       const setNextUrlSpy = jest.spyOn(authService, 'setNextUrl');
       const redirectToOAuthSpy = jest.spyOn(sdkService.nuclia.auth, 'redirectToOAuth');
 
-      service.forceReauth(returnUrl);
+      service.forceReauth(returnUrl, 'account-1');
 
       expect(setNextUrlSpy).toHaveBeenCalledWith('/account/delete');
-      expect(redirectToOAuthSpy).toHaveBeenCalledWith(
-        { came_from: returnUrl },
-        { prompt: 'login', max_age: '0' },
-      );
+      expect(redirectToOAuthSpy).toHaveBeenCalledWith({ came_from: returnUrl }, { prompt: 'login', max_age: '0' });
     });
   });
 
   // ─── hasPendingDelete ────────────────────────────────────────────────────────
 
   describe('hasPendingDelete()', () => {
-    it('returns true when the key exists in localStorage', () => {
-      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, 'https://app.example.com/account');
-      expect(service.hasPendingDelete()).toBe(true);
+    it('returns true when a fresh entry exists for that accountId', () => {
+      const now = Date.now();
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-1': now }));
+      expect(service.hasPendingDelete('account-1')).toBe(true);
     });
 
     it('returns false when the key is absent from localStorage', () => {
       localStorage.removeItem(PENDING_ACCOUNT_DELETE_KEY);
-      expect(service.hasPendingDelete()).toBe(false);
+      expect(service.hasPendingDelete('account-1')).toBe(false);
+    });
+
+    it('returns false for an accountId not present in the map', () => {
+      const now = Date.now();
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-2': now }));
+      expect(service.hasPendingDelete('account-1')).toBe(false);
+    });
+
+    it('returns false and prunes an entry older than the pending-delete window', () => {
+      const now = Date.now();
+      const staleTimestamp = now - 6 * 60 * 1000; // 6 minutes ago
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-1': staleTimestamp }));
+
+      expect(service.hasPendingDelete('account-1')).toBe(false);
+      expect(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY)).toBeNull();
+    });
+
+    it('does not prune a fresh entry for an unrelated account while checking another', () => {
+      const now = Date.now();
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-2': now }));
+
+      service.hasPendingDelete('account-1');
+
+      const stored = JSON.parse(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY) || '{}');
+      expect(stored['account-2']).toBe(now);
     });
   });
 
   // ─── clearPendingDelete ──────────────────────────────────────────────────────
 
   describe('clearPendingDelete()', () => {
-    it('removes the key from localStorage', () => {
-      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, 'https://app.example.com/account');
-      service.clearPendingDelete();
+    it('removes only the given accountId entry from the map', () => {
+      const now = Date.now();
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-1': now, 'account-2': now }));
+
+      service.clearPendingDelete('account-1');
+
+      const stored = JSON.parse(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY) || '{}');
+      expect(stored).toEqual({ 'account-2': now });
+    });
+
+    it('removes the key entirely from localStorage when it was the only entry', () => {
+      const now = Date.now();
+      localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify({ 'account-1': now }));
+      service.clearPendingDelete('account-1');
       expect(localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY)).toBeNull();
     });
   });
@@ -156,9 +201,7 @@ describe('AccountVerificationService', () => {
   describe('requestEmailOtp()', () => {
     it('delegates to sdk.nuclia.auth.requestEmailOtp()', () => {
       const mockOtp$ = of(undefined);
-      const requestEmailOtpSpy = jest
-        .spyOn(service['sdk'].nuclia.auth, 'requestEmailOtp')
-        .mockReturnValue(mockOtp$);
+      const requestEmailOtpSpy = jest.spyOn(service['sdk'].nuclia.auth, 'requestEmailOtp').mockReturnValue(mockOtp$);
 
       const result = service.requestEmailOtp();
 

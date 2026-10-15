@@ -8,18 +8,18 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ReasoningConfig } from '@nuclia/core';
+import { Subject } from 'rxjs';
 
 const INITIAL_BUDGET_TOKENS = 15000;
 
 @Component({
   selector: 'stf-reasoning-config',
-  imports: [PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './reasoning-config.component.html',
   styleUrls: ['./reasoning-config.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

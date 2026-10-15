@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -7,11 +8,10 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ZoneService } from '@flaps/core';
 import { IErrorMessages, PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { StickyFooterComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 
@@ -26,7 +26,7 @@ const COWORK_ZONE_SLUGS = ['europe-1', 'aws-us-east-2-1', 'gcp-dev-1'];
     PaTogglesModule,
     ReactiveFormsModule,
     StickyFooterComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './zone-step.component.html',
   styleUrls: ['../../_common-step.scss'],

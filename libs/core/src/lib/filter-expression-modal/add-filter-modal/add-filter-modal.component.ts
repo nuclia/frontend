@@ -11,7 +11,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, KVFieldType, TypeParagraph } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, defer, filter, map, merge, of, switchMap, take, tap } from 'rxjs';
@@ -31,7 +31,7 @@ import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.co
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './add-filter-modal.component.html',
   styleUrl: './add-filter-modal.component.scss',

@@ -1,14 +1,14 @@
-import { Component, computed, DestroyRef, inject, Input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, FormArray, FormControl, FormsModule } from '@angular/forms';
-import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { ProviderType } from '@nuclia/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { aragUrl } from '../../../../workflow.state';
+import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ProviderType } from '@nuclia/core';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { map } from 'rxjs';
 import { DriversService } from '../../../../../../drivers/drivers.service';
+import { aragUrl } from '../../../../workflow.state';
 
 @Component({
   selector: 'app-driver-select',
@@ -23,7 +23,7 @@ import { DriversService } from '../../../../../../drivers/drivers.service';
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class DriverSelectComponent implements OnInit {

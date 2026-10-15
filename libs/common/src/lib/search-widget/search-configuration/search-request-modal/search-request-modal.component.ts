@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalRef, PaButtonModule, PaModalModule, PaTableModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { SDKService } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTableModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 
 const OMITTED_HEADERS = new Set(['Authorization', 'x-ndb-client']);
@@ -16,7 +16,7 @@ const OMITTED_HEADERS = new Set(['Authorization', 'x-ndb-client']);
     PaModalModule,
     PaTableModule,
     PaTabsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './search-request-modal.component.html',
   styleUrl: './search-request-modal.component.scss',

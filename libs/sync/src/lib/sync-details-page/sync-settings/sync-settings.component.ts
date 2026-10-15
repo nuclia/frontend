@@ -20,7 +20,7 @@ import {
   PaIconModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LabelSets } from '@nuclia/core';
 import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, map, switchMap, take } from 'rxjs';
@@ -32,7 +32,7 @@ import { LogsModalComponent } from './logs-modal/logs-modal.component';
   imports: [
     CommonModule,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
     SisLabelModule,
     PaButtonModule,
     PaDateTimeModule,

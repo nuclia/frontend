@@ -25,7 +25,7 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   RemiQueryCriteria,
   RemiQueryResponse,
@@ -82,7 +82,7 @@ interface RemiHealthSummary {
 @Component({
   imports: [
     CommonModule,
-    TranslateModule,
+    TranslatePipe,
     PaTextFieldModule,
     RangeChartComponent,
     MultiSeriesEvolutionChartComponent,

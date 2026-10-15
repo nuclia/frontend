@@ -22,7 +22,7 @@ export class TestingSignupService {
     return this.sdk.nuclia.rest.post<TestingSignupResponse>(
       `${this.sdk.nuclia.auth.getAuthUrl()}/signup/start`,
       payload,
-      { Authorization: `Bearer ${key}` },
+      { 'X-Signup-Key': key },
     );
   }
 }

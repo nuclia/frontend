@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotificationUI } from '../notification.model';
-import { PaDateTimeModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { NotificationTypePipe } from '../notification-type.pipe';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PaDateTimeModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NavigationService } from '../../services';
+import { NotificationTypePipe } from '../notification-type.pipe';
+import { NotificationUI } from '../notification.model';
 
 @Component({
   selector: 'stf-notification',
-  imports: [CommonModule, PaIconModule, PaDateTimeModule, NotificationTypePipe, TranslateModule, RouterModule],
+  imports: [CommonModule, PaIconModule, PaDateTimeModule, NotificationTypePipe, TranslatePipe, RouterModule],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

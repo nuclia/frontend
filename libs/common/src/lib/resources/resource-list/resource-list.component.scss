@@ -17,22 +17,32 @@
   z-index: 10;
 
   .filters-container {
+    align-items: center;
     display: flex;
-    gap: rhythm(2);
+    flex-wrap: wrap;
+    gap: rhythm(1.5) rhythm(2);
     justify-content: space-between;
-    margin-bottom: rhythm(2);
+    margin-bottom: rhythm(3);
 
     .header-actions {
       align-items: center;
       display: flex;
       flex-shrink: 0;
       gap: rhythm(1);
+      margin-left: auto;
     }
   }
 
   .filters {
+    align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: rhythm(1.5);
+
+    nsi-search-input {
+      flex-shrink: 0;
+      width: rhythm(38);
+    }
   }
 
   .active-filters {

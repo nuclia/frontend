@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LearningConfigurationOption } from '@nuclia/core';
 import {
   ExpandableTextareaComponent,
@@ -26,7 +26,7 @@ import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component
     PaTextFieldModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
     StickyFooterComponent,
     PaButtonModule,
     UserKeysComponent,

@@ -1,22 +1,22 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskRouteDirective } from '../task-route.directive';
-import { InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Operation, TaskApplyTo, TaskName } from '@nuclia/core';
+import { InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import {
   LabelingConfiguration,
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
-import { Operation, TaskApplyTo, TaskName } from '@nuclia/core';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskRouteDirective } from '../task-route.directive';
 
 @Component({
   imports: [
     CommonModule,
     InfoCardComponent,
     TaskFormComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     PaTextFieldModule,
     LabelingConfigurationComponent,

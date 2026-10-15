@@ -36,6 +36,12 @@ nsi-search-input {
   max-width: rhythm(50);
 }
 
+.text-and-icon {
+  display: flex;
+  align-items: center;
+  gap: rhythm(0.5);
+}
+
 .extension {
   margin-left: rhythm(1);
 }
@@ -54,4 +60,15 @@ stf-table-pagination {
 
 .error {
   color: tokens.$error-color;
+}
+
+.syncing {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  margin-bottom: rhythm(2);
+  nsi-spinner {
+    width: rhythm(8);
+    height: rhythm(8);
+  }
 }

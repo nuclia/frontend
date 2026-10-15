@@ -3,8 +3,16 @@
     <h2 class="setup-invite-title">{{ 'invite.title' | translate }}</h2>
     <div class="body-s">{{ 'invite.description' | translate }}</div>
     <div class="buttons">
-      <pa-button (click)="setPassword()">{{ 'invite.set-password' | translate }}</pa-button>
-      <pa-button (click)="useSSO()">{{ 'invite.use-sso' | translate }}</pa-button>
+      <pa-button
+        kind="primary"
+        (click)="setPassword()">
+        {{ 'invite.set-password' | translate }}
+      </pa-button>
+      <pa-button
+        aspect="basic"
+        (click)="useSSO()">
+        {{ 'invite.use-sso' | translate }}
+      </pa-button>
     </div>
   </div>
 </nus-user-container>

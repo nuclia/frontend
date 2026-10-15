@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 import { UserContainerComponent } from '../user-container';
 import { CheckMailComponent } from './check-mail.component';
@@ -12,12 +11,7 @@ describe('CheckMailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        CheckMailComponent,
-        TranslateModule.forRoot(),
-        RouterModule.forRoot([]),
-        MockComponent(UserContainerComponent),
-      ],
+      imports: [CheckMailComponent, RouterModule.forRoot([]), MockComponent(UserContainerComponent)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CheckMailComponent);

@@ -7,7 +7,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   CustomSplitStrategy,
   GenerativeProviders,
@@ -24,7 +24,7 @@ import { LLMConfigurationComponent } from '../llm-configuration/llm-configuratio
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     LLMConfigurationComponent,
   ],
   templateUrl: './split-modal.component.html',

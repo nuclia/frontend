@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BackButtonComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { UsersManageModule, UsersManageService } from '../users-manage';
@@ -13,7 +13,6 @@ import { UsersManageModule, UsersManageService } from '../users-manage';
       @if (contextBoxMode | async) {
         <nsi-back-button [link]="backLink | async">{{ 'generic.back_to_home' | translate }}</nsi-back-button>
       }
-      <h2 class="display-s">{{ 'navbar.users' | translate }}</h2>
       @if (kb | async; as kb) {
         <app-users-manage [kb]="kb"></app-users-manage>
       } @else {
@@ -27,7 +26,7 @@ import { UsersManageModule, UsersManageService } from '../users-manage';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   providers: [UsersManageService],
-  imports: [CommonModule, TranslateModule, UsersManageModule, BackButtonComponent],
+  imports: [CommonModule, TranslatePipe, UsersManageModule, BackButtonComponent],
 })
 export class KnowledgeBoxUsersComponent {
   readonly users = inject(UsersManageService);

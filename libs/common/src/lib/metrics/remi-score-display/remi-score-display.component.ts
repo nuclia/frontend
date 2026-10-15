@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { getRemiScoreDisplay } from '../remi-metrics.config';
 import { RemiDisplayMode, RemiSourceScale } from '../remi-metrics.model';
 
 @Component({
   selector: 'app-remi-score-display',
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
   templateUrl: './remi-score-display.component.html',
   styleUrl: './remi-score-display.component.scss',
   host: {

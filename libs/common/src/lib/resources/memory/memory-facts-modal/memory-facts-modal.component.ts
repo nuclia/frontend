@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ModalRef, PaExpanderModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MemoryEntry, MemoryFact } from '../memory.model';
 
 export interface MemoryFactsModalData {
@@ -12,7 +12,7 @@ export interface MemoryFactsModalData {
 
 @Component({
   selector: 'stf-memory-facts-modal',
-  imports: [CommonModule, DatePipe, PaModalModule, PaExpanderModule, TranslateModule],
+  imports: [CommonModule, DatePipe, PaModalModule, PaExpanderModule, TranslatePipe],
   templateUrl: './memory-facts-modal.component.html',
   styleUrl: './memory-facts-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

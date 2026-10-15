@@ -1,4 +1,3 @@
-
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -23,7 +22,7 @@ import {
   TextareaComponent,
   TextFieldUtilityService,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { SisModalService } from '../sis-modal.service';
 import { TextareaModalComponent } from './textarea-modal/textarea-modal.component';
@@ -33,7 +32,7 @@ import { TextareaModalComponent } from './textarea-modal/textarea-modal.componen
   templateUrl: './expandable-textarea.component.html',
   styleUrls: ['./expandable-textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, PaFormFieldModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaFormFieldModule, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
 })
 export class ExpandableTextareaComponent
   extends TextareaComponent

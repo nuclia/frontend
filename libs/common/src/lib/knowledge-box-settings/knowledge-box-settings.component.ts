@@ -21,7 +21,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProcessingHook, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, Observable, of, Subject } from 'rxjs';
@@ -36,7 +36,7 @@ import { Sluggable } from '../validators';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     PaIconModule,
     PaPopupModule,

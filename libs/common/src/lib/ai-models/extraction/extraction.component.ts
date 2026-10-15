@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { ModalConfig, PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, filter, switchMap, take, tap } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   ExtractConfig,
   ExtractStrategies,
@@ -12,13 +11,14 @@ import {
   SplitStrategies,
   SplitStrategy,
 } from '@nuclia/core';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { BehaviorSubject, filter, switchMap, take, tap } from 'rxjs';
 import { ExtractionModalComponent } from './extraction-modal/extraction-modal.component';
 import { SplitModalComponent } from './split-modal/split-modal.component';
 
 @Component({
   selector: 'stf-extraction',
-  imports: [CommonModule, PaButtonModule, PaTableModule, TranslateModule, TwoColumnsConfigurationItemComponent],
+  imports: [CommonModule, PaButtonModule, PaTableModule, TranslatePipe, TwoColumnsConfigurationItemComponent],
   templateUrl: './extraction.component.html',
   styleUrls: ['./extraction.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

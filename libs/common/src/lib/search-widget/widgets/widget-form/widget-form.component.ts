@@ -24,15 +24,15 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
+import { WorkflowsService } from '../../../retrieval-agent';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { SearchWidgetService } from '../../search-widget.service';
 import { EmbedWidgetDialogComponent } from '../dialogs';
-import { WorkflowsService } from '../../../retrieval-agent';
 
 type RaoFormGroupControls = {
   workflow: FormControl<string>;
@@ -49,7 +49,7 @@ type RaoFormValue = {
     CommonModule,
     ReactiveFormsModule,
     BackButtonComponent,
-    TranslateModule,
+    TranslatePipe,
     AccordionItemComponent,
     AccordionBodyDirective,
     PaButtonModule,

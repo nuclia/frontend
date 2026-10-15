@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ModalConfig,
   PaButtonModule,
@@ -7,15 +8,14 @@ import {
   PaPopupModule,
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Workflow } from '@nuclia/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, map, switchMap, take } from 'rxjs';
-import { WorkflowModalComponent } from './workflow-modal';
-import { ActivatedRoute, Router } from '@angular/router';
-import { WorkflowsService } from './workflows.service';
-import { ToolParametersModalComponent } from './tool-parameters-modal';
 import { McpEndpointModalComponent } from './mcp-endpoint-modal';
+import { ToolParametersModalComponent } from './tool-parameters-modal';
+import { WorkflowModalComponent } from './workflow-modal';
+import { WorkflowsService } from './workflows.service';
 
 @Component({
   imports: [
@@ -25,7 +25,7 @@ import { McpEndpointModalComponent } from './mcp-endpoint-modal';
     PaDropdownModule,
     PaPopupModule,
     PaTableModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './workflows-list.component.html',
   styleUrl: './workflows-list.component.scss',

@@ -1,10 +1,10 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-entity',
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
   templateUrl: './entity.component.html',
   styleUrl: './entity.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

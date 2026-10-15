@@ -1,8 +1,7 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { JsonValidator } from '../../../../../validators';
 import {
@@ -17,14 +16,14 @@ import { ExternalAgentUI, formatHeaders } from '../../workflow.models';
   selector: 'app-external-form',
   imports: [
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     ConfigurationFormComponent,
     RulesFieldComponent,
     HeadersFieldComponent,
     PaTextFieldModule,
     PaTogglesModule,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   templateUrl: './external-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -2,22 +2,30 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
+  awsGuard,
+  AwsOnboardingComponent,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
   PageNotFoundComponent,
   rootGuard,
-  awsGuard,
-  AwsOnboardingComponent,
   SelectAccountComponent,
   selectAccountGuard,
   selectAccountManageGuard,
   setAccountGuard,
 } from '@flaps/common';
-import { RedirectComponent, FarewellComponent, CallbackComponent, AppLoginComponent } from '@nuclia/user';
 import { authGuard, redirectToSignUp } from '@flaps/core';
-import { fallbackRedirectGuard } from './fallback-redirect.guard';
+import {
+  AppLoginComponent,
+  CallbackComponent,
+  FarewellComponent,
+  RedirectComponent,
+  SetPasswordComponent,
+  TemporaryContextBoxSignupComponent,
+  TestingAppSignupComponent,
+} from '@nuclia/user';
 import { captureEntryContextGuard } from './capture-entry-context.guard';
+import { fallbackRedirectGuard } from './fallback-redirect.guard';
 
 const routes: Routes = [
   {
@@ -68,7 +76,18 @@ const routes: Routes = [
   },
   { path: 'user/callback', component: CallbackComponent },
   { path: 'user/login-redirect', component: AppLoginComponent },
+  // TEMPORARY: expose saml callback for IDP-initiated SAML clients whose RelayState points here.
+  // Remove once those clients are updated to use the auth app's URL
+  { path: 'user/callbacks/saml', component: CallbackComponent, data: { saml: true } },
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
+  { path: 'user/test-signup', component: TestingAppSignupComponent },
+  { path: 'user/contextbox-signup', component: TemporaryContextBoxSignupComponent },
+  { path: 'user/set-password', component: SetPasswordComponent },
+  {
+    path: 'user/login',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
   { path: '**', canActivate: [fallbackRedirectGuard], component: PageNotFoundComponent },
 ];
 

@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, UserService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockPipe, MockProvider } from 'ng-mocks';
@@ -21,7 +20,7 @@ describe('CostTokenUsagePageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), CostTokenUsagePageComponent, MockPipe(CompactNumberPipe)],
+      imports: [CostTokenUsagePageComponent, MockPipe(CompactNumberPipe)],
       providers: [
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),

@@ -89,13 +89,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // After forced reauth, the user lands back on this page.
-    // If there's a pending delete and they've just been re-verified, auto-open the modal.
-    if (this.accountVerification.hasPendingDelete() && this.accountVerification.isRecentlyVerified()) {
-      this.accountVerification.clearPendingDelete();
-      this.modalService.openModal(AccountDeleteComponent);
-    }
-
     this.sdk.currentAccount
       .pipe(
         tap((account) => {
@@ -103,7 +96,12 @@ export class AccountManageComponent implements OnInit, OnDestroy {
         }),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => {
+      .subscribe((account) => {
+        if (this.accountVerification.hasPendingDelete(account.id) && this.accountVerification.isRecentlyVerified()) {
+          this.accountVerification.clearPendingDelete(account.id);
+          this.modalService.openModal(AccountDeleteComponent);
+        }
+
         this.initAccountForm();
         this.initSamlForm();
         this.cdr?.markForCheck();

@@ -12,7 +12,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   DriverCreation,
   IKnowledgeBoxItem,
@@ -38,7 +38,7 @@ import { getListFromTextarea } from '../../arag.utils';
     PaTogglesModule,
     InfoCardComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     ExpandableTextareaComponent,
   ],
   templateUrl: './nuclia-driver-modal.component.html',

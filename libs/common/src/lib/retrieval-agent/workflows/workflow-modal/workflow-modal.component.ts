@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { STFUtils } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Workflow } from '@nuclia/core';
 
 @Component({
   selector: 'app-nuclia-driver-modal',
-  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './workflow-modal.component.html',
   styleUrl: '../../drivers/driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

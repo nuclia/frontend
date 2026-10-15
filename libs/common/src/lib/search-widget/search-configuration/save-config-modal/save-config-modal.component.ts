@@ -1,9 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-
-import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 export type SaveConfigModalReason = 'default-readonly' | 'default-embed';
 export interface SaveConfigModalData {
@@ -12,7 +11,7 @@ export interface SaveConfigModalData {
 }
 
 @Component({
-  imports: [PaModalModule, TranslateModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
+  imports: [PaModalModule, TranslatePipe, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
   templateUrl: './save-config-modal.component.html',
   styleUrl: './save-config-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

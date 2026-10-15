@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { SearchWidgetStorageService } from '../../search-widget';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map, switchMap, take, tap } from 'rxjs';
+import { SearchWidgetStorageService } from '../../search-widget';
 
 @Component({
   selector: 'stf-question-block',
-  imports: [CommonModule, TranslateModule, PaTextFieldModule, PaButtonModule],
+  imports: [CommonModule, TranslatePipe, PaTextFieldModule, PaButtonModule],
   templateUrl: './question-block.component.html',
   styleUrl: './question-block.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

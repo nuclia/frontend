@@ -17,7 +17,7 @@ import {
   PaFocusableModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Welcome } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
@@ -44,7 +44,7 @@ interface MenuSection {
 
 @Component({
   selector: 'app-user-menu',
-  imports: [CommonModule, TranslateModule, PaAvatarModule, PaDropdownModule, PaFocusableModule, PaPopupModule],
+  imports: [CommonModule, TranslatePipe, PaAvatarModule, PaDropdownModule, PaFocusableModule, PaPopupModule],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,6 +108,7 @@ export class UserMenuComponent implements OnInit {
   private readonly isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   private readonly isModelManagementEnabled = this.features.unstable.modelManagement;
   private readonly isNuaGuardManagementEnabled = this.features.unstable.nuaGuardsManagement;
+  private readonly isNuaKeyAuthorized = this.features.authorized.nuaKeys;
 
   private readonly isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
@@ -292,6 +293,7 @@ export class UserMenuComponent implements OnInit {
           icon: 'key',
           dataCy: 'go-to-nua-keys',
           action: () => this.go('configuration/nua'),
+          visible$: this.isNuaKeyAuthorized,
         },
         {
           label: 'navbar.nua-guard',
@@ -354,10 +356,12 @@ export class UserMenuComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    if (this.accountVerification.hasPendingDelete() && this.accountVerification.isRecentlyVerified()) {
-      this.accountVerification.clearPendingDelete();
-      this.modalService.openModal(AccountDeleteComponent);
-    }
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      if (this.accountVerification.hasPendingDelete(account.id) && this.accountVerification.isRecentlyVerified()) {
+        this.accountVerification.clearPendingDelete(account.id);
+        this.modalService.openModal(AccountDeleteComponent);
+      }
+    });
   }
 
   private showNotifications(): void {

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HintComponent } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Workflow } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { JsonValidator } from '../../../validators';
@@ -17,7 +17,7 @@ import { JsonValidator } from '../../../validators';
     PaModalModule,
     PaTextFieldModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './tool-parameters-modal.component.html',
   styleUrl: './tool-parameters-modal.component.scss',

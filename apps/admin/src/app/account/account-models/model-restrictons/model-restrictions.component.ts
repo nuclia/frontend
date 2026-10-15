@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { combineLatest, forkJoin, of } from 'rxjs';
@@ -18,7 +18,7 @@ import { CustomModelsComponent } from '../custom-models/custom-models.component'
     PaTableModule,
     PaTogglesModule,
     SpinnerComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './model-restrictions.component.html',
   styleUrl: './model-restrictions.component.scss',

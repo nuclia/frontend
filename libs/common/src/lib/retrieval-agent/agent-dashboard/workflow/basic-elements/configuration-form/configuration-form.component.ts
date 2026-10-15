@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, ViewEncapsulation } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { isRegisteredAgentSubFormModified, selectedNodeData, showRegisteredAgentForm } from '../../workflow.state';
-import { RegisteredAgentSubformComponent } from '../registered-agent/registered-agent-subform.component';
 import { NodeFunctionsComponent } from '../node-functions/node-functions.component';
+import { RegisteredAgentSubformComponent } from '../registered-agent/registered-agent-subform.component';
 
 @Component({
   selector: 'app-configuration-form',
   imports: [
     NodeFunctionsComponent,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     PaTextFieldModule,
     RegisteredAgentSubformComponent,

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { JSONSchema4 } from 'json-schema';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { JSONSchema4 } from 'json-schema';
 import { WorkflowService } from '../../../../workflow.service';
 import { aragUrl } from '../../../../workflow.state';
 
@@ -13,7 +13,7 @@ import { aragUrl } from '../../../../workflow.state';
   selector: 'app-filtered-source-select',
   templateUrl: './filtered-source-select.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, PaTextFieldModule, PaButtonModule, RouterLink, TranslateModule, InfoCardComponent],
+  imports: [ReactiveFormsModule, PaTextFieldModule, PaButtonModule, RouterLink, TranslatePipe, InfoCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilteredSourceSelectComponent implements OnInit {

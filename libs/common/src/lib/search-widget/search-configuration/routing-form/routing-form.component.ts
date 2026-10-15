@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { GenerativeProviders, LearningConfigurations, Widget } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
@@ -25,7 +25,7 @@ import { SearchWidgetStorageService } from '../../search-widget-storage.service'
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaTogglesModule,
     PaTextFieldModule,
     PaSliderModule,

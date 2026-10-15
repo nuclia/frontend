@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   AccordionBodyDirective,
@@ -6,16 +6,16 @@ import {
   OptionModel,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { registeredAgentParams, rootSchema } from '../../workflow.state';
+import { TranslatePipe } from '@ngx-translate/core';
 import { distinctUntilChanged } from 'rxjs';
+import { registeredAgentParams, rootSchema } from '../../workflow.state';
 
 @Component({
   selector: 'app-registered-agent-subform',
   templateUrl: 'registered-agent-subform.component.html',
   styleUrls: ['./registered-agent-subform.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [PaTextFieldModule, ReactiveFormsModule, TranslateModule, AccordionBodyDirective, AccordionItemComponent],
+  imports: [PaTextFieldModule, ReactiveFormsModule, TranslatePipe, AccordionBodyDirective, AccordionItemComponent],
 })
 export class RegisteredAgentSubformComponent implements OnInit {
   expanded = true;

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
 import {
@@ -153,7 +152,6 @@ const routes: Routes = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    TranslateModule.forChild(),
     ReactiveFormsModule,
     FormsModule,
     RouterModule.forChild(routes),

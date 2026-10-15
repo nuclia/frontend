@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface ConfigBlockItem {
   key: string;
@@ -9,7 +9,7 @@ export interface ConfigBlockItem {
 
 @Component({
   selector: 'app-config-block',
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
   templateUrl: './config-block.component.html',
   styleUrl: './config-block.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

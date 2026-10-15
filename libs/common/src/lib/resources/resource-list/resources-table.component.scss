@@ -5,12 +5,15 @@ $height-pagination: rhythm(9);
 
 .resource-table-header {
   background-color: $color-light-stronger;
+  min-height: rhythm(5);
+  margin-bottom: rhythm(3);
   z-index: 1;
 
   .header-container {
     align-items: center;
     display: flex;
     gap: rhythm(1);
+    min-height: rhythm(5);
   }
 
   .resource-bulk-actions {
@@ -50,6 +53,10 @@ $height-pagination: rhythm(9);
     100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - #{$height-table-header} - #{$height-pagination} +
       rhythm(3)
   );
+  // Pin the column headers right below the pinned filter row
+  ::ng-deep .pa-table-grid--header {
+    top: var(--resource-list-header-height, 0);
+  }
   .hidden-resource pa-table-cell ::ng-deep .pa-table-grid--cell {
     color: $color-neutral-regular;
   }
@@ -62,10 +69,28 @@ table {
 .row-container {
   display: flex;
   gap: rhythm(0.5);
+  // Keep labels on one line and scroll within the cell
+  overflow-x: auto;
+  padding-bottom: rhythm(0.5);
+
+  // Non-overlay scrollbar so the thumb can be revealed on hover (see below) instead of only while scrolling
+  @include scrollbar-style(rhythm(1), transparent, transparent, transparent, transparent, rhythm(0.5), 0);
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
-.classification-cell ::ng-deep .pa-table-grid--cell {
-  overflow-x: auto;
+.classification-cell:hover .row-container {
+  @include scrollbar-style(
+    rhythm(1),
+    transparent,
+    transparent,
+    $color-neutral-regular,
+    $color-neutral-regular,
+    rhythm(0.5),
+    0
+  );
 }
 
 .loading-shade {

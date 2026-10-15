@@ -9,7 +9,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AugmentedField, IResource, Resource } from '@nuclia/core';
 import {
   InfoCardComponent,
@@ -37,7 +37,7 @@ export type TestResults = { resource: Resource; results: { [key: string]: Augmen
     SpinnerComponent,
     TestResultsComponent,
     TwoColumnsConfigurationItemComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './task-testing.component.html',
   styleUrl: './task-testing.component.scss',

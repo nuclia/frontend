@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 
 @Component({
   selector: 'stf-embed-widget-dialog',
-  imports: [InfoCardComponent, PaButtonModule, PaModalModule, PaTogglesModule, TranslateModule],
+  imports: [InfoCardComponent, PaButtonModule, PaModalModule, PaTogglesModule, TranslatePipe],
   templateUrl: './embed-widget-dialog.component.html',
   styleUrl: './embed-widget-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

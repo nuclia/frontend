@@ -3,8 +3,12 @@ import { Observable } from 'rxjs';
 import { SDKService } from '../api';
 import { AuthService } from './auth.service';
 
-export const PENDING_ACCOUNT_DELETE_KEY = 'PENDING_ACCOUNT_DELETE';
-const REAUTH_WINDOW_SECONDS = 5 * 60; // 5 minutes
+export const PENDING_ACCOUNT_DELETE_KEY = 'PENDING_ACCOUNTS_DELETE';
+const REAUTH_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+const PENDING_DELETE_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+
+/** Maps account id -> `Date.now()` (ms) when forceReauth was triggered for it. */
+type PendingDeleteMap = Record<string, number>;
 
 @Injectable({
   providedIn: 'root',
@@ -15,53 +19,68 @@ export class AccountVerificationService {
     private authService: AuthService,
   ) {}
 
-  /** Returns last_verified_at Unix timestamp from JWT, or null if not present */
   getLastVerifiedAt(): number | null {
     const user = this.sdk.nuclia.auth.getJWTUser();
     return user?.ext?.last_verified_at ?? null;
   }
 
-  /** True if forced reauth is supported (last_verified_at present in JWT) */
   supportsForceReauth(): boolean {
     return this.getLastVerifiedAt() !== null;
   }
 
-  /** True if last_verified_at was set within the last 5 minutes */
   isRecentlyVerified(): boolean {
     const lastVerified = this.getLastVerifiedAt();
     if (lastVerified === null) return false;
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    return nowSeconds - lastVerified <= REAUTH_WINDOW_SECONDS;
+    return Date.now() - lastVerified * 1000 <= REAUTH_WINDOW_MS;
   }
 
-  /**
-   * Redirects browser to force reauthentication via the standard OAuth PKCE flow,
-   * with `prompt=login` and `max_age=0` so the auth server requires a fresh login
-   * regardless of any existing session.  `came_from` is embedded in the PKCE state
-   * so the callback can redirect back to the original page after re-auth.
-   *
-   * Uses the same OAuth flow as the normal unauthenticated login path — this is
-   * provider-agnostic and does NOT rely on `ext.type` from the JWT (which is a
-   * user-type discriminator, not an OAuth provider slug).
-   */
-  forceReauth(returnUrl: string): void {
-    localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, returnUrl);
+  forceReauth(returnUrl: string, accountId: string): void {
+    const map = this.pruneExpired(this.readPendingDeleteMap());
+    map[accountId] = Date.now();
+    this.writePendingDeleteMap(map);
     this.authService.setNextUrl(new URL(returnUrl).pathname);
     this.sdk.nuclia.auth.redirectToOAuth({ came_from: returnUrl }, { prompt: 'login', max_age: '0' });
   }
 
-  /** True if there is a pending account delete that triggered a reauth */
-  hasPendingDelete(): boolean {
-    return !!localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY);
+  hasPendingDelete(accountId: string): boolean {
+    const map = this.pruneExpired(this.readPendingDeleteMap());
+    return accountId in map;
   }
 
-  /** Clears the pending account delete flag */
-  clearPendingDelete(): void {
-    localStorage.removeItem(PENDING_ACCOUNT_DELETE_KEY);
+  clearPendingDelete(accountId: string): void {
+    const map = this.readPendingDeleteMap();
+    delete map[accountId];
+    this.writePendingDeleteMap(map);
   }
 
-  /** Requests an email OTP for the currently authenticated user */
   requestEmailOtp(): Observable<void> {
     return this.sdk.nuclia.auth.requestEmailOtp();
+  }
+
+  private readPendingDeleteMap(): PendingDeleteMap {
+    const raw = localStorage.getItem(PENDING_ACCOUNT_DELETE_KEY);
+    if (!raw) return {};
+
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  private writePendingDeleteMap(map: PendingDeleteMap): void {
+    if (Object.keys(map).length === 0) localStorage.removeItem(PENDING_ACCOUNT_DELETE_KEY);
+    else localStorage.setItem(PENDING_ACCOUNT_DELETE_KEY, JSON.stringify(map));
+  }
+
+  private pruneExpired(map: PendingDeleteMap): PendingDeleteMap {
+    const now = Date.now();
+    const pruned = Object.fromEntries(
+      Object.entries(map).filter(([, createdAt]) => now - createdAt <= PENDING_DELETE_WINDOW_MS),
+    );
+
+    if (Object.keys(pruned).length !== Object.keys(map).length) this.writePendingDeleteMap(pruned);
+    return pruned;
   }
 }

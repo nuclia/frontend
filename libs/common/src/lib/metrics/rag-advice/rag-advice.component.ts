@@ -14,7 +14,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   LearningConfigurationOption,
   RAGStrategy,
@@ -65,7 +65,7 @@ type NumericInputOrUndefined = string | number | null | undefined;
   imports: [
     CommonModule,
     FormsModule,
-    TranslateModule,
+    TranslatePipe,
     PaButtonModule,
     PaIconModule,
     PaModalModule,

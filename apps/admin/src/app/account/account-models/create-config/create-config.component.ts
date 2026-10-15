@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { isGeminiPriorityModel, UserKeysComponent, UserKeysForm } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, Zone } from '@flaps/core';
 import {
   ModalRef,
@@ -10,11 +11,10 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AssumeRole, ModelConfiguration, ModelConfigurationCreation } from '@nuclia/core';
-import { combineLatest, defer, filter, forkJoin, map, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
-import { isGeminiPriorityModel, UserKeysComponent, UserKeysForm } from '@flaps/common';
+import { combineLatest, defer, filter, forkJoin, map, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 
 @Component({
   imports: [
@@ -25,7 +25,7 @@ import { isGeminiPriorityModel, UserKeysComponent, UserKeysForm } from '@flaps/c
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     UserKeysComponent,
   ],
   templateUrl: './create-config.component.html',

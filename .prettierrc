@@ -7,5 +7,6 @@
   "trailingComma": "all",
   "bracketSameLine": true,
   "singleAttributePerLine": true,
-  "htmlWhitespaceSensitivity": "ignore"
+  "htmlWhitespaceSensitivity": "ignore",
+  "tailwindFunctions": ["hlm", "cva", "classes"]
 }

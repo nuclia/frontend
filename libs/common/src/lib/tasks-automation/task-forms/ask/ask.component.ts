@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterModule } from '@angular/router';
 import { FeaturesService, KvSchemasService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AgenticConfig, KVSchema, KVSchemaField, TaskApplyTo, TaskName } from '@nuclia/core';
 import {
   BadgeComponent,
@@ -28,7 +28,7 @@ const AGENTIC_SCHEMA_NAME = 'agentic-da-generation';
     ReactiveFormsModule,
     RouterModule,
     TaskFormComponent,
-    TranslateModule,
+    TranslatePipe,
     TwoColumnsConfigurationItemComponent,
     PaTogglesModule,
     BadgeComponent,

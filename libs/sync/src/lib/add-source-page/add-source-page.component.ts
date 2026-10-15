@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AgenticSource } from '@nuclia/core';
 import { BackButtonComponent, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { filter, of, switchMap, take, tap } from 'rxjs';
 import { SourcesService } from '../logic/sources.service';
-import { NucliadbSourceComponent } from './nucliadb-source/nucliadb-source.component';
-import { SyncSourceComponent } from './sync-source/sync-source.component';
-import { McpSourceComponent } from './mcp-source/mcp-source.component';
-import { PerplexitySourceComponent } from './perplexity-source/perplexity-source.component';
 import { GoogleSourceComponent } from './google-source/google-source.component';
+import { McpSourceComponent } from './mcp-source/mcp-source.component';
+import { NucliadbSourceComponent } from './nucliadb-source/nucliadb-source.component';
+import { PerplexitySourceComponent } from './perplexity-source/perplexity-source.component';
+import { SyncSourceComponent } from './sync-source/sync-source.component';
 
 @Component({
   imports: [
@@ -28,7 +28,7 @@ import { GoogleSourceComponent } from './google-source/google-source.component';
     ReactiveFormsModule,
     StickyFooterComponent,
     SyncSourceComponent,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './add-source-page.component.html',
   styleUrl: './_common-source.scss',

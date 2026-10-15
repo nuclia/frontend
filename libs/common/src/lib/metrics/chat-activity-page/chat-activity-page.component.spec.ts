@@ -1,7 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, UserService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockProvider } from 'ng-mocks';
@@ -24,7 +23,7 @@ describe('ChatActivityPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), ChatActivityPageComponent],
+      imports: [ChatActivityPageComponent],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(UserService),

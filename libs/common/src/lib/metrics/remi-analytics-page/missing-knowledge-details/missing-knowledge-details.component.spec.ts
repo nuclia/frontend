@@ -1,7 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MockModule } from 'ng-mocks';
-import { TranslateModule } from '@ngx-translate/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details.component';
 
 describe('MissingKnowledgeDetailsComponent', () => {
@@ -14,7 +12,7 @@ describe('MissingKnowledgeDetailsComponent', () => {
     })
       .overrideComponent(MissingKnowledgeDetailsComponent, {
         set: {
-          imports: [MockModule(TranslateModule)],
+          imports: [],
           schemas: [CUSTOM_ELEMENTS_SCHEMA],
         },
       })

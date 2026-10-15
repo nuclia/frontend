@@ -13,7 +13,6 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent, ProgressBarComponent } from '@nuclia/sistema';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { CreateLinkComponent } from './create-link/create-link.component';
@@ -30,7 +29,7 @@ import { UploadTextComponent } from './upload-text/upload-text.component';
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    TranslateModule.forChild(),
+
     ReactiveFormsModule,
     RouterModule,
     STFPipesModule,

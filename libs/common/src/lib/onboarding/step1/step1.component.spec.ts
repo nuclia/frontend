@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FeaturesService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { Step1Component } from './step1.component';
@@ -29,7 +28,7 @@ describe('Step1Component', () => {
 
   async function createComponent(progressComSignup: boolean, detectChanges = true) {
     await TestBed.configureTestingModule({
-      imports: [Step1Component, TranslateModule.forRoot()],
+      imports: [Step1Component],
       providers: [
         MockProvider(FeaturesService, {
           unstable: {

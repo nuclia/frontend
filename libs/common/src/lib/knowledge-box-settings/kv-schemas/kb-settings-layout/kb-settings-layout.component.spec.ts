@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { SDKService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { of } from 'rxjs';
 import { StandaloneService } from '../../../services';
@@ -17,7 +17,7 @@ class SchemaContentComponent {}
 describe('Settings page layout', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [KbSettingsLayoutComponent, KnowledgeBoxSettingsComponent, TranslateModule.forRoot()],
+      imports: [KbSettingsLayoutComponent, KnowledgeBoxSettingsComponent],
       providers: [
         provideRouter([
           {
@@ -49,7 +49,7 @@ describe('Settings page layout', () => {
       ],
     })
       .overrideComponent(KnowledgeBoxSettingsComponent, {
-        set: { imports: [CommonModule, TranslateModule], schemas: [NO_ERRORS_SCHEMA] },
+        set: { imports: [CommonModule, TranslatePipe], schemas: [NO_ERRORS_SCHEMA] },
       })
       .compileComponents();
   });

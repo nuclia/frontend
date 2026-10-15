@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { RouterLink } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService, SpinnerComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
@@ -12,7 +12,7 @@ import { UsersDialogComponent } from '../users-dialog/users-dialog.component';
 
 @Component({
   selector: 'app-kb-list',
-  imports: [CommonModule, SpinnerComponent, PaButtonModule, TranslateModule, PaTooltipModule, RouterLink],
+  imports: [CommonModule, SpinnerComponent, PaButtonModule, TranslatePipe, PaTooltipModule, RouterLink],
   templateUrl: './kb-list.component.html',
   styleUrl: './kb-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

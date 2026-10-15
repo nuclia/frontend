@@ -1,9 +1,9 @@
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
 import { AnalyticsService, SsoService } from '@flaps/core';
-import { WINDOW } from '@ng-web-apis/common';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { WINDOW } from '@ng-web-apis/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 type Provider = 'google' | 'github' | 'microsoft';
 
@@ -12,7 +12,7 @@ type Provider = 'google' | 'github' | 'microsoft';
   templateUrl: './sso-button.component.html',
   styleUrls: ['./sso-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaIconModule, TranslateModule],
+  imports: [PaIconModule, TranslatePipe],
 })
 export class SsoButtonComponent {
   @Input()

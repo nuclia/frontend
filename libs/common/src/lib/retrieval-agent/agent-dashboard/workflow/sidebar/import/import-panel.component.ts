@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, output, signal } from '@ang
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SisPasswordInputModule, SisToastService } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent } from '../../basic-elements';
@@ -15,7 +15,7 @@ import { ConfigurationFormComponent } from '../../basic-elements';
     PaTogglesModule,
     ReactiveFormsModule,
     SisPasswordInputModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './import-panel.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
