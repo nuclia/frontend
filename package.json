@@ -168,7 +168,7 @@
     "jsdom": "^26.1.0",
     "lint-staged": "^16.4.0",
     "mrs-developer": "2.3.2",
-    "ng-mocks": "14.17.3",
+    "ng-mocks": "14.18.1",
     "ng-packagr": "22.2.4",
     "nodemon": "^2.0.22",
     "nx": "23.2.0",

@@ -2,9 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NerService } from '@flaps/core';
 import { of } from 'rxjs';
 
-import { ReactiveFormsModule } from '@angular/forms';
 import { SvgIconRegistryService } from 'angular-svg-icon';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockProvider } from 'ng-mocks';
 import { EntitiesComponent } from './entities.component';
 
 describe('EntitiesComponent', () => {
@@ -13,7 +12,7 @@ describe('EntitiesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(ReactiveFormsModule), EntitiesComponent],
+      imports: [EntitiesComponent],
       providers: [
         MockProvider(NerService, {
           entities: of({}),

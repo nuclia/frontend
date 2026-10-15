@@ -4,9 +4,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FeaturesService, SDKService, UserService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
-import { MockPipe, MockProvider } from 'ng-mocks';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
 import { RagAdviceModalComponent } from '../rag-advice/rag-advice.component';
 import { UsageAnalyticsPageComponent } from './usage-analytics-page.component';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
@@ -29,7 +28,7 @@ describe('UsageAnalyticsPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],
+      imports: [UsageAnalyticsPageComponent],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),
