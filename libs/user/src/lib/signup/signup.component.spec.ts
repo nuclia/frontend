@@ -51,7 +51,6 @@ describe('SignupComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [SignupComponent, RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }])],
-      declarations: [SignupComponent, MockComponent(UserContainerComponent), MockComponent(SsoButtonsComponent)],
       providers: [
         MockProvider(ReCaptchaV3Service, {
           execute: jest.fn(() => of('some_token')),
@@ -92,7 +91,12 @@ describe('SignupComponent', () => {
           },
         },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(SignupComponent, {
+        remove: { imports: [UserContainerComponent, SsoButtonsComponent] },
+        add: { imports: [MockComponent(UserContainerComponent), MockComponent(SsoButtonsComponent)] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
