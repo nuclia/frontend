@@ -19,6 +19,7 @@ pa-tabs {
   z-index: 1;
 }
 
+/* Be aware that if you change this padding-top value, you need to change the margin-top value of .edit-resource (in edit-resource.component.scss) accordingly */
 #data-page-panel {
   padding-top: rhythm(5);
 }
