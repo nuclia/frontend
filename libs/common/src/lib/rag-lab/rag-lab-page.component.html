@@ -1,10 +1,10 @@
 <div class="rag-lab-page page-spacing">
   <div class="page-header">
-    <h1 class="page-title">{{ 'rag-lab.page-title' | translate }}</h1>
+    <h1 class="page-title">{{ 'rag-lab.header-title' | translate }}</h1>
     <p class="page-description">{{ 'rag-lab.page-description' | translate }}</p>
   </div>
 
-  <pa-tabs>
+  <pa-tabs notFullWidth>
     <pa-tab
       (click)="selectedTab = 'prompt'"
       [active]="selectedTab === 'prompt'">

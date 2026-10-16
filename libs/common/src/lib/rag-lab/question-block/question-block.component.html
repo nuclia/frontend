@@ -11,7 +11,7 @@
     <pa-button
       size="small"
       icon="plus"
-      [disabled]="questionsLimitReached | async"
+      [disabled]="(questionsLimitReached | async) || !currentQuery.trim()"
       (click)="addQuestion()"></pa-button>
   </div>
 </div>
