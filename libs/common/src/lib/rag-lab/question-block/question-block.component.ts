@@ -26,6 +26,9 @@ export class QuestionBlockComponent {
   questionsLimitReached = this.queries.pipe(map((queries) => queries.length >= 3));
 
   addQuestion() {
+    if (!this.currentQuery.trim()) {
+      return;
+    }
     this.queries
       .pipe(
         take(1),

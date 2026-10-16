@@ -2,6 +2,13 @@
 
 .rag-lab-page {
   .page-header {
-    margin-bottom: rhythm(5);
+    margin-bottom: rhythm(2);
+  }
+
+  pa-tabs {
+    display: block;
+    margin-bottom: rhythm(4);
+    max-width: 100%;
+    width: fit-content;
   }
 }
