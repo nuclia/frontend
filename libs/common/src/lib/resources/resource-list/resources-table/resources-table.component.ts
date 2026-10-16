@@ -23,6 +23,7 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { Classification, Resource, UserClassification } from '@nuclia/core';
 import {
+  ButtonMiniComponent,
   DropdownButtonComponent,
   NsiSkeletonComponent,
   SisLabelModule,
@@ -44,6 +45,7 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
     SpinnerComponent,
     PaButtonModule,
     LabelModule,
+    ButtonMiniComponent,
     DropdownButtonComponent,
     PaDropdownModule,
     PaTogglesModule,

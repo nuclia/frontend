@@ -6,35 +6,12 @@
       <div class="filtered">{{ 'resource.pagination.filtered' | translate: { num: hidden } }}</div>
     }
   </div>
-  <div class="download">
-    @if (!noDownload) {
-      @if (isErrorsView) {
-        <pa-button
-          aspect="basic"
-          iconAndText
-          icon="download"
-          [disabled]="loading"
-          (click)="download(true)">
-          {{ (loading ? 'resource.pagination.downloading' : 'resource.pagination.download-errors') | translate }}
-        </pa-button>
-      } @else {
-        <pa-button
-          aspect="basic"
-          iconAndText
-          icon="download"
-          [disabled]="loading"
-          (click)="download()">
-          {{ (loading ? 'resource.pagination.downloading' : 'resource.pagination.download') | translate }}
-        </pa-button>
-      }
-    }
-  </div>
-
   <div class="page-size">
     <div class="body-m">{{ 'resource.pagination.rows-per-page' | translate }}</div>
     <div>
       <nsi-dropdown-button
         aspect="basic"
+        size="small"
         [popupRef]="sizeDropdown">
         {{ pageSize }}
       </nsi-dropdown-button>
@@ -49,6 +26,7 @@
     <div class="pages">
       <pa-button
         aspect="basic"
+        size="small"
         [disabled]="page === 0"
         (click)="goTo(page - 1)">
         <pa-icon
@@ -59,12 +37,14 @@
         @if (item === '…') {
           <pa-button
             aspect="basic"
+            size="small"
             [disabled]="true">
             {{ item }}
           </pa-button>
         } @else {
           <pa-button
             aspect="basic"
+            size="small"
             [active]="item === page"
             (click)="goTo(item)">
             {{ item + 1 }}
@@ -73,6 +53,7 @@
       }
       <pa-button
         aspect="basic"
+        size="small"
         [disabled]="page === totalPages - 1"
         (click)="goTo(page + 1)">
         <pa-icon

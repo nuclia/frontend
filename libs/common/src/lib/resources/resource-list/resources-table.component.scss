@@ -1,19 +1,54 @@
 @use 'apps/dashboard/src/variables' as *;
 
-$height-table-header: rhythm(8);
-$height-pagination: rhythm(9);
+// Shared by every line of the table
+$table-line: $color-neutral-lighter;
+$toolbar-height: rhythm(7);
+
+.table-card {
+  // The top edge is drawn by the toolbar above, which together with the card forms one framed table
+  border: 1px solid $table-line;
+  border-top: none;
+  border-radius: 0 0 rhythm(1) rhythm(1);
+  // clip (not hidden) rounds the corners without creating a scroll container, so the sticky column headers and footer keep working
+  overflow: clip;
+
+  .selection-bar {
+    align-items: center;
+    background-color: $color-neutral-lightest;
+    color: $color-neutral-regular;
+    display: flex;
+    gap: rhythm(1.5);
+    padding: rhythm(2);
+  }
+
+  // Same light separator as between rows, instead of the footer's default darker top border
+  nsi-sticky-footer ::ng-deep footer {
+    border-top: 1px solid $table-line;
+    box-shadow: none;
+    margin-top: 0;
+    padding-block: rhythm(1);
+  }
+}
 
 .resource-table-header {
   background-color: $color-light-stronger;
-  min-height: rhythm(5);
-  margin-bottom: rhythm(3);
-  z-index: 1;
+  border: 1px solid $table-line;
+  // The separator below is drawn by the column header, so it stays visible when pinned
+  border-bottom: none;
+  border-radius: rhythm(1) rhythm(1) 0 0;
+  box-sizing: border-box;
+  height: $toolbar-height;
+  padding: rhythm(1.5) rhythm(1);
+  // Pinned with the column headers, which stick right below it
+  position: sticky;
+  top: var(--resource-list-header-height, 0px);
+  z-index: 2;
 
   .header-container {
     align-items: center;
     display: flex;
     gap: rhythm(1);
-    min-height: rhythm(5);
+    height: 100%;
   }
 
   .resource-bulk-actions {
@@ -32,30 +67,26 @@ $height-pagination: rhythm(9);
     display: flex;
     gap: rhythm(1);
     margin-left: auto;
-  }
 
-  .selection-bar {
-    align-items: center;
-    background-color: $color-neutral-lightest;
-    color: $color-neutral-regular;
-    display: flex;
-    gap: rhythm(1.5);
-    height: rhythm(5);
-    justify-content: center;
-    margin-bottom: rhythm(1.5);
+    nsi-button-mini ::ng-deep .nsi-mini-button {
+      white-space: nowrap;
+    }
   }
 }
 
 .table-container {
   position: relative;
-  // Always display pagination at the bottom, even when there are few results
-  min-height: calc(
-    100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - #{$height-table-header} - #{$height-pagination} +
-      rhythm(3)
-  );
-  // Pin the column headers right below the pinned filter row
+  // Pin the column headers right below the pinned filter row and toolbar
   ::ng-deep .pa-table-grid--header {
-    top: var(--resource-list-header-height, 0);
+    border-bottom-color: $table-line;
+    border-top: 1px solid $table-line;
+    min-height: rhythm(6);
+    padding-bottom: rhythm(1);
+    padding-top: rhythm(1);
+    top: calc(var(--resource-list-header-height, 0px) + #{$toolbar-height});
+  }
+  ::ng-deep pa-table-row:not(:last-of-type) .pa-table-grid--cell {
+    box-shadow: inset 0 -1px 0 $table-line;
   }
   .hidden-resource pa-table-cell ::ng-deep .pa-table-grid--cell {
     color: $color-neutral-regular;
@@ -113,6 +144,8 @@ table {
 }
 
 stf-table-pagination {
+  box-sizing: border-box;
+  padding: 0 rhythm(2);
   width: 100%;
 }
 
