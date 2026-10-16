@@ -5,19 +5,29 @@
   display: flex;
   gap: rhythm(5);
 
+  .scrollable-area {
+    min-width: 0;
+  }
+
   pa-tabs {
     display: block;
     margin-bottom: rhythm(3);
   }
 
   .filters-container {
-    margin-bottom: rhythm(4);
+    border-bottom: 1px solid $color-neutral-lightest;
+    margin-bottom: rhythm(3);
+    padding-bottom: rhythm(1.5);
     .selected-filters,
     .filters {
       align-items: center;
       display: flex;
       flex-wrap: wrap;
       gap: rhythm(1.5);
+      min-height: rhythm(6);
+    }
+    .filters {
+      justify-content: flex-end;
     }
     .selected-filters {
       margin-top: rhythm(1.5);
@@ -35,6 +45,48 @@
   }
 
   .resource-container {
+    .resource-details {
+      margin: 0 0 rhythm(4);
+
+      &:first-of-type {
+        padding-top: rhythm(1.5);
+      }
+
+      > div {
+        border-bottom: 1px solid $color-neutral-lighter;
+        display: grid;
+        gap: rhythm(2);
+        grid-template-columns: rhythm(20) minmax(0, 1fr);
+        padding: rhythm(2.5) 0;
+
+        &:first-child {
+          padding-top: 0;
+        }
+      }
+
+      dt {
+        color: $color-neutral-regular;
+        font-weight: $font-weight-regular;
+      }
+
+      dd {
+        margin: 0;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .identifier {
+        font-family: $font-family-monospace, monospace;
+      }
+
+      @media (max-width: $size-viewport-medium-max) {
+        > div {
+          gap: rhythm(1);
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+    }
+
     .title-m,
     .thumbnails-container {
       margin-bottom: rhythm(2);
@@ -42,12 +94,38 @@
   }
 
   .paragraph-container {
-    margin-bottom: rhythm(2.5);
-    .image {
-      border: 1px solid $color-neutral-light;
+    margin-bottom: rhythm(3);
+
+    &.extracted-block {
+      background: $color-neutral-lightest;
       border-radius: $border-radius-default;
-      max-width: rhythm(28);
-      max-height: rhythm(24);
+      padding: rhythm(2);
+    }
+
+    .paragraph-image {
+      display: flex;
+    }
+
+    .image {
+      border-radius: $border-radius-default;
+      display: block;
+      max-width: 100%;
+      max-height: rhythm(32);
+      object-fit: contain;
+    }
+
+    .paragraph-heading {
+      align-items: center;
+      color: $color-neutral-regular;
+      display: flex;
+      flex-wrap: wrap;
+      gap: rhythm(1);
+      margin-bottom: rhythm(1.5);
+    }
+
+    .paragraph-content {
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
     p {
       margin: 0;
@@ -57,15 +135,7 @@
       gap: rhythm(2);
       justify-content: space-between;
     }
-    p.with-type {
-      display: flex;
-      gap: rhythm(1);
-      justify-content: space-between;
-      nsi-badge {
-        margin: rhythm(0.5);
-      }
-    }
-    p.with-hover:hover {
+    .with-hover:hover {
       background-color: $color-neutral-lightest;
     }
     .labels-container {

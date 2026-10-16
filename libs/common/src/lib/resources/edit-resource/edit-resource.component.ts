@@ -7,7 +7,7 @@ import {
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import {
   DATA_AUGMENTATION_ERROR,
   EditResourceService,
@@ -33,6 +33,8 @@ import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 
 import { take, takeUntil } from 'rxjs/operators';
 import { isMemoryFieldId, isMemoryResource } from '../memory/memory.helpers';
 import { ResourceCacheService } from '../resource-cache.service';
+import { PreviewService } from './preview/preview.service';
+import { AddFieldComponent } from './add-field/add-field.component';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -54,7 +56,6 @@ const AUTO_FILE_FIELD_ID = /^[a-z0-9]{32}$/;
     PaPopupModule,
     PaDropdownModule,
     PaIconModule,
-    RouterLinkActive,
     RouterOutlet,
     AsyncPipe,
     TranslatePipe,
@@ -136,6 +137,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private sdk: SDKService,
     public resourceNavigationService: ResourceNavigationService,
     private resourceCacheService: ResourceCacheService,
+    public previewService: PreviewService,
   ) {
     combineLatest([this.route.params, this.isArag])
       .pipe(
@@ -190,6 +192,10 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   onViewChange() {
     this.editResource.setCurrentField('resource');
+  }
+
+  openAddField() {
+    this.modal.openModal(AddFieldComponent);
   }
 
   navigateToMemory() {

@@ -82,9 +82,10 @@
                   <div>
                     <nsi-dropdown-button
                       aspect="basic"
+                      size="small"
                       freeWidth
                       [popupRef]="paragraphTypeDropdown">
-                      {{ 'Paragraph type' | translate }}
+                      {{ 'label-set.filter' | translate }}
                     </nsi-dropdown-button>
                     <pa-dropdown #paragraphTypeDropdown>
                       @for (type of paragraphTypes | async; track type) {
@@ -118,7 +119,6 @@
               </div>
               @if (hasSelectedFilters | async) {
                 <div class="selected-filters">
-                  <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
                   @for (type of selectedTypes | async; track type) {
                     <pa-chip-closeable (closed)="toggleType(type)">
                       {{ type }}
@@ -160,14 +160,31 @@
           } @else {
             @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
               @let hasLabels = paragraph.activeClassifications.length > 0;
-              <div class="paragraph-container">
+              <div
+                class="paragraph-container"
+                [class.extracted-block]="
+                  !!paragraph.url ||
+                  paragraph.kind === 'TEXT' ||
+                  paragraph.kind === 'OCR' ||
+                  paragraph.kind === 'INCEPTION'
+                ">
+                @if (!paragraph.url && paragraph.kind) {
+                  <div class="paragraph-heading">
+                    <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
+                    @if (paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION') {
+                      <span class="body-s">
+                        {{ 'resource.tooltip.' + paragraph.kind.toLowerCase() | translate }}
+                      </span>
+                    }
+                  </div>
+                }
                 @if (paragraph.url) {
-                  <p>
+                  <div class="paragraph-image">
                     <img
                       class="image"
                       alt=""
                       [src]="paragraph.url | async" />
-                  </p>
+                  </div>
                 } @else if (paragraph.kind === 'TEXT') {
                   @if (((attachments | async) || {})[paragraph.key || '']; as attachments) {
                     <p class="with-attachments">
@@ -197,21 +214,17 @@
                     </p>
                   }
                 } @else {
-                  <p class="with-type with-hover">
-                    @if (paragraph.kind === 'TABLE') {
-                      <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
-                    } @else {
-                      <span [innerHTML]="paragraph.textWithFormat"></span>
-                    }
-                    <span
-                      [paTooltip]="
-                        paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
-                          ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
-                          : undefined
-                      ">
-                      <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
-                    </span>
-                  </p>
+                  <div
+                    class="typed-paragraph"
+                    [class.with-hover]="hasLabels">
+                    <div class="paragraph-content">
+                      @if (paragraph.kind === 'TABLE') {
+                        <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
+                      } @else {
+                        <span [innerHTML]="paragraph.textWithFormat"></span>
+                      }
+                    </div>
+                  </div>
                 }
                 @if (hasLabels) {
                   <div class="labels-container">
@@ -281,76 +294,96 @@
               {{ 'resource.preview.hide-warning' | translate }}
             </nsi-info-card>
           }
-          <div class="title-m">{{ 'resource.preview.general' | translate }}</div>
-
-          <div class="title-xxs">{{ 'generic.uid' | translate }}</div>
-          <p>{{ resource.uuid }}</p>
-
-          <div class="title-xxs">{{ 'generic.slug' | translate }}</div>
-          <p>{{ resource.slug }}</p>
-
-          <div class="title-xxs">{{ 'resource.title' | translate }}</div>
-          <p>{{ resource.title }}</p>
-
-          <div class="title-xxs">{{ 'resource.summary' | translate }}</div>
-          <p [innerHtml]="(summary | async) || '-'"></p>
-
-          <div class="title-xxs">{{ 'resource.thumbnail.label' | translate }}</div>
-          <div class="thumbnails-container">
-            @for (thumb of thumbnails | async; track thumb.uri) {
-              <div>
-                <stf-thumbnail
-                  noDeletion
-                  [selected]="resource.thumbnail === thumb.uri"
-                  [url]="thumb.blob"
-                  [alt]="'Thumbnail ' + $index"></stf-thumbnail>
-              </div>
-            }
-            @if (!(hasThumbnail | async)) {
-              –
-            }
-          </div>
+          <dl class="resource-details">
+            <div>
+              <dt>{{ 'resource.title' | translate }}</dt>
+              <dd>{{ resource.title }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'resource.summary' | translate }}</dt>
+              <dd [innerHtml]="(summary | async) || '-'"></dd>
+            </div>
+            <div>
+              <dt>{{ 'generic.uid' | translate }}</dt>
+              <dd class="identifier">{{ resource.uuid }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'generic.slug' | translate }}</dt>
+              <dd>{{ resource.slug }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'resource.thumbnail.label' | translate }}</dt>
+              <dd class="thumbnails-container">
+                @for (thumb of thumbnails | async; track thumb.uri) {
+                  <div>
+                    <stf-thumbnail
+                      noDeletion
+                      [selected]="resource.thumbnail === thumb.uri"
+                      [url]="thumb.blob"
+                      [alt]="'Thumbnail ' + $index"></stf-thumbnail>
+                  </div>
+                }
+                @if (!(hasThumbnail | async)) {
+                  –
+                }
+              </dd>
+            </div>
+          </dl>
 
           @if (resource.origin; as origin) {
             <div class="title-m">{{ 'resource.preview.origin' | translate }}</div>
 
-            <div class="title-xxs">{{ 'resource.origin.collaborators' | translate }}</div>
-            <p>{{ origin.collaborators?.join(', ') || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.created' | translate }}</div>
-            <p>{{ origin.created || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.modified' | translate }}</div>
-            <p>{{ origin.modified || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.filename' | translate }}</div>
-            <p>{{ origin.filename || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.url' | translate }}</div>
-            <p>{{ origin.url || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.tags' | translate }}</div>
-            <p>{{ origin.tags?.join(', ') || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.related' | translate }}</div>
-            <p>{{ origin.related?.join(', ') || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.path' | translate }}</div>
-            <p>{{ origin.path || '–' }}</p>
-
-            <div class="title-xxs">{{ 'resource.origin.metadata.title' | translate }}</div>
-            @if (origin.metadata; as originMetadata) {
-              <pa-table columns="50% 50%">
-                @for (item of originMetadata | keyvalue; track item.key) {
-                  <pa-table-row>
-                    <pa-table-cell>{{ item.key }}</pa-table-cell>
-                    <pa-table-cell>{{ item.value }}</pa-table-cell>
-                  </pa-table-row>
-                }
-              </pa-table>
-            } @else {
-              <p>–</p>
-            }
+            <dl class="resource-details">
+              <div>
+                <dt>{{ 'resource.origin.collaborators' | translate }}</dt>
+                <dd>{{ origin.collaborators?.join(', ') || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.created' | translate }}</dt>
+                <dd>{{ origin.created || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.modified' | translate }}</dt>
+                <dd>{{ origin.modified || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.filename' | translate }}</dt>
+                <dd>{{ origin.filename || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.url' | translate }}</dt>
+                <dd>{{ origin.url || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.tags' | translate }}</dt>
+                <dd>{{ origin.tags?.join(', ') || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.related' | translate }}</dt>
+                <dd>{{ origin.related?.join(', ') || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.path' | translate }}</dt>
+                <dd>{{ origin.path || '–' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'resource.origin.metadata.title' | translate }}</dt>
+                <dd>
+                  @if (origin.metadata; as originMetadata) {
+                    <pa-table columns="50% 50%">
+                      @for (item of originMetadata | keyvalue; track item.key) {
+                        <pa-table-row>
+                          <pa-table-cell>{{ item.key }}</pa-table-cell>
+                          <pa-table-cell>{{ item.value }}</pa-table-cell>
+                        </pa-table-row>
+                      }
+                    </pa-table>
+                  } @else {
+                    –
+                  }
+                </dd>
+              </div>
+            </dl>
           }
           @if (extraMetadata | async; as extraMetadata) {
             <div class="title-m title-with-button">
@@ -384,8 +417,12 @@
           }
           @if (resource.security) {
             <div class="title-m">{{ 'resource.security.label' | translate }}</div>
-            <div class="title-xxs">{{ 'resource.security.access-groups.label' | translate }}</div>
-            <p [innerHTML]="resource.security.access_groups.join('<br>') || '–'"></p>
+            <dl class="resource-details">
+              <div>
+                <dt>{{ 'resource.security.access-groups.label' | translate }}</dt>
+                <dd [innerHTML]="resource.security.access_groups.join('<br>') || '–'"></dd>
+              </div>
+            </dl>
           }
         </div>
       } @else if (noField | async) {
@@ -399,13 +436,6 @@
   </div>
   <div class="buttons-container">
     <div class="buttons">
-      @if (currentFieldId && currentFieldId.field_type !== 'key_value' && !(isArag | async)) {
-        <pa-button
-          [disabled]="loadingPreview"
-          (click)="openViewer()">
-          {{ 'resource.preview.open-viewer' | translate }}
-        </pa-button>
-      }
       @if (dataAugmentationErrors.length > 0) {
         <pa-button
           aspect="basic"

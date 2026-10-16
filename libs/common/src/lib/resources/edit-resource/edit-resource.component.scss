@@ -7,82 +7,91 @@
 
   header {
     $gap-header-buttons: rhythm(1);
-    $button-size: rhythm(5);
 
     align-items: center;
     background: $color-neutral-lightest;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     height: tokens.$height-header;
-    justify-content: space-between;
-    padding: 0 calc(var(--app-layout-padding-right) - #{rhythm(1)}) 0 var(--app-layout-padding-left);
+    padding: 0 rhythm(1);
     position: sticky;
     top: 0;
     z-index: 100;
 
-    .header-left-block {
-      align-items: center;
-      display: flex;
-    }
-
     .navigation-buttons {
       display: flex;
       gap: $gap-header-buttons;
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
     }
 
     .title-s {
-      flex: 1 0 auto;
-      padding-left: rhythm(9);
-      padding-right: rhythm(1);
-      max-width: calc(
-        100vw - #{$width-side-panel} - var(--app-layout-padding-left) - ($button-size * 3) -
-          ($button-size * 5) - var(--app-layout-padding-right)
-      );
+      box-sizing: border-box;
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+      max-width: tokens.$width-page-content;
+      min-width: 0;
+      padding: 0 rhythm(2);
+      text-align: center;
+      width: 100%;
     }
 
     .actions {
       align-items: center;
       display: flex;
       gap: $gap-header-buttons;
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
     }
   }
   .page-container {
-    display: flex;
-    gap: rhythm(0.5);
+    align-items: start;
+    display: grid;
+    grid-template-columns: rhythm(24) minmax(0, 1fr);
+    gap: rhythm(3);
     min-height: calc(100vh - var(--app-topbar-height) - #{tokens.$height-header});
     padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
       var(--app-layout-padding-left);
 
     nav {
-      flex: 0 0 auto;
-      position: relative;
-      top: -#{rhythm(2)};
-      width: rhythm(24);
+      min-width: 0;
+      position: sticky;
+      top: tokens.$sticky-top;
 
       h4 {
         margin: 0;
       }
 
       ul {
+        display: flex;
+        flex-direction: column;
+        gap: rhythm(0.5);
+        list-style: none;
+        margin: 0;
         padding: 0;
-        position: sticky;
-        top: tokens.$sticky-top;
       }
 
       li.nav-item {
         align-items: center;
+        border-radius: $border-radius-default;
+        box-sizing: border-box;
         cursor: pointer;
         display: flex;
         gap: rhythm(1);
-        padding: rhythm(1) rhythm(1.5);
+        height: rhythm(6);
+        padding: 0 rhythm(1.5);
 
         pa-icon {
           display: flex;
         }
 
         &.active {
+          background: $color-neutral-lightest;
           cursor: default;
           font-weight: $font-weight-semi-bold;
-          padding-right: rhythm(5);
         }
 
         &:not(.active):hover {
@@ -94,21 +103,29 @@
         }
 
         .field-menu {
-          position: absolute;
-          right: rhythm(1);
+          display: flex;
+          flex-shrink: 0;
+          margin-left: auto;
         }
       }
 
       .generated-fields {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: rhythm(1);
+        list-style: none;
+
         h4 {
-          padding: rhythm(1.5) rhythm(1.5) 0;
+          padding: 0 rhythm(1.5);
         }
       }
     }
 
     .page-content {
-      flex: 1 1 auto;
+      margin: 0;
+      max-width: tokens.$width-page-content;
+      min-width: 0;
+      width: 100%;
 
       footer {
         background: $color-light-stronger;
@@ -131,6 +148,15 @@
         .save-actions {
           display: flex;
         }
+      }
+    }
+
+    @media (max-width: $size-viewport-medium-max) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: rhythm(3);
+
+      nav {
+        position: static;
       }
     }
   }

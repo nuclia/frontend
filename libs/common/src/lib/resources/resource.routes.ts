@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import {
-  AddFieldComponent,
   EditResourceComponent,
   ParagraphAnnotationComponent,
   ParagraphClassificationComponent,
@@ -64,7 +63,8 @@ export const RESOURCE_ROUTES: Routes = [
           },
           {
             path: 'add-field',
-            component: AddFieldComponent,
+            redirectTo: 'preview',
+            pathMatch: 'full',
           },
           {
             path: 'text/:fieldId',

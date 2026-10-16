@@ -288,7 +288,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
         return (paragraphs as ParagraphWithTextAndImage[]).map((paragraph) => ({
           ...paragraph,
           url: paragraph.imagePath ? this.getGeneratedFileUrl(paragraph.imagePath) : undefined,
-          textWithFormat: DOMPurify.sanitize(paragraph.text.replace(/\n/g, '<br>')),
+          textWithFormat: DOMPurify.sanitize(paragraph.text.trimEnd().replace(/\n/g, '<br>')),
         }));
       }),
     );
@@ -345,6 +345,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
+    this.previewService.viewerRequested.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.openViewer());
     combineLatest([this.fieldId, this.resource, this.fieldData])
       .pipe(
         switchMap(([fieldId, resource, fieldData]) =>
@@ -361,6 +362,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       )
       .subscribe(({ fieldId, resource }) => {
         this.currentFieldId = fieldId;
+        this.publishViewerState();
         this.errors = getErrors(fieldId, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR);
         this.dataAugmentationErrors = getErrors(fieldId, resource).filter(
           (error) => error.code_str === DATA_AUGMENTATION_ERROR,
@@ -380,11 +382,13 @@ export class PreviewComponent implements OnInit, OnDestroy {
       )
       .subscribe((field) => {
         this.currentFieldId = field;
+        this.publishViewerState();
         this.cdr.markForCheck();
       });
   }
 
   ngOnDestroy() {
+    this.previewService.setViewerState({ available: false, loading: false });
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
     this.paragraphService.cleanup();
@@ -394,8 +398,16 @@ export class PreviewComponent implements OnInit, OnDestroy {
     }
   }
 
+  private publishViewerState() {
+    this.previewService.setViewerState({
+      available: !!this.currentFieldId && this.currentFieldId.field_type !== 'key_value',
+      loading: this.loadingPreview,
+    });
+  }
+
   openViewer() {
     this.loadingPreview = true;
+    this.publishViewerState();
     if (this.currentFieldId) {
       const fieldId = this.currentFieldId;
       this.resource
@@ -407,6 +419,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
         )
         .subscribe(() => {
           this.loadingPreview = false;
+          this.publishViewerState();
           this.cdr.markForCheck();
         });
     }
