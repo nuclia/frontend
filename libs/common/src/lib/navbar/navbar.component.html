@@ -68,7 +68,7 @@
                   class="nav-link sub-item"
                   data-cy="go-to-settings"
                   [class.disabled]="!(isKbAdmin | async)">
-                  <pa-icon name="gear"></pa-icon>
+                  <pa-icon name="settings"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
                 </a>
                 <a
@@ -78,7 +78,7 @@
                   class="nav-link sub-item"
                   data-cy="go-to-ai-models"
                   [class.disabled]="!(isKbAdmin | async)">
-                  <pa-icon name="settings"></pa-icon>
+                  <pa-icon name="sparks"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
                 </a>
 
@@ -89,7 +89,7 @@
                   data-cy="go-to-tasks"
                   class="nav-link sub-item"
                   [class.disabled]="!(isAdminOrContrib | async)">
-                  <pa-icon name="submenu"></pa-icon>
+                  <pa-icon name="dataflow"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.da-agents' | translate }}</span>
                 </a>
                 @if (isKbAdmin | async) {
@@ -99,7 +99,7 @@
                     routerLinkActive="active"
                     data-cy="go-to-api-keys"
                     class="nav-link sub-item">
-                    <pa-icon name="lock-off"></pa-icon>
+                    <pa-icon name="key"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
                   </a>
                 }
@@ -119,7 +119,7 @@
                   routerLinkActive="active"
                   class="nav-link sub-item"
                   data-cy="go-to-ner">
-                  <pa-icon name="form"></pa-icon>
+                  <pa-icon name="graph"></pa-icon>
                   <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
                 </a>
 
@@ -131,7 +131,7 @@
                     data-cy="go-to-prompt-lab"
                     class="nav-link sub-item"
                     [stfUnauthorizedFeature]="(isPromptLabAuthorized | async) === false">
-                    <pa-icon name="lab"></pa-icon>
+                    <pa-icon name="prompt"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.rag-lab' | translate }}</span>
                   </a>
                   <a
@@ -218,7 +218,7 @@
                   class="nav-link sub-item"
                   data-cy="go-to-resource-activity"
                   [class.disabled]="!(isAdminOrContrib | async)">
-                  <pa-icon name="activity-log"></pa-icon>
+                  <pa-icon name="clock-dash"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
                 </a>
                 <a
@@ -343,7 +343,7 @@
                   class="nav-link sub-item"
                   data-cy="go-to-settings"
                   [class.disabled]="!(isAragAdmin | async)">
-                  <pa-icon name="gear"></pa-icon>
+                  <pa-icon name="settings"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
                 </a>
 
@@ -364,7 +364,7 @@
                     routerLinkActive="active"
                     data-cy="go-to-api-keys"
                     class="nav-link sub-item">
-                    <pa-icon name="lock-off"></pa-icon>
+                    <pa-icon name="key"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
                   </a>
 
