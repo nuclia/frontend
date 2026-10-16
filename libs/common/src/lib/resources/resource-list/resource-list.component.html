@@ -232,6 +232,29 @@
           @if (isAdminOrContrib | async) {
             <stf-upload-button></stf-upload-button>
           }
+
+          <pa-button
+            icon="more-vertical"
+            aspect="basic"
+            [paTooltip]="'resource.menu.label' | translate"
+            [paPopup]="moreMenu">
+            {{ 'resource.menu.label' | translate }}
+          </pa-button>
+          <pa-dropdown #moreMenu>
+            <pa-option
+              icon="download"
+              [disabled]="downloading"
+              (selectOption)="downloadList()">
+              {{
+                (downloading
+                  ? 'resource.pagination.downloading'
+                  : isErrorView
+                    ? 'resource.pagination.download-errors'
+                    : 'resource.pagination.download'
+                ) | translate
+              }}
+            </pa-option>
+          </pa-dropdown>
         </div>
       </div>
 

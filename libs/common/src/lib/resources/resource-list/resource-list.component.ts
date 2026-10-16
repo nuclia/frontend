@@ -128,6 +128,16 @@ export class ResourceListComponent implements OnDestroy {
     return this.resourceListService.status === 'ERROR';
   }
 
+  downloading = false;
+
+  downloadList() {
+    this.downloading = true;
+    this.resourceListService.downloadResources(this.isErrorView ? RESOURCE_STATUS.ERROR : undefined).subscribe(() => {
+      this.downloading = false;
+      this.cdr.markForCheck();
+    });
+  }
+
   constructor(
     private sdk: SDKService,
     private uploadService: UploadService,
