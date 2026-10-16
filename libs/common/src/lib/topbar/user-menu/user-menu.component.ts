@@ -304,7 +304,7 @@ export class UserMenuComponent implements OnInit {
         },
         {
           label: 'navbar.models',
-          icon: 'settings',
+          icon: 'sparks',
           dataCy: 'go-to-models',
           action: () => this.go('configuration/models'),
           visible$: this.isModelManagementEnabled,
