@@ -3,5 +3,13 @@
 .ai-models {
   display: flex;
   flex-direction: column;
-  gap: rhythm(4);
+  gap: rhythm(2);
+
+  > pa-tabs {
+    margin-bottom: rhythm(2);
+  }
+
+  .page-description {
+    margin-bottom: 0;
+  }
 }
