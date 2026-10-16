@@ -53,11 +53,13 @@ export class PlanStatusComponent {
     this.sdk.currentAccount,
     this.features.isAccountManager,
     this.navigation.contextBoxMode,
+    this.features.unstable.contextBoxNoTrial,
   ]).pipe(
-    switchMap(([isTrial, account, isAccountManager, contextBoxMode]) => {
+    switchMap(([isTrialAccount, account, isAccountManager, contextBoxMode, contextBoxNoTrial]) => {
       if (!isAccountManager) {
         return of(null);
       }
+      const isTrial = isTrialAccount && !(contextBoxNoTrial && account.workflow === 'cowork');
       const daysLeft =
         isTrial && account.trial_expiration_date
           ? Math.max(differenceInDays(new Date(`${account.trial_expiration_date}+00:00`), new Date()) + 1, 0)

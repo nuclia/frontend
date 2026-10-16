@@ -11,6 +11,7 @@ import {
   shareReplay,
   switchMap,
   take,
+  throwError,
 } from 'rxjs';
 import {
   AccountBudget,
@@ -98,6 +99,15 @@ export class BillingService {
       switchMap((account) =>
         this.sdk.nuclia.rest.post<PaymentMethod>(`/billing/account/${account.id}/payment_methods`, data),
       ),
+    );
+  }
+
+  hasSubscription(): Observable<boolean> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.get<unknown>(`/billing/account/${account.id}/subscription`)),
+      map(() => true),
+      catchError((error) => (error.status === 404 ? of(false) : throwError(() => error))),
     );
   }
 
