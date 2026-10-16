@@ -55,11 +55,12 @@
       }
 
       &.mode-chat {
-        --custom-height-container: min(#{rhythm(70)}, calc(100vh - var(--app-topbar-height) - #{rhythm(18)}));
+        --custom-height-container: calc(100vh - var(--app-topbar-height) - #{rhythm(20)});
         --custom-margin-side-input-container: auto;
         --custom-width-input-container: 100%;
 
         overflow-y: auto;
+        padding: 0;
 
         .preview-content {
           width: min(100%, var(--preview-content-width));
