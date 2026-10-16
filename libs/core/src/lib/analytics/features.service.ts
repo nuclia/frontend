@@ -79,6 +79,7 @@ export class FeaturesService {
     perplexitySource: this.featureFlag.isFeatureEnabled('perplexity-source'),
     googleSource: this.featureFlag.isFeatureEnabled('google-source'),
     agenticDAGeneration: this.featureFlag.isFeatureEnabled('agentic-da-generation'),
+    contextBoxNoTrial: this.featureFlag.isFeatureEnabled('context-box-no-trial'),
   };
 
   /**

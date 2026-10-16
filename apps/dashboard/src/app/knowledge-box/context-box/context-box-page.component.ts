@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { filter, map, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { catchError, combineLatest, filter, map, Observable, of, switchMap, take } from 'rxjs';
+import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { Account } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { TrialExpiredModalComponent } from './trial-expired-modal/trial-expired-modal.component';
@@ -23,6 +24,9 @@ import { ContextBoxComponent } from './context-box/context-box.component';
 })
 export class ContextBoxPageComponent {
   private sdk = inject(SDKService);
+  private features = inject(FeaturesService);
+  private billing = inject(BillingService);
+  private navigation = inject(NavigationService);
   private modalService = inject(SisModalService);
   private destroyRef = inject(DestroyRef);
   private expiredModalRef?: ModalRef;
@@ -30,21 +34,41 @@ export class ContextBoxPageComponent {
   isReader = toSignal(this.sdk.currentKb.pipe(map((kb) => !kb.admin && !kb.contrib)), { initialValue: true });
 
   constructor() {
-    this.sdk.currentAccount
+    combineLatest([this.sdk.currentAccount, this.features.unstable.contextBoxNoTrial])
       .pipe(
         take(1),
-        filter((account) => isTrialExpired(account)),
+        switchMap(([account, noTrial]) =>
+          this.getBlockingAction(account, noTrial).pipe(map((action) => ({ account, action }))),
+        ),
+        filter(({ action }) => !!action),
         takeUntilDestroyed(),
       )
-      .subscribe(() => {
-        this.expiredModalRef = this.modalService.openModal(
-          TrialExpiredModalComponent,
-          new ModalConfig({ dismissable: false }),
-        );
+      .subscribe(({ account, action }) => {
+        if (action === 'pay') {
+          this.navigation.navigateExternal(this.navigation.getUpgradeUrl(account.slug), { withFromApp: true });
+        } else {
+          this.expiredModalRef = this.modalService.openModal(
+            TrialExpiredModalComponent,
+            new ModalConfig({ dismissable: false }),
+          );
+        }
       });
 
     this.destroyRef.onDestroy(() => {
       this.expiredModalRef?.close();
     });
+  }
+
+  private getBlockingAction(account: Account, noTrial: boolean): Observable<'pay' | 'modal' | null> {
+    if (!noTrial || !account.can_manage_account) {
+      return of(isTrialExpired(account) ? 'modal' : null);
+    }
+    if (account.type !== 'cowork') {
+      return of(null);
+    }
+    return this.billing.hasSubscription().pipe(
+      map((hasSubscription) => (hasSubscription ? null : 'pay')),
+      catchError(() => of(null)),
+    );
   }
 }
