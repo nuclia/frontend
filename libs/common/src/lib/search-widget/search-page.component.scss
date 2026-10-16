@@ -39,10 +39,6 @@
       padding: 0 rhythm(5) rhythm(5);
       position: relative;
 
-      // A transformed ancestor is the containing block for the widget's fixed popup/FAB elements.
-      // This keeps every preview mode inside the stage instead of underneath the config panel.
-      transform: translateZ(0);
-
       &.dark-mode {
         --custom-container-background-color: #{$color-dark-stronger};
 
@@ -84,6 +80,13 @@
           height: 100%;
           max-width: none;
         }
+      }
+
+      &.mode-popup,
+      &.mode-floating-chat {
+        // A transformed ancestor is the containing block for the widget's fixed popup/FAB elements.
+        // This keeps every preview mode inside the stage instead of underneath the config panel.
+        transform: translateZ(0);
       }
     }
 
