@@ -2200,7 +2200,7 @@
 	"search.configuration.action.manage-embeds": "Gérer",
 	"search.configuration.action.open-panel": "Ouvrir le panneau de configuration",
 	"search.configuration.action.overwrite": "Écraser la configuration sélectionnée",
-	"search.configuration.action.rag-lab": "RAG lab",
+	"search.configuration.action.rag-lab": "Lab",
 	"search.configuration.action.rag-lab-tooltip": "Comparez la réponse générée par vos différentes configurations de recherche",
 	"search.configuration.action.reset": "Réinitialiser",
 	"search.configuration.action.save": "Enregistrer",
