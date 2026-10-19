@@ -6561,21 +6561,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngneat/spectator@npm:^22.1.0":
-  version: 22.1.0
-  resolution: "@ngneat/spectator@npm:22.1.0"
-  dependencies:
-    "@testing-library/dom": "npm:^10.4.1"
-    jquery: "npm:^3.7.1"
-    tslib: "npm:^2.6.2"
-  peerDependencies:
-    "@angular/animations": ">= 20.0.0"
-    "@angular/common": ">= 20.0.0"
-    "@angular/router": ">= 20.0.0"
-  checksum: 10/5d8ca0762022a91ffd95901936c4cf3da0888c9db782ab2793bdf29d3afdfafecce6c21fc34115081708302e2c22ec1df9b924b209fdfbfa054aec4a0bcb25b3
-  languageName: node
-  linkType: hard
-
 "@ngtools/webpack@npm:22.2.1":
   version: 22.2.1
   resolution: "@ngtools/webpack@npm:22.2.1"
@@ -19701,13 +19686,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery@npm:^3.7.1":
-  version: 3.7.1
-  resolution: "jquery@npm:3.7.1"
-  checksum: 10/17be9929f5fa37697d9848284f0d108c543318ef79ec794e130cd0c49f6c050d60c803a69e8cfa16fa19f5ff7cdb814a6905cceab0831186560c65ed113cd579
-  languageName: node
-  linkType: hard
-
 "js-base64@npm:^2.6.1":
   version: 2.6.4
   resolution: "js-base64@npm:2.6.4"
@@ -22351,7 +22329,6 @@ __metadata:
     "@ng-icons/core": "npm:>=32.0.0 <34.0.0"
     "@ng-icons/lucide": "npm:>=32.0.0 <34.0.0"
     "@ng-web-apis/common": "npm:^2.1.0"
-    "@ngneat/spectator": "npm:^22.1.0"
     "@ngx-translate/core": "npm:18"
     "@ngx-translate/http-loader": "npm:^18.0.0"
     "@nx/angular": "npm:23.2.0"

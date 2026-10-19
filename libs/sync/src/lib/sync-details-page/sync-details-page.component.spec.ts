@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
-import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { ITranslateService, Language, TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
@@ -9,7 +10,8 @@ import { SyncService } from '../logic';
 import { SyncDetailsPageComponent } from './sync-details-page.component';
 
 describe('SyncDetailsPageComponent', () => {
-  let spectator: SpectatorRouting<SyncDetailsPageComponent>;
+  let fixture: ComponentFixture<SyncDetailsPageComponent>;
+  let element: HTMLElement;
   let syncService: SyncService;
 
   const fakeTranslateService: Partial<ITranslateService> = {
@@ -27,114 +29,130 @@ describe('SyncDetailsPageComponent', () => {
     disconnect: jest.fn(),
   }));
 
-  const createService = createRoutingFactory({
-    component: SyncDetailsPageComponent,
-    params: { syncId: '123' },
-    mocks: [SisToastService],
-    providers: [
-      { provide: TranslateService, useValue: fakeTranslateService as unknown as TranslateService },
-      mockProvider(SDKService, {
-        currentKb: of({
-          id: 'testKb',
-          getLabels: () => of({}),
-        }),
-      }),
-      mockProvider(SyncService, {
-        cacheUpdated: of(new Date().toISOString()),
-        getSync: (syncId: string) =>
-          of({
-            id: syncId,
-            title: 'Test Sync 123',
-            connector: {
-              name: 'dropbox',
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SyncDetailsPageComponent],
+      providers: [
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { params: of({ syncId: '123' }), url: of([]), queryParams: of({}) } },
+        { provide: SisToastService, useValue: { error: jest.fn(), success: jest.fn() } },
+        { provide: TranslateService, useValue: fakeTranslateService as unknown as TranslateService },
+        {
+          provide: SDKService,
+          useValue: {
+            currentKb: of({
+              id: 'testKb',
+              getLabels: () => of({}),
+            }),
+          },
+        },
+        {
+          provide: SyncService,
+          useValue: {
+            setCurrentSyncId: jest.fn(),
+            cacheUpdated: of(new Date().toISOString()),
+            getSync: (syncId: string) =>
+              of({
+                id: syncId,
+                title: 'Test Sync 123',
+                connector: {
+                  name: 'dropbox',
+                },
+                foldersToSync: [
+                  { uuid: 'folder1', title: 'Folder 1', originalId: 'folder1', metadata: { displayPath: '/folder1' } },
+                ],
+              }),
+            connectors: {
+              dropbox: {
+                definition: {
+                  id: 'dropbox',
+                  title: 'Dropbox',
+                  logo: `/dropbox.svg`,
+                  description: 'File storage and synchronization service developed by Dropbox',
+                  permanentSyncOnly: true,
+                  allowToSelectFolders: true,
+                },
+              },
             },
-            foldersToSync: [
-              { uuid: 'folder1', title: 'Folder 1', originalId: 'folder1', metadata: { displayPath: '/folder1' } },
-            ],
-          }),
-        connectors: {
-          dropbox: {
-            definition: {
-              id: 'dropbox',
-              title: 'Dropbox',
-              logo: `/dropbox.svg`,
-              description: 'File storage and synchronization service developed by Dropbox',
-              permanentSyncOnly: true,
+            getConnector: jest.fn(() => ({
               allowToSelectFolders: true,
+              canSyncLastChanges: true,
+              getParametersSections: () => of([]),
+            })),
+            updateSync: jest.fn(() => of(undefined)),
+            isSyncing: of(false),
+            syncJobs: of([]),
+            getLogs: jest.fn(() =>
+              of([
+                {
+                  message: 'Synchronization finished',
+                  level: 'low',
+                  createdAt: '2024-06-03T07:15:42.978Z',
+                  action: 'finish-synchronization-sync-object',
+                  payload: {
+                    from: '9512775a-1a27-4c03-a8ea-8cddd3f38958-gdrive6-ajtiyi',
+                    to: '9512775a-1a27-4c03-a8ea-8cddd3f38958',
+                    date: '2024-06-03T07:15:42.978Z',
+                    processed: [],
+                    successCount: 0,
+                    error: '',
+                  },
+                },
+              ]),
+            ),
+          },
+        },
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
             },
           },
         },
-        getConnector: jest.fn(() => ({
-          allowToSelectFolders: true,
-          canSyncLastChanges: true,
-          getParametersSections: () => of([]),
-        })),
-        updateSync: jest.fn(() => of(undefined)),
-        isSyncing: of(false),
-        syncJobs: of([]),
-        getLogs: jest.fn(() =>
-          of([
-            {
-              message: 'Synchronization finished',
-              level: 'low',
-              createdAt: '2024-06-03T07:15:42.978Z',
-              action: 'finish-synchronization-sync-object',
-              payload: {
-                from: '9512775a-1a27-4c03-a8ea-8cddd3f38958-gdrive6-ajtiyi',
-                to: '9512775a-1a27-4c03-a8ea-8cddd3f38958',
-                date: '2024-06-03T07:15:42.978Z',
-                processed: [],
-                successCount: 0,
-                error: '',
-              },
-            },
-          ]),
-        ),
-      }),
-      mockProvider(SvgIconRegistryService, {
-        loadSvg: () => {
-          /* empty */
+        {
+          provide: NavigationService,
+          useValue: {
+            kbUrl: of('/test-kb-url'),
+          },
         },
-      }),
-      mockProvider(NavigationService, {
-        kbUrl: of('/test-kb-url'),
-      }),
-    ],
-  });
+      ],
+    }).compileComponents();
 
-  beforeEach(() => {
-    spectator = createService();
-    syncService = spectator.inject(SyncService);
+    fixture = TestBed.createComponent(SyncDetailsPageComponent);
+    element = fixture.nativeElement;
+    syncService = TestBed.inject(SyncService);
+    fixture.detectChanges();
   });
 
   it('should display sync activity', () => {
-    expect(spectator.query('h1.page-title')?.textContent).toContain('Test Sync 123');
-    expect(spectator.query('.activity-logs-container')?.textContent).toContain('Synchronization finished');
+    expect(element.querySelector('h1.page-title')?.textContent).toContain('Test Sync 123');
+    expect(element.querySelector('.activity-logs-container')?.textContent).toContain('Synchronization finished');
   });
 
   it('should toggle the sync activity status', () => {
-    expect(spectator.query('[data-cy="active-toggle"]')?.textContent).toContain('sync.badge.active');
-    spectator.click('[data-cy="active-toggle"] input');
-    spectator.detectChanges();
+    expect(element.querySelector('[data-cy="active-toggle"]')?.textContent).toContain('sync.badge.active');
+    element.querySelector<HTMLInputElement>('[data-cy="active-toggle"] input')!.click();
+    fixture.detectChanges();
     expect(syncService.updateSync).toHaveBeenCalledWith('123', { disabled: true });
-    spectator.click('[data-cy="active-toggle"] input');
-    spectator.detectChanges();
+    element.querySelector<HTMLInputElement>('[data-cy="active-toggle"] input')!.click();
+    fixture.detectChanges();
     expect(syncService.updateSync).toHaveBeenCalledWith('123', { disabled: false });
   });
 
   it('should open confirm dialog when triggering sync', () => {
-    const modalService = spectator.inject(SisModalService);
+    const modalService = TestBed.inject(SisModalService);
     const openConfirm = jest.spyOn(modalService, 'openConfirm');
-    spectator.click('[data-cy="sync-now"]');
-    spectator.detectChanges();
+    element.querySelector<HTMLElement>('[data-cy="sync-now"]')!.click();
+    fixture.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
   });
 
   it('should open confirm dialog when deleting sync', () => {
-    const modalService = spectator.inject(SisModalService);
+    const modalService = TestBed.inject(SisModalService);
     const openConfirm = jest.spyOn(modalService, 'openConfirm');
-    spectator.click('[data-cy="delete"]');
-    spectator.detectChanges();
+    element.querySelector<HTMLElement>('[data-cy="delete"]')!.click();
+    fixture.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
   });
 });
