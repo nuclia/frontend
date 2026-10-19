@@ -2,7 +2,7 @@ import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } f
 
 import { OverlayModule } from '@angular/cdk/overlay';
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
@@ -58,7 +58,7 @@ bootstrapApplication(AppComponent, {
     },
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi()),
     provideZonelessChangeDetection(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({

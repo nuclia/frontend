@@ -1,6 +1,6 @@
-import { ModuleWithProviders, NgModule, inject, provideAppInitializer } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ModuleWithProviders, NgModule, inject, provideAppInitializer } from '@angular/core';
 
 import { AppInitService, StaticEnvironmentConfiguration } from './app.init.service';
 
@@ -12,7 +12,7 @@ export function init_app(appLoadService: AppInitService, environment: StaticEnvi
   declarations: [],
   exports: [],
   imports: [CommonModule],
-  providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class STFConfigModule {
   static forRoot(environment: any): ModuleWithProviders<STFConfigModule> {
