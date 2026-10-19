@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { NsiSkeletonComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-skeleton',
   templateUrl: './sistema-skeleton.component.html',
   styleUrl: './sistema-skeleton.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, NsiSkeletonComponent],
 })
 export class SistemaSkeletonComponent {
   codeText = `<div class="skeleton-demo">

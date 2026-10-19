@@ -5,7 +5,6 @@ import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TitleStrategy } from '@angular/router';
 import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
 import { BackendConfigurationService, LabelSetsModule, STFConfigModule, STFPipesModule } from '@flaps/core';
@@ -37,7 +36,6 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       BaseModule,
       BrowserModule,
-      BrowserAnimationsModule,
       ReactiveFormsModule,
       AngularSvgIconModule.forRoot(),
       STFConfigModule.forRoot(environment),

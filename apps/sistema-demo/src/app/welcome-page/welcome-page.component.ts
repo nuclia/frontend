@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   templateUrl: './welcome-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule],
 })
 export class WelcomePageComponent {}

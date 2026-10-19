@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ModalConfig, ModalService } from '@guillotinaweb/pastanaga-angular';
+import { RouterLink } from '@angular/router';
+import { ModalConfig, ModalService, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import { DialogExampleComponent } from './dialog-example/dialog-example.component';
 import { ModalExampleComponent } from './modal-example/modal-example.component';
 
@@ -7,7 +9,7 @@ import { ModalExampleComponent } from './modal-example/modal-example.component';
   templateUrl: './sistema-modal.component.html',
   styleUrls: ['./sistema-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, RouterLink, PaButtonModule],
 })
 export class SistemaModalComponent {
   dialogTemplate = `<pa-modal-dialog>

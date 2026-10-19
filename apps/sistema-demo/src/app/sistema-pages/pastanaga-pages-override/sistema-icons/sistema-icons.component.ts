@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PaDropdownModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { BaseIconPageComponent, PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import { ICONS } from '../../../../assets/glyphs';
-import { BaseIconPageComponent } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   templateUrl:
@@ -9,7 +11,7 @@ import { BaseIconPageComponent } from '@guillotinaweb/pastanaga-angular/demo';
     '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/icon-page/icon-page.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, PaIconModule, PaTextFieldModule, FormsModule, PaDropdownModule],
 })
 export class SistemaIconsComponent extends BaseIconPageComponent implements OnInit {
   ngOnInit(): void {

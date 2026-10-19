@@ -1,12 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { CountrySelectComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-country-select',
   templateUrl: './sistema-country-select.component.html',
   styleUrl: './sistema-country-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, CountrySelectComponent, FormsModule, ReactiveFormsModule, PaTogglesModule],
 })
 export class SistemaCountrySelectComponent {
   disabled = false;

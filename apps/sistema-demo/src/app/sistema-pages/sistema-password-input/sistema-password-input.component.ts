@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { PasswordInputComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-password-input',
   templateUrl: './sistema-password-input.component.html',
   styleUrls: ['./sistema-password-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, PasswordInputComponent, PaTogglesModule],
 })
 export class SistemaPasswordInputComponent {
   disabled = false;

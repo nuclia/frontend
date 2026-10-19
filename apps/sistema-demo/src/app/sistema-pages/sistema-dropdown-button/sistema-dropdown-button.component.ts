@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PaDropdownModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-dropdown-button',
   templateUrl: './sistema-dropdown-button.component.html',
   styleUrls: ['./sistema-dropdown-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, DropdownButtonComponent, PaTogglesModule, PaDropdownModule],
 })
 export class SistemaDropdownButtonComponent {
   options = [

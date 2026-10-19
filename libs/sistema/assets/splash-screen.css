@@ -11,6 +11,19 @@ app-root {
   background-color: #fff;
   z-index: 99999;
   pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 400ms ease,
+    visibility 0s;
+}
+
+#stf-splash-screen.stf-splash-screen-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 400ms ease,
+    visibility 0s linear 400ms;
 }
 
 #stf-splash-screen .center {
@@ -44,6 +57,10 @@ app-root {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  #stf-splash-screen {
+    transition: none;
+  }
+
   #stf-splash-screen .logo {
     animation: none;
   }

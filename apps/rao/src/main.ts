@@ -4,7 +4,6 @@ import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/com
 import { enableProdMode, importProvidersFrom, provideZonelessChangeDetection } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TitleStrategy } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
@@ -37,7 +36,6 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       BaseModule,
       BrowserModule,
-      BrowserAnimationsModule,
       ReactiveFormsModule,
       AngularSvgIconModule.forRoot(),
       STFConfigModule.forRoot(environment),

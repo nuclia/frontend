@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ControlModel } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { SisSearchInputComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-search-input',
   templateUrl: './sistema-search-input.component.html',
   styleUrls: ['./sistema-search-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, SisSearchInputComponent],
 })
 export class SistemaSearchInputComponent {
   disabled = false;

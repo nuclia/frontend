@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-confirmation-dialog',
   templateUrl: './sistema-confirmation-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [PaDemoModule, PaButtonModule],
 })
 export class SistemaConfirmationDialogComponent {
   openConfirmCode = `
