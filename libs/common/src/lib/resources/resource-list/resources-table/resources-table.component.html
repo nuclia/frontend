@@ -11,13 +11,22 @@
     <div class="header-container">
       @if ((isAdminOrContrib | async) && (selection.length > 0 || allResourcesSelected)) {
         <div class="resource-bulk-actions">
-          <span class="selected-count title-xxs">
-            {{
-              'resource.selected_count'
-                | translate: { num: allResourcesSelected ? (totalItems | async) : selection.length }
-            }}
-          </span>
-
+          @if (isSummarizationAuthorized | async) {
+            <pa-button
+              aspect="basic"
+              size="small"
+              [disabled]="allResourcesSelected"
+              (click)="bulkSummarize()">
+              {{ 'resource.menu.summarize' | translate }}
+            </pa-button>
+          }
+          <pa-button
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkReprocess()">
+            {{ 'resource.reprocess' | translate }}
+          </pa-button>
           <pa-button
             data-cy="delete-selection"
             kind="destructive"
@@ -26,13 +35,6 @@
             [disabled]="bulkAction.inProgress"
             (click)="bulkDelete()">
             {{ 'generic.delete' | translate }}
-          </pa-button>
-          <pa-button
-            aspect="basic"
-            size="small"
-            [disabled]="bulkAction.inProgress"
-            (click)="bulkReprocess()">
-            {{ 'resource.reprocess' | translate }}
           </pa-button>
           @if (hasLabelSets | async) {
             <app-label-dropdown
@@ -54,15 +56,6 @@
               {{ 'resource.labels.remove' | translate }}
             </app-label-dropdown>
           }
-          @if (isSummarizationAuthorized | async) {
-            <pa-button
-              aspect="basic"
-              size="small"
-              [disabled]="allResourcesSelected"
-              (click)="bulkSummarize()">
-              {{ 'resource.menu.summarize' | translate }}
-            </pa-button>
-          }
           @if (hiddenResourcesEnabled | async) {
             <div>
               <nsi-dropdown-button
@@ -78,6 +71,12 @@
               </pa-dropdown>
             </div>
           }
+          <span class="selected-count body-s">
+            {{
+              'resource.selected_count'
+                | translate: { num: allResourcesSelected ? (totalItems | async) : selection.length }
+            }}
+          </span>
         </div>
       }
 

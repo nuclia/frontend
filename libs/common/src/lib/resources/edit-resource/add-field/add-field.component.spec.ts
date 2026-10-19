@@ -3,20 +3,23 @@ import { TestBed } from '@angular/core/testing';
 import { EditResourceService } from '@flaps/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { FIELD_TYPE } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 import { of, Subject } from 'rxjs';
 import { AddFieldComponent } from './add-field.component';
 
 describe('AddFieldComponent', () => {
   let component: AddFieldComponent;
-  let result: Subject<void>;
+  let result: Subject<void | null>;
   let modal: { close: jest.Mock; dismiss: jest.Mock };
   let service: { resource: ReturnType<typeof of>; addField: jest.Mock; addFile: jest.Mock; setCurrentView: jest.Mock };
   let markForCheck: jest.Mock;
+  let toaster: { error: jest.Mock };
 
   beforeEach(() => {
-    result = new Subject<void>();
+    result = new Subject<void | null>();
     modal = { close: jest.fn(), dismiss: jest.fn() };
     markForCheck = jest.fn();
+    toaster = { error: jest.fn() };
     service = {
       resource: of({ getFields: () => [] }),
       addField: jest.fn(() => result),
@@ -28,6 +31,7 @@ describe('AddFieldComponent', () => {
         { provide: EditResourceService, useValue: service },
         { provide: ModalRef, useValue: modal },
         { provide: ChangeDetectorRef, useValue: { markForCheck } },
+        { provide: SisToastService, useValue: toaster },
       ],
     });
     component = TestBed.runInInjectionContext(() => new AddFieldComponent());
@@ -77,5 +81,27 @@ describe('AddFieldComponent', () => {
     expect(component.newFile).toBeUndefined();
     expect(component.isModified).toBe(false);
     expect(component.form.invalid).toBe(true);
+  });
+
+  it('does not close the dialog when the resource service cannot save', () => {
+    component.textControl.setValue('Content to retain');
+    component.save();
+    result.next(null);
+
+    expect(component.isSaving).toBe(false);
+    expect(component.textControl.value).toBe('Content to retain');
+    expect(modal.close).not.toHaveBeenCalled();
+    expect(toaster.error).toHaveBeenCalledWith('generic.error.oops');
+  });
+
+  it('rejects a missing file instead of reporting a successful save', () => {
+    component.changeFieldType(FIELD_TYPE.file);
+    component.isModified = true;
+    component.save();
+
+    expect(service.addFile).not.toHaveBeenCalled();
+    expect(component.isSaving).toBe(false);
+    expect(modal.close).not.toHaveBeenCalled();
+    expect(toaster.error).toHaveBeenCalledWith('generic.error.oops');
   });
 });

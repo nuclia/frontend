@@ -73,7 +73,18 @@
         padding: 0;
       }
 
-      li.nav-item {
+      button.nav-item {
+        @include reset-button();
+        text-align: left;
+        width: 100%;
+
+        &:focus-visible {
+          box-shadow: $shadow-focus;
+        }
+      }
+
+      li.nav-item,
+      button.nav-item {
         align-items: center;
         border-radius: $border-radius-default;
         box-sizing: border-box;

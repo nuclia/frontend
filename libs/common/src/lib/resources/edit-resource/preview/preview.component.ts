@@ -62,6 +62,7 @@ import {
   InfoCardComponent,
   NsiSkeletonComponent,
   SisModalService,
+  SisToastService,
   SpinnerComponent,
 } from '@nuclia/sistema';
 import DOMPurify from 'dompurify';
@@ -69,7 +70,9 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  EMPTY,
   filter,
+  finalize,
   forkJoin,
   map,
   Observable,
@@ -125,6 +128,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   private modalService = inject(SisModalService);
   private navigationService = inject(NavigationService);
   private featuresService = inject(FeaturesService);
+  private toaster = inject(SisToastService);
 
   unsubscribeAll = new Subject<void>();
   isArag = this.route.data.pipe(
@@ -184,7 +188,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     map((field) => field as IFieldData),
   );
   loadingField: Observable<boolean> = this.editResourceService.loadingField;
-  isOnResourcePage: Observable<any> = this.route.params.pipe(
+  isOnResourcePage: Observable<boolean> = this.route.params.pipe(
     map((params) => !params['fieldId'] && !params['fieldType']),
   );
   fieldId: Observable<FieldId> = this.route.params.pipe(
@@ -373,11 +377,14 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
     this.isOnResourcePage
       .pipe(
-        filter((isResourcePage) => isResourcePage),
-        switchMap(() => this.editResourceService.fields),
-        map((fields) => fields.filter((field) => field.field_type !== FIELD_TYPE.generic)),
-        filter((fields) => fields.length === 1),
-        map((fields) => fields[0]),
+        switchMap((isResourcePage) =>
+          isResourcePage
+            ? this.editResourceService.fields.pipe(
+                map((fields) => fields.filter((field) => field.field_type !== FIELD_TYPE.generic)),
+                map((fields) => (fields.length === 1 ? fields[0] : undefined)),
+              )
+            : EMPTY,
+        ),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((field) => {
@@ -388,9 +395,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.previewService.setViewerState({ available: false, loading: false });
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.previewService.setViewerState({ available: false, loading: false });
     this.paragraphService.cleanup();
     const viewerElement = document.querySelector('nuclia-viewer') as any;
     if (typeof viewerElement?.$$c?.$destroy === 'function') {
@@ -400,29 +407,32 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   private publishViewerState() {
     this.previewService.setViewerState({
-      available: !!this.currentFieldId && this.currentFieldId.field_type !== 'key_value',
+      available: !!this.currentFieldId && this.currentFieldId.field_type !== FIELD_TYPE.key_value,
       loading: this.loadingPreview,
     });
   }
 
   openViewer() {
+    const fieldId = this.currentFieldId;
+    if (!fieldId || fieldId.field_type === FIELD_TYPE.key_value || this.loadingPreview) {
+      return;
+    }
     this.loadingPreview = true;
     this.publishViewerState();
-    if (this.currentFieldId) {
-      const fieldId = this.currentFieldId;
-      this.resource
-        .pipe(
-          take(1),
-          switchMap((resource) => this.previewService.openViewer({ ...fieldId, resourceId: resource.id })),
-          filter((isPreviewing) => !!isPreviewing),
-          take(1),
-        )
-        .subscribe(() => {
+    this.resource
+      .pipe(
+        take(1),
+        switchMap((resource) => this.previewService.openViewer({ ...fieldId, resourceId: resource.id })),
+        filter((isPreviewing) => !!isPreviewing),
+        take(1),
+        takeUntil(this.unsubscribeAll),
+        finalize(() => {
           this.loadingPreview = false;
           this.publishViewerState();
           this.cdr.markForCheck();
-        });
-    }
+        }),
+      )
+      .subscribe({ error: () => this.toaster.error('generic.error.oops') });
   }
 
   onClickOption(type: TypeParagraph, event: MouseEvent | KeyboardEvent) {

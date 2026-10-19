@@ -194,13 +194,16 @@
         }
 
         @if (!aragMode && (isAdminOrContrib | async) === true) {
-          <li
-            class="nav-item"
-            (click)="openAddField()">
-            <pa-icon
-              name="plus"
-              size="small"></pa-icon>
-            {{ 'resource.tooltip.add-field' | translate }}
+          <li>
+            <button
+              type="button"
+              class="nav-item"
+              (click)="openAddField()">
+              <pa-icon
+                name="plus"
+                size="small"></pa-icon>
+              {{ 'resource.tooltip.add-field' | translate }}
+            </button>
           </li>
         }
         @if (((generatedFields | async) || []).length > 0) {

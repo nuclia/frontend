@@ -1,7 +1,7 @@
 @use 'apps/dashboard/src/variables' as *;
 
 // Shared by every line of the table
-$table-line: $color-neutral-lighter;
+$table-line: color-mix(in srgb, $color-neutral-lighter 50%, $color-neutral-light 50%);
 $toolbar-height: rhythm(7);
 
 .table-card {
@@ -54,13 +54,17 @@ $toolbar-height: rhythm(7);
   .resource-bulk-actions {
     align-items: center;
     display: flex;
+    flex: 1;
     font-weight: $font-weight-regular;
     gap: rhythm(1.5);
+    min-width: 0;
     padding-left: rhythm(0.5);
   }
 
   .selected-count {
     color: $color-neutral-regular;
+    font-weight: $font-weight-regular;
+    white-space: nowrap;
   }
 
   .table-options {

@@ -10,9 +10,13 @@
   <div class="header-container">
     @if ((isAdminOrContrib | async) && (selection.length > 0 || allResourcesSelected)) {
       <div class="resource-bulk-actions">
-        <span class="selected-count title-xxs">
-          {{ 'resource.selected_count' | translate: { num: selection.length } }}
-        </span>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [disabled]="bulkAction.inProgress"
+          (click)="bulkReprocess()">
+          {{ 'resource.reprocess' | translate }}
+        </pa-button>
         <pa-button
           kind="destructive"
           aspect="basic"
@@ -21,22 +25,21 @@
           (click)="bulkDelete()">
           {{ 'generic.delete' | translate }}
         </pa-button>
-        <pa-button
-          aspect="basic"
-          size="small"
-          [disabled]="bulkAction.inProgress"
-          (click)="bulkReprocess()">
-          {{ 'resource.reprocess' | translate }}
-        </pa-button>
         @if (bulkAction.inProgress) {
           <div class="body-m">
             {{ bulkAction.label | translate }}
             {{ bulkAction.done }} / {{ bulkAction.total }}
           </div>
         }
+        <span class="selected-count body-s">
+          {{ 'resource.selected_count' | translate: { num: selection.length } }}
+        </span>
       </div>
     }
   </div>
+</div>
+
+<div class="table-card">
   @if (
     allResourcesSelected ||
     ((allSelected | async) === true && !bulkAction.inProgress && ((totalCount | async) || 0) > selection.length)
@@ -51,7 +54,7 @@
       </div>
       @if (allResourcesSelected) {
         <pa-button
-          aspect="basic"
+          kind="secondary"
           size="small"
           (click)="clearSelection()"
           [disabled]="bulkAction.inProgress">
@@ -59,7 +62,7 @@
         </pa-button>
       } @else {
         <pa-button
-          aspect="basic"
+          kind="secondary"
           size="small"
           (click)="selectAllResources()"
           [disabled]="bulkAction.inProgress">
@@ -68,9 +71,6 @@
       }
     </div>
   }
-</div>
-
-<div class="table-card">
   <div class="table-container">
     <pa-table [columns]="tableLayout | async">
       <pa-table-sortable-header
