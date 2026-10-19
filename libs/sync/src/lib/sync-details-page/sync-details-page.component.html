@@ -59,7 +59,7 @@
           [isCloud]="sync.isCloud"
           [kbId]="kbId | async"
           [connector]="connector | async"
-          [connectorId]="$safeNavigationMigration((connectorDef | async)?.id)"
+          [connectorId]="(connectorDef | async)?.id"
           (configurationChange)="updateConfiguration($event)"
           (validForm)="validForm = $event"></nsy-configuration-form>
 

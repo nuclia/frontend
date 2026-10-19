@@ -18,7 +18,7 @@
         [property]="property"
         [required]="required"
         [initialLanguage]="fieldConfig.additionalProps?.['initialLanguage'] || 'javascript'"
-        [availableLanguages]="$safeNavigationMigration(fieldConfig.additionalProps?.['availableLanguages'])"
+        [availableLanguages]="fieldConfig.additionalProps?.['availableLanguages']"
       [showLanguageSelector]="fieldConfig.additionalProps?.['showLanguageSelector'] ?? true"></app-code-editor>
     }
     <!-- Driver select -->
@@ -28,8 +28,8 @@
         [required]="required"
         [form]="form"
         [controlName]="controlName"
-        [provider]="$safeNavigationMigration(fieldConfig.additionalProps?.['provider'])"
-      [multiselect]="$safeNavigationMigration(fieldConfig.additionalProps?.['multiselect'])"></app-driver-select>
+        [provider]="fieldConfig.additionalProps?.['provider']"
+      [multiselect]="fieldConfig.additionalProps?.['multiselect']"></app-driver-select>
     }
     <!-- Enum select -->
     @case ('enum-select') {

@@ -18,7 +18,7 @@
                 <pa-input
                   id="uid"
                   readonly
-                  [value]="$safeNavigationMigration((resource | async)?.uuid)">
+                  [value]="(resource | async)?.uuid">
                   {{ 'generic.uid' | translate }}
                 </pa-input>
                 <pa-input
