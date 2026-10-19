@@ -1,11 +1,22 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ToastType } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
+import { PaDemoModule } from '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/demo.module';
+import { PaButtonModule } from '../../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/button/button.module';
+import { PaTextFieldModule } from '../../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/controls/textfield/text-field.module';
+import { FormsModule } from '@angular/forms';
+import { PaDropdownModule } from '../../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/dropdown/dropdown.module';
 
 @Component({
-  templateUrl: './sistema-toast.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+    templateUrl: './sistema-toast.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [
+        PaDemoModule,
+        PaButtonModule,
+        PaTextFieldModule,
+        FormsModule,
+        PaDropdownModule,
+    ],
 })
 export class SistemaToastComponent {
   code = `constructor(private toaster: SisToastService) {}

@@ -1,11 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/demo.module';
+import { PasswordInputComponent } from '../../../../../../libs/sistema/src/lib/password-input/password-input.component';
+import { PaTogglesModule } from '../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/controls/toggles/toggles.module';
 
 @Component({
-  selector: 'nsd-sistema-password-input',
-  templateUrl: './sistema-password-input.component.html',
-  styleUrls: ['./sistema-password-input.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+    selector: 'nsd-sistema-password-input',
+    templateUrl: './sistema-password-input.component.html',
+    styleUrls: ['./sistema-password-input.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        PaDemoModule,
+        PasswordInputComponent,
+        PaTogglesModule,
+    ],
 })
 export class SistemaPasswordInputComponent {
   disabled = false;

@@ -2,12 +2,19 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalConfig, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { DialogExampleComponent } from './dialog-example/dialog-example.component';
 import { ModalExampleComponent } from './modal-example/modal-example.component';
+import { PaDemoModule } from '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/demo.module';
+import { RouterLink } from '@angular/router';
+import { PaButtonModule } from '../../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/button/button.module';
 
 @Component({
-  templateUrl: './sistema-modal.component.html',
-  styleUrls: ['./sistema-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+    templateUrl: './sistema-modal.component.html',
+    styleUrls: ['./sistema-modal.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        PaDemoModule,
+        RouterLink,
+        PaButtonModule,
+    ],
 })
 export class SistemaModalComponent {
   dialogTemplate = `<pa-modal-dialog>
