@@ -8,6 +8,7 @@
 - [Before Installation](#before-installation)
 - [Installation](#installation)
 - [Dependencies Updates](#dependencies-updates)
+- [Angular template diagnostics](#angular-template-diagnostics)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
 - [Auth app and onboarding flow](#auth-app-and-onboarding-flow)
@@ -124,6 +125,23 @@ Wait until a matching version is older than the configured window, lower yarn np
 ```
 
 in which case you just have to check the release date of the targetted packages and try again once they're more than 2 weeks old.
+
+## Angular template diagnostics
+
+All Angular apps use the default warning level for `nullishCoalescingNotNullable` (NG8102) and
+`optionalChainNotNullable` (NG8107). Keep optional chaining and nullish fallbacks only where values can
+actually be null or undefined, accounting for template control-flow narrowing.
+
+To check an app and its shared-library templates without bundling, run:
+
+```sh
+yarn ngc -p apps/dashboard/tsconfig.app.json --noEmit
+```
+
+The separately checked-out, Git-ignored Pastanaga source currently reports NG8107 for
+`mobileCell?.label` inside the `mobileCell?.sortable` guard in
+`libs/pastanaga-angular/projects/pastanaga-angular/src/lib/table/table-sortable-header/table-sortable-header.component.html`.
+That dependency warning needs an upstream Pastanaga fix; it is not suppressed by the apps.
 
 ## Dashboard
 

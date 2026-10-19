@@ -76,22 +76,22 @@
         @if (input?.answer) {
           <div class="summary-field">
             <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
-            <p class="summary-value truncated">{{ input?.answer }}</p>
+            <p class="summary-value truncated">{{ input.answer }}</p>
           </div>
         }
         @if (input?.remiScores) {
           <div class="remi-scores">
             <app-remi-score-display
               displayMode="badge"
-              [value]="input?.remiScores?.answerRelevance ?? null"
+              [value]="input.remiScores.answerRelevance ?? null"
               [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
             <app-remi-score-display
               displayMode="badge"
-              [value]="input?.remiScores?.contextRelevance ?? null"
+              [value]="input.remiScores.contextRelevance ?? null"
               [label]="'metrics.remi.context' | translate"></app-remi-score-display>
             <app-remi-score-display
               displayMode="badge"
-              [value]="input?.remiScores?.groundedness ?? null"
+              [value]="input.remiScores.groundedness ?? null"
               [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
           </div>
         }
@@ -147,22 +147,22 @@
             @if (input?.answer) {
               <div class="summary-field">
                 <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
-                <p class="summary-value truncated">{{ input?.answer }}</p>
+                <p class="summary-value truncated">{{ input.answer }}</p>
               </div>
             }
             @if (input?.remiScores) {
               <div class="remi-scores">
                 <app-remi-score-display
                   displayMode="badge"
-                  [value]="input?.remiScores?.answerRelevance ?? null"
+                  [value]="input.remiScores.answerRelevance ?? null"
                   [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
                 <app-remi-score-display
                   displayMode="badge"
-                  [value]="input?.remiScores?.contextRelevance ?? null"
+                  [value]="input.remiScores.contextRelevance ?? null"
                   [label]="'metrics.remi.context' | translate"></app-remi-score-display>
                 <app-remi-score-display
                   displayMode="badge"
-                  [value]="input?.remiScores?.groundedness ?? null"
+                  [value]="input.remiScores.groundedness ?? null"
                   [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
               </div>
             }

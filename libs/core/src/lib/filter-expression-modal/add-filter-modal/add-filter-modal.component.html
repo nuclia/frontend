@@ -76,8 +76,10 @@
                     formControlName="label"
                     [label]="'search.configuration.filter-expression-modal.label-filter.label' | translate"
                     [help]="'generic.optional' | translate">
-                    @for (label of ((labelsets | async) || {})?.[selectedLabelset]?.labels || []; track label.title) {
-                      <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                    @if ((labelsets | async)?.[selectedLabelset]; as labelset) {
+                      @for (label of labelset.labels; track label.title) {
+                        <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                      }
                     }
                   </pa-select>
                 }
