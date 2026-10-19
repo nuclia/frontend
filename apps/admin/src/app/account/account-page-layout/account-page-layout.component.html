@@ -8,11 +8,13 @@
   </div>
 
   <div class="settings-navigation">
-    <nsi-back-button
-      class="back-home-button"
-      [link]="backLink()">
-      {{ 'generic.back_to_home' | translate }}
-    </nsi-back-button>
+    @if (showBackLink()) {
+      <nsi-back-button
+        class="back-home-button"
+        [link]="backLink()">
+        {{ 'generic.back_to_home' | translate }}
+      </nsi-back-button>
+    }
     <!-- Project pa-tabs here using the [tabs] attribute selector -->
     <ng-content select="[tabs]"></ng-content>
   </div>

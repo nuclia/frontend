@@ -1,10 +1,12 @@
-@if ((isSubscribedToAws | async) === true) {
+@if ((isContextBoxActivation | async) === true) {
+  <app-checkout></app-checkout>
+} @else if ((isSubscribedToAws | async) === true) {
   <app-aws-subscription></app-aws-subscription>
 } @else if ((isManuallySubscribed | async) === true) {
   <app-manual-subscription></app-manual-subscription>
-} @else {
+} @else if ((isContextBoxActivation | async) === false) {
   <div class="header">
-    @if (canSelectCurrency) {
+    @if (canSelectCurrency && !(showCowork | async)) {
       <div>
         <button
           class="currency title-xs"
@@ -34,7 +36,12 @@
               <div class="plan-name">Context Box</div>
               @if ((prices | async)?.['cowork']; as cowork) {
                 <div class="price">
-                  <span>{{ $safeNavigationMigration(cowork?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span>
+                    {{
+                      $safeNavigationMigration(cowork?.recurring?.month?.price)
+                        | currency: currency : 'symbol' : '1.0-0'
+                    }}
+                  </span>
                   <span class="unit">/{{ 'billing.month' | translate }}</span>
                 </div>
               }
@@ -59,7 +66,12 @@
               <div class="plan-name">Starter</div>
               @if ((prices | async)?.['v3starter']; as starter) {
                 <div class="price">
-                  <span>{{ $safeNavigationMigration(starter?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span>
+                    {{
+                      $safeNavigationMigration(starter?.recurring?.month?.price)
+                        | currency: currency : 'symbol' : '1.0-0'
+                    }}
+                  </span>
                   <span class="unit">/{{ 'billing.month' | translate }}</span>
                 </div>
               }
@@ -83,7 +95,11 @@
               <div class="plan-name">Pro</div>
               @if ((prices | async)?.['v3pro']; as pro) {
                 <div class="price">
-                  <span>{{ $safeNavigationMigration(pro?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span>
+                    {{
+                      $safeNavigationMigration(pro?.recurring?.month?.price) | currency: currency : 'symbol' : '1.0-0'
+                    }}
+                  </span>
                   <span class="unit">/{{ 'billing.month' | translate }}</span>
                 </div>
               }

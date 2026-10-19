@@ -1,0 +1,8 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.activation-checkout {
+  --account-page-section-padding-top: 0;
+  --account-page-max-width: calc(
+    #{rhythm(80)} + #{rhythm(48)} + #{rhythm(12)} + var(--app-layout-padding-left) + var(--app-layout-padding-right)
+  );
+}

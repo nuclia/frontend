@@ -21,6 +21,7 @@ export class AccountBillingComponent extends AccountPageBase implements OnInit, 
   private readonly backendConfig = inject(BackendConfigurationService);
 
   isSubscribed = this.billing.isSubscribedToStripe;
+  protected isContextBoxActivation = this.billing.isContextBoxActivation;
   noStripe = this.backendConfig.noStripe();
 
   ngOnInit(): void {

@@ -56,6 +56,14 @@ export class BillingService {
   isManuallySubscribed = this.subscriptionProvider.pipe(
     map((provider) => provider === 'NO_SUBSCRIPTION' || provider === 'MANUAL' || provider === 'CLOUD_ZERO'),
   );
+  isContextBoxActivation = this.sdk.currentAccount.pipe(
+    switchMap((account) =>
+      account.workflow === 'cowork' || account.type === 'cowork'
+        ? this.hasSubscription().pipe(map((subscribed) => !subscribed))
+        : of(false),
+    ),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   constructor(private sdk: SDKService) {}
 

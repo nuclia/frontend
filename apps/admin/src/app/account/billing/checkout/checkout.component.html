@@ -1,16 +1,21 @@
-<div class="checkout">
-  <div>
-    <h2 class="page-subtitle">{{ 'billing.payment_details' | translate }}</h2>
-    <p class="page-description">{{ 'billing.payment_details-description' | translate }}</p>
-  </div>
+<div
+  class="checkout"
+  [class.activation]="isContextBoxActivation | async"
+  [attr.aria-busy]="loading">
+  @if (!(isContextBoxActivation | async)) {
+    <div>
+      <h2 class="page-subtitle">{{ 'billing.payment_details' | translate }}</h2>
+      <p class="page-description">{{ 'billing.payment_details-description' | translate }}</p>
+    </div>
+  }
 
-  @if (!(isSubscribedToStripe | async)) {
+  @if (!(isContextBoxActivation | async) && !(isSubscribedToStripe | async)) {
     <nsi-back-button [link]="backToSettingsLink | async">
       {{ ((contextBoxMode | async) ? 'generic.back_to_subscription' : 'generic.back') | translate }}
     </nsi-back-button>
   }
 
-  @if (subscribeMode | async) {
+  @if ((subscribeMode | async) && !(isContextBoxActivation | async)) {
     <div>
       <div class="section-header">
         <div class="section-title">
@@ -46,27 +51,47 @@
   }
 
   @if (billingDetailsEnabled) {
-    <div>
-      <div class="section-header">
-        <div class="section-title">
-          <pa-icon [name]="customer && !editCustomer ? 'circle-check' : 'circle-dash'"></pa-icon>
-          {{ 'billing.billing_details' | translate }}
-        </div>
-        @if (!editCustomer) {
-          <pa-button
-            (click)="showCustomerForm()"
-            icon="edit"
-            aspect="basic"></pa-button>
+    <div class="billing-section">
+      <div class="billing-heading">
+        @if (isContextBoxActivation | async) {
+          <div
+            class="activation-company-choice"
+            [attr.inert]="loading ? '' : null">
+            <pa-toggle
+              [value]="isCompany"
+              (valueChange)="customerForm.controls.not_company.setValue(!$event)"
+              [disabled]="loading"
+              labelOnRight>
+              {{ 'billing.context-box.company-label' | translate }}
+            </pa-toggle>
+          </div>
         }
+        <div class="section-header">
+          <div class="section-title">
+            @if (!(isContextBoxActivation | async)) {
+              <pa-icon [name]="customer && !editCustomer ? 'circle-check' : 'circle-dash'"></pa-icon>
+            }
+            {{ 'billing.billing_details' | translate }}
+          </div>
+          @if (!editCustomer && !(isContextBoxActivation | async)) {
+            <pa-button
+              (click)="showCustomerForm()"
+              icon="edit"
+              aspect="basic"></pa-button>
+          }
+        </div>
       </div>
       <div class="section-body">
-        @if (editCustomer) {
+        @if (editCustomer || (isContextBoxActivation | async)) {
           <form
             [formGroup]="customerForm"
+            [attr.inert]="(isContextBoxActivation | async) && loading ? '' : null"
             class="customer-form">
-            <div class="not-company">
-              <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
-            </div>
+            @if (!(isContextBoxActivation | async)) {
+              <div class="not-company">
+                <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
+              </div>
+            }
             @if (isCompany) {
               <div class="field-line">
                 <div class="field-block long">
@@ -81,7 +106,7 @@
                     [errorMessages]="errors"
                     externalLabel></pa-input>
                 </div>
-                <div class="field-block">
+                <div class="field-block short">
                   <label
                     class="title-s"
                     for="vat">
@@ -109,7 +134,7 @@
                   [errorMessages]="errors"
                   externalLabel></pa-input>
               </div>
-              <div class="field-block">
+              <div class="field-block email-field">
                 <label
                   class="title-s"
                   for="email">
@@ -186,7 +211,7 @@
                   formControlName="state"
                   externalLabel></pa-input>
               </div>
-              <div class="field-block">
+              <div class="field-block short">
                 <label
                   class="title-s"
                   for="postal_code">
@@ -199,12 +224,14 @@
                   externalLabel></pa-input>
               </div>
             </div>
-            <pa-button
-              (click)="saveCustomer()"
-              [disabled]="!customerForm.valid"
-              kind="primary">
-              {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
-            </pa-button>
+            @if (!(isContextBoxActivation | async)) {
+              <pa-button
+                (click)="saveCustomer()"
+                [disabled]="!customerForm.valid"
+                kind="primary">
+                {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
+              </pa-button>
+            }
           </form>
         } @else if (!editCustomer && customer) {
           <div class="body-m">
@@ -229,9 +256,11 @@
   <div>
     <div class="section-header">
       <div class="section-title">
-        <pa-icon
-          [name]="(subscribeMode | async) === false || (token && !editCard) ? 'circle-check' : 'circle-dash'"
-          [class.disabled]="!customer"></pa-icon>
+        @if (!(isContextBoxActivation | async)) {
+          <pa-icon
+            [name]="(subscribeMode | async) === false || (token && !editCard) ? 'circle-check' : 'circle-dash'"
+            [class.disabled]="!customer"></pa-icon>
+        }
         {{ 'billing.payment_method' | translate }}
         <div class="powered-by">
           <span class="body-xs">Powered by</span>
@@ -240,7 +269,7 @@
             size="large"></pa-icon>
         </div>
       </div>
-      @if (!editCard && token) {
+      @if (!editCard && token && !(isContextBoxActivation | async)) {
         <pa-button
           (click)="showCardForm()"
           icon="edit"
@@ -251,7 +280,8 @@
       @if (subscribeMode | async) {
         <div
           class="payment-method-form"
-          [class.hidden]="!editCard">
+          [class.hidden]="!editCard && !(isContextBoxActivation | async)"
+          [attr.inert]="(isContextBoxActivation | async) && loading ? '' : null">
           <div class="field-block">
             <label
               class="title-s"
@@ -273,14 +303,16 @@
             </div>
             <div class="card-error">{{ cardError }}</div>
           </div>
-          <pa-button
-            (click)="createPaymentMethod()"
-            [disabled]="cardName.invalid || !validCard || loading"
-            kind="primary">
-            {{ 'billing.save_continue' | translate }}
-          </pa-button>
+          @if (!(isContextBoxActivation | async)) {
+            <pa-button
+              (click)="createPaymentMethod()"
+              [disabled]="cardName.invalid || !validCard || loading"
+              kind="primary">
+              {{ 'billing.save_continue' | translate }}
+            </pa-button>
+          }
         </div>
-        @if (!editCard && token) {
+        @if (!editCard && token && !(isContextBoxActivation | async)) {
           <div class="body-m">
             <div>{{ cardName.value }}</div>
             <div>{{ token.card.brand }}</div>
@@ -329,7 +361,7 @@
     </div>
   }
 
-  @if (subscribeMode | async) {
+  @if ((subscribeMode | async) && !(isContextBoxActivation | async)) {
     @if (currency$ | async) {
       <div class="submit">
         <pa-button
@@ -343,5 +375,51 @@
         }
       </div>
     }
+  }
+
+  @if (isContextBoxActivation | async) {
+    <div class="plan-summary">
+      <nsi-info-card
+        class="context-box-plan"
+        role="region"
+        aria-labelledby="context-box-plan-title">
+        <div class="plan-heading">
+          <h2
+            class="plan-title"
+            id="context-box-plan-title">
+            {{ 'billing.context-box.plan-name' | translate }}
+          </h2>
+          @if (currency$ | async; as currency) {
+            @if ((prices$ | async)?.cowork?.recurring?.month; as price) {
+              <div class="plan-price">
+                {{ price.price | currency: currency }}
+                <span>/{{ 'billing.month' | translate }}</span>
+              </div>
+            }
+          }
+        </div>
+      </nsi-info-card>
+      <p class="plan-notes">{{ 'billing.context-box.pricing-note' | translate }}</p>
+      @if (currency$ | async) {
+        <div class="checkout-actions pa-dual-buttons">
+          <pa-button
+            (click)="cancelActivation()"
+            [disabled]="loading"
+            kind="secondary"
+            aspect="basic">
+            {{ 'generic.cancel' | translate }}
+          </pa-button>
+          <pa-button
+            (click)="reviewActivation()"
+            [disabled]="customerForm.invalid || cardName.invalid || !validCard || loading"
+            kind="primary">
+            {{ 'billing.context-box.review-subscription' | translate }}
+          </pa-button>
+        </div>
+        @if (loading) {
+          <nsi-spinner class="checkout-spinner"></nsi-spinner>
+        }
+      }
+    </div>
   }
 </div>

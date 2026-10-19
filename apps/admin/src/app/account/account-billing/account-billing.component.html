@@ -1,7 +1,23 @@
 <app-account-page-layout
-  [title]="((isSubscribed | async) ? 'billing.page-title' : 'billing.subscription.title') | translate"
-  [description]="((isSubscribed | async) ? 'billing.page-description' : 'billing.subscription.help') | translate"
+  [class.activation-checkout]="isContextBoxActivation | async"
+  [title]="
+    ((isContextBoxActivation | async)
+      ? 'billing.context-box.activation-title'
+      : (isSubscribed | async)
+        ? 'billing.page-title'
+        : 'billing.subscription.title'
+    ) | translate
+  "
+  [description]="
+    ((isContextBoxActivation | async)
+      ? 'billing.context-box.activation-description'
+      : (isSubscribed | async)
+        ? 'billing.page-description'
+        : 'billing.subscription.help'
+    ) | translate
+  "
   [backLink]="backLink | async"
+  [showBackLink]="(isContextBoxActivation | async) !== true"
   panelId="billing-section-panel">
   @if (isSubscribed | async) {
     <pa-tabs

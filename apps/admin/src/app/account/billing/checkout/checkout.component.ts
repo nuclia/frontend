@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -13,12 +14,14 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BudgetComponent } from '@flaps/common';
 import {
   AccountBudget,
+  AccountEntryContextService,
   BillingService,
   injectScript,
   NavigationService,
   RecurrentPriceInterval,
   SDKService,
   StripeCustomer,
+  STFPipesModule,
   SubscriptionError,
   UserService,
 } from '@flaps/core';
@@ -35,6 +38,7 @@ import {
   BackButtonComponent,
   COUNTRIES,
   CountrySelectComponent,
+  InfoCardComponent,
   SisModalService,
   SisToastService,
   SpinnerComponent,
@@ -45,6 +49,7 @@ import {
   delay,
   distinctUntilChanged,
   filter,
+  finalize,
   map,
   shareReplay,
   switchMap,
@@ -75,6 +80,8 @@ import { SubscriptionService } from '../subscription.service';
     AsyncPipe,
     CurrencyPipe,
     TranslatePipe,
+    STFPipesModule,
+    InfoCardComponent,
   ],
 })
 export class CheckoutComponent implements OnDestroy, OnInit {
@@ -103,22 +110,26 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   loading = false;
   countries = COUNTRIES;
-
+  protected isContextBoxActivation = this.billingService.isContextBoxActivation;
+  private readonly entryContext = inject(AccountEntryContextService);
   accountType = combineLatest([
     this.sdk.currentAccount.pipe(
       take(1),
       map((account) => account.type),
     ),
     this.route.queryParams.pipe(map((params) => params['type'])),
+    this.isContextBoxActivation,
   ]).pipe(
-    map(([currentType, nextType]) => (nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined)),
+    map(([currentType, nextType, activation]) =>
+      activation ? 'cowork' : nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined,
+    ),
     shareReplay(1),
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
   isCowork = combineLatest([
     this.sdk.currentAccount.pipe(
       take(1),
-      map((account) => account.type === 'cowork'),
+      map((account) => account.type === 'cowork' || account.workflow === 'cowork'),
     ),
     this.route.queryParams.pipe(map((params) => params['type'] === 'cowork')),
   ]).pipe(
@@ -257,34 +268,32 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   saveCustomer() {
     if (this.customerForm.invalid) return;
+    this.saveCustomerRequest().subscribe({
+      error: (error) => this.handleCheckoutError(error),
+    });
+  }
+
+  private saveCustomerRequest() {
     const { not_company, company, vat, ...data } = { ...this.customerForm.getRawValue() };
     const payload = { ...data, is_company: !not_company, ...(not_company ? {} : { company, vat }) };
     const observable = this.customer
       ? this.billingService.modifyCustomer(payload).pipe(switchMap(() => this.billingService.getCustomer()))
       : this.billingService.createCustomer(payload);
-    observable.subscribe({
-      next: (customer) => {
-        if (customer) {
-          this.customer = customer;
-          this.customerForm.reset();
-          this.updateCustomerForm(customer);
-          this.editCustomer = false;
-          if (!this.token) {
-            this.editCard = true;
-          }
-          this.cdr?.markForCheck();
+    return observable.pipe(
+      tap((customer) => {
+        if (!customer) {
+          throw new Error('billing.unknown_error');
         }
-      },
-      error: (error) => {
-        if (error.status === 422 && error.body?.detail?.[0]?.loc?.includes('vat')) {
-          this.customerForm.controls.vat.setErrors({ vat: true });
-          this.customerForm.controls.vat.markAsDirty();
-          this.cdr?.markForCheck();
-        } else {
-          this.showError();
+        this.customer = customer;
+        this.customerForm.reset();
+        this.updateCustomerForm(customer);
+        this.editCustomer = false;
+        if (!this.token) {
+          this.editCard = true;
         }
-      },
-    });
+        this.cdr?.markForCheck();
+      }),
+    );
   }
 
   initStripe() {
@@ -315,42 +324,41 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   createPaymentMethod() {
     this.loading = true;
-    from(
+    this.createPaymentMethodRequest()
+      .pipe(finalize(() => this.finishLoading()))
+      .subscribe({
+        error: (error) => this.handleCheckoutError(error),
+      });
+  }
+
+  private createPaymentMethodRequest() {
+    return from(
       this._stripe.createToken(this.card, {
         name: this.cardName.value,
         address_country: this.customer?.billing_details.country,
         address_zip: this.customer?.billing_details.postal_code,
       }),
-    )
-      .pipe(
-        tap((data: any) => {
-          if (data.error) {
-            throw new Error(data.error.message);
-          }
-        }),
-        switchMap((data: any) =>
-          this.billingService.createPaymentMethod({ token: data.token.id }).pipe(
-            catchError(() => {
-              throw new Error('billing.invalid_card');
-            }),
-            map((result) => ({ result, token: data.token })),
-          ),
+    ).pipe(
+      tap((data: any) => {
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+      }),
+      switchMap((data: any) =>
+        this.billingService.createPaymentMethod({ token: data.token.id }).pipe(
+          catchError(() => {
+            throw new Error('billing.invalid_card');
+          }),
+          map((result) => ({ result, token: data.token })),
         ),
-      )
-      .subscribe({
-        next: ({ result, token }) => {
-          this.token = token;
-          this.paymentMethodId = result.payment_method_id;
-          this.editCard = false;
-          this.loading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.loading = false;
-          this.showError(error.message);
-          this.cdr.markForCheck();
-        },
-      });
+      ),
+      tap(({ result, token }) => {
+        this.token = token;
+        this.paymentMethodId = result.payment_method_id;
+        this.editCard = false;
+        this.cdr.markForCheck();
+      }),
+    );
   }
 
   showCardForm() {
@@ -358,8 +366,35 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.cdr?.markForCheck();
   }
 
-  doSubscribe() {
-    this.openReview()
+  reviewActivation() {
+    if (this.loading) return;
+    if (this.customerForm.invalid || this.cardName.invalid || !this.validCard) {
+      this.customerForm.markAllAsTouched();
+      this.cardName.markAsTouched();
+      return;
+    }
+    this.loading = true;
+    this.saveCustomerRequest()
+      .pipe(
+        switchMap(() => this.createPaymentMethodRequest()),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe({
+        next: () => this.doSubscribe(true),
+        error: (error) => {
+          this.finishLoading();
+          this.handleCheckoutError(error);
+        },
+      });
+  }
+
+  cancelActivation() {
+    if (this.loading) return;
+    this.navigation.navigateExternal(this.entryContext.getReturnUrl());
+  }
+
+  doSubscribe(activation = false) {
+    this.openReview(activation)
       .pipe(
         take(1),
         filter((result) => !!result),
@@ -449,6 +484,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           );
         }),
       )
+      .pipe(
+        finalize(() => this.finishLoading()),
+        takeUntil(this.unsubscribeAll),
+      )
       .subscribe({
         next: (backUrl) => {
           this.toaster.success('billing.success');
@@ -456,11 +495,25 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.navigation.navigateExternal(backUrl);
         },
         error: (error) => {
-          this.loading = false;
-          this.cdr?.markForCheck();
-          this.showError(error.message);
+          this.handleCheckoutError(error);
         },
       });
+  }
+
+  private finishLoading() {
+    this.loading = false;
+    this.cdr.markForCheck();
+  }
+
+  private handleCheckoutError(error: { status?: number; body?: { detail?: { loc?: string[] }[] }; message?: string }) {
+    if (error.status === 422 && error.body?.detail?.[0]?.loc?.includes('vat')) {
+      this.customerForm.controls.vat.setErrors({ vat: true });
+      this.customerForm.controls.vat.markAsDirty();
+      this.customerForm.controls.vat.markAsTouched();
+      this.cdr.markForCheck();
+    } else {
+      this.showError(error.message);
+    }
   }
 
   showError(message?: string) {
@@ -473,30 +526,45 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     );
   }
 
-  openReview() {
+  openReview(activation = false) {
+    const pricing =
+      activation && this.customer
+        ? this.billingService
+            .getCurrency(this.customer.billing_details.country)
+            .pipe(
+              switchMap((currency) =>
+                this.billingService.getPrices(currency).pipe(map((prices) => ({ prices, currency }))),
+              ),
+            )
+        : forkJoin([this.prices$.pipe(take(1)), this.currency$.pipe(take(1))]).pipe(
+            map(([prices, currency]) => ({ prices, currency })),
+          );
     return forkJoin([
-      this.prices$.pipe(take(1)),
-      this.currency$.pipe(take(1)),
+      pricing,
       this.accountType.pipe(
         take(1),
         filter((accountType) => !!accountType),
         map((accountType) => accountType as AccountTypes),
       ),
     ]).pipe(
-      switchMap(
-        ([prices, currency, accountType]) =>
-          this.modalService.openModal(ReviewComponent, {
-            dismissable: true,
-            data: {
-              account: accountType,
-              customer: this.customer,
-              token: this.token,
-              prices: prices[accountType],
-              budget: this.budget?.on_demand_budget || null,
-              currency,
-            },
-          }).onClose,
-      ),
+      switchMap(([{ prices, currency }, accountType]) => {
+        if (activation && !prices[accountType]?.recurring?.month) {
+          throw new Error('billing.unknown_error');
+        }
+        const modal = this.modalService.openModal(ReviewComponent, {
+          dismissable: true,
+          data: {
+            account: accountType,
+            activation,
+            customer: this.customer,
+            token: this.token,
+            prices: prices[accountType],
+            budget: this.budget?.on_demand_budget || null,
+            currency,
+          },
+        });
+        return merge(modal.onClose, modal.onDismiss.pipe(map(() => false)));
+      }),
     );
   }
 

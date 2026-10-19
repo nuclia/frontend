@@ -28,6 +28,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import { SubscriptionService } from '../subscription.service';
+import { CheckoutComponent } from '../checkout/checkout.component';
 import { AwsSubscriptionComponent } from './aws-subscription/aws-subscription.component';
 import { ManualSubscriptionComponent } from './manual-subscription/manual-subscription.component';
 
@@ -46,6 +47,7 @@ import { ManualSubscriptionComponent } from './manual-subscription/manual-subscr
     CurrencyPipe,
     TranslatePipe,
     STFPipesModule,
+    CheckoutComponent,
   ],
 })
 export class SubscriptionsComponent implements OnDestroy {
@@ -76,6 +78,7 @@ export class SubscriptionsComponent implements OnDestroy {
     ),
   );
   showCowork = this.tiers.pipe(map((tiers) => tiers.includes('cowork')));
+  protected isContextBoxActivation = this.billing.isContextBoxActivation;
 
   constructor(
     private billing: BillingService,
