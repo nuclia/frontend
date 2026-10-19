@@ -25,6 +25,7 @@ import {
   InfiniteScrollPageComponent,
   InputPageComponent,
   NativeTextFieldPageComponent,
+  PaDemoModule,
   PopoverPageComponent,
   PopupPageComponent,
   RadioPageComponent,
@@ -187,7 +188,7 @@ export const menu: IDemoMenuSection[] = [
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [PaDemoModule],
 })
 export class AppComponent {
   logo = './assets/logos/logo-pdp.svg';
