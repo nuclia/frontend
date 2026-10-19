@@ -14,7 +14,7 @@
     @for (invoice of invoices.items; track invoice.id) {
       <pa-table-row>
         <pa-table-cell>
-          {{ invoice.period_start | date: 'YYYY-MM-dd' }} - {{ invoice.period_end | date: 'YYYY-MM-dd' }}
+          {{ invoice.period_start | date: 'yyyy-MM-dd' }} - {{ invoice.period_end | date: 'yyyy-MM-dd' }}
         </pa-table-cell>
         <pa-table-cell>{{ invoice.order_number }}</pa-table-cell>
         <pa-table-cell>{{ 'account.type.' + invoice.account_type | translate }}</pa-table-cell>
