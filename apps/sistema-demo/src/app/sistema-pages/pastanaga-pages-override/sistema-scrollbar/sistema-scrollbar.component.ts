@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { PaDemoModule } from '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/demo.module';
-import { PaScrollModule } from '../../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/scroll/scroll.module';
+import { PaScrollModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
-    templateUrl: './sistema-scrollbar.component.html',
-    styleUrls: ['sistema-scrollbar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [PaDemoModule, PaScrollModule],
+  templateUrl: './sistema-scrollbar.component.html',
+  styleUrls: ['sistema-scrollbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaDemoModule, PaScrollModule],
 })
 export class SistemaScrollbarComponent {
   code = `<div paScrollableContainer>dynamic scrollbar styling</div>

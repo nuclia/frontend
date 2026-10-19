@@ -1,21 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/demo.module';
-import { CountrySelectComponent } from '../../../../../../libs/sistema/src/lib/country-select/country-select.component';
-import { PaTogglesModule } from '../../../../../../libs/pastanaga-angular/projects/pastanaga-angular/src/lib/controls/toggles/toggles.module';
+import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { CountrySelectComponent } from '@nuclia/sistema';
 
 @Component({
-    selector: 'nsd-sistema-country-select',
-    templateUrl: './sistema-country-select.component.html',
-    styleUrl: './sistema-country-select.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        PaDemoModule,
-        CountrySelectComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        PaTogglesModule,
-    ],
+  selector: 'nsd-sistema-country-select',
+  templateUrl: './sistema-country-select.component.html',
+  styleUrl: './sistema-country-select.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaDemoModule, CountrySelectComponent, FormsModule, ReactiveFormsModule, PaTogglesModule],
 })
 export class SistemaCountrySelectComponent {
   disabled = false;

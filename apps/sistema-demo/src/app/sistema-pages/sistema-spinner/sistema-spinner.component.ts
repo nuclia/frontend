@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/demo.module';
-import { SpinnerComponent } from '../../../../../../libs/sistema/src/lib/progress/spinner/spinner.component';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
+import { SpinnerComponent } from '@nuclia/sistema';
 
 @Component({
-    selector: 'nsd-sistema-spinner',
-    templateUrl: './sistema-spinner.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [PaDemoModule, SpinnerComponent],
+  selector: 'nsd-sistema-spinner',
+  templateUrl: './sistema-spinner.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaDemoModule, SpinnerComponent],
 })
 export class SistemaSpinnerComponent {
   codeSmall = `<nsi-spinner size="small"></nsi-spinner>`;
