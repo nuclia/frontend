@@ -60,8 +60,7 @@
             <pa-toggle
               [value]="isCompany"
               (valueChange)="customerForm.controls.not_company.setValue(!$event)"
-              [disabled]="loading"
-              labelOnRight>
+              [disabled]="loading">
               {{ 'billing.context-box.company-label' | translate }}
             </pa-toggle>
           </div>
