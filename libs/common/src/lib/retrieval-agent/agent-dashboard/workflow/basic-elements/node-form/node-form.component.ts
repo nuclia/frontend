@@ -11,7 +11,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
 import { ARAGSchemas } from '@nuclia/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subscription } from 'rxjs';
@@ -34,7 +33,7 @@ export interface RenderableField {
   styleUrls: ['./node-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, ConfigurationFormComponent, CommonModule, FieldRendererComponent],
+  imports: [ReactiveFormsModule, ConfigurationFormComponent, CommonModule, FieldRendererComponent],
 })
 export class NodeFormComponent extends FormDirective implements OnInit, OnDestroy {
   @Input() agentType!: keyof ARAGSchemas['agents'];

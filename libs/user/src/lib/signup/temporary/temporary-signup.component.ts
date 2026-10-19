@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { UserContainerComponent } from '../../user-container';
 
@@ -11,7 +10,7 @@ import { UserContainerComponent } from '../../user-container';
   templateUrl: './temporary-signup.component.html',
   styleUrl: './temporary-signup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, PaTogglesModule, TranslatePipe, UserContainerComponent],
+  imports: [CommonModule, PaButtonModule, PaTextFieldModule, PaTogglesModule, UserContainerComponent],
 })
 export class TemporaryContextBoxSignupComponent {
   private sdk = inject(SDKService);

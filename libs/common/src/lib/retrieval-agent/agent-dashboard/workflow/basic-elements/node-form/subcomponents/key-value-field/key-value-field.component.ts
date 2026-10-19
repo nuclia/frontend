@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, TextInputType } from '@guillotinaweb/pastanaga-angular';
-import { TranslatePipe } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { getKeyValueInputType } from '../../../../../../arag.utils';
@@ -16,7 +15,7 @@ let keyValueIndex = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
 })
 export class KeyValueFieldComponent implements OnInit, OnDestroy {
   @Input() form!: FormGroup;
