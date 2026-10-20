@@ -89,6 +89,7 @@ describe('SearchPageComponent', () => {
       { widgetMode: 'floating-chat', panelWidth: 452, panelHeight: 552 },
       undefined,
       '.preview-stage',
+      undefined,
     );
     expect(component.widgetOptions.panelWidth).toBe(600);
     expect(component.widgetOptions.panelHeight).toBe(700);
@@ -105,6 +106,7 @@ describe('SearchPageComponent', () => {
         { widgetMode },
         undefined,
         widgetMode === 'page' ? '.search-preview-container' : '.preview-stage',
+        widgetMode === 'page' ? expect.stringMatching(/\/assets\/search-preview\.css$/) : undefined,
       );
     },
   );

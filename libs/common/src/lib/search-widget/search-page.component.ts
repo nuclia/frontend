@@ -70,6 +70,10 @@ export class SearchPageComponent implements OnDestroy {
     return this.previewMode === 'page' ? '.search-preview-container' : '.preview-stage';
   }
 
+  private get previewCssPath(): string | undefined {
+    return this.previewMode === 'page' ? new URL('assets/search-preview.css', this.document.baseURI).href : undefined;
+  }
+
   constructor() {
     this.searchWidgetService.searchTriggered.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       if (this.route.snapshot.paramMap.has('kb')) {
@@ -92,7 +96,13 @@ export class SearchPageComponent implements OnDestroy {
       return;
     }
     this.searchWidgetService
-      .generateWidgetSnippetForEmbed(this.searchConfig, this.widgetOptions, widgetSlug, this.previewScrollContainer)
+      .generateWidgetSnippetForEmbed(
+        this.searchConfig,
+        this.widgetOptions,
+        widgetSlug,
+        this.previewScrollContainer,
+        this.previewCssPath,
+      )
       .subscribe(({ snippet, synchSnippet }) => {
         this.modalService.openModal(
           EmbedWidgetDialogComponent,
@@ -137,6 +147,7 @@ export class SearchPageComponent implements OnDestroy {
       this.getPreviewWidgetOptions(),
       undefined,
       this.previewScrollContainer,
+      this.previewCssPath,
     );
   }
 

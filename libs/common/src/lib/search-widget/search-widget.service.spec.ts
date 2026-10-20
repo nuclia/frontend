@@ -88,4 +88,27 @@ describe('SearchWidgetService', () => {
 
     expect(storeWidgets).toHaveBeenCalledWith([retainedWidget]);
   });
+
+  it('applies custom styles only to the preview without changing either embed snippet', async () => {
+    const config = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
+    const original = await firstValueFrom(service.generateWidgetSnippetForEmbed(config, {}, 'embed'));
+    const styled = await firstValueFrom(
+      service.generateWidgetSnippetForEmbed(
+        config,
+        {},
+        'embed',
+        '.search-preview-container',
+        'https://dashboard.example/assets/search-preview.css',
+      ),
+    );
+    const preview = document.createElement('div');
+    preview.innerHTML = String(styled.preview);
+
+    expect(preview.querySelector('nuclia-search-results')?.getAttribute('csspath')).toBe(
+      'https://dashboard.example/assets/search-preview.css',
+    );
+    expect(preview.querySelector('nuclia-search-bar')?.hasAttribute('csspath')).toBe(false);
+    expect(styled.snippet).toBe(original.snippet);
+    expect(styled.synchSnippet).toBe(original.synchSnippet);
+  });
 });
