@@ -1,15 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  Inject,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import { NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { BrandService, SDKService, SelectAccountKbService, StaticEnvironmentConfiguration } from '@flaps/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { NavigationStart, Router, RouterLink, RouterOutlet, Scroll } from '@angular/router';
+import { BrandService, SDKService, SelectAccountKbService } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
@@ -24,6 +16,11 @@ import { map, takeUntil } from 'rxjs/operators';
   imports: [RouterLink, PaIconModule, PaButtonModule, RouterOutlet, AsyncPipe, TranslatePipe],
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
+  private selectService = inject(SelectAccountKbService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private sdk = inject(SDKService);
+
   accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(
     map((accounts) => (accounts || []).sort((a, b) => a.title.localeCompare(b.title))),
   );
@@ -33,22 +30,18 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   logoPath = this.brandService.logoPath;
   brandName = this.brandService.brandName;
 
-  constructor(
-    private selectService: SelectAccountKbService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private sdk: SDKService,
-    @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
-  ) {}
-
   ngOnInit() {
     // Going back to the account list can slide right away, the list is already rendered
     this.router.events
       .pipe(
-        filter((event) => event instanceof NavigationStart && event.url === '/select'),
+        filter((event) => event instanceof NavigationStart || event instanceof Scroll),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => this.showKbs(false));
+      .subscribe((event) => {
+        const showKbs =
+          event instanceof NavigationStart ? event.url !== '/select' : (event as Scroll).routerEvent.url !== '/select';
+        this.showKbs(showKbs);
+      });
   }
 
   // Going forward waits for the outlet content: it only exists once the route guards have loaded the KB list,
