@@ -8,7 +8,7 @@ import { UploadProgressComponent } from '../upload-progress/upload-progress.comp
   template: `
     @if (!showProgress) {
       <app-upload-files
-        [folderMode]="$safeNavigationMigration(modal.config.data?.['folderMode'])"
+        [folderMode]="modal.config.data?.['folderMode']"
         (upload)="onUpload()"
         (uploadClose)="close($event)"></app-upload-files>
     }

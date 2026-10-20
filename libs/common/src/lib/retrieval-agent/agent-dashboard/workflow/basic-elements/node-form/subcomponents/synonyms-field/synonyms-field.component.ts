@@ -10,7 +10,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslatePipe } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 
@@ -30,7 +29,7 @@ let synonymsIndex = 0;
       multi: true,
     },
   ],
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
 })
 export class SynonymsFieldComponent implements ControlValueAccessor, OnInit, OnDestroy {
   @Input() label!: string;

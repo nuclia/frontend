@@ -29,11 +29,11 @@
             @if (currency$ | async; as currency) {
               @if ((prices$ | async)?.[account]?.recurring; as prices) {
                 @if (monthly | async) {
-                  {{ $safeNavigationMigration(prices.month?.price) | currency: currency }}/{{
+                  {{ prices.month?.price | currency: currency }}/{{
                     'billing.month' | translate
                   }}
                 } @else {
-                  {{ $safeNavigationMigration(prices.year?.price) | currency: currency }}/{{
+                  {{ prices.year?.price | currency: currency }}/{{
                     'billing.year' | translate
                   }}
                 }

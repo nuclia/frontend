@@ -1,6 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {
   enableProdMode,
   importProvidersFrom,
@@ -65,7 +65,7 @@ bootstrapApplication(AppComponent, {
     },
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi()),
     provideZonelessChangeDetection(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({

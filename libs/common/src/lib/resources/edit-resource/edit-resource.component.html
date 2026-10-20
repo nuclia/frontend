@@ -147,7 +147,7 @@
               [class.active]="
                 activeField !== 'resource' &&
                 activeField?.field_id === field.field_id &&
-                activeField?.field_type === field.field_type
+                activeField.field_type === field.field_type
               "
               (click)="navigateToField(field)">
               <pa-icon
@@ -170,7 +170,7 @@
                 (isAdminOrContrib | async) === true &&
                 activeField !== 'resource' &&
                 activeField?.field_id === field.field_id &&
-                activeField?.field_type === field.field_type
+                activeField.field_type === field.field_type
               ) {
                 <div class="field-menu">
                   <pa-button
@@ -215,7 +215,7 @@
                   [class.active]="
                     activeField !== 'resource' &&
                     activeField?.field_id === field.field_id &&
-                    activeField?.field_type === field.field_type
+                    activeField.field_type === field.field_type
                   "
                   (click)="navigateToField(field)">
                   <pa-icon
@@ -233,7 +233,7 @@
                     (isAdminOrContrib | async) === true &&
                     activeField !== 'resource' &&
                     activeField?.field_id === field.field_id &&
-                    activeField?.field_type === field.field_type
+                    activeField.field_type === field.field_type
                   ) {
                     <div class="field-menu">
                       <pa-button

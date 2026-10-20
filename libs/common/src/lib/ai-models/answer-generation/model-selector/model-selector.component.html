@@ -8,13 +8,13 @@
           <div
             class="body-m"
             paEllipsisTooltip>
-            {{ selectedModelData()?.provider?.title }} - {{ selectedModelData()?.title || selectedModel() }}
+            {{ selectedModelData().provider?.title }} - {{ selectedModelData().title || selectedModel() }}
           </div>
-          @if (selectedModelData()?.description) {
+          @if (selectedModelData().description) {
             <div
               class="body-xs description"
               paEllipsisTooltip>
-              {{ selectedModelData()?.description }}
+              {{ selectedModelData().description }}
             </div>
           }
         </div>
@@ -38,7 +38,7 @@
                 <p class="body-m">
                   {{
                     'kb.ai-models.model-selector.disclaimer.description'
-                      | translate: { model: selectedModelData()?.title || '' }
+                      | translate: { model: selectedModelData().title || '' }
                   }}
                 </p>
                 <div>{{ disclaimerText() }}</div>
@@ -50,7 +50,7 @@
           [value]="accepted()"
           (valueChange)="updateAccepted($event)"
           noEllipsis>
-          {{ 'kb.ai-models.model-selector.disclaimer.label' | translate: { model: selectedModelData()?.title || '' } }}
+          {{ 'kb.ai-models.model-selector.disclaimer.label' | translate: { model: selectedModelData().title || '' } }}
         </pa-checkbox>
       }
     </div>

@@ -7,7 +7,7 @@
         [disabled]="!download || download.status === 'pending'"
         card
         buttonOnlyToggle
-        [contentLoaded]="$safeNavigationMigration(download?.status)"
+        [contentLoaded]="download?.status"
         (toggleExpander)="toggleExpander(item.month)">
         <pa-expander-header>
           <div class="download-item">
@@ -38,7 +38,7 @@
           } @else if (visibleTables[item.month]) {
             <app-log-table
               [month]="item.month"
-              [url]="$safeNavigationMigration(download?.url)"
+              [url]="download?.url"
               [rows]="!!download ? download.rows || [] : []"></app-log-table>
           }
         </pa-expander-body>

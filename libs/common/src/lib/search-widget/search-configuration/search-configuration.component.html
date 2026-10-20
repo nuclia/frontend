@@ -196,7 +196,7 @@
                 </nsi-info-card>
               }
               <stf-agentic-configuration
-                [config]="savedConfig?.type === 'config' ? savedConfig : undefined"
+                [config]="savedConfig.type === 'config' ? savedConfig : undefined"
                 [excludeSearchConfigNames]="agenticWidgetConfigNames()"
                 [learningConfigurations]="learningConfigurations"
                 [generativeProviders]="generativeProviders"
@@ -217,7 +217,7 @@
             (expandedChange)="updateSearchBoxHeight()">
             <pa-accordion-item-body>
               <stf-search-box-form
-                [config]="$safeNavigationMigration(savedConfig?.searchBox)"
+                [config]="savedConfig.searchBox"
                 [semanticModels]="semanticModels"
                 (configChanged)="updateSearchBoxConfig($event)"
                 (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
@@ -233,13 +233,13 @@
             (expandedChange)="updateGenerativeAnswerHeight()">
             <pa-accordion-item-body>
               <stf-generative-answer-form
-                [config]="$safeNavigationMigration(savedConfig?.generativeAnswer)"
+                [config]="savedConfig.generativeAnswer"
                 [defaultPrompt]="defaultPromptFromSettings"
                 [defaultSystemPrompt]="defaultSystemPromptFromSettings"
                 [promptInfos]="promptInfos"
                 [generativeProviders]="generativeProviders"
                 [learningConfigurations]="learningConfigurations"
-                [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+                [useSearchResults]="currentConfig.searchBox?.useSearchResults ?? true"
                 (configChanged)="updateGenerativeAnswerConfig($event)"
                 (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
             </pa-accordion-item-body>
@@ -254,11 +254,11 @@
             (expandedChange)="updateResultsHeight()">
             <pa-accordion-item-body>
               <stf-results-display-form
-                [config]="$safeNavigationMigration(savedConfig?.resultDisplay)"
+                [config]="savedConfig.resultDisplay"
                 [modelNames]="generativeModelNames"
-                [generativeModel]="currentConfig?.generativeAnswer?.generativeModel || generativeModelFromSettings"
-                [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"
-                [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+                [generativeModel]="currentConfig.generativeAnswer?.generativeModel || generativeModelFromSettings"
+                [generateAnswer]="currentConfig.generativeAnswer?.generateAnswer ?? true"
+                [useSearchResults]="currentConfig.searchBox?.useSearchResults ?? true"
                 [generativeProviders]="generativeProviders"
                 (configChanged)="updateResultDisplayConfig($event)"
                 (heightChanged)="updateResultsHeight()"></stf-results-display-form>
@@ -274,7 +274,7 @@
             (expandedChange)="updateRoutingHeight()">
             <pa-accordion-item-body>
               <stf-routing-form
-                [config]="$safeNavigationMigration(savedConfig?.routing)"
+                [config]="savedConfig.routing"
                 [kind]="useGenerativeAnswer ? 'ask' : 'find'"
                 [generativeProviders]="generativeProviders"
                 [learningConfigurations]="learningConfigurations"

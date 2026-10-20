@@ -76,8 +76,10 @@
                     formControlName="label"
                     [label]="'search.configuration.filter-expression-modal.label-filter.label' | translate"
                     [help]="'generic.optional' | translate">
-                    @for (label of ((labelsets | async) || {})?.[selectedLabelset]?.labels || []; track label.title) {
-                      <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                    @if ((labelsets | async)?.[selectedLabelset]; as labelset) {
+                      @for (label of labelset.labels; track label.title) {
+                        <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                      }
                     }
                   </pa-select>
                 }
@@ -248,7 +250,7 @@
             @case ('key_value_eq') {
               <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
               @if (selectedSchemaKey) {
-                @let type = $safeNavigationMigration((schemaField | async)?.type);
+                @let type = (schemaField | async)?.type;
                 @if (type === 'text') {
                   <pa-input formControlName="eq">
                     {{ 'search.configuration.filter-expression-modal.key-value-filter.equal' | translate }}
@@ -277,7 +279,7 @@
             @case ('key_value_gte_lte') {
               <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
               @if (selectedSchemaKey) {
-                @let type = $safeNavigationMigration((schemaField | async)?.type);
+                @let type = (schemaField | async)?.type;
                 @if (type === 'float' || type === 'integer') {
                   <pa-input
                     type="number"
@@ -311,7 +313,7 @@
             @case ('key_value_contains') {
               <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
               @if (selectedSchemaKey) {
-                @let type = $safeNavigationMigration((schemaField | async)?.type);
+                @let type = (schemaField | async)?.type;
                 @if (type === 'text') {
                   <pa-input formControlName="contains">
                     {{ 'search.configuration.filter-expression-modal.key-value-filter.contains' | translate }}

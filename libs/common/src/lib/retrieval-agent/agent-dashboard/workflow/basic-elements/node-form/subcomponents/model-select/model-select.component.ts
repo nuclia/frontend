@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
 import { ModelSelectorComponent } from '../../../../../../../ai-models';
 import { WorkflowService } from '../../../../workflow.service';
 
@@ -11,7 +10,7 @@ import { WorkflowService } from '../../../../workflow.service';
   styleUrls: ['./model-select.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, ModelSelectorComponent, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ModelSelectorComponent, ReactiveFormsModule],
 })
 export class ModelSelectComponent {
   @Input() label = '';

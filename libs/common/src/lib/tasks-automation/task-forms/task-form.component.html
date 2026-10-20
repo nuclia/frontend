@@ -6,7 +6,7 @@
         <pa-icon
           name="chevron-right"
           size="small"></pa-icon>
-        <a [routerLink]="(tasksRoute | async) + '/' + task.id">{{ task.parameters?.name }}</a>
+        <a [routerLink]="(tasksRoute | async) + '/' + task.id">{{ task.parameters.name }}</a>
         <pa-icon
           name="chevron-right"
           size="small"></pa-icon>
@@ -23,7 +23,7 @@
     }
     <div>
       @if (task) {
-        <h1 class="page-title">{{ task.parameters?.name }}</h1>
+        <h1 class="page-title">{{ task.parameters.name }}</h1>
       } @else {
         <h1 class="page-title">{{ 'tasks-automation.type.' + type + '.title' | translate }}</h1>
         <p class="page-description">{{ 'tasks-automation.type.' + type + '.description' | translate }}</p>
