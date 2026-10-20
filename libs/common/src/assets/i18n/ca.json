@@ -2617,7 +2617,7 @@
 	"search.configuration.unsupported-warning": "Deseu la configuració per aplicar els canvis a la pàgina de cerca del lateral.",
 	"search.configuration.use-generative-answer": "Utilitza una resposta generativa",
 	"search.description": "Proveu la cerca de Agentic RAG al vostre Knowledge Box i configureu la vostra configuració de cerca.",
-	"search.embed.description": "Configura, previsualitza i insereix experiències de cerca i xat per al teu Knowledge Box.",
+	"search.embed.description": "Configurar, previsualitzar i incrustar experiències de cerca i xat",
 	"search.title": "Cerca",
 	"search.widgets.action.create-widget-button": "Crea un giny",
 	"search.widgets.action.delete": "Suprimeix",

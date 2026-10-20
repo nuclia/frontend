@@ -1,0 +1,3 @@
+.nuclia-widget .sw-result-row {
+  --width-thumbnail: calc(var(--rhythm-28) * 0.75);
+}

@@ -19,7 +19,14 @@
     transition: width $transition-slide;
 
     &.mode-page {
-      --preview-content-width: #{rhythm(56)};
+      overflow-y: auto;
+      padding-top: 0;
+
+      header {
+        flex: 0 0 auto;
+        padding-top: var(--app-layout-padding-top);
+        width: min(100%, #{rhythm(56)});
+      }
     }
 
     header {
@@ -46,11 +53,33 @@
       }
 
       &.mode-page {
-        overflow-y: auto;
+        flex: 1 0 auto;
+        overflow: visible;
         padding-top: rhythm(1.5);
 
         .preview-content {
           width: min(100%, var(--preview-content-width));
+
+          nuclia-search-bar {
+            background-color: var(--custom-container-background-color, #{$color-light-stronger});
+            display: grid;
+            grid-template-columns: minmax(0, #{rhythm(56)});
+            justify-content: center;
+            padding-block: rhythm(1.5);
+            position: sticky;
+            top: var(--app-layout-padding-top);
+            width: 100%;
+            z-index: 1;
+
+            &::before {
+              background-color: inherit;
+              content: '';
+              inset-block: calc(-1 * var(--app-layout-padding-top)) 0;
+              inset-inline: 0;
+              position: absolute;
+              z-index: -1;
+            }
+          }
         }
       }
 

@@ -2617,7 +2617,7 @@
 	"search.configuration.unsupported-warning": "Save the configuration to apply your changes to the search page on the side.",
 	"search.configuration.use-generative-answer": "Use generative answer",
 	"search.description": "Try Agentic RAG search on your Knowledge Box and set up your search configuration.",
-	"search.embed.description": "Configure, preview, and embed search and chat experiences for your Knowledge Box.",
+	"search.embed.description": "Configure, preview, and embed search and chat experiences",
 	"search.title": "Search",
 	"search.widgets.action.create-widget-button": "Create widget",
 	"search.widgets.action.delete": "Delete",

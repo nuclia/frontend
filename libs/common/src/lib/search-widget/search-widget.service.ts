@@ -40,6 +40,7 @@ export class SearchWidgetService {
     widgetOptions: Widget.WidgetConfiguration;
     widgetId?: string;
     scrollContainer?: string;
+    previewCssPath?: string;
   }>();
   private _generateRaoWidgetSnippetSubject = new Subject<{
     widgetOptions: Widget.RaoWidgetConfiguration;
@@ -54,8 +55,8 @@ export class SearchWidgetService {
     this._generateWidgetSnippetSubject
       .pipe(
         debounceTime(300),
-        switchMap(({ currentConfig, widgetOptions, widgetId, scrollContainer }) =>
-          this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer),
+        switchMap(({ currentConfig, widgetOptions, widgetId, scrollContainer, previewCssPath }) =>
+          this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer, previewCssPath),
         ),
         delay(100), // wait for the widget to render
         tap(() => this.reinitWidgetPreview()),
@@ -125,8 +126,15 @@ export class SearchWidgetService {
     widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
     widgetId?: string,
     scrollContainer?: string,
+    previewCssPath?: string,
   ) {
-    this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions, widgetId, scrollContainer });
+    this._generateWidgetSnippetSubject.next({
+      currentConfig,
+      widgetOptions,
+      widgetId,
+      scrollContainer,
+      previewCssPath,
+    });
   }
 
   generateWidgetSnippetForEmbed(
@@ -134,8 +142,9 @@ export class SearchWidgetService {
     widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
     widgetId?: string,
     scrollContainer?: string,
+    previewCssPath?: string,
   ) {
-    return this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer);
+    return this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer, previewCssPath);
   }
 
   private _generateWidgetSnippet(
@@ -143,6 +152,7 @@ export class SearchWidgetService {
     widgetOptions: Widget.WidgetConfiguration,
     widgetId?: string,
     scrollContainer?: string,
+    previewCssPath?: string,
   ): Observable<{ preview: SafeHtml; snippet: string; synchSnippet?: string }> {
     this.deleteWidgetPreview();
 
@@ -220,6 +230,7 @@ export class SearchWidgetService {
             .replace(parameters, '')
             .replace(`></${tagName}>`, `${accountParam}\n  widget_id="${widgetId}"></${tagName}>`);
         }
+        const previewCssAttribute = previewCssPath ? ` csspath="${this.escapeParameter(previewCssPath)}"` : '';
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
             .replace('zone=', `client="dashboard" zone=`)
@@ -227,7 +238,7 @@ export class SearchWidgetService {
             .replace(apiKey, '')
             .replace(
               '<nuclia-search-results',
-              `<nuclia-search-results scrollableContainerSelector="${scrollContainer}"`,
+              `<nuclia-search-results scrollableContainerSelector="${scrollContainer}"${previewCssAttribute}`,
             ),
         );
 

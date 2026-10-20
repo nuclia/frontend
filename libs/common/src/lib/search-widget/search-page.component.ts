@@ -66,6 +66,14 @@ export class SearchPageComponent implements OnDestroy {
     return this.widgetOptions?.darkMode === 'dark';
   }
 
+  private get previewScrollContainer(): string {
+    return this.previewMode === 'page' ? '.search-preview-container' : '.preview-stage';
+  }
+
+  private get previewCssPath(): string | undefined {
+    return this.previewMode === 'page' ? new URL('assets/search-preview.css', this.document.baseURI).href : undefined;
+  }
+
   constructor() {
     this.searchWidgetService.searchTriggered.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       if (this.route.snapshot.paramMap.has('kb')) {
@@ -88,13 +96,19 @@ export class SearchPageComponent implements OnDestroy {
       return;
     }
     this.searchWidgetService
-      .generateWidgetSnippetForEmbed(this.searchConfig, this.widgetOptions, widgetSlug, '.preview-stage')
+      .generateWidgetSnippetForEmbed(
+        this.searchConfig,
+        this.widgetOptions,
+        widgetSlug,
+        this.previewScrollContainer,
+        this.previewCssPath,
+      )
       .subscribe(({ snippet, synchSnippet }) => {
-      this.modalService.openModal(
-        EmbedWidgetDialogComponent,
-        new ModalConfig({ dismissable: true, data: { code: { snippet, synchSnippet } } }),
-      );
-      this.refreshPreview();
+        this.modalService.openModal(
+          EmbedWidgetDialogComponent,
+          new ModalConfig({ dismissable: true, data: { code: { snippet, synchSnippet } } }),
+        );
+        this.refreshPreview();
       });
   }
 
@@ -114,6 +128,12 @@ export class SearchPageComponent implements OnDestroy {
 
   onPreviewContainerTransitionEnd(event: TransitionEvent) {
     if (event.propertyName === 'width') {
+      this.resizePreview();
+    }
+  }
+
+  private resizePreview() {
+    if (this.previewMode === 'floating-chat') {
       this.refreshPreview();
     }
   }
@@ -126,7 +146,8 @@ export class SearchPageComponent implements OnDestroy {
       this.searchConfig,
       this.getPreviewWidgetOptions(),
       undefined,
-      '.preview-stage',
+      this.previewScrollContainer,
+      this.previewCssPath,
     );
   }
 
@@ -163,11 +184,11 @@ export class SearchPageComponent implements OnDestroy {
       const width = lastWidth + (mouseX - e.clientX);
       this.panelWidth.set(Math.max(width, this.minPanelWidth));
     };
-    const finishResize = (e: MouseEvent) => {
+    const finishResize = () => {
       this.document.removeEventListener('mousemove', duringResize);
       this.document.removeEventListener('mouseup', finishResize);
       this.searchConfigurationComponent()?.updateHeight();
-      this.document.defaultView?.requestAnimationFrame(() => this.refreshPreview());
+      this.document.defaultView?.requestAnimationFrame(() => this.resizePreview());
     };
     this.document.addEventListener('mousemove', duringResize);
     this.document.addEventListener('mouseup', finishResize);
