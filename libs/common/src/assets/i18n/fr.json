@@ -2617,7 +2617,7 @@
 	"search.configuration.unsupported-warning": "Enregistrez la configuration pour appliquer vos modifications à la page de recherche sur le côté.",
 	"search.configuration.use-generative-answer": "Utiliser une réponse générative",
 	"search.description": "Essayez la recherche Agentic RAG sur votre Knowledge Box et configurez votre configuration de recherche.",
-	"search.embed.description": "Configurez, prévisualisez et intégrez des expériences de recherche et de chat pour votre Knowledge Box.",
+	"search.embed.description": "Configurer, prévisualiser et intégrer des expériences de recherche et de chat",
 	"search.title": "Recherche",
 	"search.widgets.action.create-widget-button": "Créer un widget",
 	"search.widgets.action.delete": "Supprimer",
