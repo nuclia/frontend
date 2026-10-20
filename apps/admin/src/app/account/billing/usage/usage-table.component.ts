@@ -17,7 +17,7 @@ export class UsageTableComponent {
 
   usageData = this.billing.getAccountUsage().pipe(shareReplay(1));
   total = this.usageData.pipe(map((usage) => usage.over_cost));
-  invoiceItems: Observable<[string, InvoiceItem][]> = this.usageData.pipe(
+  invoiceItems: Observable<[string, InvoiceItem | null][]> = this.usageData.pipe(
     map((usage) => {
       const params = this.paramsToShow;
       return Object.entries(usage.invoice_items)
