@@ -1,8 +1,8 @@
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { OAuthService, SDKService, SelectAccountKbService, UserService } from '@flaps/core';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { UserService, SelectAccountKbService, SDKService, OAuthService } from '@flaps/core';
 
 export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
@@ -58,7 +58,7 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
         // redirect to kb selection
         return selectService
           .selectAccount(accountSlug)
-          .pipe(map((account) => router.createUrlTree([`/select/${accountSlug}`])));
+          .pipe(map(() => router.createUrlTree([`/select/${accountSlug}`])));
       } else {
         // several accounts, we continue to account selection
         return of(true);
