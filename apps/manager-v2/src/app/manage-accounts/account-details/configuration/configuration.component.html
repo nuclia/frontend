@@ -66,7 +66,13 @@
         [(value)]="free_tokens_per_billing_cycle">
         Free tokens
       </pa-input>
-      <pa-button (click)="updateFreeTokens()">Update free tokens</pa-button>
+      <pa-button
+        [disabled]="!provider"
+        paTooltip="Require a subscription provider"
+        paTooltipOffset="-16"
+        (click)="updateFreeTokens()">
+        Update free tokens
+      </pa-button>
     </div>
     <div>
       <label
