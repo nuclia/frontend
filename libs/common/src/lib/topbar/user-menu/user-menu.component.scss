@@ -4,6 +4,8 @@
   display: block;
 
   .user-menu-trigger {
+    --user-menu-avatar-background: #{$color-primary-lightest};
+
     background: none;
     border: none;
     cursor: pointer;
@@ -11,6 +13,16 @@
     display: inline-flex;
     align-items: center;
     border-radius: 50%;
+
+    @media (hover: hover) {
+      &:hover {
+        --user-menu-avatar-background: #{$color-primary-lighter};
+      }
+    }
+
+    &:active {
+      --user-menu-avatar-background: #{$color-primary-lighter};
+    }
   }
 
   .avatar-wrapper {
@@ -18,7 +30,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: $color-primary-lightest;
+    background-color: var(--user-menu-avatar-background);
+    transition: background-color $transition-hint;
     border-radius: 50%;
     padding: rhythm(0.5);
 
@@ -54,10 +67,12 @@
     cursor: pointer;
     height: rhythm(5);
     width: rhythm(5);
-    background-color: $color-primary-lightest;
+    background-color: var(--user-menu-avatar-background);
+    transition: background-color $transition-hint;
 
     .pa-avatar-initials {
-      background-color: $color-primary-lightest;
+      background-color: var(--user-menu-avatar-background);
+      transition: background-color $transition-hint;
       color: $color-primary-regular;
       font-size: font-size(m);
       font-weight: $font-weight-thin;

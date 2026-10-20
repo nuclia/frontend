@@ -16,6 +16,21 @@
 
 .chat-bubble-button {
   display: block;
+
+  ::ng-deep .pa-button.pa-primary.pa-basic:not(:disabled) {
+    background: $color-primary-lightest;
+
+    @media (hover: hover) {
+      &:hover {
+        background: $color-primary-lighter;
+      }
+    }
+
+    &:active,
+    &.pa-active {
+      background: $color-primary-lighter;
+    }
+  }
 }
 
 .chat-minimized-custom {
@@ -27,16 +42,18 @@
   padding: rhythm(1);
   border: 1px solid $color-neutral-light;
   border-radius: rhythm(1) 0 0 rhythm(1);
-  background: $color-light-stronger;
-  color: $color-dark-stronger;
+  background: $color-primary-lightest;
+  color: $color-primary-regular;
   cursor: pointer;
 
-  pa-icon {
-    color: $color-dark-stronger;
+  @media (hover: hover) {
+    &:hover {
+      background: $color-primary-lighter;
+    }
   }
 
-  &:hover {
-    background: $color-neutral-lightest;
+  &:active {
+    background: $color-primary-lighter;
   }
 
   &:focus-visible {
