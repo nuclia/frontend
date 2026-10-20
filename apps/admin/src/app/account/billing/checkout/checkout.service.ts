@@ -1,12 +1,10 @@
-import { DestroyRef, ElementRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef, ElementRef, inject, Service, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   BillingService,
-  Currency,
   injectScript,
   NavigationService,
-  Prices,
   RecurrentPriceInterval,
   SDKService,
   StripeCustomer,
@@ -15,9 +13,8 @@ import {
   SubscriptionError,
   UserService,
 } from '@flaps/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Account, AccountTypes } from '@nuclia/core';
+import { Account } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import {
   catchError,
@@ -31,6 +28,7 @@ import {
   Observable,
   of,
   shareReplay,
+  startWith,
   Subject,
   switchMap,
   take,
@@ -39,53 +37,13 @@ import {
 } from 'rxjs';
 import { ReviewComponent } from '../review/review.component';
 import { SubscriptionService } from '../subscription.service';
-
-export function createCustomerForm() {
-  return new FormGroup({
-    not_company: new FormControl<boolean>(false, { nonNullable: true }),
-    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-    company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    vat: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    phone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    address: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    country: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    state: new FormControl<string>('', { nonNullable: true }),
-    city: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    postal_code: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-  });
-}
-
-export const CUSTOMER_FORM_ERRORS = {
-  required: 'validation.required',
-  email: 'validation.email',
-  vat: 'billing.invalid_vat',
-} as IErrorMessages;
-
-type CustomerForm = ReturnType<typeof createCustomerForm>;
-
-/** Errors whose message is meant for the user: an i18n key or a message coming from Stripe. */
-export class CheckoutError extends Error {}
-
-export interface CheckoutPlanDetails {
-  account: AccountTypes;
-  prices: Prices;
-  currency: Currency;
-  budget: number | null;
-  contextBox?: boolean;
-}
-
-export interface CheckoutStrategy {
-  details(customer: StripeCustomer): Observable<CheckoutPlanDetails>;
-  redirectUrl(account: Account): Observable<string>;
-  onError?(message?: string): void;
-}
+import { CheckoutError, CheckoutPlanDetails, CheckoutStrategy } from './checkout.model';
 
 /**
  * State and steps of the Stripe checkout (billing details, card, review, subscription).
- * Provide it in the component using it: every checkout page gets its own instance.
+ * Provided by each checkout page, so every page gets its own instance.
  */
-@Injectable()
+@Service({ autoProvided: false })
 export class CheckoutService {
   private billing = inject(BillingService);
   private sdk = inject(SDKService);
@@ -102,7 +60,7 @@ export class CheckoutService {
   private tokenKey?: string;
   private updateCurrency = new Subject<string>();
 
-  readonly customerForm = createCustomerForm();
+  readonly customerForm = this.createCustomerForm();
   readonly cardName = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
   readonly customer = signal<StripeCustomer | undefined>(undefined);
   readonly token = signal<any>(undefined);
@@ -110,21 +68,11 @@ export class CheckoutService {
   readonly cardError = signal('');
   readonly loading = signal(false);
 
-  readonly currency$ = merge(
-    inject(SubscriptionService).initialCurrency.pipe(take(1)),
-    this.updateCurrency.pipe(
-      distinctUntilChanged(),
-      switchMap((country) => this.billing.getCurrency(country)),
-    ),
-  ).pipe(shareReplay(1));
-  readonly prices$ = this.currency$.pipe(
-    switchMap((currency) => this.billing.getPrices(currency)),
-    shareReplay(1),
-  );
-
-  get isCompany() {
-    return !this.customerForm.value.not_company;
-  }
+  readonly currency$ = this.createCurrency$();
+  readonly prices$ = this.createPrices$();
+  readonly currency = toSignal(this.currency$);
+  readonly prices = toSignal(this.prices$);
+  readonly isCompany = this.createIsCompany();
 
   constructor() {
     const form = this.customerForm;
@@ -308,7 +256,51 @@ export class CheckoutService {
     this.updateCurrency.next(customer.billing_details.country);
   }
 
-  private updateValidation(newValues: Partial<CustomerForm['value']>) {
+  private createCurrency$() {
+    return merge(
+      inject(SubscriptionService).initialCurrency.pipe(take(1)),
+      this.updateCurrency.pipe(
+        distinctUntilChanged(),
+        switchMap((country) => this.billing.getCurrency(country)),
+      ),
+    ).pipe(shareReplay(1));
+  }
+
+  private createPrices$() {
+    return this.currency$.pipe(
+      switchMap((currency) => this.billing.getPrices(currency)),
+      shareReplay(1),
+    );
+  }
+
+  private createIsCompany() {
+    const notCompany = this.customerForm.controls.not_company;
+    return toSignal(
+      notCompany.valueChanges.pipe(
+        startWith(notCompany.value),
+        map((value) => !value),
+      ),
+      { requireSync: true },
+    );
+  }
+
+  private createCustomerForm() {
+    return new FormGroup({
+      not_company: new FormControl<boolean>(false, { nonNullable: true }),
+      name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+      company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      vat: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      phone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      address: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      country: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      state: new FormControl<string>('', { nonNullable: true }),
+      city: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      postal_code: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    });
+  }
+
+  private updateValidation(newValues: Partial<CheckoutService['customerForm']['value']>) {
     const { company, vat } = this.customerForm.controls;
     const required = { ...this.customerForm.value, ...newValues }.not_company ? [] : [Validators.required];
     company.setValidators(required);

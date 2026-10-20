@@ -11,7 +11,8 @@ import { BackButtonComponent, COUNTRIES, SisToastService, SpinnerComponent } fro
 import { combineLatest, forkJoin, of } from 'rxjs';
 import { filter, map, shareReplay, take } from 'rxjs/operators';
 import { CheckoutFormComponent } from '../checkout-form/checkout-form.component';
-import { CheckoutService, CheckoutStrategy } from './checkout.service';
+import { CheckoutStrategy } from './checkout.model';
+import { CheckoutService } from './checkout.service';
 
 @Component({
   selector: 'app-checkout',

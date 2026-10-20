@@ -7,7 +7,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService, SpinnerComponent } from '@nuclia/sistema';
 import { filter, map, of, switchMap, take } from 'rxjs';
 import { CheckoutFormComponent } from '../checkout-form/checkout-form.component';
-import { CheckoutError, CheckoutService, CheckoutStrategy } from '../checkout/checkout.service';
+import { CheckoutError, CheckoutStrategy } from '../checkout/checkout.model';
+import { CheckoutService } from '../checkout/checkout.service';
 
 @Component({
   selector: 'app-checkout-context-box',

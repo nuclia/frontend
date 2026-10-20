@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { provideTranslateService } from '@ngx-translate/core';
 import { CountrySelectComponent } from '@nuclia/sistema';
 import { MockComponent } from 'ng-mocks';
-import { CheckoutService, createCustomerForm } from '../checkout/checkout.service';
+import { CheckoutService } from '../checkout/checkout.service';
 import { CheckoutFormComponent } from './checkout-form.component';
 
 @Component({
@@ -17,6 +17,26 @@ class HostComponent {
   section: 'billing' | 'card' = 'billing';
 }
 
+const CUSTOMER_FIELDS = [
+  'not_company',
+  'name',
+  'email',
+  'company',
+  'vat',
+  'phone',
+  'address',
+  'country',
+  'state',
+  'city',
+  'postal_code',
+];
+
+function createCustomerForm() {
+  return new FormGroup(
+    Object.fromEntries(CUSTOMER_FIELDS.map((field) => [field, new FormControl('')])),
+  ) as unknown as CheckoutService['customerForm'];
+}
+
 let checkoutService: Partial<CheckoutService>;
 const initStripe = jest.fn();
 const cardError = signal('');
@@ -27,7 +47,7 @@ describe('CheckoutFormComponent', () => {
   function render(section: 'billing' | 'card', isCompany = false) {
     checkoutService = {
       customerForm: createCustomerForm(),
-      isCompany,
+      isCompany: (() => isCompany) as unknown as CheckoutService['isCompany'],
       customer: (() => undefined) as unknown as CheckoutService['customer'],
       cardName: new FormControl('', { nonNullable: true }),
       cardError,

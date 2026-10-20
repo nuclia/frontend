@@ -26,16 +26,12 @@
         @if (accountType | async; as account) {
           <div class="body-m">
             {{ 'account.type.' + account | translate }}
-            @if (checkoutService.currency$ | async; as currency) {
-              @if ((checkoutService.prices$ | async)?.[account]?.recurring; as prices) {
+            @if (checkoutService.currency(); as currency) {
+              @if (checkoutService.prices()?.[account]?.recurring; as prices) {
                 @if (monthly | async) {
-                  {{ prices.month?.price | currency: currency }}/{{
-                    'billing.month' | translate
-                  }}
+                  {{ prices.month?.price | currency: currency }}/{{ 'billing.month' | translate }}
                 } @else {
-                  {{ prices.year?.price | currency: currency }}/{{
-                    'billing.year' | translate
-                  }}
+                  {{ prices.year?.price | currency: currency }}/{{ 'billing.year' | translate }}
                 }
               }
             }
@@ -159,7 +155,7 @@
         <div class="budget-form">
           <div [innerHTML]="'billing.budget_description' | translate"></div>
           @if (subscribeMode | async) {
-            @if (checkoutService.currency$ | async; as currency) {
+            @if (checkoutService.currency()) {
               <app-budget
                 [showActions]="false"
                 [defaultBudget]="true"
@@ -182,7 +178,7 @@
   }
 
   @if (subscribeMode | async) {
-    @if (checkoutService.currency$ | async) {
+    @if (checkoutService.currency()) {
       <div class="submit">
         <pa-button
           (click)="doSubscribe()"

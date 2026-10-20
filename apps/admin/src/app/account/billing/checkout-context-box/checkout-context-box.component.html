@@ -7,7 +7,7 @@
         class="company-choice"
         [attr.inert]="checkoutService.loading() ? '' : null">
         <pa-toggle
-          [value]="checkoutService.isCompany"
+          [value]="checkoutService.isCompany()"
           (valueChange)="checkoutService.customerForm.controls.not_company.setValue(!$event)"
           [disabled]="checkoutService.loading()">
           {{ 'billing.context-box.company-label' | translate }}
@@ -54,8 +54,8 @@
           id="context-box-plan-title">
           {{ 'billing.context-box.plan-name' | translate }}
         </h2>
-        @if (checkoutService.currency$ | async; as currency) {
-          @if ((checkoutService.prices$ | async)?.cowork?.recurring?.month; as price) {
+        @if (checkoutService.currency(); as currency) {
+          @if (checkoutService.prices()?.cowork?.recurring?.month; as price) {
             <div class="plan-price">
               {{ price.price | currency: currency }}
               <span>/{{ 'billing.month' | translate }}</span>
@@ -65,7 +65,7 @@
       </div>
     </nsi-info-card>
     <p class="plan-notes">{{ 'billing.context-box.pricing-note' | translate }}</p>
-    @if (checkoutService.currency$ | async) {
+    @if (checkoutService.currency()) {
       <div class="checkout-actions pa-dual-buttons">
         <pa-button
           (click)="cancel()"

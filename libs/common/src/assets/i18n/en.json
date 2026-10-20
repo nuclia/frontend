@@ -655,6 +655,7 @@
 	"billing.tokens": "Agentic RAG Tokens",
 	"billing.trial.title": "{{days}} days trial",
 	"billing.unit": "unit",
+	"billing.unknown_error": "We could not complete your subscription. Please try again or contact us for assistance.",
 	"billing.unlimited": "Unlimited",
 	"billing.unsubscribe-error": "Error when unsubscribing",
 	"billing.unsubscribe-help": "Don’t forget: even if you stop renewing your subscription, you still have some time left to use Agentic RAG.",

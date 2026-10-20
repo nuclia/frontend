@@ -10,7 +10,7 @@ import {
 } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { Observable, of, Subject, throwError } from 'rxjs';
+import { EMPTY, Observable, of, Subject, throwError } from 'rxjs';
 import { CheckoutService } from '../checkout/checkout.service';
 import { SubscriptionService } from '../subscription.service';
 import { CheckoutContextBoxComponent } from './checkout-context-box.component';
@@ -33,8 +33,6 @@ describe('CheckoutContextBoxComponent', () => {
   let fixture: ComponentFixture<CheckoutContextBoxComponent>;
   let component: CheckoutContextBoxComponent;
   let checkoutService: CheckoutService;
-  let closeReview: Subject<boolean>;
-  let dismissReview: Subject<void>;
   let createToken: jest.Mock;
   let billing: {
     isContextBoxPaymentRequired: Observable<boolean>;
@@ -55,17 +53,19 @@ describe('CheckoutContextBoxComponent', () => {
   let closeConfirm: Subject<boolean>;
   let setAccount: jest.Mock;
 
-  async function flushPromises() {
-    for (let i = 0; i < 5; i++) {
-      await Promise.resolve();
-    }
+  function reviewWith(confirmed: boolean) {
+    openModal.mockReturnValue({ onClose: of(confirmed), onDismiss: EMPTY });
+  }
+
+  async function submit() {
+    checkoutService.submit(component['strategy']);
+    await jest.runAllTimersAsync();
   }
 
   beforeEach(async () => {
+    jest.useFakeTimers();
     jest.spyOn(CheckoutService.prototype, 'initStripe').mockImplementation();
-    closeReview = new Subject<boolean>();
-    dismissReview = new Subject<void>();
-    openModal = jest.fn().mockReturnValue({ onClose: closeReview, onDismiss: dismissReview });
+    openModal = jest.fn();
     showError = jest.fn();
     showSuccess = jest.fn();
     navigateExternal = jest.fn();
@@ -125,6 +125,7 @@ describe('CheckoutContextBoxComponent', () => {
     checkoutService.customerForm.patchValue({ ...customer.billing_details, not_company: true });
     checkoutService.cardName.setValue('Designer');
     checkoutService.validCard.set(true);
+    reviewWith(false);
   });
 
   afterEach(() => {
@@ -141,6 +142,13 @@ describe('CheckoutContextBoxComponent', () => {
     expect(billing.createCustomer).not.toHaveBeenCalled();
     expect(createToken).not.toHaveBeenCalled();
     expect(openModal).not.toHaveBeenCalled();
+  });
+
+  it('submits the checkout with its strategy', () => {
+    const submitSpy = jest.spyOn(checkoutService, 'submit').mockImplementation();
+    component.review();
+
+    expect(submitSpy).toHaveBeenCalledWith(component['strategy']);
   });
 
   it('asks for confirmation before logging out when payment is required', () => {
@@ -189,9 +197,7 @@ describe('CheckoutContextBoxComponent', () => {
   });
 
   it('saves billing and card details once, but does not subscribe before confirmation', async () => {
-    component.review();
-    component.review();
-    await flushPromises();
+    await Promise.all([submit(), submit()]);
 
     expect(billing.createCustomer).toHaveBeenCalledTimes(1);
     expect(createToken).toHaveBeenCalledWith(undefined, {
@@ -204,10 +210,7 @@ describe('CheckoutContextBoxComponent', () => {
       expect.anything(),
       expect.objectContaining({ data: expect.objectContaining({ contextBox: true, customer, token }) }),
     );
-    expect(checkoutService.loading()).toBe(true);
-
-    dismissReview.next();
-
+    expect(billing.createSubscription).not.toHaveBeenCalled();
     expect(checkoutService.loading()).toBe(false);
     expect(checkoutService.customerForm.controls.name.value).toBe('Designer');
     expect(checkoutService.cardName.value).toBe('Designer');
@@ -215,18 +218,12 @@ describe('CheckoutContextBoxComponent', () => {
   });
 
   it('reuses the card token when reviewing again, but creates a new one if the card name changes', async () => {
-    component.review();
-    await flushPromises();
-    dismissReview.next();
-
-    component.review();
-    await flushPromises();
+    await submit();
+    await submit();
     expect(createToken).toHaveBeenCalledTimes(1);
-    dismissReview.next();
 
     checkoutService.cardName.setValue('Another Name');
-    component.review();
-    await flushPromises();
+    await submit();
     expect(createToken).toHaveBeenCalledTimes(2);
   });
 
@@ -239,13 +236,8 @@ describe('CheckoutContextBoxComponent', () => {
   });
 
   it('redirects after payment without updating the SDK account, which would swap the checkout out mid-flow', async () => {
-    jest.useFakeTimers();
-    component.review();
-    await flushPromises();
-    closeReview.next(true);
-    await flushPromises();
-    jest.advanceTimersByTime(2000);
-    await flushPromises();
+    reviewWith(true);
+    await submit();
 
     expect(billing.createSubscription).toHaveBeenCalledWith({
       payment_method_id: 'payment-method',
@@ -262,10 +254,8 @@ describe('CheckoutContextBoxComponent', () => {
     billing.createSubscription.mockReturnValue(
       throwError(() => ({ body: { error_code: 'STRIPE_SUBSCRIPTION_WITHOUT_PRICING' } })),
     );
-    component.review();
-    await flushPromises();
-    closeReview.next(true);
-    await flushPromises();
+    reviewWith(true);
+    await submit();
 
     expect(showError).toHaveBeenCalledWith('billing.unknown_error');
     expect(navigateExternal).not.toHaveBeenCalled();
@@ -287,8 +277,7 @@ describe('CheckoutContextBoxComponent', () => {
 
   it('preserves entered details after a declined card and lets the user retry', async () => {
     createToken.mockResolvedValueOnce({ error: { message: 'Card declined' } });
-    component.review();
-    await flushPromises();
+    await submit();
 
     expect(showError).toHaveBeenCalledWith('Card declined');
     expect(checkoutService.loading()).toBe(false);
@@ -296,8 +285,7 @@ describe('CheckoutContextBoxComponent', () => {
     expect(checkoutService.cardName.value).toBe('Designer');
     expect(openModal).not.toHaveBeenCalled();
 
-    component.review();
-    await flushPromises();
+    await submit();
 
     expect(billing.createCustomer).toHaveBeenCalledTimes(1);
     expect(billing.modifyCustomer).toHaveBeenCalledTimes(1);
@@ -308,8 +296,7 @@ describe('CheckoutContextBoxComponent', () => {
     const prices = { cowork: { recurring: { month: { price: 31 } }, usage: {} } };
     billing.getCurrency.mockReturnValue(of('EUR'));
     billing.getPrices.mockReturnValue(of(prices));
-    component.review();
-    await flushPromises();
+    await submit();
 
     expect(billing.getCurrency).toHaveBeenCalledWith('GB');
     expect(openModal).toHaveBeenCalledWith(
@@ -320,8 +307,7 @@ describe('CheckoutContextBoxComponent', () => {
 
   it('does not open an unpriced review when pricing is unavailable', async () => {
     billing.getPrices.mockReturnValue(of({}));
-    component.review();
-    await flushPromises();
+    await submit();
 
     expect(openModal).not.toHaveBeenCalled();
     expect(showError).toHaveBeenCalledWith('billing.unknown_error');

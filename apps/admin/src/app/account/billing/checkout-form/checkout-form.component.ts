@@ -11,7 +11,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CountrySelectComponent } from '@nuclia/sistema';
-import { CheckoutService, CUSTOMER_FORM_ERRORS } from '../checkout/checkout.service';
+import { CUSTOMER_FORM_ERRORS } from '../checkout/checkout.model';
+import { CheckoutService } from '../checkout/checkout.service';
 
 @Component({
   selector: 'app-checkout-form',

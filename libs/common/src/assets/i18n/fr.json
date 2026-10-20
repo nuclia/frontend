@@ -655,6 +655,7 @@
 	"billing.tokens": "Agentic RAG Tokens",
 	"billing.trial.title": "{{days}} jours d’essai",
 	"billing.unit": "Unité",
+	"billing.unknown_error": "Votre inscription n'a pas pu être finalisée. Veuillez réessayer ou nous contacter pour obtenir de l'aide.",
 	"billing.unlimited": "Illimité",
 	"billing.unsubscribe-error": "Erreur lors de l’annulation de l’abonnement",
 	"billing.unsubscribe-help": "N’oubliez pas: même si vous arrêtez de renouveler votre abonnement, il vous reste encore du temps pour utiliser Agentic RAG.",

@@ -2,9 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { BillingService, NavigationService, SDKService, StripeCustomer, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { SubscriptionService } from '../subscription.service';
-import { CheckoutError, CheckoutService } from './checkout.service';
+import { CheckoutError } from './checkout.model';
+import { CheckoutService } from './checkout.service';
 
 describe('CheckoutService', () => {
   const company: StripeCustomer = {
@@ -22,8 +23,15 @@ describe('CheckoutService', () => {
       country: 'GB',
     },
   };
+  const token = { id: 'token', card: { brand: 'Visa', last4: '4242' } };
   let service: CheckoutService;
-  let billing: { getCustomer: jest.Mock; getCurrency: jest.Mock; getPrices: jest.Mock };
+  let billing: {
+    getCustomer: jest.Mock;
+    getCurrency: jest.Mock;
+    getPrices: jest.Mock;
+    createPaymentMethod: jest.Mock;
+  };
+  let createToken: jest.Mock;
   let showError: jest.Mock;
 
   beforeEach(() => {
@@ -32,7 +40,9 @@ describe('CheckoutService', () => {
       getCustomer: jest.fn().mockReturnValue(of(company)),
       getCurrency: jest.fn().mockReturnValue(of('EUR')),
       getPrices: jest.fn().mockReturnValue(of({ cowork: {} })),
+      createPaymentMethod: jest.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
     };
+    createToken = jest.fn().mockResolvedValue({ token });
     TestBed.configureTestingModule({
       providers: [
         CheckoutService,
@@ -47,6 +57,7 @@ describe('CheckoutService', () => {
       ],
     });
     service = TestBed.inject(CheckoutService);
+    (service as any).stripe = { createToken };
   });
 
   it('fills the form from the saved customer and maps is_company to not_company', () => {
@@ -106,8 +117,39 @@ describe('CheckoutService', () => {
     service.loadCustomer().subscribe();
 
     expect(currencies).toEqual(['USD', 'EUR']);
+    expect(service.currency()).toBe('EUR');
     expect(billing.getCurrency).toHaveBeenCalledWith('GB');
     expect(billing.getPrices).toHaveBeenCalledWith('USD');
     expect(billing.getPrices).toHaveBeenCalledWith('EUR');
+  });
+
+  it('tracks whether the customer is a company from the not_company control', () => {
+    expect(service.isCompany()).toBe(true);
+
+    service.customerForm.controls.not_company.setValue(true);
+
+    expect(service.isCompany()).toBe(false);
+  });
+
+  describe('createPaymentMethod', () => {
+    beforeEach(() => {
+      service.loadCustomer().subscribe();
+      service.cardName.setValue('Jane');
+    });
+
+    it('creates the token with the billing country and postal code and keeps it', async () => {
+      await lastValueFrom(service.createPaymentMethod(), { defaultValue: undefined });
+
+      expect(createToken).toHaveBeenCalledWith(undefined, { name: 'Jane', address_country: 'GB', address_zip: 'SW1' });
+      expect(billing.createPaymentMethod).toHaveBeenCalledWith({ token: 'token' });
+      expect(service.token()).toEqual(token);
+    });
+
+    it('fails with the Stripe message when the card is declined', async () => {
+      createToken.mockResolvedValue({ error: { message: 'Card declined' } });
+
+      await expect(lastValueFrom(service.createPaymentMethod())).rejects.toEqual(new CheckoutError('Card declined'));
+      expect(service.token()).toBeUndefined();
+    });
   });
 });
