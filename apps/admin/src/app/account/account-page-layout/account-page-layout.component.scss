@@ -6,7 +6,7 @@
 
 .account-page-layout {
   margin: 0 auto;
-  max-width: calc(#{rhythm(90)} * 2);
+  max-width: var(--account-page-max-width, calc(#{rhythm(90)} * 2));
   width: 100%;
 }
 
@@ -33,6 +33,10 @@
   position: sticky;
   top: 0;
   z-index: 1;
+
+  &:empty {
+    display: none;
+  }
 }
 
 .back-home-button {
@@ -46,5 +50,5 @@
 }
 
 .settings-section {
-  padding-top: rhythm(3);
+  padding-top: var(--account-page-section-padding-top, #{rhythm(3)});
 }

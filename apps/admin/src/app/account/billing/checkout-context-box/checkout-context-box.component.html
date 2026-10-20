@@ -1,0 +1,94 @@
+<div
+  class="checkout"
+  [attr.aria-busy]="checkoutService.loading()">
+  <div class="billing-section">
+    <div class="billing-heading">
+      <div
+        class="company-choice"
+        [attr.inert]="checkoutService.loading() ? '' : null">
+        <pa-toggle
+          [value]="checkoutService.isCompany"
+          (valueChange)="checkoutService.customerForm.controls.not_company.setValue(!$event)"
+          [disabled]="checkoutService.loading()">
+          {{ 'billing.context-box.company-label' | translate }}
+        </pa-toggle>
+      </div>
+      <div class="section-header">
+        <div class="section-title">{{ 'billing.billing_details' | translate }}</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <app-checkout-form
+        section="billing"
+        [attr.inert]="checkoutService.loading() ? '' : null"></app-checkout-form>
+    </div>
+  </div>
+
+  <div class="payment-section">
+    <div class="section-header">
+      <div class="section-title">
+        {{ 'billing.payment_method' | translate }}
+        <div class="powered-by">
+          <span class="body-xs">Powered by</span>
+          <pa-icon
+            path="assets/images/stripe-logo.svg"
+            size="large"></pa-icon>
+        </div>
+      </div>
+    </div>
+    <div class="section-body">
+      <app-checkout-form
+        section="card"
+        [attr.inert]="checkoutService.loading() ? '' : null"></app-checkout-form>
+    </div>
+  </div>
+
+  <div class="plan-summary">
+    <nsi-info-card
+      class="context-box-plan"
+      role="region"
+      aria-labelledby="context-box-plan-title">
+      <div class="plan-heading">
+        <h2
+          class="plan-title"
+          id="context-box-plan-title">
+          {{ 'billing.context-box.plan-name' | translate }}
+        </h2>
+        @if (checkoutService.currency$ | async; as currency) {
+          @if ((checkoutService.prices$ | async)?.cowork?.recurring?.month; as price) {
+            <div class="plan-price">
+              {{ price.price | currency: currency }}
+              <span>/{{ 'billing.month' | translate }}</span>
+            </div>
+          }
+        }
+      </div>
+    </nsi-info-card>
+    <p class="plan-notes">{{ 'billing.context-box.pricing-note' | translate }}</p>
+    @if (checkoutService.currency$ | async) {
+      <div class="checkout-actions pa-dual-buttons">
+        <pa-button
+          (click)="cancel()"
+          [disabled]="checkoutService.loading()"
+          kind="secondary"
+          aspect="basic">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+        <pa-button
+          (click)="review()"
+          [disabled]="
+            checkoutService.customerForm.invalid ||
+            checkoutService.cardName.invalid ||
+            !checkoutService.validCard() ||
+            checkoutService.loading()
+          "
+          kind="primary">
+          {{ 'billing.context-box.review-subscription' | translate }}
+        </pa-button>
+      </div>
+      @if (checkoutService.loading()) {
+        <nsi-spinner class="checkout-spinner"></nsi-spinner>
+      }
+    }
+  </div>
+</div>

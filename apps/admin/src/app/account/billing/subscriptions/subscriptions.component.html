@@ -1,10 +1,12 @@
-@if ((isSubscribedToAws | async) === true) {
+@if (isContextBoxActivation() === true) {
+  <app-checkout-context-box></app-checkout-context-box>
+} @else if ((isSubscribedToAws | async) === true) {
   <app-aws-subscription></app-aws-subscription>
 } @else if ((isManuallySubscribed | async) === true) {
   <app-manual-subscription></app-manual-subscription>
-} @else {
+} @else if (isContextBoxActivation() === false) {
   <div class="header">
-    @if (canSelectCurrency) {
+    @if (canSelectCurrency && !(showCowork | async)) {
       <div>
         <button
           class="currency title-xs"

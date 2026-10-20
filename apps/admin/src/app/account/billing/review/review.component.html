@@ -1,11 +1,17 @@
 <pa-modal-advanced fitContentHeight>
   <pa-modal-title>
-    {{ 'billing.review.title' | translate }}
+    {{ (contextBox ? 'billing.context-box.review-subscription' : 'billing.review.title') | translate }}
   </pa-modal-title>
   <pa-modal-content>
     <div>
       <h2 class="title-s">
-        {{ 'billing.review.subscribe_to' | translate: { account: 'account.type.' + account | translate } }}
+        {{
+          'billing.review.subscribe_to'
+            | translate
+              : {
+                  account: (contextBox ? 'billing.context-box.plan-name' : 'account.type.' + account) | translate,
+                }
+        }}
       </h2>
       @if (prices && currency) {
         <div class="body-m">
@@ -60,7 +66,7 @@
       <pa-button
         kind="primary"
         (click)="confirm()">
-        {{ 'billing.review.confirm_subscription' | translate }}
+        {{ (contextBox ? 'billing.context-box.activate-and-pay' : 'billing.review.confirm_subscription') | translate }}
       </pa-button>
     </div>
   </pa-modal-footer>

@@ -1,5 +1,6 @@
 import { AsyncPipe, CurrencyPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import {
   AccountService,
@@ -28,6 +29,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import { SubscriptionService } from '../subscription.service';
+import { CheckoutContextBoxComponent } from '../checkout-context-box/checkout-context-box.component';
 import { AwsSubscriptionComponent } from './aws-subscription/aws-subscription.component';
 import { ManualSubscriptionComponent } from './manual-subscription/manual-subscription.component';
 
@@ -46,6 +48,7 @@ import { ManualSubscriptionComponent } from './manual-subscription/manual-subscr
     CurrencyPipe,
     TranslatePipe,
     STFPipesModule,
+    CheckoutContextBoxComponent,
   ],
 })
 export class SubscriptionsComponent implements OnDestroy {
@@ -76,6 +79,7 @@ export class SubscriptionsComponent implements OnDestroy {
     ),
   );
   showCowork = this.tiers.pipe(map((tiers) => tiers.includes('cowork')));
+  protected isContextBoxActivation = toSignal(this.billing.isContextBoxActivation);
 
   constructor(
     private billing: BillingService,
