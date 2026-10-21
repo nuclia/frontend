@@ -12,8 +12,7 @@ import { RecoverComponent } from './recover.component';
 describe('RecoverComponent', () => {
   let component: RecoverComponent;
   let fixture: ComponentFixture<RecoverComponent>;
-  let queryParams$: BehaviorSubject<{ login_challenge?: string }>;
-  let routeData$: BehaviorSubject<{ isPasswordInit?: boolean }>;
+  let queryParams$: BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>;
 
   let loginService: { recover: jest.Mock };
   let reCaptchaV3Service: { execute: jest.Mock };
@@ -21,10 +20,8 @@ describe('RecoverComponent', () => {
   let modalService: { openConfirm: jest.Mock };
   let translateService: { get: jest.Mock };
   beforeEach(async () => {
-    queryParams$ = new BehaviorSubject<{ login_challenge?: string }>({
+    queryParams$ = new BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>({
       login_challenge: 'challenge-1',
-    });
-    routeData$ = new BehaviorSubject<{ isPasswordInit?: boolean }>({
       isPasswordInit: true,
     });
 
@@ -54,7 +51,7 @@ describe('RecoverComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: { queryParams: queryParams$.asObservable(), data: routeData$.asObservable() },
+          useValue: { queryParams: queryParams$.asObservable() },
         },
         { provide: LoginService, useValue: loginService },
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
@@ -79,7 +76,7 @@ describe('RecoverComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should read login challenge and password init from query params and route data', () => {
+  it('should read login challenge and password init from query params', () => {
     expect(component.loginChallenge).toBe('challenge-1');
     expect(component.isPasswordInit).toBe(true);
   });

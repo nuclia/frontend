@@ -127,8 +127,9 @@ export class LoginComponent {
     }
     this.route.data.subscribe((data) => {
       if (data['loginData']?.['needs_initial_setpassword']) {
-        this.router.navigate(['/user/initiate-password'], {
+        this.router.navigate(['/user/recover'], {
           queryParamsHandling: 'merge',
+          queryParams: { isPasswordInit: true },
         });
       }
     });

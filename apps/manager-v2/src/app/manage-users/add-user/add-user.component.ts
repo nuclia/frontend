@@ -27,7 +27,7 @@ export class AddUserComponent {
   private toaster = inject(SisToastService);
   private sdk = inject(SDKService);
 
-  passwordPage = this.sdk.getOriginForApp('auth') + '/user/initiate-password';
+  passwordPage = this.sdk.getOriginForApp('rag') + '/user/set-password';
   copied = signal(false);
 
   save() {
