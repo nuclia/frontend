@@ -197,6 +197,7 @@ describe('CheckoutContextBoxComponent', () => {
   });
 
   it('saves billing and card details once, but does not subscribe before confirmation', async () => {
+    // double-click guard check
     await Promise.all([submit(), submit()]);
 
     expect(billing.createCustomer).toHaveBeenCalledTimes(1);
@@ -218,6 +219,7 @@ describe('CheckoutContextBoxComponent', () => {
   });
 
   it('reuses the card token when reviewing again, but creates a new one if the card name changes', async () => {
+    // token reuse check
     await submit();
     await submit();
     expect(createToken).toHaveBeenCalledTimes(1);
