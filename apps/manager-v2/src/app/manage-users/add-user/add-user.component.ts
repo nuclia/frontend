@@ -1,16 +1,18 @@
-import { ChangeDetectorRef, Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { UserService } from '../user.service';
 import { UserType } from '@nuclia/core';
+import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: 'add-user.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
+  styleUrls: ['add-user.component.scss'],
 })
 export class AddUserComponent {
   isSaving = false;
@@ -23,6 +25,10 @@ export class AddUserComponent {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private toaster = inject(SisToastService);
+  private sdk = inject(SDKService);
+
+  passwordPage = this.sdk.getOriginForApp('auth') + '/user/initiate-password';
+  copied = signal(false);
 
   save() {
     this.isSaving = true;
@@ -39,6 +45,12 @@ export class AddUserComponent {
         this.toaster.error(JSON.stringify(error));
       },
     });
+  }
+
+  copy() {
+    this.copied.set(true);
+    navigator.clipboard.writeText(this.passwordPage);
+    setTimeout(() => this.copied.set(false), 2000);
   }
 
   cancel() {
