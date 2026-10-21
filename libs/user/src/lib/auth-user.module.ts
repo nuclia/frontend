@@ -54,7 +54,6 @@ export const authRoutes: Routes = [
   { path: 'saml-login', component: SamlLoginComponent },
   { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
   { path: 'recover', component: RecoverComponent },
-  { path: 'initiate-password', component: RecoverComponent, data: { isPasswordInit: true } },
   { path: 'reset', component: ResetComponent },
   { path: 'setup', component: ResetComponent },
   { path: 'magic', component: MagicComponent },
