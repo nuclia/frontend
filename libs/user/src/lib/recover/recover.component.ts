@@ -7,7 +7,7 @@ import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angu
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { forkJoin, map } from 'rxjs';
+import { combineLatest, forkJoin, map } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { UserContainerComponent } from '../user-container/user-container.component';
 
@@ -50,9 +50,9 @@ export class RecoverComponent {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) {
-    this.route.queryParams.subscribe((params) => {
+    combineLatest([this.route.queryParams, this.route.data]).subscribe(([params, data]) => {
       this.loginChallenge = params['login_challenge'];
-      this.isPasswordInit = params['isPasswordInit'];
+      this.isPasswordInit = !!data['isPasswordInit'];
       this.cdr.markForCheck();
     });
   }

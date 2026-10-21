@@ -121,9 +121,8 @@ describe('LoginComponent', () => {
     routeData$.next({ loginData: { needs_initial_setpassword: true } as OAuthLoginData });
     await buildComponent();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/user/recover'], {
+    expect(router.navigate).toHaveBeenCalledWith(['/user/initiate-password'], {
       queryParamsHandling: 'merge',
-      queryParams: { isPasswordInit: true },
     });
   });
 

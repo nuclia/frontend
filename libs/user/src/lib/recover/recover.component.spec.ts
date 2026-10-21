@@ -12,7 +12,8 @@ import { RecoverComponent } from './recover.component';
 describe('RecoverComponent', () => {
   let component: RecoverComponent;
   let fixture: ComponentFixture<RecoverComponent>;
-  let queryParams$: BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>;
+  let queryParams$: BehaviorSubject<{ login_challenge?: string }>;
+  let routeData$: BehaviorSubject<{ isPasswordInit?: boolean }>;
 
   let loginService: { recover: jest.Mock };
   let reCaptchaV3Service: { execute: jest.Mock };
@@ -20,8 +21,10 @@ describe('RecoverComponent', () => {
   let modalService: { openConfirm: jest.Mock };
   let translateService: { get: jest.Mock };
   beforeEach(async () => {
-    queryParams$ = new BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>({
+    queryParams$ = new BehaviorSubject<{ login_challenge?: string }>({
       login_challenge: 'challenge-1',
+    });
+    routeData$ = new BehaviorSubject<{ isPasswordInit?: boolean }>({
       isPasswordInit: true,
     });
 
@@ -49,7 +52,10 @@ describe('RecoverComponent', () => {
     TestBed.configureTestingModule({
       imports: [RecoverComponent, ReactiveFormsModule],
       providers: [
-        { provide: ActivatedRoute, useValue: { queryParams: queryParams$.asObservable() } },
+        {
+          provide: ActivatedRoute,
+          useValue: { queryParams: queryParams$.asObservable(), data: routeData$.asObservable() },
+        },
         { provide: LoginService, useValue: loginService },
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
         { provide: BackendConfigurationService, useValue: config },
@@ -73,7 +79,7 @@ describe('RecoverComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should read login challenge and password init from query params', () => {
+  it('should read login challenge and password init from query params and route data', () => {
     expect(component.loginChallenge).toBe('challenge-1');
     expect(component.isPasswordInit).toBe(true);
   });
