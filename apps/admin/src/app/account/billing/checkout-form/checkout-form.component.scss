@@ -1,0 +1,59 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.customer-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  .field-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(3);
+
+    @media (max-width: $breakpoint-medium) {
+      .field-block.short {
+        flex-basis: 100%;
+      }
+    }
+  }
+
+  .field-block {
+    flex: 1 1 rhythm(24);
+    min-width: 0;
+
+    &.long {
+      flex-basis: rhythm(40);
+    }
+
+    &.email-field {
+      flex-basis: rhythm(26);
+    }
+
+    &.short {
+      flex: 0 1 rhythm(20);
+    }
+  }
+}
+
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+label {
+  margin-bottom: rhythm(1);
+}
+
+.card-element {
+  background: $color-background-field-regular;
+  border: 1px solid $border-color-field-regular;
+  padding: rhythm(2) $padding-field-control-left;
+  &:hover {
+    border-color: $border-color-field-hover;
+  }
+}
+
+.card-error {
+  color: $color-secondary-stronger;
+}

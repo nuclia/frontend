@@ -41,10 +41,10 @@
   padding-left: rhythm(4);
 }
 
-.customer-form {
+.customer-edit {
   display: flex;
   flex-direction: column;
-  gap: rhythm(1.5);
+  gap: rhythm(3.5);
   position: relative;
 
   .not-company {
@@ -53,25 +53,8 @@
     right: 0;
   }
 
-  .field-line {
-    display: flex;
-    gap: rhythm(3);
-  }
-
-  .field-block {
-    width: 33%;
-    &.long {
-      width: 69%;
-    }
-  }
-
-  label {
-    margin-bottom: rhythm(1);
-  }
-
   pa-button {
     align-self: flex-start;
-    margin-top: rhythm(2);
   }
 }
 
@@ -90,19 +73,6 @@
   &.hidden {
     height: 0;
     visibility: hidden;
-  }
-
-  .card-element {
-    background: $color-background-field-regular;
-    border: 1px solid $border-color-field-regular;
-    padding: rhythm(2) $padding-field-control-left;
-    &:hover {
-      border-color: $border-color-field-hover;
-    }
-  }
-
-  .card-error {
-    color: $color-secondary-stronger;
   }
 
   pa-button {

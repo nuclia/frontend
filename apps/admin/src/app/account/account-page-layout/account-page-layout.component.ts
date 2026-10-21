@@ -14,6 +14,7 @@ export class AccountPageLayoutComponent {
   title = input('');
   description = input('');
   backLink = input<string | null>(null);
+  showBackLink = input(true);
   /** ARIA id for the tab-panel div, linked via ariaControls on each pa-tab. */
   panelId = input<string | undefined>(undefined);
 }

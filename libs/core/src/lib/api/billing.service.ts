@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AccountTypes, UsageType } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -31,6 +31,7 @@ import {
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from '../models/billing.model';
+import { FeaturesService } from '../analytics/features.service';
 import { SDKService } from './sdk.service';
 
 export const DEFAULT_TRIAL_TOKEN_BUDGET = 20_000;
@@ -39,6 +40,7 @@ export const DEFAULT_TRIAL_TOKEN_BUDGET = 20_000;
 export class BillingService {
   private _accountSubscriptionCache = new BehaviorSubject<AccountSubscription | null>(null);
   private _accountSubscriptionInit = false;
+  private features = inject(FeaturesService);
 
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
   isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
@@ -56,6 +58,20 @@ export class BillingService {
   isManuallySubscribed = this.subscriptionProvider.pipe(
     map((provider) => provider === 'NO_SUBSCRIPTION' || provider === 'MANUAL' || provider === 'CLOUD_ZERO'),
   );
+  private isContextBoxAccount = this.sdk.currentAccount.pipe(
+    map((account) => account.workflow === 'cowork' || account.type === 'cowork'),
+  );
+
+  isContextBoxActivation = this.isContextBoxAccount.pipe(
+    switchMap((isContextBox) => (isContextBox ? this.hasNoSubscription() : of(false))),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /** Activation page where leaving is not allowed: unpaid Context Box account while the trial is disabled. */
+  isContextBoxPaymentRequired = combineLatest([
+    this.isContextBoxActivation,
+    this.features.unstable.contextBoxNoTrial,
+  ]).pipe(map(([activation, noTrial]) => activation && noTrial));
 
   constructor(private sdk: SDKService) {}
 
@@ -99,6 +115,16 @@ export class BillingService {
       switchMap((account) =>
         this.sdk.nuclia.rest.post<PaymentMethod>(`/billing/account/${account.id}/payment_methods`, data),
       ),
+    );
+  }
+
+  private hasNoSubscription(): Observable<boolean> {
+    return this.hasSubscription().pipe(
+      map((subscribed) => !subscribed),
+      catchError((error) => {
+        console.error('Could not check the account subscription', error);
+        return of(false);
+      }),
     );
   }
 
