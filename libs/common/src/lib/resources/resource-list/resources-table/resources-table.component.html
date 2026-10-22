@@ -88,16 +88,12 @@
       <div class="table-options">
         @if (visibleColumnsId | async; as visibleColumns) {
           @if (visibleColumns.includes('classification')) {
-            <nsi-button-mini
-              [icon]="fullLabels ? 'collapse' : 'expand'"
-              (click)="fullLabels = !fullLabels">
+            <nsi-button-mini (click)="fullLabels = !fullLabels">
               {{ (fullLabels ? 'resource.collapse-labels' : 'resource.expand-labels') | translate }}
             </nsi-button-mini>
           }
           @if (visibleColumns.includes('key-value-fields')) {
-            <nsi-button-mini
-              [icon]="fullKeyValue ? 'collapse' : 'expand'"
-              (click)="fullKeyValue = !fullKeyValue">
+            <nsi-button-mini (click)="fullKeyValue = !fullKeyValue">
               {{ (fullKeyValue ? 'resource.collapse-key-value' : 'resource.expand-key-value') | translate }}
             </nsi-button-mini>
           }
@@ -158,6 +154,7 @@
         </div>
         @if (allResourcesSelected) {
           <pa-button
+            aspect="basic"
             kind="secondary"
             size="small"
             (click)="clearSelection()"
@@ -166,6 +163,7 @@
           </pa-button>
         } @else {
           <pa-button
+            aspect="basic"
             kind="secondary"
             size="small"
             (click)="selectAllResources()"

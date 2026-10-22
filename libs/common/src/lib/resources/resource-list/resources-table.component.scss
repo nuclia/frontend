@@ -56,9 +56,14 @@ $toolbar-height: rhythm(7);
     align-items: center;
     display: flex;
     font-weight: $font-weight-regular;
-    gap: rhythm(1.5);
+    gap: rhythm(1);
     min-width: 0;
     padding-left: rhythm(0.5);
+
+    ::ng-deep button {
+      padding-left: rhythm(1);
+      padding-right: rhythm(1);
+    }
   }
 
   .selected-count {
