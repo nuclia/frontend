@@ -52,6 +52,16 @@
       <div class="border"></div>
     </div>
     <div class="configuration-drawer-header">
+      <div class="configuration-drawer-title-row">
+        <div class="configuration-drawer-title">{{ 'search.configuration.panel-title' | translate }}</div>
+        <pa-button
+          icon="cross"
+          aspect="basic"
+          size="small"
+          (click)="toggleConfigurationPanel()">
+          {{ 'generic.close' | translate }}
+        </pa-button>
+      </div>
       @if (configPanel.isConfigModified && (configPanel.canModifyConfig | async)) {
         <nsi-info-card
           type="warning"
@@ -59,13 +69,6 @@
           {{ 'search.configuration.modification-warning' | translate }}
         </nsi-info-card>
       }
-      <pa-button
-        icon="cross"
-        aspect="basic"
-        size="small"
-        (click)="toggleConfigurationPanel()">
-        {{ 'generic.close' | translate }}
-      </pa-button>
     </div>
 
     <stf-search-configuration
