@@ -46,6 +46,7 @@ export interface ExtendedAccount extends Account, AccountConfig {
   users: AccountUser[];
   stashes: AccountKbList;
   dedicated_processors_state: DedicatedProcessorsState;
+  allow_access_external_models: boolean;
 }
 
 export type AccountUserType = 'manager' | 'member';
@@ -72,6 +73,7 @@ export interface AccountPatchPayload {
   limits?: AccountLimitsPatchPayload;
   trial_expiration_date?: string | null;
   allow_access_non_enterprise_models?: boolean;
+  allow_access_external_models?: boolean;
   labels?: AccountLabels | null;
   workflow?: WorkflowType;
   zone_visibility?: ZoneVisibility;

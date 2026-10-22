@@ -30,6 +30,7 @@ export interface AccountDetails extends AccountSummary {
   trialExpirationDate?: string;
   users: AccountUser[];
   allowAccessNonEnterpriseModels: boolean;
+  allowAccessExternalModels: boolean;
   zoneVisibility: ZoneVisibility;
 }
 
@@ -96,6 +97,7 @@ export interface AccountConfigurationPayload {
   type: AccountTypes;
   workflow?: WorkflowType | null;
   allowAccessNonEnterpriseModels: boolean;
+  allowAccessExternalModels: boolean;
   zoneVisibility?: ZoneVisibility;
   labels: AccountLabels | null;
 }
