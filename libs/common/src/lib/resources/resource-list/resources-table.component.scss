@@ -9,8 +9,6 @@ $toolbar-height: rhythm(7);
   border: 1px solid $table-line;
   border-top: none;
   border-radius: 0 0 rhythm(1) rhythm(1);
-  // clip (not hidden) rounds the corners without creating a scroll container, so the sticky column headers and footer keep working
-  overflow: clip;
 
   .selection-bar {
     align-items: center;
@@ -23,10 +21,12 @@ $toolbar-height: rhythm(7);
 
   // Same light separator as between rows, instead of the footer's default darker top border
   nsi-sticky-footer ::ng-deep footer {
+    border-radius: 0 0 rhythm(1) rhythm(1);
     border-top: 1px solid $table-line;
     box-shadow: none;
     margin-top: 0;
     padding-block: rhythm(1);
+    z-index: unset;
   }
 }
 
@@ -37,7 +37,7 @@ $toolbar-height: rhythm(7);
   border-bottom: none;
   border-radius: rhythm(1) rhythm(1) 0 0;
   box-sizing: border-box;
-  height: $toolbar-height;
+  min-height: $toolbar-height;
   padding: rhythm(1.5) rhythm(1);
   // Pinned with the column headers, which stick right below it
   position: sticky;
@@ -47,6 +47,7 @@ $toolbar-height: rhythm(7);
   .header-container {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: rhythm(1);
     height: 100%;
   }
