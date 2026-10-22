@@ -10,10 +10,13 @@
   <div class="header-container">
     @if ((isAdminOrContrib | async) && selection.length > 0) {
       <div class="resource-bulk-actions">
-        <span class="selected-count title-xxs">
-          {{ 'resource.selected_count' | translate: { num: selection.length } }}
-        </span>
-
+        <pa-button
+          aspect="basic"
+          size="small"
+          [disabled]="bulkAction.inProgress"
+          (click)="bulkReprocess()">
+          {{ 'resource.reprocess' | translate }}
+        </pa-button>
         <pa-button
           data-cy="delete-selection"
           kind="destructive"
@@ -22,13 +25,6 @@
           [disabled]="bulkAction.inProgress"
           (click)="bulkDelete()">
           {{ 'generic.delete' | translate }}
-        </pa-button>
-        <pa-button
-          aspect="basic"
-          size="small"
-          [disabled]="bulkAction.inProgress"
-          (click)="bulkReprocess()">
-          {{ 'resource.reprocess' | translate }}
         </pa-button>
         @if (
           (allSelected | async) === true &&
@@ -50,6 +46,9 @@
             {{ bulkAction.done }} / {{ bulkAction.total }}
           </div>
         }
+        <span class="selected-count title-xxs">
+          {{ 'resource.selected_count' | translate: { num: selection.length } }}
+        </span>
       </div>
     }
   </div>
