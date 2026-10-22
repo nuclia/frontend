@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { UserService } from '../user.service';
 import { UserDetailsComponent } from './user-details.component';
+import { SDKService } from '@flaps/core';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
@@ -18,6 +19,9 @@ describe('UserDetailsComponent', () => {
       providers: [
         MockProvider(UserService),
         MockProvider(SisToastService),
+        MockProvider(SDKService, {
+          getOriginForApp: () => '',
+        }),
         MockProvider(ManagerStore, {
           canEdit: of(true),
         }),
