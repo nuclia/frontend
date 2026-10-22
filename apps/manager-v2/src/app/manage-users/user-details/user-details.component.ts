@@ -61,7 +61,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   isSaving = false;
 
   app = signal<'platform' | 'rag'>('platform');
-  passwordPage = computed(() => this.sdk.getOriginForApp('auth') + '/setup-user?app=' + this.app());
+  passwordPage = computed(() => this.sdk.getOriginForApp('auth') + '/setup/user?app=' + this.app());
   copied = signal(false);
 
   constructor(
