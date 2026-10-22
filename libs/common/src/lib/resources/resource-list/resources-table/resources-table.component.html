@@ -72,7 +72,9 @@
                 freeWidth>
                 {{ 'resource.change-visibility' | translate }}
               </nsi-dropdown-button>
-              <pa-dropdown #visibilityActions>
+              <pa-dropdown
+                #visibilityActions
+                dontAdjustPosition>
                 <pa-option (selectOption)="bulkChangeVisibility(true)">{{ 'resource.hide' | translate }}</pa-option>
                 <pa-option (selectOption)="bulkChangeVisibility(false)">{{ 'resource.unhide' | translate }}</pa-option>
               </pa-dropdown>
@@ -106,7 +108,9 @@
             name="chevron-down"
             size="small"></pa-icon>
         </nsi-button-mini>
-        <pa-dropdown #visibleColumns>
+        <pa-dropdown
+          #visibleColumns
+          dontAdjustPosition>
           @for (column of optionalColumns; track column.id) {
             <pa-option
               [value]="column.id"
