@@ -12,6 +12,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
+  ButtonMiniComponent,
   DropdownButtonComponent,
   NsiSkeletonComponent,
   SisLabelModule,
@@ -32,6 +33,7 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
     SpinnerComponent,
     PaButtonModule,
     LabelModule,
+    ButtonMiniComponent,
     DropdownButtonComponent,
     PaDropdownModule,
     PaTogglesModule,

@@ -1,19 +1,6 @@
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  numberAttribute,
-  OnInit,
-  Output,
-} from '@angular/core';
-import { ResourceListService } from '@flaps/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, numberAttribute, Output } from '@angular/core';
 import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { RESOURCE_STATUS } from '@nuclia/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 
 @Component({
@@ -24,10 +11,7 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
   styleUrl: './table-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TablePaginationComponent implements OnInit {
-  private resourceListService = inject(ResourceListService);
-  private cdr = inject(ChangeDetectorRef);
-
+export class TablePaginationComponent {
   @Input({ transform: numberAttribute })
   set totalPages(value: number) {
     this._totalPages = value;
@@ -45,7 +29,6 @@ export class TablePaginationComponent implements OnInit {
     return this._page;
   }
 
-  @Input({ transform: booleanAttribute }) noDownload = false;
   @Input({ transform: numberAttribute }) totalItems = 0;
   @Input({ transform: numberAttribute }) totalKbResources = 0;
   @Input({ transform: numberAttribute }) pageSize = 0;
@@ -57,8 +40,6 @@ export class TablePaginationComponent implements OnInit {
   private _totalPages = 0;
   private _page = 0;
   pages: (number | '…')[] = [];
-  loading = false;
-  isErrorsView = false;
 
   get from() {
     return this.page * this.pageSize + 1;
@@ -66,10 +47,6 @@ export class TablePaginationComponent implements OnInit {
 
   get to() {
     return Math.min(this.page * this.pageSize + this.pageSize, this.totalItems);
-  }
-
-  ngOnInit() {
-    this.isErrorsView = this.resourceListService.status === RESOURCE_STATUS.ERROR;
   }
 
   generatePagination() {
@@ -84,13 +61,5 @@ export class TablePaginationComponent implements OnInit {
 
   goTo(page: number) {
     this.pageChange.emit(page);
-  }
-
-  download(errors = false) {
-    this.loading = true;
-    this.resourceListService.downloadResources(errors ? RESOURCE_STATUS.ERROR : undefined).subscribe(() => {
-      this.loading = false;
-      this.cdr.markForCheck();
-    });
   }
 }
