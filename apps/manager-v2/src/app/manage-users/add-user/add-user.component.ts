@@ -12,7 +12,6 @@ import { SDKService } from '@flaps/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
-  styleUrls: ['add-user.component.scss'],
 })
 export class AddUserComponent {
   isSaving = false;
@@ -25,10 +24,6 @@ export class AddUserComponent {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private toaster = inject(SisToastService);
-  private sdk = inject(SDKService);
-
-  passwordPage = this.sdk.getOriginForApp('rag') + '/user/set-password';
-  copied = signal(false);
 
   save() {
     this.isSaving = true;
@@ -45,12 +40,6 @@ export class AddUserComponent {
         this.toaster.error(JSON.stringify(error));
       },
     });
-  }
-
-  copy() {
-    this.copied.set(true);
-    navigator.clipboard.writeText(this.passwordPage);
-    setTimeout(() => this.copied.set(false), 2000);
   }
 
   cancel() {

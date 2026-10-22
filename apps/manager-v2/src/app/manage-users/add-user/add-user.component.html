@@ -36,18 +36,6 @@
           Cancel
         </pa-button>
       </footer>
-      <div>
-        <label class="title-s">Page to initiate the password:</label>
-        <div class="input-with-copy">
-          <pa-input
-            readonly
-            value="{{ passwordPage }}"></pa-input>
-          <pa-button
-            aspect="basic"
-            [icon]="copied() ? 'check' : 'copy'"
-            (click)="copy()"></pa-button>
-        </div>
-      </div>
     </form>
   </div>
 </div>

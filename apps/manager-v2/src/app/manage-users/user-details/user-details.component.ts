@@ -1,26 +1,50 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaExpanderModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { UserType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, map, Subject, switchMap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { User } from '../user.models';
 import { UserService } from '../user.service';
+import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, FormsModule, ReactiveFormsModule, PaTextFieldModule, PaDropdownModule, AsyncPipe],
+  imports: [
+    PaButtonModule,
+    PaExpanderModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaDropdownModule,
+    AsyncPipe,
+  ],
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private router = inject(Router);
   private toaster = inject(SisToastService);
   private store = inject(ManagerStore);
+  private sdk = inject(SDKService);
   canEdit = this.store.canEdit;
   userEmail = '';
   userId = '';
@@ -35,6 +59,10 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   });
   isEdit = this.router.url.endsWith('edit');
   isSaving = false;
+
+  app = signal<'platform' | 'rag'>('platform');
+  passwordPage = computed(() => this.sdk.getOriginForApp('auth') + '/setup-user?app=' + this.app());
+  copied = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -109,5 +137,11 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         this.toaster.error(JSON.stringify(error));
       },
     });
+  }
+
+  copy() {
+    this.copied.set(true);
+    navigator.clipboard.writeText(this.passwordPage());
+    setTimeout(() => this.copied.set(false), 2000);
   }
 }

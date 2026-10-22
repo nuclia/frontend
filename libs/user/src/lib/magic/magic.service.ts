@@ -55,7 +55,7 @@ export class MagicService {
         if (action.needs_initial_setpassword === false && this.cameFrom) {
           this.goToCameFromWithMessage('/select', 'login.invite_accepted_please_login');
         } else {
-          this.router.navigate(['/setup/invite'], {
+          this.router.navigate(['/setup/user'], {
             queryParams: { account: action.account },
           });
         }
@@ -64,7 +64,7 @@ export class MagicService {
         if (action.needs_initial_setpassword === false && this.cameFrom) {
           this.goToCameFromWithMessage('/select', 'login.invite_accepted_please_login');
         } else {
-          this.router.navigate(['/setup/invite'], {
+          this.router.navigate(['/setup/user'], {
             queryParams: { account: action.account, kb: action.kb },
           });
         }
