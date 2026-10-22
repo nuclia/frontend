@@ -4,11 +4,12 @@ header {
   display: flex;
   flex-direction: column;
   gap: rhythm(1);
-  margin-bottom: rhythm(5);
+  margin-bottom: rhythm(2);
 }
 
 .page-title {
   justify-content: space-between;
+  margin-bottom: 0;
 }
 
 pa-tabs {

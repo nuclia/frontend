@@ -34,10 +34,11 @@ import {
   DropdownButtonComponent,
   NsiSkeletonComponent,
   SisSearchInputComponent,
+  SisToastService,
   SpinnerComponent,
 } from '@nuclia/sistema';
 import { endOfDay } from 'date-fns';
-import { distinctUntilChanged, filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
+import { distinctUntilChanged, filter, finalize, forkJoin, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { ResourceCacheService } from '../resource-cache.service';
 import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
@@ -84,6 +85,7 @@ export class ResourceListComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   private resourceCacheService = inject(ResourceCacheService);
+  private toaster = inject(SisToastService);
 
   statusCount = this.uploadService.statusCount;
   uploadInProgress = this.uploadService.uploadInProgress;
@@ -126,6 +128,25 @@ export class ResourceListComponent implements OnDestroy {
   }
   get isErrorView(): boolean {
     return this.resourceListService.status === 'ERROR';
+  }
+
+  downloading = false;
+
+  downloadList() {
+    if (this.downloading) {
+      return;
+    }
+    this.downloading = true;
+    this.resourceListService
+      .downloadResources(this.isErrorView ? RESOURCE_STATUS.ERROR : undefined)
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        finalize(() => {
+          this.downloading = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({ error: () => this.toaster.error('generic.error.oops') });
   }
 
   constructor(

@@ -6,6 +6,11 @@
   gap: rhythm(2);
   width: 100%;
 
+  .counter,
+  .page-size > .body-m {
+    color: $color-neutral-regular;
+  }
+
   .counter {
     display: flex;
     gap: rhythm(1);
@@ -15,15 +20,15 @@
     color: $color-neutral-regular;
   }
 
-  .download {
-    margin-left: auto;
-    margin-right: rhythm(2);
-  }
-
   .page-size {
     align-items: center;
     display: flex;
     gap: rhythm(2);
+    margin-left: auto;
+
+    nsi-dropdown-button ::ng-deep .nsi-dropdown-button .pa-button {
+      min-width: rhythm(10);
+    }
   }
 
   .pages {

@@ -1,19 +1,21 @@
-<div class="main-container">
-  <div class="scrollable-area with-footer">
-    <nsi-dropdown-button [popupRef]="fieldTypeDropdown">
-      {{ 'resource.field.add' | translate }} {{ 'resource.field-' + fieldType.value | translate }}
-    </nsi-dropdown-button>
-    <pa-dropdown #fieldTypeDropdown>
-      @for (type of availableTypes; track type) {
-        <pa-option
-          [value]="type"
-          (selectOption)="changeFieldType(type)">
-          {{ 'resource.field-' + type | translate }}
-        </pa-option>
-      }
-    </pa-dropdown>
-
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'resource.tooltip.add-field' | translate }}</pa-modal-title>
+  <pa-modal-content>
     <form [formGroup]="form">
+      <div class="field-block">
+        <pa-select
+          id="field-type"
+          [label]="'resource.tooltip.add-field' | translate"
+          [disabled]="isSaving"
+          [value]="fieldType.value"
+          (valueChange)="changeFieldType($event)">
+          @for (type of availableTypes; track type) {
+            <pa-option [value]="type">
+              {{ 'resource.field-' + type | translate }}
+            </pa-option>
+          }
+        </pa-select>
+      </div>
       @if (fieldType.value === 'text') {
         <div class="field-block">
           <pa-select
@@ -21,8 +23,7 @@
             formControlName="format"
             [label]="'resource.field-text-format-label' | translate">
             @for (format of availableFormats; track format) {
-              <pa-option
-                [value]="format">
+              <pa-option [value]="format">
                 {{ format }}
               </pa-option>
             }
@@ -54,7 +55,7 @@
       @if (fieldType.value === 'file') {
         <stf-dropzone
           [isUploading]="isSaving"
-        (file)="onFileChange($event)"></stf-dropzone>
+          (file)="onFileChange($event)"></stf-dropzone>
         @if (newFile) {
           <p>
             <strong>{{ 'resource.field-file-new-file' | translate }}</strong>
@@ -63,21 +64,20 @@
         }
       }
     </form>
-  </div>
-</div>
+  </pa-modal-content>
 
-<footer class="form-buttons">
-  <pa-button
-    kind="primary"
-    [disabled]="form.invalid || !isModified"
-    (click)="save()">
-    {{ 'generic.save' | translate }}
-  </pa-button>
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      [disabled]="isSaving || form.invalid || !isModified"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
 
-  <pa-button
-    aspect="basic"
-    [disabled]="!isModified"
-    (click)="cancel()">
-    {{ 'generic.cancel' | translate }}
-  </pa-button>
-</footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

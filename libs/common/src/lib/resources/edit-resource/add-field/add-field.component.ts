@@ -1,20 +1,28 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { EditResourceService, ResourceNavigationService } from '@flaps/core';
-import { IErrorMessages, PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { EditResourceService } from '@flaps/core';
+import {
+  IErrorMessages,
+  ModalRef,
+  PaButtonModule,
+  PaDropdownModule,
+  PaModalModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
-import { DropdownButtonComponent, ExpandableTextareaComponent } from '@nuclia/sistema';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { ExpandableTextareaComponent, SisToastService } from '@nuclia/sistema';
+import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
 import { DropzoneComponent } from '../dropzone/dropzone.component';
+
+type AddableFieldType = FIELD_TYPE.file | FIELD_TYPE.link | FIELD_TYPE.text;
 
 @Component({
   templateUrl: './add-field.component.html',
-  styleUrls: ['../common-page-layout.scss', './add-field.component.scss'],
+  styleUrl: './add-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DropdownButtonComponent,
     PaDropdownModule,
     FormsModule,
     ReactiveFormsModule,
@@ -22,21 +30,24 @@ import { DropzoneComponent } from '../dropzone/dropzone.component';
     ExpandableTextareaComponent,
     DropzoneComponent,
     PaButtonModule,
+    PaModalModule,
     TranslatePipe,
   ],
 })
-export class AddFieldComponent implements OnInit, OnDestroy {
-  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON', 'JSONL'];
-  availableTypes: FIELD_TYPE[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text];
+export class AddFieldComponent {
+  private editResource = inject(EditResourceService);
+  private cdr = inject(ChangeDetectorRef);
+  private modal = inject(ModalRef);
+  private destroyRef = inject(DestroyRef);
+  private toaster = inject(SisToastService);
 
-  unsubscribeAll = new Subject<void>();
-  fieldType: BehaviorSubject<FIELD_TYPE> = new BehaviorSubject<FIELD_TYPE>(FIELD_TYPE.text);
+  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON', 'JSONL'];
+  availableTypes: AddableFieldType[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text];
+
+  fieldType = new BehaviorSubject<AddableFieldType>(FIELD_TYPE.text);
   fieldId: Observable<string> = combineLatest([
     this.fieldType,
-    this.editResource.resource.pipe(
-      filter((resource) => !!resource),
-      map((resource) => resource as Resource),
-    ),
+    this.editResource.resource.pipe(filter((resource): resource is Resource => !!resource)),
   ]).pipe(
     map(([fieldType, resource]) => {
       const dataKey = getDataKeyFromFieldType(fieldType);
@@ -68,29 +79,13 @@ export class AddFieldComponent implements OnInit, OnDestroy {
     pattern: 'validation.url_required',
   };
 
-  constructor(
-    private editResource: EditResourceService,
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
-    private resourceNavigation: ResourceNavigationService,
-  ) {
-    this.resourceNavigation.currentRoute = this.route;
+  constructor() {
+    this.textControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => (this.isModified = !!value));
   }
 
-  ngOnInit(): void {
-    this.editResource.setCurrentView('add-field');
-
-    this.textControl.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((value) => (this.isModified = !!value));
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
-  }
-
-  changeFieldType(newType: FIELD_TYPE) {
+  changeFieldType(newType: AddableFieldType) {
+    this.newFile = undefined;
+    this.isModified = false;
     this.fieldType.next(newType);
     if (newType === FIELD_TYPE.file) {
       this.textControl.setValidators([]);
@@ -111,33 +106,38 @@ export class AddFieldComponent implements OnInit, OnDestroy {
   }
 
   save() {
+    if (this.isSaving || this.form.invalid || !this.isModified) {
+      return;
+    }
+    const fieldType = this.fieldType.value;
+    let saveField: (fieldId: string) => Observable<void | null>;
+    if (fieldType === FIELD_TYPE.file) {
+      const file = this.newFile;
+      if (!file) {
+        this.toaster.error('generic.error.oops');
+        return;
+      }
+      saveField = (fieldId) => this.editResource.addFile(fieldId, file);
+    } else {
+      const data = this.getData(fieldType);
+      saveField = (fieldId) => this.editResource.addField(fieldType, fieldId, data);
+    }
     this.isSaving = true;
-    this.fieldId
-      .pipe(
-        take(1),
-        switchMap((fieldId) => {
-          switch (this.fieldType.value) {
-            case FIELD_TYPE.link:
-            case FIELD_TYPE.text:
-              return this.editResource.addField(this.fieldType.value, fieldId, this.getData(this.fieldType.value));
-            case FIELD_TYPE.file:
-              return this.editResource.addFile(fieldId, this.newFile!);
-            default:
-              return of(null);
-          }
-        }),
-      )
-      .subscribe({
-        next: () => {
+    this.fieldId.pipe(take(1), switchMap(saveField), takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (result) => {
+        if (result === null) {
           this.isSaving = false;
-          this.isModified = false;
-          this.form.reset();
+          this.toaster.error('generic.error.oops');
           this.cdr.markForCheck();
-        },
-        error: () => {
-          this.isSaving = false;
-        },
-      });
+        } else {
+          this.modal.close();
+        }
+      },
+      error: () => {
+        this.isSaving = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   onFileChange(file: File) {
@@ -146,9 +146,7 @@ export class AddFieldComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this.newFile = undefined;
-    this.isModified = false;
-    this.form.reset();
+    this.modal.dismiss();
   }
 
   private getData(type: FIELD_TYPE.text | FIELD_TYPE.link): TextField | LinkField {
