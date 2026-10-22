@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PasswordInputComponent, SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { Observable } from 'rxjs';
+import { getLoginErrorMessageKey } from '../login-error.util';
 import { SamePassword, StrongPassword } from '../password.validator';
 import { UserContainerComponent } from '../user-container/user-container.component';
 
@@ -97,7 +98,13 @@ export class ResetComponent {
           this.goLogin(data);
         },
         error: (error) => {
-          this.toaster.error(error.status === 500 ? 'reset.invalid-token' : 'generic.error.oops');
+          const errorMessage =
+            error.status === 500
+              ? 'reset.invalid-token'
+              : error.status === 410
+                ? getLoginErrorMessageKey(error.body?.error_code, 'generic.error.oops')
+                : 'generic.error.oops';
+          this.toaster.error(errorMessage);
           this.pending = false;
           this.cdr.markForCheck();
         },
