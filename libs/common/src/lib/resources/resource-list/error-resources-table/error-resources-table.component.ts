@@ -15,6 +15,7 @@ import { map } from 'rxjs';
 import { COMMON_COLUMNS, ResourcesTableDirective } from '../resources-table.directive';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 import { TitleCellComponent } from '../title-cell/title-cell.component';
+import { TableScrollHeaderDirective } from '../table-scroll-header.directive';
 
 @Component({
   selector: 'stf-error-resources-table',
@@ -22,6 +23,7 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
   styleUrls: ['../resources-table.component.scss', './error-resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableScrollHeaderDirective,
     SpinnerComponent,
     PaButtonModule,
     PaTableModule,

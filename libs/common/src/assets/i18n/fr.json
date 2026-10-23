@@ -1824,6 +1824,7 @@
 	"resource.security.access-groups.help": "Liste des identifiants de groupe pouvant accéder à la ressource, un identifiant par ligne.",
 	"resource.security.access-groups.label": "Groupes d’accès",
 	"resource.security.label": "Sécurité",
+	"resource.select.deselect-all": "Tout désélectionner",
 	"resource.select.filtered-resources-selected": "Toutes les {{num}} correspondant aux filtres sélectionnées",
 	"resource.select.kb-resources-selected": "Tous les {{num}} sélectionnés",
 	"resource.select.page-resources-selected": "Tous les {{num}} sélectionnés sur cette page",

@@ -6,6 +6,10 @@
   padding-bottom: 0;
 }
 
+.resource-list-content {
+  min-width: 0;
+}
+
 .resource-list-header {
   align-items: center;
   background-color: $color-light-stronger;
@@ -17,12 +21,16 @@
   z-index: 10;
 
   .filters-container {
-    align-items: center;
+    align-items: start;
     display: flex;
     flex-wrap: wrap;
     gap: rhythm(1.5) rhythm(2);
     justify-content: space-between;
-    margin-bottom: rhythm(3);
+    margin-bottom: rhythm(1);
+
+    .header-actions-group {
+      display: contents;
+    }
 
     .header-actions {
       align-items: center;
@@ -41,7 +49,15 @@
 
     nsi-search-input {
       flex-shrink: 0;
-      width: rhythm(38);
+      min-width: 0;
+      width: rhythm(32);
+    }
+
+    .label-filters,
+    .visibility-filter {
+      ::ng-deep .nsi-dropdown-button .pa-button {
+        min-width: auto;
+      }
     }
   }
 
@@ -52,12 +68,18 @@
     gap: rhythm(1.5);
   }
 
+  .filter-summary {
+    min-height: rhythm(5);
+  }
+
   .label-filters {
     align-items: center;
     display: flex;
-    ::ng-deep .pa-button {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
+    &:has(.labels-logic) {
+      app-label-dropdown ::ng-deep .pa-button {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
     }
     .labels-logic {
       border: 1px solid $color-neutral-light;

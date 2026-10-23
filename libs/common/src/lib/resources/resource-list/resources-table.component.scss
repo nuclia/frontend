@@ -4,6 +4,58 @@
 $table-line: color-mix(in srgb, $color-neutral-lighter 50%, $color-neutral-light 50%);
 $toolbar-height: rhythm(7);
 
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.resource-table-frame {
+  min-width: 0;
+}
+
+.table-pinned-header {
+  // Keep an opaque backing behind the rounded corners as rows scroll underneath.
+  background: $color-light-stronger;
+  overflow: clip;
+  position: sticky;
+  top: var(--resource-list-header-height, 0px);
+  z-index: 2;
+}
+
+.table-header-scroll {
+  border-radius: rhythm(1) rhythm(1) 0 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.table-header-content {
+  width: var(--resource-table-width, 100%);
+
+  > pa-table {
+    border-inline: 1px solid $table-line;
+    display: block;
+  }
+
+  ::ng-deep .pa-table-grid--header {
+    border-top: 1px solid $table-line;
+    border-bottom: 1px solid $table-line;
+    min-height: rhythm(6);
+    padding-block: rhythm(1);
+    position: static;
+  }
+}
+
+.table-body-scroll {
+  border-radius: 0 0 rhythm(1) rhythm(1);
+  overflow-x: auto;
+
+  .table-card,
+  ::ng-deep .pa-table-grid {
+    box-sizing: border-box;
+    min-width: min-content;
+  }
+}
+
 .table-card {
   // The top edge is drawn by the toolbar above, which together with the card forms one framed table
   border: 1px solid $table-line;
@@ -39,9 +91,7 @@ $toolbar-height: rhythm(7);
   box-sizing: border-box;
   min-height: $toolbar-height;
   padding: rhythm(1.5) rhythm(1);
-  // Pinned with the column headers, which stick right below it
-  position: sticky;
-  top: var(--resource-list-header-height, 0px);
+  position: relative;
   z-index: 2;
 
   .header-container {
@@ -64,6 +114,10 @@ $toolbar-height: rhythm(7);
       padding-left: rhythm(1);
       padding-right: rhythm(1);
     }
+
+    ::ng-deep .add-label-dropdown .nsi-dropdown-button .pa-button {
+      min-width: auto;
+    }
   }
 
   .selected-count {
@@ -85,20 +139,14 @@ $toolbar-height: rhythm(7);
 
 .table-container {
   position: relative;
-  // Pin the column headers right below the pinned filter row and toolbar
-  ::ng-deep .pa-table-grid--header {
-    border-bottom-color: $table-line;
-    border-top: 1px solid $table-line;
-    min-height: rhythm(6);
-    padding-bottom: rhythm(1);
-    padding-top: rhythm(1);
-    top: calc(var(--resource-list-header-height, 0px) + #{$toolbar-height});
-  }
   ::ng-deep pa-table-row:not(:last-of-type) .pa-table-grid--cell {
     box-shadow: inset 0 -1px 0 $table-line;
   }
   .hidden-resource pa-table-cell ::ng-deep .pa-table-grid--cell {
     color: $color-neutral-regular;
+  }
+  &.expanded-rows ::ng-deep .pa-table-grid--cell {
+    align-items: flex-start;
   }
 }
 
@@ -109,28 +157,38 @@ table {
 .row-container {
   display: flex;
   gap: rhythm(0.5);
-  // Keep labels on one line and scroll within the cell
-  overflow-x: auto;
-  padding-bottom: rhythm(0.5);
-
-  // Non-overlay scrollbar so the thumb can be revealed on hover (see below) instead of only while scrolling
-  @include scrollbar-style(rhythm(1), transparent, transparent, transparent, transparent, rhythm(0.5), 0);
+  width: 100%;
 
   > * {
     flex-shrink: 0;
   }
 }
 
-.classification-cell:hover .row-container {
-  @include scrollbar-style(
-    rhythm(1),
-    transparent,
-    transparent,
-    $color-neutral-regular,
-    $color-neutral-regular,
-    rhythm(0.5),
-    0
-  );
+.collapsed-labels .row-container {
+  align-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.row-container.expanded-labels {
+  align-items: flex-start;
+  flex-direction: column;
+
+  > nsi-label {
+    max-width: 100%;
+  }
+
+  ::ng-deep .pa-chip {
+    box-sizing: border-box;
+    height: auto;
+    min-height: rhythm(4);
+    max-width: 100%;
+  }
+
+  ::ng-deep .pa-chip-content-wrapper {
+    overflow-wrap: anywhere;
+    // paEllipsisTooltip sets white-space inline on chip labels.
+    white-space: normal !important;
+  }
 }
 
 .loading-shade {
@@ -154,7 +212,7 @@ table {
 
 stf-table-pagination {
   box-sizing: border-box;
-  padding: 0 rhythm(2);
+  padding: 0 rhythm(2) 0 rhythm(1);
   width: 100%;
 }
 

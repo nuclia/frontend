@@ -1824,6 +1824,7 @@
 	"resource.security.access-groups.help": "Llista d’identificadors de grup que poden accedir al recurs, un identificador per línia.",
 	"resource.security.access-groups.label": "Grups d’accés",
 	"resource.security.label": "Seguretat",
+	"resource.select.deselect-all": "Desselecciona-ho tot",
 	"resource.select.filtered-resources-selected": "Tots els {{num}} coincideixen amb els filtres seleccionats",
 	"resource.select.kb-resources-selected": "Tots els {{num}} seleccionats",
 	"resource.select.page-resources-selected": "Tots els {{num}} d'aquesta pàgina seleccionats",

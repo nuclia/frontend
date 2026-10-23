@@ -23,6 +23,7 @@ import { map } from 'rxjs';
 import { ResourcesTableComponent } from '../resources-table/resources-table.component';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 import { TitleCellComponent } from '../title-cell/title-cell.component';
+import { TableScrollHeaderDirective } from '../table-scroll-header.directive';
 
 @Component({
   selector: 'stf-processed-resources-table',
@@ -30,6 +31,7 @@ import { TitleCellComponent } from '../title-cell/title-cell.component';
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableScrollHeaderDirective,
     SpinnerComponent,
     PaButtonModule,
     LabelModule,
