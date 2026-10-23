@@ -2,7 +2,7 @@ export * from './callback/callback.component';
 export * from './check-mail/check-mail.component';
 export * from './consent/consent.component';
 export * from './farewell';
-export * from './invite';
+export * from './setup-user';
 export * from './login/login.component';
 export * from './login/app-login.component';
 export * from './magic/magic.component';

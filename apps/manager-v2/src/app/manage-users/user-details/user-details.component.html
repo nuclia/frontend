@@ -83,6 +83,34 @@
           </pa-button>
         }
       </footer>
+
+      @if (!userForm.controls.last_login.value) {
+        <pa-expander [expanded]="false">
+          <pa-expander-header><span class="title-xxs">User setup URL</span></pa-expander-header>
+          <pa-expander-body>
+            <form class="user-setup">
+              <pa-select
+                label="Application"
+                [value]="app()"
+                (valueChange)="app.set($event)">
+                <pa-option value="platform">PDP Studio</pa-option>
+                <pa-option value="rag">Agentic RAG</pa-option>
+              </pa-select>
+              <div class="input-with-copy">
+                <pa-input
+                  readonly
+                  value="{{ passwordPage() }}">
+                  Setup URL
+                </pa-input>
+                <pa-button
+                  aspect="basic"
+                  [icon]="copied() ? 'check' : 'copy'"
+                  (click)="copy()"></pa-button>
+              </div>
+            </form>
+          </pa-expander-body>
+        </pa-expander>
+      }
     </form>
   </div>
 </div>
