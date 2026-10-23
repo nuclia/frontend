@@ -83,13 +83,15 @@ export class Rest implements IRest {
     return this.fetch('PATCH', path, body, extraHeaders, doNotParse, synchronous, zoneSlug);
   }
 
-  delete<T>(
+  delete<T = void>(
     path: string,
     extraHeaders?: { [key: string]: string },
     synchronous?: boolean,
     zoneSlug?: string,
+    body?: any,
+    doNotParse = true,
   ): Observable<T> {
-    return this.fetch('DELETE', path, undefined, extraHeaders, true, synchronous, zoneSlug);
+    return this.fetch('DELETE', path, body, extraHeaders, doNotParse, synchronous, zoneSlug);
   }
 
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response> {

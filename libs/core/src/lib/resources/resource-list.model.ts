@@ -4,18 +4,22 @@ import {
   CatalogQuery,
   CREATION_END_PREFIX,
   CREATION_START_PREFIX,
-  Filter,
-  FilterOperator,
-  getDateFromFilter,
+  DateCreatedFilter,
   getVisibilityFromFilter,
   HIDDEN_PREFIX,
   KeyValueFieldData,
+  LABEL_FILTER_PREFIX,
+  LabelFilter,
+  MIME_FILTER_PREFIX,
   Resource,
   RESOURCE_STATUS,
+  ResourceFilterExpression,
+  ResourceMimetypeFilter,
   ResourceProperties,
   Search,
   SortField,
   SortOption,
+  StatusFilter,
   WritableKnowledgeBox,
 } from '@nuclia/core';
 import { Observable } from 'rxjs';
@@ -100,24 +104,15 @@ export function getSearchOptions(params: ResourceListParams, uid?: string, slug?
       },
     };
   } else {
-    const labelsOperator = params.labelsLogic === 'AND' ? FilterOperator.all : FilterOperator.any;
-    const filters: Filter[] = [
-      { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
-      { [labelsOperator]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
-      { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
-    ].filter((item) => (Object.values(item)[0] || []).length > 0);
-    const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
-    const end = params.filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
+    const filter_expression = buildResourceFilterExpression(params.filters, params.labelsLogic, params.status);
     const hiddenFilter = params.filters.find((filter) => filter.startsWith(HIDDEN_PREFIX));
 
     return {
       page_number: params.page,
       page_size: params.pageSize,
       sort: params.sort,
-      range_creation_start: start ? getDateFromFilter(start) : undefined,
-      range_creation_end: end ? getDateFromFilter(end) : undefined,
+      filter_expression: filter_expression ? { resource: filter_expression } : undefined,
       hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
-      filters,
       // TODO: VALUES is always requested (regardless of `includeKeyValue`) only so the resource
       // list can detect memory resources client-side (via their `conversations` field ids).
       // Remove this once the backend exposes memory-resource detection as a proper resource type/flag,
@@ -143,4 +138,51 @@ export function searchResources(
 
 export function formatQuery(query: string) {
   return query.trim();
+}
+
+export function buildResourceFilterExpression(
+  filters: string[],
+  labelsLogic: LabelsLogic = DEFAULT_LABELS_LOGIC,
+  status?: RESOURCE_STATUS,
+): ResourceFilterExpression | undefined {
+  const mimeFilters: ResourceMimetypeFilter[] = filters
+    .filter((filter) => filter.startsWith(`/${MIME_FILTER_PREFIX}/`))
+    .map((filter) => {
+      const [, , type, subtype] = filter.split('/');
+      return { prop: 'resource_mimetype', type, ...(subtype ? { subtype } : {}) };
+    });
+
+  const labelFilters: LabelFilter[] = filters
+    .filter((filter) => filter.startsWith(`/${LABEL_FILTER_PREFIX}/`))
+    .map((filter) => {
+      const [, , labelset, label] = filter.split('/');
+      return {
+        prop: 'label',
+        labelset,
+        ...(label ? { label } : {}),
+      };
+    });
+
+  const statusFilter: StatusFilter | undefined = status ? { prop: 'status', status } : undefined;
+
+  const creationStart = filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
+  const creationEnd = filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
+  const createdFilters: DateCreatedFilter | undefined =
+    creationStart || creationEnd
+      ? {
+          prop: 'created',
+          ...(creationStart ? { since: creationStart.split('/')[3] } : {}),
+          ...(creationEnd ? { until: creationEnd.split('/')[3] } : {}),
+        }
+      : undefined;
+
+  const filterExpression: ResourceFilterExpression = {
+    and: [
+      ...(mimeFilters.length ? [{ or: mimeFilters }] : []),
+      ...(labelFilters.length ? [labelsLogic === 'OR' ? { or: labelFilters } : { and: labelFilters }] : []),
+      ...(createdFilters ? [{ or: [createdFilters] }] : []),
+      ...(statusFilter ? [{ or: [statusFilter] }] : []),
+    ],
+  };
+  return filterExpression.and.length > 0 ? filterExpression : undefined;
 }

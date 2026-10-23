@@ -1682,6 +1682,7 @@
 	"resource.custom-processing.split-strategy": "Estratègia de divisió",
 	"resource.delete-all": "Suprimeix tots els {{count}} recursos",
 	"resource.delete-all-pending": "Suprimeix tots els {{count}} recursos pendents",
+	"resource.delete-all-warning": "Eliminació de recursos en curs. Això pot trigar uns minuts.",
 	"resource.description.title": "Descripció",
 	"resource.empty.description": "La llista de recursos està buida. Comença pujant alguns fitxers o sincronitzant les teves dades.",
 	"resource.empty.title": "No hi ha res a veure aquí… encara.",
