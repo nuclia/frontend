@@ -93,6 +93,7 @@ export class ResourceListService {
   private _searchMode = new BehaviorSubject<SearchModes>('title');
   searchMode = this._searchMode.asObservable();
   private _labelsLogic = new BehaviorSubject<LabelsLogic>(DEFAULT_LABELS_LOGIC);
+  labelsLogic = this._labelsLogic.asObservable();
 
   private _page = new BehaviorSubject<number>(0);
   page = this._page.asObservable();

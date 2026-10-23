@@ -112,12 +112,14 @@ export interface IRest {
     synchronous?: boolean,
     zoneSlug?: string,
   ): Observable<T>;
-  delete(
+  delete<T = void>(
     path: string,
     extraHeaders?: { [key: string]: string },
     synchronous?: boolean,
     zoneSlug?: string,
-  ): Observable<void>;
+    body?: any,
+    doNotParse?: boolean,
+  ): Observable<T>;
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response>;
   getZones(): Observable<{ [key: string]: string }>;
   getZoneSlug(zoneId: string): Observable<string>;

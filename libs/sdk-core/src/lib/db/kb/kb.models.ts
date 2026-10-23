@@ -9,6 +9,7 @@ import type {
   CatalogOptions,
   ChatOptions,
   PredictAnswerOptions,
+  ResourceFilterExpression,
   Search,
   SearchOptions,
   SuggestOptions,
@@ -307,6 +308,8 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   updateProcessingHook(data: ProcessingHook): Observable<ProcessingHook>;
 
   deleteProcessingHook(): Observable<void>;
+
+  deleteAllResources(filter: DeleteResourcesFilter): Observable<DeletedResources>;
 }
 
 export interface KnowledgeBoxCreation {
@@ -690,4 +693,15 @@ export enum DataResidencyStatus {
 export interface ProcessingHook {
   uri: string;
   headers?: { [key: string]: string };
+}
+
+export interface DeleteResourcesFilter {
+  filter_expression: {
+    resource: ResourceFilterExpression;
+  };
+}
+
+export interface DeletedResources {
+  delete_id: string;
+  resources: string[];
 }

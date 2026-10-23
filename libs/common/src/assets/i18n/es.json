@@ -1682,6 +1682,7 @@
 	"resource.custom-processing.split-strategy": "Estrategia de división",
 	"resource.delete-all": "Eliminar todos los {{count}} recursos",
 	"resource.delete-all-pending": "Eliminar todos los {{count}} recursos pendientes",
+	"resource.delete-all-warning": "Eliminación de recursos en curso. Esto puede tardar unos minutos.",
 	"resource.description.title": "Descripción",
 	"resource.empty.description": "La lista de recursos está vacía. Empieza subiendo algunos archivos o sincronizando tus datos.",
 	"resource.empty.title": "No hay nada que ver aquí… todavía.",
