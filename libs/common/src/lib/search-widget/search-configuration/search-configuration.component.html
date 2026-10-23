@@ -108,72 +108,12 @@
       <div class="search-mode-container">
         <div class="search-mode-header">
           <div class="section-title">{{ 'search.configuration.search-mode.title' | translate }}</div>
-          <div class="section-description">{{ 'search.configuration.search-mode.description' | translate }}</div>
         </div>
-        <pa-radio-group noBackground [value]="searchMode()" (valueChange)="updateSearchMode($event)">
-          <pa-radio value="simple-rag">
-            <span class="search-mode-label">
-              <span>{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
-              <pa-button
-                icon="info"
-                aspect="basic"
-                size="small"
-                (click)="$event.stopPropagation()"
-                [paPopup]="simpleRagModeInfoDropdown"></pa-button>
-            </span>
-          </pa-radio>
-
-          <pa-radio value="search">
-            <span class="search-mode-label">
-              <span>{{ 'search.configuration.search-mode.search' | translate }}</span>
-              <pa-button
-                icon="info"
-                aspect="basic"
-                size="small"
-                (click)="$event.stopPropagation()"
-                [paPopup]="searchModeInfoDropdown"></pa-button>
-            </span>
-          </pa-radio>
-
-          @if ((isAgenticSearchEnabled | async) || searchMode() === 'agentic') {
-            <pa-radio value="agentic">
-              <span class="search-mode-label">
-                <span>{{ 'search.configuration.search-mode.agentic' | translate }}</span>
-                <pa-button
-                  icon="info"
-                  aspect="basic"
-                  size="small"
-                  (click)="$event.stopPropagation()"
-                  [paPopup]="agenticModeInfoDropdown"></pa-button>
-                <nsi-badge kind="tertiary">BETA</nsi-badge>
-              </span>
-            </pa-radio>
-          }
-        </pa-radio-group>
-
-        <pa-dropdown
-          #agenticModeInfoDropdown
-          class="info-dropdown">
-          <pa-option [readonly]="true">
-            {{ 'search.configuration.search-mode.agentic-description' | translate }}
-          </pa-option>
-        </pa-dropdown>
-
-        <pa-dropdown
-          #simpleRagModeInfoDropdown
-          class="info-dropdown">
-          <pa-option [readonly]="true">
-            {{ 'search.configuration.search-mode.simple-rag-description' | translate }}
-          </pa-option>
-        </pa-dropdown>
-
-        <pa-dropdown
-          #searchModeInfoDropdown
-          class="info-dropdown">
-          <pa-option [readonly]="true">
-            {{ 'search.configuration.search-mode.search-description' | translate }}
-          </pa-option>
-        </pa-dropdown>
+        <stf-search-mode-selector
+          [label]="'search.configuration.search-mode.title' | translate"
+          [options]="searchModeOptions()"
+          [value]="searchMode()"
+          (valueChange)="updateSearchMode($event)"></stf-search-mode-selector>
       </div>
 
       <pa-accordion (toggleAccordion)="scrollOnTop()">

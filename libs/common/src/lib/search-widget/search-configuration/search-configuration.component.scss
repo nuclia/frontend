@@ -38,7 +38,6 @@
     display: flex;
     flex-direction: column;
     gap: rhythm(1);
-    margin-bottom: -13px;
     padding-top: rhythm(2);
   }
 
@@ -51,23 +50,6 @@
       @include title-m();
       color: $color-dark-stronger;
     }
-
-    .section-description {
-      @include body-s();
-      color: $color-neutral-regular;
-    }
-  }
-
-  // Radio rows are full width by default, so clicking empty space (e.g. to dismiss a dropdown) would change the mode.
-  .search-mode-container pa-radio ::ng-deep .pa-checkbox-wrapper,
-  .search-mode-container pa-radio ::ng-deep .pa-toggle-label {
-    width: auto;
-  }
-
-  .search-mode-label {
-    align-items: center;
-    display: inline-flex;
-    gap: rhythm(0.5);
   }
 
   .agentic-config-flow {

@@ -1,0 +1,29 @@
+<div
+  class="segmented-options"
+  role="radiogroup"
+  [class.disabled]="disabled()"
+  [attr.aria-label]="label()"
+  [attr.aria-describedby]="selectedOption() ? descriptionId : null"
+  [attr.aria-disabled]="disabled() || null">
+  @for (option of options(); track option.value; let index = $index) {
+    <button
+      type="button"
+      role="radio"
+      [class.active]="option.value === value()"
+      [attr.aria-checked]="option.value === value()"
+      [tabindex]="option.value === value() ? 0 : -1"
+      [disabled]="disabled()"
+      (click)="select(option.value)"
+      (keydown)="onKeydown($event, index)">
+      <span class="option-label">{{ option.label | translate }}</span>
+    </button>
+  }
+</div>
+
+@if (selectedOption(); as option) {
+  <p
+    class="option-description"
+    [id]="descriptionId">
+    {{ option.description | translate }}
+  </p>
+}
