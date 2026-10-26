@@ -20,7 +20,7 @@ const meta: Meta<AccordionStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAccordionImports</code> from <code>@nuclia/ui/accordion</code> into your component's imports.
+        component: `Import <code>HlmAccordionImports</code> from <code>@nuclia/ui-spartan/accordion</code> into your component's imports.
 Compose <code>hlm-accordion</code> with <code>hlm-accordion-item</code>, <code>hlm-accordion-trigger</code>, and <code>hlm-accordion-content</code>.
 
 Use <code>type="single"</code> to open one item at a time or <code>type="multiple"</code> to open several items independently.

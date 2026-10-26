@@ -128,6 +128,12 @@
   --error: rgb(243.04 212.64 216.16);
   --error-foreground: rgb(117.12 25.92 36.48);
   --error-border: rgb(231.08 170.28 177.32);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
 }
 
 :root.dark {

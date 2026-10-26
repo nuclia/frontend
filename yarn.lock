@@ -15856,6 +15856,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"embla-carousel-reactive-utils@npm:^8.0.0":
+  version: 8.6.0
+  resolution: "embla-carousel-reactive-utils@npm:8.6.0"
+  peerDependencies:
+    embla-carousel: 8.6.0
+  checksum: 10/48b31931572b32b49705e6125d4f10c240fca0ee8a078867fc91f7c889f6adee95f7fd0b0fdf5dfef6d83d497115759f3f3ca2e8320e331efa0de1c9e6fb4638
+  languageName: node
+  linkType: hard
+
 "embla-carousel@npm:>=8.0.0 <9.0.0":
   version: 8.6.0
   resolution: "embla-carousel@npm:8.6.0"
@@ -22614,6 +22623,7 @@ __metadata:
     dotenv: "npm:10.0.0"
     embla-carousel: "npm:>=8.0.0 <9.0.0"
     embla-carousel-angular: "npm:^22.0.0"
+    embla-carousel-reactive-utils: "npm:^8.0.0"
     eslint: "npm:^9.35.0"
     eslint-config-prettier: "npm:10.1.5"
     eslint-plugin-import: "npm:2.31.0"
