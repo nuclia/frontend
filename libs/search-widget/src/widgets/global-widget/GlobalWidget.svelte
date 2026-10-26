@@ -57,7 +57,6 @@
     client?: string;
     kbstate?: KBStates;
     features?: string;
-    standalone?: boolean;
     mode?: string;
     vectorset?: string;
     audit_metadata?: string;
@@ -77,7 +76,6 @@
     client = 'widget',
     kbstate = 'PUBLISHED',
     features = '',
-    standalone = false,
     mode = '',
     vectorset = '',
     audit_metadata = '',
@@ -131,7 +129,6 @@
         knowledgeBox: knowledgebox,
         client,
         apiKey: apikey,
-        standalone,
         account,
       },
       kbstate,
