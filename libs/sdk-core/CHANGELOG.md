@@ -1,3 +1,9 @@
+# 1.33.1 (unreleased)
+
+### Improvements
+
+- Support endpoint to delete multiple resources
+
 # 1.33.0 (2026-10-05)
 
 ### Breaking changes
