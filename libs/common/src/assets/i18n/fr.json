@@ -1682,7 +1682,7 @@
 	"resource.custom-processing.split-strategy": "Stratégie de division",
 	"resource.delete-all": "Supprimer toutes les {{count}}  ressources",
 	"resource.delete-all-pending": "Supprimer toutes les {{count}}  ressources en attente",
-	"resource.delete-all-warning": "Suppression de la ressource en cours. Cela peut prendre quelques minutes.",
+	"resource.delete-all-warning": "Suppression des ressources en cours. Cela peut prendre quelques minutes.",
 	"resource.description.title": "La description",
 	"resource.empty.description": "Votre liste de ressources est vide. Commencez par télécharger quelques fichiers ou synchroniser vos données.",
 	"resource.empty.title": "Rien à voir ici… pour l’instant.",
