@@ -18,6 +18,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { cloneDeep, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
@@ -51,7 +52,6 @@ import {
   WritableKnowledgeBox,
 } from '@nuclia/core';
 import {
-  BadgeComponent,
   ButtonMiniComponent,
   ExpandableTextareaComponent,
   InfoCardComponent,
@@ -79,6 +79,7 @@ import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
 import { SaveConfigModalComponent, SaveConfigModalData } from './save-config-modal/save-config-modal.component';
 import { SearchBoxFormComponent } from './search-box-form';
+import { SearchModeOption, SearchModeSelectorComponent, SearchMode } from './search-mode-selector';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
 import { WidgetOptionsFormComponent } from './widget-options-form';
@@ -100,7 +101,6 @@ export class IsTypedConfigPipe implements PipeTransform {
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
-    BadgeComponent,
     ButtonMiniComponent,
     InfoCardComponent,
     PaButtonModule,
@@ -122,6 +122,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     ExpandableTextareaComponent,
     AgenticConfigurationComponent,
     WidgetOptionsFormComponent,
+    SearchModeSelectorComponent,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
@@ -199,7 +200,29 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   isConfigUnsupported = false;
   canModifyConfig = this.features.isKbAdmin;
 
-  searchMode = signal<'agentic' | 'simple-rag' | 'search'>('simple-rag');
+  searchMode = signal<SearchMode>('simple-rag');
+  private agenticSearchEnabled = toSignal(this.isAgenticSearchEnabled, { initialValue: false });
+  searchModeOptions = computed<SearchModeOption[]>(() => [
+    {
+      value: 'simple-rag',
+      label: 'search.configuration.search-mode.simple-rag',
+      description: 'search.configuration.search-mode.simple-rag-description',
+    },
+    {
+      value: 'search',
+      label: 'search.configuration.search-mode.search',
+      description: 'search.configuration.search-mode.search-description',
+    },
+    ...(this.agenticSearchEnabled() || this.searchMode() === 'agentic'
+      ? [
+          {
+            value: 'agentic' as const,
+            label: 'search.configuration.search-mode.agentic',
+            description: 'search.configuration.search-mode.agentic-description',
+          },
+        ]
+      : []),
+  ]);
   currentKbSource = signal<{ id: string; label: string } | null>(null);
   agenticWidgetConfigNames = signal<string[]>([]);
   agenticSourcesValid = signal(true);
@@ -565,10 +588,8 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateSearchMode(mode: 'agentic' | 'simple-rag' | 'search') {
+  updateSearchMode(mode: SearchMode) {
     if (!this.savedConfig || this.currentConfig?.type !== 'config') return;
-    // pa-radio-group emits valueChange when its bound value is updated programmatically. If the
-    // loaded draft already has this mode, this is hydration rather than a user change.
     if (this.currentConfig.searchMode === mode) return;
     this.searchMode.set(mode);
     const currentConfig = this.currentConfig;
