@@ -9,7 +9,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Simple carousel preview for theme review. See the [official Spartan carousel documentation](https://www.spartan.ng/components/carousel) for implementation guidance.',
+          'Displays a sequence of items that users can browse one slide at a time. Use it for image galleries, featured content, or related items within a limited space.',
       },
     },
   },

@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmCollapsibleImports</code> or the collapsible root, trigger, and content primitives from <code>@nuclia/ui-spartan/collapsible</code>. Put the trigger and content under one root; use the root's <code>expanded</code> input when an initial state is needed. The trigger exposes expanded state for assistive technology and supports keyboard activation. Use a real button and a descriptive label for the trigger.`,
+        component: `Reveals or hides a single section of content. Use it for optional details or advanced settings that should remain available without taking up space by default.`,
       },
     },
   },

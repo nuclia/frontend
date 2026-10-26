@@ -14,7 +14,7 @@ const meta: Meta<AttachmentStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAttachmentImports</code> from <code>@nuclia/ui-spartan/attachment</code>. Build an attachment from <code>hlmAttachment</code> with media, content, title, description, and optional action/group directives; a trigger can be a button or link. The state describes upload progress. Label icon-only actions and provide the trigger with meaningful accessible text.`,
+        component: `Represents an attached file or image with a preview, file details, upload status, and related actions. Use it to help users recognize and manage files in messages or upload flows.`,
       },
     },
   },

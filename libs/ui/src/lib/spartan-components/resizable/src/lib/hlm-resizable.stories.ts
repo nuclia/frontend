@@ -10,7 +10,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmResizableImports</code> or the resizable group, panel, and handle primitives from <code>@nuclia/ui-spartan/resizable</code>. Arrange panels as direct children of a group and place a handle between adjacent panels. The handle supports keyboard resizing; keep it focusable and ensure each panel remains usable at its minimum size.`,
+        component: `Divides a layout into panels whose sizes users can adjust. Use it for workspaces, editors, or split views where users need to give more room to the content they are working with.`,
       },
     },
   },

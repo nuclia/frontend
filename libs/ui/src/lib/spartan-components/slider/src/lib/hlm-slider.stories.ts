@@ -17,8 +17,7 @@ const meta: Meta<SliderStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmSlider</code> or <code>HlmSliderImports</code> from <code>@nuclia/ui-spartan/slider</code>. Bind a numeric array to <code>value</code>; arrays with one value render a single thumb and arrays with two values render a range.
-Set a meaningful accessible label, and provide suitable <code>min</code>, <code>max</code>, and <code>step</code> values. The slider supports keyboard adjustment and exposes the current value.`,
+        component: `Lets users adjust a value or range along a track. Use it for settings such as volume, zoom, or price ranges where the position within a range is more useful than typing an exact value.`,
       },
     },
   },

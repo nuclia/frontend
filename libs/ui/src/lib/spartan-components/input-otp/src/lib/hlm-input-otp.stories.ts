@@ -12,8 +12,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmInputOtpImports</code> from <code>@nuclia/ui-spartan/input-otp</code> and use its group, slot, separator, and fake-caret components inside the Brain <code>brn-input-otp</code> control.
-Set the required <code>length</code>, choose an appropriate input mode, and connect the input id to a visible label. The underlying control supports one-time-code autocomplete, keyboard entry, paste, and completion events.`,
+        component: `A segmented field for entering a one-time password or verification code. Use it in authentication and confirmation flows where a short, fixed-length code is sent to the user.`,
       },
     },
   },

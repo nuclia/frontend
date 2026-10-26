@@ -17,8 +17,7 @@ const meta: Meta<InputStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmInput</code> or <code>HlmInputImports</code> from <code>@nuclia/ui-spartan/input</code>, then add the <code>hlmInput</code> directive to a native input.
-Use the native input type and attributes for validation and browser behavior. Associate a visible label with the input id; use <code>disabled</code> or the field integration to communicate its state accessibly.`,
+        component: `A single-line field for entering text or other short values. Use it for form details, search terms, or numeric entries, with a label that makes the expected value clear.`,
       },
     },
   },

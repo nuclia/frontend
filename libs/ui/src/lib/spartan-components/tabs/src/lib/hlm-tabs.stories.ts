@@ -10,7 +10,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmTabsImports</code> or the tabs root, list, trigger, content, lazy content, and paginated list primitives from <code>@nuclia/ui-spartan/tabs</code>. Give the root a selected <code>tab</code> value and make each trigger's <code>hlmTabsTrigger</code> value match its content's <code>hlmTabsContent</code> value. The underlying tabs primitive provides tablist/tab/tabpanel semantics and keyboard navigation; keep labels concise and ensure every panel has a corresponding trigger.`,
+        component: `Organizes related content into panels, showing one panel at a time. Use tabs to switch between peer views or sections within the same context without leaving the page.`,
       },
     },
   },

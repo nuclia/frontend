@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmDrawerImports</code> or the drawer, trigger, portal, content, header, title, description, footer, and close primitives from <code>@nuclia/ui-spartan/drawer</code>. Compose a trigger with a portal template and labelled content; the drawer content supports the drawer's directional presentation and drag handle. Provide a title and description, retain a clear close action, and verify that the underlying page remains understandable when the drawer is open.`,
+        component: `A sliding dialog with a draggable surface, following the bottom-sheet pattern common on mobile devices. Use it for contextual details or short tasks that benefit from a touch-friendly overlay.`,
       },
     },
   },

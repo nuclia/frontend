@@ -12,7 +12,7 @@ const meta: Meta<CardStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmCardImports</code> from <code>@nuclia/ui-spartan/card</code>. Compose a card with header, title, description, content, optional action, and footer directives. Use the small size for dense layouts. Cards do not add heading semantics automatically, so choose heading levels that fit the surrounding page structure.`,
+        component: `Groups related information and actions in a distinct surface. Use cards for summaries, settings, or self-contained content that needs a clear visual boundary within a page.`,
       },
     },
   },

@@ -16,8 +16,7 @@ const meta: Meta<CheckboxStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmCheckbox</code> or <code>HlmCheckboxImports</code> from <code>@nuclia/ui-spartan/checkbox</code>. Add <code>HlmLabel</code> from <code>@nuclia/ui-spartan/label</code> for a visible label.
-Use <code>checked</code>, <code>disabled</code>, <code>required</code>, and <code>indeterminate</code> to describe the control state. Associate the label with <code>inputId</code> and use a field description when additional context is needed; the checkbox supports keyboard interaction and announces its checked state.`,
+        component: `Lets users select or clear an option independently of other choices. Use checkboxes for multiple selections or agreement fields; an indeterminate state can represent a partially selected group.`,
       },
     },
   },

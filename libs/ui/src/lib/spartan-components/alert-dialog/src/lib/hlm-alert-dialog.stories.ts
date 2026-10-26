@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Use a modal alert dialog for an important decision that needs confirmation. Import <code>HlmAlertDialogImports</code>, or the individual <code>HlmAlertDialog</code>, <code>HlmAlertDialogTrigger</code>, <code>HlmAlertDialogPortal</code>, content, header, title, description, footer, cancel, and action primitives from <code>@nuclia/ui-spartan/alert-dialog</code>. Compose the trigger with a portal template containing labelled content and clearly named actions. The alert-dialog primitive supplies modal alert-dialog semantics and keyboard focus management; always provide a title and a concise description.`,
+        component: `Interrupts the current task to ask for confirmation of an important action. Use it for decisions with significant consequences, such as deleting data, with clear options to confirm or cancel.`,
       },
     },
   },

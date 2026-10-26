@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Chat-style scroll container with a "scroll to latest" button. Scroll up in the example to reveal the button and review its theme (colors, border, radius, spacing). For usage, API and examples, see the <a href="https://www.spartan.ng/components/message-scroller" target="_blank" rel="noopener noreferrer">Spartan documentation</a>.`,
+        component: `A scrollable conversation area with a shortcut back to the latest messages. Use it to let users browse earlier messages and easily return to the current conversation.`,
       },
     },
   },

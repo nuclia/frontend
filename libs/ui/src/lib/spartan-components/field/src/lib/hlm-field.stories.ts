@@ -12,8 +12,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmFieldImports</code> from <code>@nuclia/ui-spartan/field</code>, and compose its field, field-set, label, description, error, content, title, legend, group, and separator parts around controls from their own public entrypoints.
-Use a visible field label, connect it to the control id, and provide descriptions or errors through the exported field parts so assistive technology receives the correct relationships. The root supports vertical, horizontal, and responsive orientations.`,
+        component: `Organizes a form control with its label, help text, and validation feedback. Use fields and field groups to give forms a consistent structure and make requirements and errors easy to understand.`,
       },
     },
   },

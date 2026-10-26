@@ -11,9 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Extends the Dialog component to display content that complements the main content of the screen.
-
-Import <code>HlmSheetImports</code> or the sheet, trigger, portal, content, header, title, description, footer, and close primitives from <code>@nuclia/ui-spartan/sheet</code>. Compose a trigger with portal content and provide a visible title and description. A sheet is modal and manages focus and keyboard dismissal; ensure the trigger and close action have clear accessible names and that the content remains operable by keyboard.`,
+        component: `A dialog that slides in from an edge of the screen to display content alongside the main view. Use it for details, filters, or editing tasks that benefit from a larger contextual panel.`,
       },
     },
   },

@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmTableImports</code> from <code>@nuclia/ui-spartan/table</code>. Compose a semantic table inside <code>hlmTableContainer</code> using head, body, rows, header cells, data cells, optional footer, and caption directives. Use proper row and column headers, and provide a caption that summarizes the table's purpose.`,
+        component: `Organizes structured information into rows and columns for easy comparison. Use it for records, reports, or other data where users need to scan shared attributes across multiple entries.`,
       },
     },
   },

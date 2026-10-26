@@ -10,7 +10,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmCommandImports</code> or the command, input, list, group, group-label, item, shortcut, separator, and empty-state primitives from <code>@nuclia/ui-spartan/command</code>. Group related actions inside the list and render each selectable action as a button with <code>hlmCommandItem</code>. The command primitive provides searchable, keyboard-navigable options; keep a visible label for the search field and meaningful text for every action.`,
+        component: `A searchable list of commands or destinations that users can navigate with the keyboard. Use it for command palettes and quick-action menus that help users find and perform tasks efficiently.`,
       },
     },
   },

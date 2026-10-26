@@ -11,9 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAutocompleteImports</code> or the individual components from <code>@nuclia/ui-spartan/autocomplete</code>.
-Compose <code>hlm-autocomplete</code>, <code>hlm-autocomplete-input</code>, <code>hlm-autocomplete-content</code>, <code>hlm-autocomplete-list</code>, and <code>hlm-autocomplete-item</code>; the family also exports grouping, status, empty-state, separator, search, and portal helpers.
-Give the input a visible label and the list an accessible name. Items support the underlying autocomplete keyboard navigation and selection behavior.`,
+        component: `Suggests matching options as users type into a text field. Use it for search suggestions or assisted text entry to reduce typing and help users discover relevant values.`,
       },
     },
   },

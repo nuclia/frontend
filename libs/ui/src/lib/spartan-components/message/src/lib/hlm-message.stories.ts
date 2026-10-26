@@ -14,7 +14,7 @@ const meta: Meta<MessageStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmMessageImports</code> from <code>@nuclia/ui-spartan/message</code> and <code>HlmBubbleImports</code> from <code>@nuclia/ui-spartan/bubble</code>. Message provides the conversation layout; render the visible message surface with <code>hlmBubble</code> inside <code>hlmMessageContent</code>. Use <code>hlmMessageGroup</code> to group related messages. Provide meaningful avatar alt text or mark decorative avatar content as hidden.`,
+        component: `Organizes a message within a conversation, combining its content with optional avatar, sender details, timestamp, and actions. Use it to make authorship and message grouping clear in chat interfaces.`,
       },
     },
   },

@@ -11,8 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmLabel</code> or <code>HlmLabelImports</code> from <code>@nuclia/ui-spartan/label</code> and apply <code>hlmLabel</code> to a native label.
-Use the native <code>for</code> attribute to associate the label with its control's id. A clear visible label is the preferred accessible name for form controls.`,
+        component: `Identifies a form control and tells users what information or choice is expected. Use a clear, visible label to make each field understandable and easy to locate.`,
       },
     },
   },

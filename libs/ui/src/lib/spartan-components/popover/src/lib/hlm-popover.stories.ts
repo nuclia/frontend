@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmPopoverImports</code> or the popover, trigger, portal, content, header, title, and description primitives from <code>@nuclia/ui-spartan/popover</code>. Keep the trigger and portal content under the same root and provide a title when the panel contains a distinct task or set of information. The trigger exposes expanded state and the underlying primitive manages focus and keyboard dismissal; use a named button trigger.`,
+        component: `Opens a small panel anchored to a trigger for contextual information or controls. Use it for quick settings, filters, or compact forms that do not need a full dialog.`,
       },
     },
   },

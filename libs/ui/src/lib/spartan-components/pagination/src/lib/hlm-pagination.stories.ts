@@ -23,7 +23,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmPaginationImports</code> from <code>@nuclia/ui-spartan/pagination</code>. Compose the navigation, content, item, page link, previous, next, and ellipsis primitives for route-based pagination. Use the advanced numbered component when page state is managed locally, or the query-parameter variant when page state belongs in the URL.`,
+        component: `Divides a large collection into pages and provides controls to move between them. Use it for search results, tables, and lists where users need a manageable view and a clear sense of their position.`,
       },
     },
   },

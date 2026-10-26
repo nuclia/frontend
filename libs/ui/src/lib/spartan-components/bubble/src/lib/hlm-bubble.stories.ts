@@ -13,7 +13,7 @@ const meta: Meta<BubbleStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmBubbleImports</code> from <code>@nuclia/ui-spartan/bubble</code>. Compose <code>hlmBubbleGroup</code>, <code>hlmBubble</code>, and <code>hlmBubbleContent</code>; optional reactions are provided by <code>hlmBubbleReactions</code>. Use the alignment to distinguish speakers and do not rely on color alone to communicate authorship.`,
+        component: `Displays conversational content inside a message bubble, with visual treatments for different speakers and grouped messages. Use it as the content surface within a conversation, with optional reactions or expandable details.`,
       },
     },
   },

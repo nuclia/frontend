@@ -10,7 +10,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmNavigationMenuImports</code> or the navigation-menu root, list, item, trigger, content, portal, and link primitives from <code>@nuclia/ui-spartan/navigation-menu</code>. Compose the trigger and its related content within a list item; use navigation links for destinations. The root renders a navigation landmark and the brain primitive manages keyboard interaction. Supply meaningful link text and an accessible name for the navigation region.`,
+        component: `Organizes links to the main sections of a site or application, with expandable panels for related destinations. Use it for primary navigation rather than menus of commands or actions.`,
       },
     },
   },

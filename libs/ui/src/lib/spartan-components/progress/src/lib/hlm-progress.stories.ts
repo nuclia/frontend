@@ -15,8 +15,7 @@ const meta: Meta<ProgressStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmProgressImports</code> or the individual components from <code>@nuclia/ui-spartan/progress</code>. Place <code>hlm-progress-indicator</code> inside <code>hlm-progress</code>; set the progress value and maximum on the root.
-The primitive exposes progress semantics to assistive technology. Provide an accessible label describing what is progressing, and use a null value for indeterminate progress.`,
+        component: `Shows how far a task has advanced toward completion. Use it for uploads, processing, or multi-step flows when users benefit from seeing progress rather than only a loading indicator.`,
       },
     },
   },

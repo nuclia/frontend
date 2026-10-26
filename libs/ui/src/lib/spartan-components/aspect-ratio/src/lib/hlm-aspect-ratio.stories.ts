@@ -12,7 +12,7 @@ const meta: Meta<AspectRatioStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAspectRatioImports</code> from <code>@nuclia/ui-spartan/aspect-ratio</code>. Apply <code>hlmAspectRatio</code> to a container and pass a width/height ratio (number or ratio string such as <code>16/9</code>). It reserves a stable box for projected content; give images useful alt text and use an empty alt only for decorative images.`,
+        component: `Keeps content at a consistent width-to-height ratio as its container resizes. Use it for images, videos, and media previews that need predictable proportions across layouts.`,
       },
     },
   },

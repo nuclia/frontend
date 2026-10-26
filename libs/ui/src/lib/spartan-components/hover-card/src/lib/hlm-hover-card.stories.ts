@@ -10,7 +10,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmHoverCardImports</code> or the hover-card, trigger, portal, and content primitives from <code>@nuclia/ui-spartan/hover-card</code>. Place the content in a portal template associated with the trigger. Hover cards are supplemental previews, not the only way to reach essential information; use a descriptive link or button trigger and keep all key content available in the main page flow.`,
+        component: `Shows a richer preview of linked content when users hover over its trigger. Use it for supplemental details, such as a person's profile or a destination summary, without requiring users to leave the page.`,
       },
     },
   },

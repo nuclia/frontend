@@ -18,8 +18,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmDatePickerImports</code> or individual components from <code>@nuclia/ui-spartan/date-picker</code>. Provide a date adapter and calendar internationalisation provider; this story uses the native JavaScript <code>Date</code> adapter.
-Compose <code>hlm-date-picker</code> with either <code>hlm-date-picker-trigger</code> or <code>hlm-date-picker-input</code>; the public family also includes range, multi-date, and month/year pickers and their inputs. Pair the trigger/input with a visible field label. Calendar navigation and selection are keyboard accessible.`,
+        component: `Lets users choose dates from a calendar opened from a field or button. Use it for scheduling, deadlines, or date filters when a full calendar should only appear during selection.`,
       },
     },
   },

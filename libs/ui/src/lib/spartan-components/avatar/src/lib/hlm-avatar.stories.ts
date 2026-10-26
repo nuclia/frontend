@@ -21,9 +21,7 @@ const meta: Meta<AvatarStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAvatarImports</code> or the individual components from <code>@nuclia/ui-spartan/avatar</code>.
-Compose <code>hlm-avatar</code> with <code>hlm-avatar-image</code> and <code>hlm-avatar-fallback</code>; the same public entrypoint exports <code>hlm-avatar-badge</code>, <code>hlm-avatar-group</code>, and <code>hlm-avatar-group-count</code>.
-Provide descriptive image alternative text, useful fallback initials, and an accessible label for meaningful status badges or avatar groups.`,
+        component: `An image element with a fallback for representing the user.`,
       },
     },
   },

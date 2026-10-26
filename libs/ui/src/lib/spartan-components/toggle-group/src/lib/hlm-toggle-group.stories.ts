@@ -16,8 +16,7 @@ const meta: Meta<ToggleGroupStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmToggleGroupImports</code> or its components from <code>@nuclia/ui-spartan/toggle-group</code>. Compose <code>hlm-toggle-group</code> with native buttons carrying <code>hlmToggleGroupItem</code>.
-Set the group to <code>single</code> or <code>multiple</code>, provide a group label, and give every item a value and visible accessible name. The group supports keyboard navigation and announces pressed state.`,
+        component: `Groups related toggle buttons with either one or multiple active choices. Use it for compact option sets such as text alignment, formatting tools, or view modes where the active state should stay visible.`,
       },
     },
   },

@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmSeparatorImports</code> from <code>@nuclia/ui-spartan/separator</code> and apply <code>hlmSeparator</code> to a divider. Set <code>decorative</code> for a purely visual divider so it is hidden from assistive technology; for meaningful section separation, retain separator semantics and label it when needed.`,
+        component: `A horizontal or vertical divider that separates groups of content. Use it to clarify structure and distinguish related sections or actions without adding another container.`,
       },
     },
   },

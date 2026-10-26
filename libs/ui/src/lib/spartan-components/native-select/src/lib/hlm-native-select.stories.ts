@@ -16,8 +16,7 @@ const meta: Meta<NativeSelectStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmNativeSelectImports</code> or its components from <code>@nuclia/ui-spartan/native-select</code>. Compose <code>hlm-native-select</code> with native options, <code>hlmNativeSelectOption</code>, and the optional opt-group helper.
-The native select retains browser and platform keyboard behavior. Always connect a visible label to the select id and use descriptive option text.`,
+        component: `Lets users choose an option through the browser's built-in select control. Use it for straightforward choices where familiar platform behavior, including the mobile picker, is preferred.`,
       },
     },
   },

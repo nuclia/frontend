@@ -17,7 +17,7 @@ const meta: Meta<MarkerStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmMarkerImports</code> from <code>@nuclia/ui-spartan/marker</code>. Pair the marker root with its content and optional icon directives. The default variant supports inline marker content, separator adds flanking rules, and border adds a lower divider. Give meaningful text to links and hide purely decorative icons from assistive technology.`,
+        component: `Displays a status update, system note, or labeled separator within a conversation. Use it to distinguish events such as processing activity or conversation milestones from messages sent by participants.`,
       },
     },
   },

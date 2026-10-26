@@ -10,8 +10,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmSpinner</code> or <code>HlmSpinnerImports</code> from <code>@nuclia/ui-spartan/spinner</code>. The spinner uses a registered icon name and accepts an <code>aria-label</code>.
-Use a concise status label such as “Loading report”; pair it with visible status text when the loading state is important to the task.`,
+        component: `An animated indicator that shows a task is in progress without specifying how much is complete. Use it for loading or processing states when a measurable progress value is not available.`,
       },
     },
   },

@@ -17,8 +17,7 @@ const meta: Meta<SwitchStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmSwitchImports</code> or the switch components from <code>@nuclia/ui-spartan/switch</code>; use <code>HlmLabel</code> from <code>@nuclia/ui-spartan/label</code> for a visible label.
-Set the switch's <code>inputId</code> and associate the label with it. A switch represents an immediate on/off setting, supports keyboard operation, and announces its checked state.`,
+        component: `Turns a setting on or off, usually with an immediate effect. Use it for binary preferences such as enabling notifications, rather than selecting items to submit as a group.`,
       },
     },
   },

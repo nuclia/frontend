@@ -65,10 +65,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmChartImports</code>, <code>HLM\\_CHART\\_THEME</code>, and <code>hlmChartTooltip</code> from <code>@nuclia/ui-spartan/chart</code>.
-Apply <code>hlmChart</code> to a <code>tanstack-chart</code> and pass an <code>options</code> object whose <code>definition</code> is built with <code>defineChart(spec, interaction)</code> from <code>@tanstack/charts</code>.
-Import scales from subpaths such as <code>@tanstack/charts/scales/band</code>, use <code>HLM\\_CHART\\_THEME</code> as the spec theme, and <code>hlmChartTooltip()</code> as the interaction tooltip.
-Size the chart with <code>height</code> or <code>aspectRatio</code>, and always provide <code>ariaLabel</code> and <code>ariaDescription</code>.`,
+        component: `Visualizes data to make comparisons, trends, and relationships easier to understand. Use charts in reports and dashboards, with consistent colors, labels, and tooltips to support interpretation.`,
       },
     },
     controls: {

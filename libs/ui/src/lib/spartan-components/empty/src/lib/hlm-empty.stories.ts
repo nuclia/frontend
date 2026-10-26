@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmEmptyImports</code> from <code>@nuclia/ui-spartan/empty</code>. Compose the empty-state root with header, media, title, description, and optional content directives. Explain why the area is empty and offer a clear next step; keep action labels descriptive.`,
+        component: `Explains why an area has no content and guides users toward a useful next step. Use it for first-use experiences, empty collections, or searches with no results.`,
       },
     },
   },

@@ -16,7 +16,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmContextMenuImports</code> from <code>@nuclia/ui-spartan/context-menu</code> for the context-trigger directive. Bind its <code>hlmContextMenuTrigger</code> input to a menu template. Style that panel with the public dropdown-menu primitives from <code>@nuclia/ui-spartan/dropdown-menu</code>, since the context-menu entrypoint intentionally exports only the trigger and configuration token. Context menus open with the context-menu gesture and use Angular CDK menu focus and keyboard behavior; keep the target discoverable and ensure the same actions are available through a keyboard-accessible trigger or equivalent controls.`,
+        component: `Shows actions relevant to a particular item or area when users open its context menu, typically with a right-click. Use it as a shortcut to contextual actions, not as their only point of access.`,
       },
     },
   },

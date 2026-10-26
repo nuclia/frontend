@@ -21,8 +21,7 @@ const meta: Meta<CalendarStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmCalendarImports</code> or individual calendar components from <code>@nuclia/ui-spartan/calendar</code>. A date adapter and calendar internationalisation provider are required; this story uses the native JavaScript <code>Date</code> adapter.
-Use <code>hlm-calendar</code> for one date, <code>hlm-calendar-multi</code> for multiple selections, or <code>hlm-calendar-range</code> for a start/end range. Calendar buttons support keyboard navigation and expose the grid and date selection state to assistive technology.`,
+        component: `Presents a calendar for browsing months and selecting a date, multiple dates, or a date range. Use it when users need to see dates in context, such as scheduling or choosing a reporting period.`,
       },
     },
   },

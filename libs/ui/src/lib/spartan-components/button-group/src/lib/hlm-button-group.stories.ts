@@ -11,8 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmButtonGroupImports</code> or its components from <code>@nuclia/ui-spartan/button-group</code>; use <code>HlmButtonImports</code> from <code>@nuclia/ui-spartan/button</code> for the grouped actions.
-Compose buttons inside <code>hlm-button-group</code>, optionally adding <code>hlm-button-group-separator</code> or <code>hlm-button-group-text</code>. The group exposes its orientation and <code>role="group"</code>; give each action a clear accessible name.`,
+        component: `Visually connects related buttons into a single group. Use it for compact sets of actions, such as editing tools or a primary action paired with additional options.`,
       },
     },
   },

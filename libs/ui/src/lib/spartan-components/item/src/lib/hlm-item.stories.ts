@@ -13,7 +13,7 @@ const meta: Meta<ItemStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmItemImports</code> from <code>@nuclia/ui-spartan/item</code>. Use the item root with media, header/content, title, description, actions, footer, and separator directives as needed. Select the appropriate size and variant for the surrounding list. Use native links or buttons for interactive items and preserve their keyboard focus indicators.`,
+        component: `Presents a single entry with optional media, a title, supporting text, and actions. Use it for consistent rows in lists of people, files, settings, or other related content.`,
       },
     },
   },

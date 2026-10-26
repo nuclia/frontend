@@ -12,8 +12,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmSelectImports</code> or its components from <code>@nuclia/ui-spartan/select</code>. Compose <code>hlm-select</code> with a trigger, value, content, and items; use the exported group, label, separator, placeholder, portal, and scroll helpers as needed.
-Pair the trigger with a visible label and a stable button id. Options are keyboard navigable and selection is announced through the underlying select semantics.`,
+        component: `Presents a list of predefined options in a dropdown opened from a field. Use it to keep forms compact when users can choose a value without needing to type a search.`,
       },
     },
   },

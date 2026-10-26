@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmScrollAreaImports</code> or <code>HlmScrollArea</code> from <code>@nuclia/ui-spartan/scroll-area</code> and the <code>NgScrollbar</code> component from <code>ngx-scrollbar</code>. Apply the Hlm directive to an <code>ng-scrollbar</code> and give the viewport a constrained size so overflowing content can scroll. Keep content in the document's normal reading order and do not rely on color alone to indicate the scrollbar.`,
+        component: `Contains overflowing content in a scrollable region with consistently styled scrollbars. Use it for long lists or panels that need to stay within a fixed area of the layout.`,
       },
     },
   },

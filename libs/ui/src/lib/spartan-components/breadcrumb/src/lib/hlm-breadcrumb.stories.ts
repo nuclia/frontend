@@ -14,7 +14,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Build hierarchical navigation with <code>HlmBreadcrumbImports</code> or the individual breadcrumb, list, item, link, page, separator, and ellipsis primitives from <code>@nuclia/ui-spartan/breadcrumb</code>. Compose the list from ordered items, use links for navigable ancestors, and mark the current location with <code>hlmBreadcrumbPage</code>. Put the breadcrumb in a labelled <code>nav</code>; the current page should be conveyed with <code>aria-current="page"</code>.`,
+        component: `Shows the current page's place in a hierarchy and provides links back to its parent pages. Use it to help users stay oriented and move through nested sections.`,
       },
     },
   },

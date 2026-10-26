@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Use <code>HlmDialogImports</code> or the dialog, trigger, portal, content, header, title, description, footer, and close primitives from <code>@nuclia/ui-spartan/dialog</code>. Place the portal template inside the dialog and compose its content with a visible title and description. Dialogs provide modal focus management and keyboard dismissal; give the trigger and close action accessible names and keep focus within the dialog while it is open.`,
+        component: `Opens a focused task or piece of information in a modal window above the page. Use it for short forms, editing details, or interactions that users can complete without leaving their current context.`,
       },
     },
   },

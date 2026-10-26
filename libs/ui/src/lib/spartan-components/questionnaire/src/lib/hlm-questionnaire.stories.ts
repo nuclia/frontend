@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmQuestionnaireImports</code> from <code>@nuclia/ui-spartan/questionnaire</code>. Use the questionnaire form with progress, fieldset item, legend title, description, choices or input, error, and actions as appropriate. Keep each fieldset's legend descriptive, associate errors with the relevant field, and provide explicit labels for all choices and inputs.`,
+        component: `Guides users through a series of questions with choices or freeform answers. Use it for onboarding, preference gathering, or guided requests where one question at a time keeps the task focused.`,
       },
     },
   },

@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmDropdownMenuImports</code> or the dropdown-menu trigger, panel, group, label, item, checkbox, radio, submenu, separator, shortcut, and indicator primitives from <code>@nuclia/ui-spartan/dropdown-menu</code>. Bind the trigger to an <code>ng-template</code> containing the menu panel. Menu items are keyboard navigable and manage focus; use buttons for actions, provide a descriptive trigger name, and group related commands with labels and separators.`,
+        component: `Opens a menu of actions or options from a button. Use it to keep secondary commands, account actions, or related choices available without displaying them all on the page.`,
       },
     },
   },

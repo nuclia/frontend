@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmKbdImports</code> from <code>@nuclia/ui-spartan/kbd</code>. Apply <code>hlmKbd</code> to a key label and group simultaneous keys with <code>hlmKbdGroup</code>. These are visual hints only: ensure the described shortcut is also available through accessible instructions and works with the user's keyboard layout.`,
+        component: `Displays a keyboard key or key combination as a visual hint. Use it in menus, tooltips, and instructions to help users discover available keyboard shortcuts.`,
       },
     },
   },

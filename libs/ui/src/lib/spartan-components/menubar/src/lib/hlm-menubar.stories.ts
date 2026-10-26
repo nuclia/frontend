@@ -11,7 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmMenubarImports</code> from <code>@nuclia/ui-spartan/menubar</code> for the menubar root and trigger. Each trigger points to a menu template; this package exposes no menubar-specific item or panel components, so the example uses the public dropdown-menu primitives from <code>@nuclia/ui-spartan/dropdown-menu</code> to render panel contents. The menubar uses Angular CDK menu-bar keyboard and focus behavior. Keep trigger names concise and make each action a real button.`,
+        component: `A horizontal set of menus that organizes application commands into familiar categories. Use it for desktop-style interfaces with groups of actions such as File, Edit, and View.`,
       },
     },
   },

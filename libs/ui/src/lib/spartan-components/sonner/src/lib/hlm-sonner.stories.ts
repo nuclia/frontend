@@ -17,7 +17,7 @@ const meta: Meta<ToasterStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmToasterImports</code> from <code>@nuclia/ui-spartan/sonner</code> and place one <code>hlm-toaster</code> near the application root. Import <code>toast</code> from <code>@spartan-ng/brain/sonner</code> and call it from an event handler to display a notification. Configure its placement, theme, and toast behavior with the supported inputs. Keep toast copy concise and do not use transient notifications as the only way to communicate critical information.`,
+        component: `Displays brief toast notifications that give feedback without interrupting the current task. Use it for action results and background updates; critical information should also remain available outside a temporary toast.`,
       },
     },
   },

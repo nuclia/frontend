@@ -16,7 +16,7 @@ const meta: Meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: `Import <code>HlmSidebarImports</code> or the sidebar, wrapper, content, header, footer, group, group label/content, menu, menu item/button, badge, action, sub-menu, separator, rail, trigger, inset, input, and skeleton primitives from <code>@nuclia/ui-spartan/sidebar</code>. Compose the sidebar inside a wrapper and pair it with the inset main content; use the trigger or rail to expose collapse behavior. The sidebar service supports a keyboard shortcut and mobile presentation, while menu buttons are keyboard-operable. Give the navigation landmark a label and use semantic links or buttons for destinations/actions.`,
+        component: `A side panel that organizes navigation and supporting actions alongside the main content. Use it for application sections, nested destinations, and workspace controls, with collapsible layouts to leave more room for the current task.`,
       },
     },
   },

@@ -12,8 +12,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmInputGroupImports</code> or its individual components from <code>@nuclia/ui-spartan/input-group</code>. Compose the group with its input, textarea, addon, text, and button parts; grouped buttons can use <code>HlmButtonImports</code> from <code>@nuclia/ui-spartan/button</code>.
-Give the input its own visible label and give icon-only buttons accessible names. Addons are supporting content and should not replace the input's label.`,
+        component: `Combines an input with supporting text, icons, or actions inside one visual control. Use it for search fields, values with units, or entries with a related action such as copying or submitting.`,
       },
     },
   },

@@ -17,8 +17,7 @@ const meta: Meta<ToggleStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmToggle</code> or <code>HlmToggleImports</code> from <code>@nuclia/ui-spartan/toggle</code> and apply <code>hlmToggle</code> to a native button.
-Use the <code>variant</code>, <code>size</code>, <code>state</code>, and <code>disabled</code> inputs to configure the toggle. Provide a visible text label or an accessible name for icon-only buttons; pressed state is exposed to assistive technology.`,
+        component: `A button with a persistent pressed or unpressed state. Use it to activate a mode or formatting option, such as bold text, rather than perform a one-off action.`,
       },
     },
   },

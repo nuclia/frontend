@@ -15,8 +15,7 @@ const meta: Meta<BadgeStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmBadge</code> or <code>HlmBadgeImports</code> from <code>@nuclia/ui-spartan/badge</code>.
-Apply <code>hlmBadge</code> to inline text or use <code>hlm-badge</code>; the <code>variant</code> input selects the visual treatment. Keep badge text concise and meaningful so the status is also clear to assistive-technology users.`,
+        component: `A compact label that highlights a status, category, or count. Use badges alongside content to make key attributes easy to scan without competing with primary actions.`,
       },
     },
   },

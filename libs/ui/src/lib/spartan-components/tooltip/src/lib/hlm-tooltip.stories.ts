@@ -15,7 +15,7 @@ const meta: Meta<TooltipStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmTooltipImports</code> or <code>HlmTooltip</code> from <code>@nuclia/ui-spartan/tooltip</code>. Attach <code>hlmTooltip</code> to a focusable element and bind it to short supplemental text or a template; use <code>position</code> to choose the preferred placement. Tooltip content is available on pointer hover and keyboard focus, but should never be the sole source of essential instructions or the accessible name.`,
+        component: `Shows a short explanation when users hover over or focus a control. Use it for supplemental hints or clarification, not for essential instructions or interactive content.`,
       },
     },
   },

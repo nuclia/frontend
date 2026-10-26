@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmTypographyImports</code> from <code>@nuclia/ui-spartan/typography</code>. Apply the heading, paragraph, lead, large, small, muted, blockquote, code, and list directives to native semantic elements. Keep heading levels in document order and use semantic elements for meaning rather than choosing a directive based only on appearance.`,
+        component: `Defines a consistent visual hierarchy for headings, body text, lists, quotes, and code. Use it to make content readable and establish clear differences between primary information and supporting text.`,
       },
     },
   },

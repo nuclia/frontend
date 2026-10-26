@@ -16,8 +16,7 @@ const meta: Meta<TextareaStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmTextarea</code> or <code>HlmTextareaImports</code> from <code>@nuclia/ui-spartan/textarea</code>, then apply <code>hlmTextarea</code> to a native textarea.
-Associate a visible label with the textarea id and use native attributes such as <code>rows</code>, <code>required</code>, and <code>disabled</code> for form behavior.`,
+        component: `A multi-line field for entering longer text. Use it for messages, descriptions, comments, or other responses that need more room than a single-line input.`,
       },
     },
   },

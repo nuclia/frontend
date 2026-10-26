@@ -12,8 +12,7 @@ const meta: Meta<AlertStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAlertImports</code> from <code>@nuclia/ui-spartan/alert</code>.
-Compose <code>hlm-alert</code> with the <code>hlmAlertTitle</code>, <code>hlmAlertDescription</code>, and optional <code>hlmAlertAction</code> directives. The root exposes the alert role; use concise, meaningful text and reserve the destructive variant for errors or critical warnings.`,
+        component: `Highlights important information within the page, such as a warning, an error, or a status update. Unlike a dialog, an alert keeps the message in context without interrupting the user's task.`,
       },
     },
   },

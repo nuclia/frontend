@@ -16,8 +16,7 @@ const meta: Meta<RadioGroupStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmRadioGroupImports</code> or its components from <code>@nuclia/ui-spartan/radio-group</code>, and <code>HlmLabel</code> from <code>@nuclia/ui-spartan/label</code> for visible option labels.
-Compose <code>hlm-radio-group</code> with <code>hlm-radio</code> and <code>hlm-radio-indicator</code>. Give the group an accessible label and each radio a value and associated visible label. The group supports standard arrow-key navigation.`,
+        component: `Lets users choose one option from a set of mutually exclusive choices. Use it when the available options should remain visible for comparison, such as selecting a plan or delivery method.`,
       },
     },
   },

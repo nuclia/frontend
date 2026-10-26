@@ -8,7 +8,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmSkeletonImports</code> from <code>@nuclia/ui-spartan/skeleton</code> and apply <code>hlmSkeleton</code> to placeholder shapes that match the content being loaded. Treat decorative placeholders as hidden from assistive technology and announce loading state on the surrounding region.`,
+        component: `A placeholder that mirrors the shape of content while it loads. Use it to preserve the page's visual structure and give users a sense of what will appear.`,
       },
     },
   },

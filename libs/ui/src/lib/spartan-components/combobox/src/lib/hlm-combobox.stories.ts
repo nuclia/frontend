@@ -11,9 +11,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmComboboxImports</code> or the individual components from <code>@nuclia/ui-spartan/combobox</code>.
-Compose <code>hlm-combobox</code> with <code>hlm-combobox-input</code>, <code>hlm-combobox-content</code>, <code>hlm-combobox-list</code>, and <code>hlm-combobox-item</code>. The public family also exports multiple-value, chip, placeholder, group, empty, status, and portal parts.
-Provide a visible label for the input and an accessible list name. Options are keyboard navigable, and the input trigger and clear controls include accessible names.`,
+        component: `Combines a text input with a list of predefined options to select. Use it when users need to search a long list of choices rather than browse a simple select menu.`,
       },
     },
   },
