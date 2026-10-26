@@ -1,0 +1,61 @@
+import { type BooleanInput } from '@angular/cdk/coercion';
+import { CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
+import { booleanAttribute, computed, Directive, effect, forwardRef, inject, input } from '@angular/core';
+import {
+	createMenuPosition,
+	MENU_SIDE,
+	type MenuAlign,
+	type MenuSide,
+	updateMenuPosition,
+} from '@spartan-ng/brain/core';
+import { classes } from '@nuclia/ui-spartan/utils';
+import { injectHlmMenubarConfig } from './hlm-menubar-token';
+
+@Directive({
+	selector: 'button[hlmMenubarTrigger]',
+	providers: [{ provide: MENU_SIDE, useExisting: forwardRef(() => HlmMenubarTrigger) }],
+	hostDirectives: [
+		{
+			directive: CdkMenuItem,
+			inputs: ['cdkMenuItemDisabled: disabled'],
+		},
+		{
+			directive: CdkMenuTrigger,
+			inputs: ['cdkMenuTriggerFor: hlmMenubarTrigger', 'cdkMenuTriggerData: hlmMenubarTriggerData'],
+			outputs: ['cdkMenuOpened: hlmDropdownMenuOpened', 'cdkMenuClosed: hlmDropdownMenuClosed'],
+		},
+	],
+	host: {
+		'data-slot': 'menubar-trigger',
+		'[disabled]': 'disabled() ',
+		'[attr.data-disabled]': 'disabled() ? "" : null',
+	},
+})
+export class HlmMenubarTrigger {
+	private readonly _cdkTrigger = inject(CdkMenuTrigger, { host: true });
+	private readonly _config = injectHlmMenubarConfig();
+
+	public readonly disabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+
+	public readonly align = input<MenuAlign>(this._config.align);
+	public readonly side = input<MenuSide>(this._config.side);
+
+	private readonly _menuPosition = computed(() => createMenuPosition(this.align(), this.side()));
+
+	constructor() {
+		// CDK sets transform-origin on the menu content (a shared hlm-dropdown-menu) from the resolved
+		// position; the content reads it to animate from the anchored corner and to derive its data-side.
+		// Cast tolerates @angular/cdk < 21.2 (we still support >=21.0), where the property is absent and
+		// the assignment is a harmless no-op.
+		(this._cdkTrigger as { transformOriginSelector?: string }).transformOriginSelector = '[data-slot="dropdown-menu"]';
+
+		effect(() => {
+			updateMenuPosition(this._cdkTrigger, this._menuPosition());
+		});
+
+		classes(
+			() =>
+				'hover:bg-muted aria-expanded:bg-muted rounded-sm px-1.5 py-[2px] text-sm font-medium flex items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50',
+		);
+	}
+}

@@ -12,8 +12,15 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2023",
     "module": "esnext",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2023", "dom", "esnext.asynciterable", "esnext.bigint"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2023",
+      "dom",
+      "esnext.asynciterable",
+      "esnext.bigint"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
@@ -24,28 +31,245 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "paths": {
-      "@flaps/common": ["./libs/common/src/index.ts"],
-      "@flaps/core": ["./libs/core/src/index.ts"],
-      "@guillotinaweb/pastanaga-angular": ["./libs/pastanaga-angular/projects/pastanaga-angular/src"],
-      "@guillotinaweb/pastanaga-angular/demo": ["./libs/pastanaga-angular/projects/demo/src/index.ts"],
-      "@nuclia/core": ["./libs/sdk-core/src/index.ts"],
-      "@nuclia/sistema": ["./libs/sistema/src/index.ts"],
-      "@nuclia/sync": ["./libs/sync/src/index.ts"],
-      "@nuclia/user": ["./libs/user/src/index.ts"],
-      "@nuclia/widget": ["./libs/search-widget/src/index.ts"],
-      "@nuclia/ui": ["./libs/ui/src/index.ts"],
-      "libs": ["./libs/src/index.ts"],
-      "*": ["./*"],
-      "@nuclia/ui-spartan": ["./libs/ui/src/lib/spartan-components/src/index.ts"],
-      "@nuclia/ui-spartan/accordion": ["./libs/ui/src/lib/spartan-components/accordion/src/index.ts"],
-      "@nuclia/ui-spartan/avatar": ["./libs/ui/src/lib/spartan-components/avatar/src/index.ts"],
-      "@nuclia/ui-spartan/button": ["./libs/ui/src/lib/spartan-components/button/src/index.ts"],
-      "@nuclia/ui-spartan/utils": ["./libs/ui/src/lib/spartan-components/utils/src/index.ts"]
+      "@flaps/common": [
+        "./libs/common/src/index.ts"
+      ],
+      "@flaps/core": [
+        "./libs/core/src/index.ts"
+      ],
+      "@guillotinaweb/pastanaga-angular": [
+        "./libs/pastanaga-angular/projects/pastanaga-angular/src"
+      ],
+      "@guillotinaweb/pastanaga-angular/demo": [
+        "./libs/pastanaga-angular/projects/demo/src/index.ts"
+      ],
+      "@nuclia/core": [
+        "./libs/sdk-core/src/index.ts"
+      ],
+      "@nuclia/sistema": [
+        "./libs/sistema/src/index.ts"
+      ],
+      "@nuclia/sync": [
+        "./libs/sync/src/index.ts"
+      ],
+      "@nuclia/user": [
+        "./libs/user/src/index.ts"
+      ],
+      "@nuclia/widget": [
+        "./libs/search-widget/src/index.ts"
+      ],
+      "@nuclia/ui": [
+        "./libs/ui/src/index.ts"
+      ],
+      "libs": [
+        "./libs/src/index.ts"
+      ],
+      "*": [
+        "./*"
+      ],
+      "@nuclia/ui-spartan": [
+        "./libs/ui/src/lib/spartan-components/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/accordion": [
+        "./libs/ui/src/lib/spartan-components/accordion/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/avatar": [
+        "./libs/ui/src/lib/spartan-components/avatar/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/button": [
+        "./libs/ui/src/lib/spartan-components/button/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/utils": [
+        "./libs/ui/src/lib/spartan-components/utils/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/alert": [
+        "./libs/ui/src/lib/spartan-components/alert/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/alert-dialog": [
+        "./libs/ui/src/lib/spartan-components/alert-dialog/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/aspect-ratio": [
+        "./libs/ui/src/lib/spartan-components/aspect-ratio/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/attachment": [
+        "./libs/ui/src/lib/spartan-components/attachment/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/autocomplete": [
+        "./libs/ui/src/lib/spartan-components/autocomplete/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/badge": [
+        "./libs/ui/src/lib/spartan-components/badge/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/breadcrumb": [
+        "./libs/ui/src/lib/spartan-components/breadcrumb/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/bubble": [
+        "./libs/ui/src/lib/spartan-components/bubble/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/button-group": [
+        "./libs/ui/src/lib/spartan-components/button-group/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/calendar": [
+        "./libs/ui/src/lib/spartan-components/calendar/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/card": [
+        "./libs/ui/src/lib/spartan-components/card/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/carousel": [
+        "./libs/ui/src/lib/spartan-components/carousel/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/chart": [
+        "./libs/ui/src/lib/spartan-components/chart/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/checkbox": [
+        "./libs/ui/src/lib/spartan-components/checkbox/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/collapsible": [
+        "./libs/ui/src/lib/spartan-components/collapsible/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/combobox": [
+        "./libs/ui/src/lib/spartan-components/combobox/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/command": [
+        "./libs/ui/src/lib/spartan-components/command/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/context-menu": [
+        "./libs/ui/src/lib/spartan-components/context-menu/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/date-picker": [
+        "./libs/ui/src/lib/spartan-components/date-picker/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/dialog": [
+        "./libs/ui/src/lib/spartan-components/dialog/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/drawer": [
+        "./libs/ui/src/lib/spartan-components/drawer/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/dropdown-menu": [
+        "./libs/ui/src/lib/spartan-components/dropdown-menu/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/empty": [
+        "./libs/ui/src/lib/spartan-components/empty/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/field": [
+        "./libs/ui/src/lib/spartan-components/field/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/hover-card": [
+        "./libs/ui/src/lib/spartan-components/hover-card/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/input": [
+        "./libs/ui/src/lib/spartan-components/input/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/input-group": [
+        "./libs/ui/src/lib/spartan-components/input-group/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/input-otp": [
+        "./libs/ui/src/lib/spartan-components/input-otp/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/item": [
+        "./libs/ui/src/lib/spartan-components/item/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/kbd": [
+        "./libs/ui/src/lib/spartan-components/kbd/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/label": [
+        "./libs/ui/src/lib/spartan-components/label/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/marker": [
+        "./libs/ui/src/lib/spartan-components/marker/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/menubar": [
+        "./libs/ui/src/lib/spartan-components/menubar/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/message": [
+        "./libs/ui/src/lib/spartan-components/message/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/message-scroller": [
+        "./libs/ui/src/lib/spartan-components/message-scroller/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/native-select": [
+        "./libs/ui/src/lib/spartan-components/native-select/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/navigation-menu": [
+        "./libs/ui/src/lib/spartan-components/navigation-menu/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/pagination": [
+        "./libs/ui/src/lib/spartan-components/pagination/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/popover": [
+        "./libs/ui/src/lib/spartan-components/popover/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/progress": [
+        "./libs/ui/src/lib/spartan-components/progress/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/questionnaire": [
+        "./libs/ui/src/lib/spartan-components/questionnaire/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/radio-group": [
+        "./libs/ui/src/lib/spartan-components/radio-group/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/resizable": [
+        "./libs/ui/src/lib/spartan-components/resizable/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/scroll-area": [
+        "./libs/ui/src/lib/spartan-components/scroll-area/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/select": [
+        "./libs/ui/src/lib/spartan-components/select/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/separator": [
+        "./libs/ui/src/lib/spartan-components/separator/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/sheet": [
+        "./libs/ui/src/lib/spartan-components/sheet/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/sidebar": [
+        "./libs/ui/src/lib/spartan-components/sidebar/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/skeleton": [
+        "./libs/ui/src/lib/spartan-components/skeleton/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/slider": [
+        "./libs/ui/src/lib/spartan-components/slider/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/sonner": [
+        "./libs/ui/src/lib/spartan-components/sonner/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/spinner": [
+        "./libs/ui/src/lib/spartan-components/spinner/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/switch": [
+        "./libs/ui/src/lib/spartan-components/switch/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/table": [
+        "./libs/ui/src/lib/spartan-components/table/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/tabs": [
+        "./libs/ui/src/lib/spartan-components/tabs/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/textarea": [
+        "./libs/ui/src/lib/spartan-components/textarea/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/toggle": [
+        "./libs/ui/src/lib/spartan-components/toggle/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/toggle-group": [
+        "./libs/ui/src/lib/spartan-components/toggle-group/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/tooltip": [
+        "./libs/ui/src/lib/spartan-components/tooltip/src/index.ts"
+      ],
+      "@nuclia/ui-spartan/typography": [
+        "./libs/ui/src/lib/spartan-components/typography/src/index.ts"
+      ]
     }
   },
   "angularCompilerOptions": {
     "strictTemplates": false,
     "strictInjectionParameters": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }
