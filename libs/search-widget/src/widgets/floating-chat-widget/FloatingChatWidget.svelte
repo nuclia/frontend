@@ -76,6 +76,7 @@
     client = 'widget';
     kbstate: KBStates = 'PUBLISHED';
     features?: string;
+    standalone = false;
     proxy = false;
     csspath?: string;
     id?: string;
@@ -135,6 +136,7 @@
   let client = $derived(componentProps.client || config.client);
   let kbstate = $derived(componentProps.kbstate || config.kbstate);
   let features = $derived(componentProps.features || config.features);
+  let standalone = $derived(componentProps.standalone || config.standalone);
   let proxy = $derived(componentProps.proxy || config.proxy);
   let csspath = $derived(componentProps.csspath || config.csspath);
   let id = $derived(componentProps.id || config.id);
@@ -303,6 +305,7 @@
       knowledgeBox: knowledgebox,
       client,
       apiKey: apikey,
+      standalone,
       proxy,
       account,
       accountId: account,

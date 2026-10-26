@@ -36,6 +36,7 @@
     client?: string;
     kbstate?: KBStates;
     features?: string;
+    standalone?: boolean;
     proxy?: boolean;
     filters?: string;
     labelsets_excluded_from_filters?: string;
@@ -85,6 +86,7 @@
     client = 'widget',
     kbstate = 'PUBLISHED',
     features = '',
+    standalone = false,
     proxy = false,
     filters = '',
     labelsets_excluded_from_filters = '',
@@ -227,6 +229,7 @@
           {client}
           {kbstate}
           {features}
+          {standalone}
           {proxy}
           {filters}
           {labelsets_excluded_from_filters}

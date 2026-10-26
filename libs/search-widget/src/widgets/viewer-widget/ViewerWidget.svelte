@@ -47,6 +47,7 @@
     client?: string;
     kbstate?: KBStates;
     features?: string;
+    standalone?: boolean;
     proxy?: boolean;
     csspath?: string;
     no_tracking?: boolean;
@@ -66,6 +67,7 @@
     client = 'widget',
     kbstate = 'PUBLISHED',
     features = '',
+    standalone = false,
     proxy = false,
     csspath = '',
     no_tracking = false,
@@ -140,6 +142,7 @@
         apiKey: apikey,
         account,
         accountId: account,
+        standalone,
         proxy,
       },
       kbstate,

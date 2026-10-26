@@ -104,6 +104,7 @@
     client = 'widget';
     kbstate: KBStates = 'PUBLISHED';
     features?: string;
+    standalone = false;
     proxy = false;
     mode?: string;
     filters?: string;
@@ -158,6 +159,7 @@
   let client = $derived(componentProps.client || config.client);
   let kbstate = $derived(componentProps.kbstate || config.kbstate);
   let features = $derived(componentProps.features || config.features);
+  let standalone = $derived(componentProps.standalone || config.standalone);
   let proxy = $derived(componentProps.proxy || config.proxy);
   let mode = $derived(componentProps.mode || config.mode);
   let filters = $derived(componentProps.filters || config.filters);
@@ -269,6 +271,7 @@
       _filter_expression,
       mode,
       proxy,
+      standalone,
       backend,
       zone,
       knowledgebox,
@@ -358,6 +361,7 @@
       knowledgeBox: knowledgebox,
       client,
       apiKey: apikey,
+      standalone,
       proxy,
       account,
       accountId: account,

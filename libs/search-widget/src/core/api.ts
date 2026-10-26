@@ -624,7 +624,9 @@ export const getRegionalBackend = () => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.options.proxy ? `${nucliaApi.options.backend}/v1` : nucliaApi.regionalBackend + '/v1';
+  return nucliaApi.options.standalone || nucliaApi.options.proxy
+    ? `${nucliaApi.options.backend}/v1`
+    : nucliaApi.regionalBackend + '/v1';
 };
 
 export const getTempToken = (): Observable<string> => {
@@ -634,8 +636,15 @@ export const getTempToken = (): Observable<string> => {
   return nucliaApi.knowledgeBox.getTempToken();
 };
 
+export function getPdfSrc(path: string): string | { url: string; httpHeaders: any } {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.options.standalone ? { url: path, httpHeaders: { 'X-NUCLIADB-ROLES': 'READER' } } : path;
+}
+
 export const isPrivateKnowledgeBox = (): boolean => {
-  return STATE === 'PRIVATE';
+  return STATE === 'PRIVATE' || !!nucliaApi?.options?.standalone;
 };
 
 export const hasAuthData = (): boolean => {
