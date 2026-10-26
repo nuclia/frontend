@@ -1,13 +1,12 @@
 import { ChangeDetectorRef, Directive, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { LearningConfigurations, GenerativeProviders, WritableKnowledgeBox } from '@nuclia/core';
 import { FeaturesService, SDKService, UnauthorizedFeatureModalComponent } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { GenerativeProviders, LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Directive({
   selector: '[stfLearningConfiguration]',
-  standalone: true,
 })
 export abstract class LearningConfigurationDirective implements OnChanges {
   protected sdk = inject(SDKService);

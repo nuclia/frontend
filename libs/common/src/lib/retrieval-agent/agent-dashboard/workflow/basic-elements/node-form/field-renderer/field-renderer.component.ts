@@ -1,9 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { FieldConfig } from '../field-config.service';
 
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { RulesFieldComponent } from '../../rules-field/rules-field.component';
 import {
   ArrayStringFieldComponent,
   CodeEditorComponent,
@@ -13,16 +15,13 @@ import {
   SynonymsFieldComponent,
   TransportFieldComponent,
 } from '../subcomponents';
+import { FilteredSourceSelectComponent } from '../subcomponents/filtered-source-select/filtered-source-select.component';
 import { ModelSelectComponent } from '../subcomponents/model-select/model-select.component';
 import { SubformFieldComponent } from '../subcomponents/subform-field/subform-field.component';
-import { FilteredSourceSelectComponent } from '../subcomponents/filtered-source-select/filtered-source-select.component';
-import { RulesFieldComponent } from '../../rules-field/rules-field.component';
-import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-field-renderer',
   templateUrl: './field-renderer.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     ArrayStringFieldComponent,

@@ -1,11 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'driver-expandable-textarea',
-  standalone: true,
   imports: [ReactiveFormsModule, ExpandableTextareaComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `

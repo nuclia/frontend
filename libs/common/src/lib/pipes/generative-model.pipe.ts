@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'generativeModel',
-  standalone: true,
 })
 export class GenerativeModelPipe implements PipeTransform {
   constructor(private translate: TranslateService) {}

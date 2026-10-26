@@ -12,7 +12,6 @@ import { aragUrl } from '../../../../workflow.state';
 @Component({
   selector: 'app-filtered-source-select',
   templateUrl: './filtered-source-select.component.html',
-  standalone: true,
   imports: [ReactiveFormsModule, PaTextFieldModule, PaButtonModule, RouterLink, TranslatePipe, InfoCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

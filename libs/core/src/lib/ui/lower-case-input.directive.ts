@@ -4,7 +4,6 @@ import { Subject, takeUntil } from 'rxjs';
 
 @Directive({
   selector: '[stfLowerCaseInput]',
-  standalone: true,
 })
 export class LowerCaseInputDirective implements OnInit, OnDestroy {
   private control = inject(NgControl);

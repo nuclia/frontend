@@ -8,7 +8,6 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
   templateUrl: './knowledge-box-keys.component.html',
   styleUrls: ['./knowledge-box-keys.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslatePipe, ServiceAccessComponent],
 })
 export class KnowledgeBoxKeysComponent {

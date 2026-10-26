@@ -1,9 +1,8 @@
-import { AfterViewInit, Directive, EventEmitter, inject, Output } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { AfterViewInit, Directive, EventEmitter, inject, Output } from '@angular/core';
 
 @Directive({
   selector: 'cdk-virtual-scroll-viewport[tableVirtualScroll]',
-  standalone: true,
 })
 export class TableVirtualScrollDirective implements AfterViewInit {
   viewport = inject(CdkVirtualScrollViewport, { host: true });

@@ -1,23 +1,23 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
+  OnDestroy,
   OnInit,
   inject,
-  ChangeDetectionStrategy,
   signal,
-  ChangeDetectorRef,
-  OnDestroy,
 } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 
-import { DriverFieldConfigService, DriverFieldConfig } from '../driver-field-config.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
-import { KeyValueFieldComponent } from '../key-value-field/key-value-field.component';
-import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
-import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
 import { Subject, takeUntil } from 'rxjs';
+import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
+import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
+import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
+import { DriverFieldConfig, DriverFieldConfigService } from '../driver-field-config.service';
+import { KeyValueFieldComponent } from '../key-value-field/key-value-field.component';
 
 export interface RenderableDriverSubfield {
   key: string;
@@ -32,7 +32,6 @@ export interface RenderableDriverSubfield {
   templateUrl: './driver-subform-field.component.html',
   styleUrls: ['./driver-subform-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ArrayStringFieldComponent,
     ReactiveFormsModule,

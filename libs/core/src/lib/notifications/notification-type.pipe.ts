@@ -3,7 +3,6 @@ import { NotificationUI } from './notification.model';
 
 @Pipe({
   name: 'notificationType',
-  standalone: true,
 })
 export class NotificationTypePipe implements PipeTransform {
   transform(notification: NotificationUI): string {

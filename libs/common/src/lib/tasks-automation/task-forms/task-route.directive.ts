@@ -1,13 +1,12 @@
 import { Directive, inject } from '@angular/core';
-import { filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TasksAutomationService } from '../tasks-automation.service';
 import { TaskName, TaskParameters } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
+import { filter, map, shareReplay, switchMap, take } from 'rxjs';
+import { TasksAutomationService } from '../tasks-automation.service';
 
 @Directive({
   selector: '[stfTaskRoute]',
-  standalone: true,
 })
 export class TaskRouteDirective {
   protected activeRoute = inject(ActivatedRoute);

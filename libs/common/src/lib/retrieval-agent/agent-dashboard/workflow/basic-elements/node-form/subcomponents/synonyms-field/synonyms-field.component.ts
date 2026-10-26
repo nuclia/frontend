@@ -21,7 +21,6 @@ let synonymsIndex = 0;
   styleUrls: ['./synonyms-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

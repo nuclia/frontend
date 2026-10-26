@@ -32,7 +32,6 @@ export interface RenderableField {
   templateUrl: './node-form.component.html',
   styleUrls: ['./node-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, ConfigurationFormComponent, CommonModule, FieldRendererComponent],
 })
 export class NodeFormComponent extends FormDirective implements OnInit, OnDestroy {

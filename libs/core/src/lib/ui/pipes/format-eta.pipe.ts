@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'formatETA',
-  standalone: true,
 })
 export class FormatETAPipe implements PipeTransform {
   transform(value: number | null | undefined): string {

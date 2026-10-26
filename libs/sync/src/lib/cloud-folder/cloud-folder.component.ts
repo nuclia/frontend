@@ -25,7 +25,6 @@ import {
 } from '@nuclia/sistema';
 
 @Component({
-  standalone: true,
   imports: [
     ButtonMiniComponent,
     ReactiveFormsModule,

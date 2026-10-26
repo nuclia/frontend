@@ -1,11 +1,10 @@
 import { AfterViewInit, ChangeDetectorRef, Directive, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
+import * as d3 from 'd3';
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
-import * as d3 from 'd3';
 
 @Directive({
   selector: '[stfBaseChart]',
-  standalone: true,
 })
 export abstract class BaseChartDirective implements AfterViewInit, OnDestroy {
   @ViewChild('container') container: ElementRef | undefined;
@@ -34,8 +33,6 @@ export abstract class BaseChartDirective implements AfterViewInit, OnDestroy {
   }
 
   private removeExistingChartFromParent(): void {
-    d3.select(this.container?.nativeElement)
-      .select('svg')
-      .remove();
+    d3.select(this.container?.nativeElement).select('svg').remove();
   }
 }

@@ -7,7 +7,6 @@ import { NodeConfig } from '../../workflow.models';
 
 @Component({
   selector: 'app-rules-field',
-  standalone: true,
   imports: [ReactiveFormsModule, ExpandableTextareaComponent, PaButtonModule, TranslatePipe],
   templateUrl: './rules-field.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

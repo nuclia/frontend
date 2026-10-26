@@ -21,7 +21,6 @@ import { ActivityLogTableModalComponent } from './log-table-modal.component';
 import { LogEntry, LogValueObject, LogValueString } from './log.models';
 
 @Component({
-  standalone: true,
   imports: [
     ButtonMiniComponent,
     PaTableModule,

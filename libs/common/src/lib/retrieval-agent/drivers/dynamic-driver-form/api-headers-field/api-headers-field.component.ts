@@ -14,7 +14,6 @@ export interface HeaderEntry {
   templateUrl: './api-headers-field.component.html',
   styleUrls: ['./api-headers-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, PaTextFieldModule, PaButtonModule, PaIconModule, TranslatePipe],
 })
 export class ApiHeadersFieldComponent implements OnInit {
