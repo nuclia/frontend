@@ -25,7 +25,7 @@ describe('SearchWidgetService', () => {
           useValue: {
             currentKb: of({ id: 'kb-id', state: 'PUBLIC', slug: 'kb-slug' }),
             currentAccount: of({ id: 'account-id' }),
-            nuclia: { options: { standalone: false, zone: 'europe-1' } },
+            nuclia: { options: { zone: 'europe-1' } },
           },
         },
         {

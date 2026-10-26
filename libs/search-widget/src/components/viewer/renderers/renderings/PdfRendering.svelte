@@ -4,7 +4,7 @@
   import { debounceTime, filter, Subject } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
   import { IconButton, isMobileViewport, Spinner } from '../../../../common';
-  import { getVendorsCDN, getPdfSrc } from '../../../../core';
+  import { getVendorsCDN } from '../../../../core';
   import { _ } from '../../../../core/i18n';
   import { getUnMarked } from '../../utils';
 
@@ -84,7 +84,7 @@
     linkService.setViewer(pdfViewer);
 
     // Load the pdf and pass it to PDF.js
-    const loadingTask = pdfJsLib.getDocument(getPdfSrc(src));
+    const loadingTask = pdfJsLib.getDocument(src);
     loadingTask.promise.then(
       (pdf) => {
         pdfViewer.setDocument(pdf);
