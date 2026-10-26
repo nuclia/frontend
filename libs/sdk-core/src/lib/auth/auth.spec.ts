@@ -283,9 +283,6 @@ describe('Authentication', () => {
     it('should delete authenticated user and clear stored tokens', async () => {
       const nuclia = createNuclia({
         options: { knowledgeBox: 'kb' },
-        rest: {
-          delete: jest.fn(() => of(void 0)),
-        },
       });
       auth = new Authentication(nuclia);
       localStorage.setItem(LOCALSTORAGE_AUTH_KEY, 'token');

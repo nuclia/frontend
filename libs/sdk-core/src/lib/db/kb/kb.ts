@@ -61,6 +61,8 @@ import { ActivityMonitor } from './activity';
 import { AgenticConfig, AgenticConfigs, AgenticConfigSchema, AgenticSource, AgenticSources } from './kb-agentic.models';
 import {
   Counters,
+  DeletedResources,
+  DeleteResourcesFilter,
   Entities,
   EntitiesGroup,
   ExtractConfig,
@@ -1388,5 +1390,16 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteProcessingHook(): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/processing_webhooks/webhook/default`);
+  }
+
+  deleteAllResources(filter: DeleteResourcesFilter): Observable<DeletedResources> {
+    return this.nuclia.rest.delete<DeletedResources>(
+      `${this.path}/resources`,
+      undefined,
+      undefined,
+      undefined,
+      filter,
+      false,
+    );
   }
 }

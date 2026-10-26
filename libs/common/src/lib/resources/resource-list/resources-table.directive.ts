@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, DestroyRef, Directive, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BulkAction,
   ColumnHeader,
   FeaturesService,
+  buildResourceFilterExpression,
   MenuAction,
   PAGE_SIZES,
   ResourceListService,
@@ -12,7 +13,7 @@ import {
 } from '@flaps/core';
 import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
+import { HIDDEN_PREFIX, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
@@ -25,13 +26,13 @@ import {
   mergeMap,
   Observable,
   of,
-  Subject,
   take,
   tap,
   toArray,
 } from 'rxjs';
-import { delay, map, switchMap, takeUntil } from 'rxjs/operators';
+import { delay, finalize, map, switchMap } from 'rxjs/operators';
 import { ResourceCacheService } from '../resource-cache.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false },
@@ -45,7 +46,7 @@ export const COMMON_COLUMNS = [
 ];
 
 @Directive({ selector: '[stfResourcesTable]' })
-export class ResourcesTableDirective implements OnInit, OnDestroy {
+export class ResourcesTableDirective implements OnInit {
   protected resourceListService = inject(ResourceListService);
   protected resourceCacheService = inject(ResourceCacheService);
   protected sdk: SDKService = inject(SDKService);
@@ -56,6 +57,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected toaster = inject(SisToastService);
   protected translate = inject(TranslateService);
   protected features = inject(FeaturesService);
+  protected destroyRef = inject(DestroyRef);
 
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
@@ -66,7 +68,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   pageSize = this.resourceListService.pageSize;
   pageSizes = PAGE_SIZES;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
-  unsubscribeAll = new Subject<void>();
 
   isSummarizationAuthorized = this.features.authorized.summarization;
 
@@ -123,15 +124,10 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     combineLatest([this.data, this.page])
-      .pipe(takeUntil(this.unsubscribeAll))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.clearSelection();
       });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   protected getApplySortingMapper() {
@@ -260,56 +256,118 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     );
   }
 
+  private confirmDelete(multiple: boolean) {
+    const title = multiple ? 'resource.confirm-delete.plural-title' : 'resource.confirm-delete.title';
+    const message = multiple ? 'resource.confirm-delete.plural-description' : 'resource.confirm-delete.description';
+    return this.modalService.openConfirm({
+      title,
+      description: message,
+      confirmLabel: 'generic.delete',
+      isDestructive: true,
+    }).onClose;
+  }
+
+  private onDeleteComplete() {
+    this.resourceCacheService.invalidate();
+    this.resourceCacheService.notifyDeletion();
+    this.sdk.refreshCounter(true);
+    this.cdr.markForCheck();
+  }
+
   delete(resources: Resource[]) {
-    const title = resources.length > 1 ? 'resource.confirm-delete.plural-title' : 'resource.confirm-delete.title';
-    const message =
-      resources.length > 1 ? 'resource.confirm-delete.plural-description' : 'resource.confirm-delete.description';
-    return this.modalService
-      .openConfirm({
-        title,
-        description: message,
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((yes) => !!yes),
-        tap(() => {
-          this.isLoading = true;
-          if (resources.length > 1) {
-            this.bulkAction = {
-              inProgress: true,
-              done: 0,
-              errors: 0,
-              total: resources.length,
-              label: 'generic.deleting',
-            };
-            this.cdr.markForCheck();
-          }
-        }),
-        switchMap(() => {
-          const bulkActionItems = resources.map((resource) => this.updateBulkAction(defer(() => resource.delete())));
-          return from(bulkActionItems);
-        }),
-        mergeMap((obs) => obs, 6),
-        toArray(),
-        delay(1000),
-        switchMap(() => this.resourceListService.loadResources()),
-        tap(() => {
-          this.manageBulkActionResults('deleting');
-          this.resourceCacheService.invalidate();
-          this.resourceCacheService.notifyDeletion();
-          this.sdk.refreshCounter(true);
+    return this.confirmDelete(resources.length > 1).pipe(
+      filter((yes) => !!yes),
+      tap(() => {
+        this.isLoading = true;
+        if (resources.length > 1) {
+          this.bulkAction = {
+            inProgress: true,
+            done: 0,
+            errors: 0,
+            total: resources.length,
+            label: 'generic.deleting',
+          };
           this.cdr.markForCheck();
-        }),
-      );
+        }
+      }),
+      switchMap(() => {
+        const bulkActionItems = resources.map((resource) => this.updateBulkAction(defer(() => resource.delete())));
+        return from(bulkActionItems);
+      }),
+      mergeMap((obs) => obs, 6),
+      toArray(),
+      delay(1000),
+      switchMap(() => this.resourceListService.loadResources()),
+      tap(() => {
+        this.manageBulkActionResults('deleting');
+        this.onDeleteComplete();
+      }),
+    );
+  }
+
+  deleteAll() {
+    return this.confirmDelete(true).pipe(
+      filter((yes) => !!yes),
+      tap(() => {
+        this.isLoading = true;
+        this.cdr.markForCheck();
+      }),
+      switchMap(() =>
+        combineLatest([this.resourceListService.filters, this.resourceListService.labelsLogic, this.sdk.currentKb]),
+      ),
+      take(1),
+      switchMap(([filters, labelsLogic, kb]) => {
+        let filterExpression = buildResourceFilterExpression(filters, labelsLogic, this.resourceListService.status);
+        if (!filterExpression) {
+          // To delete everything, we use a filter expression that matches all resources
+          filterExpression = { not: { prop: 'resource', id: '11111111-1111-1111-1111-111111111111' } };
+        }
+        return kb.deleteAllResources({ filter_expression: { resource: filterExpression } });
+      }),
+      tap(() => this.toaster.warning('resource.delete-all-warning')),
+      switchMap(() =>
+        // Wait until all the resources are deleted (notifications triggers totalItems refresh)
+        this.resourceListService.totalItems.pipe(
+          takeUntilDestroyed(this.destroyRef),
+          filter((total) => total === 0),
+          take(1),
+        ),
+      ),
+      catchError(() => {
+        this.toaster.error('error.deleting-resource');
+        return of(null);
+      }),
+      tap(() => {
+        this.afterBulkActions();
+        this.onDeleteComplete();
+      }),
+    );
   }
 
   bulkDelete() {
-    const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
-    resourcesObs.pipe(switchMap((resources) => this.delete(resources))).subscribe();
-    if (this.allResourcesSelected) {
-      this.allResourcesSelected = false;
-    }
+    combineLatest([this.resourceListService.query, this.resourceListService.filters])
+      .pipe(
+        take(1),
+        switchMap(([query, filters]) => {
+          // If all the resources are selected, we can delete them with a single request.
+          // Except when a visibility filter or query is applied, since filter expressions don't support them.
+          const hasVisibilityFilter = filters.some((filter) => filter.startsWith(HIDDEN_PREFIX));
+          const canUseSingleRequest = this.allResourcesSelected && !hasVisibilityFilter && !query;
+          if (canUseSingleRequest) {
+            return this.deleteAll();
+          } else {
+            const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
+            return resourcesObs.pipe(switchMap((resources) => this.delete(resources)));
+          }
+        }),
+        finalize(() => {
+          if (this.allResourcesSelected) {
+            this.allResourcesSelected = false;
+            this.cdr.markForCheck();
+          }
+        }),
+      )
+      .subscribe();
   }
 
   reprocess(resources: Resource[]) {
