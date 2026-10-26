@@ -19,7 +19,7 @@
   </div>
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="repeat(7, 1fr) 96px">
+    <pa-table columns="1fr minmax(300px, 1fr) repeat(6, 1fr) 96px">
       <pa-table-header noBackground>
         <pa-table-cell header>Id</pa-table-cell>
         <pa-table-cell header>Email</pa-table-cell>
@@ -28,6 +28,7 @@
         <pa-table-cell header>Type</pa-table-cell>
         <pa-table-cell header>Workflow</pa-table-cell>
         <pa-table-cell header>Creation</pa-table-cell>
+        <pa-table-cell header>Trial Expiration</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
       @for (account of accounts$ | async | slice: 0 : lastIndex; track account) {
@@ -37,16 +38,36 @@
           <pa-table-cell>
             <small>{{ account.id }}</small>
           </pa-table-cell>
-          <pa-table-cell>{{ account.email }}</pa-table-cell>
-          <pa-table-cell>{{ account.title }}</pa-table-cell>
-          <pa-table-cell>{{ account.slug }}</pa-table-cell>
-          <pa-table-cell>{{ account.type }}</pa-table-cell>
-          <pa-table-cell>{{ account.workflow }}</pa-table-cell>
           <pa-table-cell>
-            <pa-datetime
-              [datetime]="account.created + '+00:00'"
-              format="numerical"
-              dateOnly></pa-datetime>
+            <small style="word-wrap: anywhere">{{ account.email }}</small>
+          </pa-table-cell>
+          <pa-table-cell>
+            <small>{{ account.title }}</small>
+          </pa-table-cell>
+          <pa-table-cell>
+            <small>{{ account.slug }}</small>
+          </pa-table-cell>
+          <pa-table-cell>
+            <small>{{ account.type }}</small>
+          </pa-table-cell>
+          <pa-table-cell>
+            <small>{{ account.workflow }}</small>
+          </pa-table-cell>
+          <pa-table-cell>
+            <small>
+              <pa-datetime
+                [datetime]="account.created + '+00:00'"
+                format="numerical"
+                dateOnly></pa-datetime>
+            </small>
+          </pa-table-cell>
+          <pa-table-cell>
+            <small>
+              <pa-datetime
+                [datetime]="account.trial_expiration_date"
+                format="numerical"
+                dateOnly></pa-datetime>
+            </small>
           </pa-table-cell>
           <pa-table-cell-menu>
             @if (canDelete | async) {

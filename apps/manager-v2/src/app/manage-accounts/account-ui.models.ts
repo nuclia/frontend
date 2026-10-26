@@ -19,6 +19,7 @@ export interface AccountSummary {
   email: string;
   labels: AccountLabels | null;
   workflow: WorkflowType;
+  trial_expiration_date?: string; // this is coming from the backend GET @accounts endpoint
 }
 
 export interface AccountDetails extends AccountSummary {
@@ -27,10 +28,10 @@ export interface AccountDetails extends AccountSummary {
   maxKbs: number;
   maxAgents: number;
   maxMemories: number;
-  trialExpirationDate?: string;
   users: AccountUser[];
   allowAccessNonEnterpriseModels: boolean;
   zoneVisibility: ZoneVisibility;
+  trialExpirationDate?: string;
 }
 
 export interface KbSummary {
