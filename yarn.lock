@@ -9346,9 +9346,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@spartan-ng/brain@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@spartan-ng/brain@npm:1.4.1"
+"@spartan-ng/brain@npm:1.6.3":
+  version: 1.6.3
+  resolution: "@spartan-ng/brain@npm:1.6.3"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
@@ -9364,13 +9364,13 @@ __metadata:
   peerDependenciesMeta:
     luxon:
       optional: true
-  checksum: 10/c4e17b0d6749e16915772304ec07312ed88341c6c4f9f543e20b35a21cf32efcd165c335a5c391ba77dc28125c87f0f1417f7df1b512ce6e1ff7185cfb245dc0
+  checksum: 10/70ef1694f5e047c0371bb988ed9eb4d2998b0877a0e2edf12e63fd573439080e8d879e60a691e6367968ed209835bb17b6d4dc18790580a29f44e70d2625b495
   languageName: node
   linkType: hard
 
-"@spartan-ng/cli@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@spartan-ng/cli@npm:1.4.1"
+"@spartan-ng/cli@npm:1.6.3":
+  version: 1.6.3
+  resolution: "@spartan-ng/cli@npm:1.6.3"
   dependencies:
     "@angular/core": "npm:>=21.0.0"
     "@nx/angular": "npm:>=21.0.0"
@@ -9393,7 +9393,7 @@ __metadata:
     zod: "npm:^3.25.76"
   peerDependencies:
     tslib: ^2.3.0
-  checksum: 10/c7d066eb43c6953922951defb553d308fd3e400cd501a1ce6f6095b88726ae01cde15066c8bb12343e835ab7d9df051402816e377f01fb7c7e3ea9342aa365e2
+  checksum: 10/8d49e9b7007d7236acb7977a90aa8af5b37129c12b6ea0ed868009f282ea9a1332aaf5b535459fd443ffb53a26fee0477adf96973ec3a0674b144c6d951ceef5
   languageName: node
   linkType: hard
 
@@ -22348,8 +22348,8 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^12.3.0"
     "@schematics/angular": "npm:22.1.7"
     "@sentry/angular": "npm:10.65.0"
-    "@spartan-ng/brain": "npm:^1.4.1"
-    "@spartan-ng/cli": "npm:^1.4.1"
+    "@spartan-ng/brain": "npm:1.6.3"
+    "@spartan-ng/cli": "npm:1.6.3"
     "@storybook/addon-docs": "npm:^10.6.0"
     "@storybook/addon-themes": "npm:^10"
     "@storybook/angular": "npm:^10.5.0"
