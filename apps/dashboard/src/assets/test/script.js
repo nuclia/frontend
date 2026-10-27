@@ -13,8 +13,19 @@
 
   function addWidget() {
     const params = new URLSearchParams(window.location.search);
-    const { zone, knowledgebox, account, widget_id, mode, apikey, knowledgebox_name, widget_name, expiration, env } =
-      Object.fromEntries(params);
+    const {
+      zone,
+      knowledgebox,
+      account,
+      widget_id,
+      config_id,
+      mode,
+      apikey,
+      knowledgebox_name,
+      widget_name,
+      expiration,
+      env,
+    } = Object.fromEntries(params);
 
     if (!zone || !knowledgebox || !account || !widget_id || !mode) {
       console.error('Missing URL parameters');
@@ -39,6 +50,7 @@
     element.setAttribute('knowledgebox', knowledgebox);
     element.setAttribute('account', account);
     element.setAttribute('widget_id', widget_id);
+    element.setAttribute('audit_metadata', `{"config": "${config_id}", "widget":"${widget_id}"}`);
     if (apikey) {
       element.setAttribute('apikey', apikey);
       element.setAttribute('state', 'PRIVATE');

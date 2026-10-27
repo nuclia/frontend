@@ -80,6 +80,7 @@ export class TestPageModalComponent {
       params.append('knowledgebox', kb.id);
       params.append('account', account.id);
       params.append('widget_id', values.widget);
+      params.append('config_id', selectedWidget?.searchConfigId || '');
       params.append('mode', selectedWidget?.widgetConfig?.widgetMode || '');
       params.append('knowledgebox_name', kb.title);
       params.append('widget_name', selectedWidget?.name || '');
