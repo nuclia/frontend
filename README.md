@@ -14,7 +14,7 @@
 - [Auth app and onboarding flow](#auth-app-and-onboarding-flow)
 - [Admin app](#admin-app)
 - [SDK](#sdk)
-- [Sistema](#sistema)
+- [Design system](#design-system)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
 - [Linters](#linters)
@@ -298,9 +298,11 @@ To make the locally-running dashboard app route account-management pages to your
 
 [Documentation](https://docs.nuclia.dev/docs/develop/js-sdk/)
 
-## Sistema
+## Design system
 
-Sistema is Nuclia's design system. It is based on [Pastanaga](https://github.com/plone/pastanaga-angular).
+### Sistema: old design system (deprecated)
+
+Sistema is Nuclia's first design system. It is based on [Pastanaga](https://github.com/plone/pastanaga-angular) — which is installed via mrs-developer — and lives in `./libs/sistema`.
 
 The demo is available at [https://nuclia.github.io/frontend](https://nuclia.github.io/frontend).
 
@@ -312,6 +314,16 @@ To update the glyphs sprite:
 ```shell
 ./libs/sistema/scripts/update_icons.sh
 ```
+
+Sistema and Pastanaga are now entering simple maintenance mode as we will switch to a new DS for the new PDP studio monorepo: if we find some bugs, we will fix them, but we won't add new components or new features to existing components.
+
+### UI lib: our new design system
+
+Our new design system is based on [Spartan](https://www.spartan.ng/documentation/introduction), an angular UI library based on ShadCN.
+
+It lives in `./libs/ui`.
+
+To start the storybook, run `nx run ui:storybook`.
 
 ## CI/CD Deployment
 

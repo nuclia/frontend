@@ -1,7 +1,6 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { HlmAvatarImports } from '../index';
 import { HlmAvatar } from './hlm-avatar';
-import { HlmAvatarFallback } from './hlm-avatar-fallback';
-import { HlmAvatarImage } from './hlm-avatar-image';
 
 interface AvatarStoryArgs {
   size: 'default' | 'sm' | 'lg';
@@ -16,14 +15,13 @@ const meta: Meta<AvatarStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     moduleMetadata({
-      imports: [HlmAvatarFallback, HlmAvatarImage],
+      imports: [...HlmAvatarImports],
     }),
   ],
   parameters: {
     docs: {
       description: {
-        component: `Display a user image with a text fallback when the image is unavailable.
-    Import <code>HlmAvatar</code>, <code>HlmAvatarImage</code>, and <code>HlmAvatarFallback</code> from <code>@nuclia/ui-spartan/avatar</code>; choose from three sizes to fit your layout.`,
+        component: `An image element with a fallback for representing the user.`,
       },
     },
   },
@@ -102,5 +100,42 @@ export const Sizes: Story = {
                 </hlm-avatar>
             </div>
         `,
+  }),
+};
+
+export const WithStatusBadge: Story = {
+  render: ({ size, fallback }) => ({
+    props: { size, fallback },
+    template: `
+      <hlm-avatar [size]="size">
+        <span hlmAvatarFallback>{{ fallback }}</span>
+        <span hlmAvatarBadge aria-label="Online"></span>
+      </hlm-avatar>
+    `,
+  }),
+};
+
+export const Group: Story = {
+  parameters: {
+    controls: {
+      disable: true,
+    },
+  },
+  render: () => ({
+    template: `
+      <div hlmAvatarGroup role="group" aria-label="Project collaborators">
+        <hlm-avatar>
+          <span hlmAvatarFallback aria-label="Alex Morgan">AM</span>
+          <span hlmAvatarBadge aria-label="Online"></span>
+        </hlm-avatar>
+        <hlm-avatar>
+          <span hlmAvatarFallback aria-label="Riley Chen">RC</span>
+        </hlm-avatar>
+        <hlm-avatar>
+          <span hlmAvatarFallback aria-label="Sam Patel">SP</span>
+        </hlm-avatar>
+        <span hlmAvatarGroupCount aria-label="2 more collaborators">+2</span>
+      </div>
+    `,
   }),
 };

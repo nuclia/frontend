@@ -6524,27 +6524,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ng-icons/core@npm:>=32.0.0 <34.0.0":
-  version: 33.4.0
-  resolution: "@ng-icons/core@npm:33.4.0"
+"@ng-icons/core@npm:^32.2.0":
+  version: 32.5.0
+  resolution: "@ng-icons/core@npm:32.5.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular-devkit/schematics": ">=21.0.0"
-    "@angular/common": ">=21.0.0"
-    "@angular/core": ">=21.0.0"
-    "@schematics/angular": ">=21.0.0"
+    "@angular/common": ">=20.0.0"
+    "@angular/core": ">=20.0.0"
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/8622f65a4fa045e7060bc0032574ff420e30217f3e56f2101962a888a952f13e71d511c28fc45d8df5c4023a566d71890f89ea3a706473f25dad304785f3dfc1
+  checksum: 10/8b2ea3f6b5a1c92df30c6ac84f7bc02ece4e2192ff2ac22061e4d441b25c5445409a13d4b4f6334a305300449e45115c48193ee5fe8e99ce4888f449687b5bc9
   languageName: node
   linkType: hard
 
-"@ng-icons/lucide@npm:>=32.0.0 <34.0.0":
-  version: 33.4.0
-  resolution: "@ng-icons/lucide@npm:33.4.0"
+"@ng-icons/lucide@npm:^32.2.0":
+  version: 32.5.0
+  resolution: "@ng-icons/lucide@npm:32.5.0"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/56ede4c0c44e23c9228012fd01f075a74f169cbe4cce076ccd8c6fa8e7f681b3a2da5062699f32b96965ebcf088662cfa40c512904a75e49eaed1dce04cf7502
+  checksum: 10/67904ba8350150132be3af7df6e8b23e20acc6cab1f54ce41a05d8dde11e473d5249b14c0208b97bb7991e6ad99329182a012260b4242b97d3658ed3c8e0679f
   languageName: node
   linkType: hard
 
@@ -9346,9 +9344,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@spartan-ng/brain@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@spartan-ng/brain@npm:1.4.1"
+"@spartan-ng/brain@npm:1.6.3":
+  version: 1.6.3
+  resolution: "@spartan-ng/brain@npm:1.6.3"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
@@ -9364,13 +9362,13 @@ __metadata:
   peerDependenciesMeta:
     luxon:
       optional: true
-  checksum: 10/c4e17b0d6749e16915772304ec07312ed88341c6c4f9f543e20b35a21cf32efcd165c335a5c391ba77dc28125c87f0f1417f7df1b512ce6e1ff7185cfb245dc0
+  checksum: 10/70ef1694f5e047c0371bb988ed9eb4d2998b0877a0e2edf12e63fd573439080e8d879e60a691e6367968ed209835bb17b6d4dc18790580a29f44e70d2625b495
   languageName: node
   linkType: hard
 
-"@spartan-ng/cli@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@spartan-ng/cli@npm:1.4.1"
+"@spartan-ng/cli@npm:1.6.3":
+  version: 1.6.3
+  resolution: "@spartan-ng/cli@npm:1.6.3"
   dependencies:
     "@angular/core": "npm:>=21.0.0"
     "@nx/angular": "npm:>=21.0.0"
@@ -9393,7 +9391,7 @@ __metadata:
     zod: "npm:^3.25.76"
   peerDependencies:
     tslib: ^2.3.0
-  checksum: 10/c7d066eb43c6953922951defb553d308fd3e400cd501a1ce6f6095b88726ae01cde15066c8bb12343e835ab7d9df051402816e377f01fb7c7e3ea9342aa365e2
+  checksum: 10/8d49e9b7007d7236acb7977a90aa8af5b37129c12b6ea0ed868009f282ea9a1332aaf5b535459fd443ffb53a26fee0477adf96973ec3a0674b144c6d951ceef5
   languageName: node
   linkType: hard
 
@@ -9989,6 +9987,87 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/angular-charts@npm:0.16.0":
+  version: 0.16.0
+  resolution: "@tanstack/angular-charts@npm:0.16.0"
+  dependencies:
+    "@tanstack/charts": "npm:0.16.0"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    "@angular/core": ">=19"
+    "@angular/platform-browser": ">=19"
+  checksum: 10/84e6df1a635d8fa8fdfa0bf6dd0f741bdd367e4a936fd729cca5091edd308dbfd04cd18bef09cc7fe7a44779c25d289e5d65bf14444b18c0dff969432ccc0c52
+  languageName: node
+  linkType: hard
+
+"@tanstack/charts@npm:0.16.0":
+  version: 0.16.0
+  resolution: "@tanstack/charts@npm:0.16.0"
+  dependencies:
+    "@types/d3-force": "npm:^3.0.10"
+    "@types/d3-geo": "npm:^3.1.0"
+    "@types/d3-hierarchy": "npm:^3.1.7"
+    "@types/d3-sankey": "npm:^0.12.5"
+    "@types/d3-shape": "npm:^3.1.8"
+    d3-array: "npm:3.2.4"
+    d3-brush: "npm:3.0.0"
+    d3-contour: "npm:4.0.2"
+    d3-delaunay: "npm:6.0.4"
+    d3-force: "npm:3.0.0"
+    d3-geo: "npm:3.1.1"
+    d3-hexbin: "npm:0.2.2"
+    d3-hierarchy: "npm:3.1.2"
+    d3-sankey: "npm:0.12.3"
+    d3-scale: "npm:4.0.2"
+    d3-selection: "npm:3.0.0"
+    d3-shape: "npm:3.2.0"
+    d3-zoom: "npm:3.0.0"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    "@angular/core": ">=19"
+    "@angular/platform-browser": ">=19"
+    alpinejs: ">=3.15"
+    lit: ">=3.1.3"
+    octane: ^0.1.13
+    preact: ">=10"
+    react: ^19.0.0
+    react-dom: ^19.0.0
+    react-native: ^0.86.0
+    react-native-svg: ">=15.15.4 <16"
+    solid-js: ">=1.8"
+    svelte: ^5.20.0
+    vue: ">=3.5"
+  peerDependenciesMeta:
+    "@angular/core":
+      optional: true
+    "@angular/platform-browser":
+      optional: true
+    alpinejs:
+      optional: true
+    lit:
+      optional: true
+    octane:
+      optional: true
+    preact:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+    react-native-svg:
+      optional: true
+    solid-js:
+      optional: true
+    svelte:
+      optional: true
+    vue:
+      optional: true
+  checksum: 10/0fb8e80dbe0fcdc3cf1bba2d554993419a3af8053722f68f755f11a57cbdf31f514ae8944ae17440e623cdd0aa9c31bc2f7b49a29190b03ce143d0ec349c8153
+  languageName: node
+  linkType: hard
+
 "@testing-library/dom@npm:10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
@@ -10357,7 +10436,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/d3-force@npm:*":
+"@types/d3-force@npm:*, @types/d3-force@npm:^3.0.10":
   version: 3.0.10
   resolution: "@types/d3-force@npm:3.0.10"
   checksum: 10/9c35abed2af91b94fc72d6b477188626e628ed89a01016437502c1deaf558da934b5d0cc808c2f2979ac853b6302b3d6ef763eddaff3a55552a55c0be710d5ca
@@ -10380,7 +10459,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/d3-hierarchy@npm:*":
+"@types/d3-geo@npm:^3.1.0":
+  version: 3.1.1
+  resolution: "@types/d3-geo@npm:3.1.1"
+  dependencies:
+    "@types/geojson": "npm:*"
+  checksum: 10/9543f4928f9289120e03e19c9057386eaa63078bf24b2712d2537438cd2f139f291b477e3055ebf6735b8ac392e8de5f5e59e523bfcaf02ca629d41231928adc
+  languageName: node
+  linkType: hard
+
+"@types/d3-hierarchy@npm:*, @types/d3-hierarchy@npm:^3.1.7":
   version: 3.1.7
   resolution: "@types/d3-hierarchy@npm:3.1.7"
   checksum: 10/9ff6cdedf5557ef9e1e7a65ca3c6846c895c84c1184e11ec6fa48565e96ebf5482d8be5cc791a8bc7f7debbd0e62604ee3da3ddca4f9d58bf6c8b4030567c6c6
@@ -10403,6 +10491,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/d3-path@npm:^1":
+  version: 1.0.11
+  resolution: "@types/d3-path@npm:1.0.11"
+  checksum: 10/faddcf4d636317aed4191afc55e0c49bfc9ccb24ab1594b8d0cd3aee5a522cd1fe51eb8ebc4e43494b6f78d8b0e8cae858495240830d32052ea1c10f0926626c
+  languageName: node
+  linkType: hard
+
 "@types/d3-polygon@npm:*":
   version: 3.0.2
   resolution: "@types/d3-polygon@npm:3.0.2"
@@ -10421,6 +10516,15 @@ __metadata:
   version: 3.0.3
   resolution: "@types/d3-random@npm:3.0.3"
   checksum: 10/2c126dda6846f6c7e02c9123a30b4cdf27f3655d19b78456bbb330fbac27acceeeb987318055d3964dba8e6450377ff737db91d81f27c81ca6f4522c9b994ef2
+  languageName: node
+  linkType: hard
+
+"@types/d3-sankey@npm:^0.12.5":
+  version: 0.12.5
+  resolution: "@types/d3-sankey@npm:0.12.5"
+  dependencies:
+    "@types/d3-shape": "npm:^1"
+  checksum: 10/cb5248028e2bf4a75a718aa8cd99d08823ae3a0ad582104de3f302eeecc756cdd18a71971e6788f649861dff498971ba7ca0facc37313ad36b74c280d0ce6ec7
   languageName: node
   linkType: hard
 
@@ -10453,6 +10557,24 @@ __metadata:
   dependencies:
     "@types/d3-path": "npm:*"
   checksum: 10/b7ddda2a9c916ba438308bfa6e53fa2bb11c2ce13537ba2a7816c16f9432287b57901921c7231d2924f2d7d360535c3795f017865ab05abe5057c6ca06ca81df
+  languageName: node
+  linkType: hard
+
+"@types/d3-shape@npm:^1":
+  version: 1.3.12
+  resolution: "@types/d3-shape@npm:1.3.12"
+  dependencies:
+    "@types/d3-path": "npm:^1"
+  checksum: 10/fcb51938332c9af5d749956385fe5b6a9cd9c174619f6bf5e419efa3c4d0d0b3df919eb971bf94cacd95a24dac10f97bcf373d1fe53dcd9ae2d5dd909cbec7f0
+  languageName: node
+  linkType: hard
+
+"@types/d3-shape@npm:^3.1.8":
+  version: 3.2.0
+  resolution: "@types/d3-shape@npm:3.2.0"
+  dependencies:
+    "@types/d3-path": "npm:*"
+  checksum: 10/4b34712f1cddc98dfe63b83740dcf31c49dbb0ce5696c58c80195217f933315774ec1ffd0fe9293386ddd2080b0b654644b433eef87d330c965e2c05c9ce71cb
   languageName: node
   linkType: hard
 
@@ -14656,7 +14778,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-array@npm:2 - 3, d3-array@npm:2.10.0 - 3, d3-array@npm:2.5.0 - 3, d3-array@npm:3, d3-array@npm:^3.2.0":
+"d3-array@npm:1 - 2":
+  version: 2.12.1
+  resolution: "d3-array@npm:2.12.1"
+  dependencies:
+    internmap: "npm:^1.0.0"
+  checksum: 10/9fdfb91f428915006e126090fe9aa9d5fcbecc78e925eceb32de9dfb989135f6ad940a8f1b086d0b569523679f85453c5335772aa9e6d5d41b480c2610857c7f
+  languageName: node
+  linkType: hard
+
+"d3-array@npm:2 - 3, d3-array@npm:2.10.0 - 3, d3-array@npm:2.5.0 - 3, d3-array@npm:3, d3-array@npm:3.2.4, d3-array@npm:^3.2.0":
   version: 3.2.4
   resolution: "d3-array@npm:3.2.4"
   dependencies:
@@ -14672,7 +14803,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-brush@npm:3":
+"d3-brush@npm:3, d3-brush@npm:3.0.0":
   version: 3.0.0
   resolution: "d3-brush@npm:3.0.0"
   dependencies:
@@ -14701,7 +14832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-contour@npm:4":
+"d3-contour@npm:4, d3-contour@npm:4.0.2":
   version: 4.0.2
   resolution: "d3-contour@npm:4.0.2"
   dependencies:
@@ -14710,7 +14841,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-delaunay@npm:6":
+"d3-delaunay@npm:6, d3-delaunay@npm:6.0.4":
   version: 6.0.4
   resolution: "d3-delaunay@npm:6.0.4"
   dependencies:
@@ -14773,7 +14904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-force@npm:3":
+"d3-force@npm:3, d3-force@npm:3.0.0":
   version: 3.0.0
   resolution: "d3-force@npm:3.0.0"
   dependencies:
@@ -14791,7 +14922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-geo@npm:3":
+"d3-geo@npm:3, d3-geo@npm:3.1.1":
   version: 3.1.1
   resolution: "d3-geo@npm:3.1.1"
   dependencies:
@@ -14800,7 +14931,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-hierarchy@npm:3":
+"d3-hexbin@npm:0.2.2":
+  version: 0.2.2
+  resolution: "d3-hexbin@npm:0.2.2"
+  checksum: 10/503b3dbb2244751b49c53e45756df2609b89f015848a28b323899e3cfc43aaae0ea65cb69db2148f91d839c320899fed5e7c6bf4cbd333e00013a4b040131581
+  languageName: node
+  linkType: hard
+
+"d3-hierarchy@npm:3, d3-hierarchy@npm:3.1.2":
   version: 3.1.2
   resolution: "d3-hierarchy@npm:3.1.2"
   checksum: 10/497b79dc6c35e28b21e8a7b94db92876abd1d4ec082d9803a07ea8964e55b0e71c511a21489363a36f1456f069adb8ff7d33c633678730d6ae961ed350b27733
@@ -14813,6 +14951,13 @@ __metadata:
   dependencies:
     d3-color: "npm:1 - 3"
   checksum: 10/988d66497ef5c190cf64f8c80cd66e1e9a58c4d1f8932d776a8e3ae59330291795d5a342f5a97602782ccbef21a5df73bc7faf1f0dc46a5145ba6243a82a0f0e
+  languageName: node
+  linkType: hard
+
+"d3-path@npm:1":
+  version: 1.0.9
+  resolution: "d3-path@npm:1.0.9"
+  checksum: 10/6ce1747837ea2a449d9ea32e169a382978ab09a4805eb408feb6bbc12cb5f5f6ce29aefc252dd9a815d420f4813d672f75578b78b3bbaf7811f54d8c7f93fd11
   languageName: node
   linkType: hard
 
@@ -14844,6 +14989,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"d3-sankey@npm:0.12.3":
+  version: 0.12.3
+  resolution: "d3-sankey@npm:0.12.3"
+  dependencies:
+    d3-array: "npm:1 - 2"
+    d3-shape: "npm:^1.2.0"
+  checksum: 10/d5c679135a26d435e9970de3fc0778c6ef5c911f0c878b246939517b57a8daa2e2db6ef99318a0dad16e6079e4b89ef9166f1f661d8d247637875b764628094d
+  languageName: node
+  linkType: hard
+
 "d3-scale-chromatic@npm:3":
   version: 3.1.0
   resolution: "d3-scale-chromatic@npm:3.1.0"
@@ -14854,7 +15009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-scale@npm:4":
+"d3-scale@npm:4, d3-scale@npm:4.0.2":
   version: 4.0.2
   resolution: "d3-scale@npm:4.0.2"
   dependencies:
@@ -14867,19 +15022,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-selection@npm:2 - 3, d3-selection@npm:3":
+"d3-selection@npm:2 - 3, d3-selection@npm:3, d3-selection@npm:3.0.0":
   version: 3.0.0
   resolution: "d3-selection@npm:3.0.0"
   checksum: 10/0e5acfd305b31628b7be5009ba7303d84bb34817a88ed4dde9c8bd9c23528573fc5272f89fc04e5be03d2cbf5441a248d7274aaf55a8ef3dad46e16333d72298
   languageName: node
   linkType: hard
 
-"d3-shape@npm:3":
+"d3-shape@npm:3, d3-shape@npm:3.2.0":
   version: 3.2.0
   resolution: "d3-shape@npm:3.2.0"
   dependencies:
     d3-path: "npm:^3.1.0"
   checksum: 10/2e861f4d4781ee8abd85d2b435f848d667479dcf01a4e0db3a06600a5bdeddedb240f88229ec7b3bf7fa300c2b3526faeaf7e75f9a24dbf4396d3cc5358ff39d
+  languageName: node
+  linkType: hard
+
+"d3-shape@npm:^1.2.0":
+  version: 1.3.7
+  resolution: "d3-shape@npm:1.3.7"
+  dependencies:
+    d3-path: "npm:1"
+  checksum: 10/1e40fdcfdc8edc9c53a77a6aaea2dbf31bf06df12ebd66cc8d91f76bbde753049ad21dfee0577f7dc5d0a4468554ede4783f6df7d809e291745334dba977c09e
   languageName: node
   linkType: hard
 
@@ -14923,7 +15087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-zoom@npm:3":
+"d3-zoom@npm:3, d3-zoom@npm:3.0.0":
   version: 3.0.0
   resolution: "d3-zoom@npm:3.0.0"
   dependencies:
@@ -15511,15 +15675,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.4.16":
-  version: 3.4.16
-  resolution: "dompurify@npm:3.4.16"
+"dompurify@npm:3.4.17":
+  version: 3.4.17
+  resolution: "dompurify@npm:3.4.17"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/a571d0e2bede4f739666afd640398a86854abd27c71ce0724910249e2fd2ca7ddb8098a9ab579d3a5b39058419af694421f8fe859a81fd6d8acda16019a8ab9d
+  checksum: 10/ae03c068bd351d1201a24a9667cb302c65939f45a0c357edec8b84133108e19ac74f355c2d8b0f30baadadd7f0be2db300d269aa80d3ee15872712ca9ff4e1a8
   languageName: node
   linkType: hard
 
@@ -15675,6 +15839,36 @@ __metadata:
     minimalistic-assert: "npm:^1.0.1"
     minimalistic-crypto-utils: "npm:^1.0.1"
   checksum: 10/dc678c9febd89a219c4008ba3a9abb82237be853d9fd171cd602c8fb5ec39927e65c6b5e7a1b2a4ea82ee8e0ded72275e7932bb2da04a5790c2638b818e4e1c5
+  languageName: node
+  linkType: hard
+
+"embla-carousel-angular@npm:^22.0.0":
+  version: 22.0.0
+  resolution: "embla-carousel-angular@npm:22.0.0"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ">=22.0.0"
+    "@angular/core": ">=22.0.0"
+    embla-carousel: ^8
+    embla-carousel-reactive-utils: ^8
+  checksum: 10/7d70179485e8472382195fe6fbaca7d9ef8aa767b0468aeeacf6360b7c2f9d214475a0610b8a87dfa4ac775f593483d11a2ceb8fbb888212bd6c54893cd54039
+  languageName: node
+  linkType: hard
+
+"embla-carousel-reactive-utils@npm:^8.0.0":
+  version: 8.6.0
+  resolution: "embla-carousel-reactive-utils@npm:8.6.0"
+  peerDependencies:
+    embla-carousel: 8.6.0
+  checksum: 10/48b31931572b32b49705e6125d4f10c240fca0ee8a078867fc91f7c889f6adee95f7fd0b0fdf5dfef6d83d497115759f3f3ca2e8320e331efa0de1c9e6fb4638
+  languageName: node
+  linkType: hard
+
+"embla-carousel@npm:>=8.0.0 <9.0.0":
+  version: 8.6.0
+  resolution: "embla-carousel@npm:8.6.0"
+  checksum: 10/6c1c4268160ce2a150c80f0c84edd4c42b47567f8ef25f56fb21819a4094cfa885614cb0837d180e8da8159ff79a077e0a2e1e679ed2c500ff52697d3ec94b78
   languageName: node
   linkType: hard
 
@@ -18128,6 +18322,13 @@ __metadata:
   version: 2.0.3
   resolution: "internmap@npm:2.0.3"
   checksum: 10/873e0e7fcfe32f999aa0997a0b648b1244508e56e3ea6b8259b5245b50b5eeb3853fba221f96692bd6d1def501da76c32d64a5cb22a0b26cdd9b445664f805e0
+  languageName: node
+  linkType: hard
+
+"internmap@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "internmap@npm:1.0.1"
+  checksum: 10/429cb9e28f393f10c73a826d71ba9e359711b7e42345bd684aba708f43b8139ce90f09b15abbf977a981474ac61615294854e5b9520d3f65187d0f6a2ff27665
   languageName: node
   linkType: hard
 
@@ -22056,6 +22257,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ngx-scrollbar@npm:^19.1.5":
+  version: 19.1.5
+  resolution: "ngx-scrollbar@npm:19.1.5"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/cdk": ">=20.0.0"
+    "@angular/common": ">=20.0.0"
+    "@angular/core": ">=20.0.0"
+    rxjs: ">=7.0.0"
+  checksum: 10/7cebb3196f5e229dae7a21006928532bf22106b5d8b8736d0456f44b14f612cb245484c14f4ac33c2a15102e6a44d5c7e9ab010ef40dddad036e16ef34e1bfe6
+  languageName: node
+  linkType: hard
+
 "no-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "no-case@npm:3.0.4"
@@ -22326,8 +22541,8 @@ __metadata:
     "@angular/service-worker": "npm:22.2.1"
     "@babel/core": "npm:^7.29.6"
     "@eslint/js": "npm:^9.35.0"
-    "@ng-icons/core": "npm:>=32.0.0 <34.0.0"
-    "@ng-icons/lucide": "npm:>=32.0.0 <34.0.0"
+    "@ng-icons/core": "npm:^32.2.0"
+    "@ng-icons/lucide": "npm:^32.2.0"
     "@ng-web-apis/common": "npm:^2.1.0"
     "@ngx-translate/core": "npm:18"
     "@ngx-translate/http-loader": "npm:^18.0.0"
@@ -22348,8 +22563,8 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^12.3.0"
     "@schematics/angular": "npm:22.1.7"
     "@sentry/angular": "npm:10.65.0"
-    "@spartan-ng/brain": "npm:^1.4.1"
-    "@spartan-ng/cli": "npm:^1.4.1"
+    "@spartan-ng/brain": "npm:1.6.3"
+    "@spartan-ng/cli": "npm:1.6.3"
     "@storybook/addon-docs": "npm:^10.6.0"
     "@storybook/addon-themes": "npm:^10"
     "@storybook/angular": "npm:^10.5.0"
@@ -22361,6 +22576,8 @@ __metadata:
     "@swc/core": "npm:1.16.2"
     "@swc/helpers": "npm:0.5.23"
     "@tailwindcss/postcss": "npm:^4.3.3"
+    "@tanstack/angular-charts": "npm:0.16.0"
+    "@tanstack/charts": "npm:0.16.0"
     "@testing-library/dom": "npm:10.4.0"
     "@tsconfig/svelte": "npm:^5.0.4"
     "@types/core-js": "npm:^2.5.4"
@@ -22402,8 +22619,11 @@ __metadata:
     d3: "npm:^7.9.0"
     date-fns: "npm:^3.6.0"
     deepmerge-ts: "npm:^8.0.0"
-    dompurify: "npm:3.4.16"
+    dompurify: "npm:3.4.17"
     dotenv: "npm:10.0.0"
+    embla-carousel: "npm:>=8.0.0 <9.0.0"
+    embla-carousel-angular: "npm:^22.0.0"
+    embla-carousel-reactive-utils: "npm:^8.0.0"
     eslint: "npm:^9.35.0"
     eslint-config-prettier: "npm:10.1.5"
     eslint-plugin-import: "npm:2.31.0"
@@ -22427,6 +22647,7 @@ __metadata:
     ng-mocks: "npm:14.18.1"
     ng-packagr: "npm:22.2.4"
     ng-recaptcha-2: "npm:^22.0.1"
+    ngx-scrollbar: "npm:^19.1.5"
     node-fetch: "npm:^3.3.1"
     nodemon: "npm:^2.0.22"
     nx: "npm:23.2.0"
