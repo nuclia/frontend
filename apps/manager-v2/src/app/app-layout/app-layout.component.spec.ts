@@ -34,6 +34,7 @@ describe('AppLayoutComponent', () => {
           canUseManager: of(true),
           canManageZones: of(true),
           canSeeUsers: of(true),
+          canSendEmails: of(true),
         }),
       ],
     }).compileComponents();

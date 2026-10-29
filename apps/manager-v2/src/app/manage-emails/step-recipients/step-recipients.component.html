@@ -1,0 +1,14 @@
+<section class="flex flex-col gap-8 px-1 pt-6 pb-1">
+  <nma-recipient-filters />
+  <nma-recipient-list class="mt-8" />
+
+  <div class="flex items-center justify-end">
+    <button
+      hlmBtn
+      type="button"
+      [disabled]="recipients.selected().size === 0"
+      spartanStepperNext>
+      Next: compose ({{ recipients.selected().size }})
+    </button>
+  </div>
+</section>

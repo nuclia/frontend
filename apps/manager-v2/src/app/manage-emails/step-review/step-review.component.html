@@ -1,0 +1,79 @@
+<section class="flex flex-col gap-8 px-1 pt-6 pb-1">
+  <div class="flex flex-col gap-0">
+    <h2 class="text-muted-foreground/90 text-lg leading-none">Preview</h2>
+    <div class="mt-3 overflow-hidden rounded-lg border">
+      <dl class="bg-muted/40 grid grid-cols-[4.5rem_1fr] gap-x-3 gap-y-2 border-b px-5 py-4 text-sm">
+        <dt class="text-muted-foreground">From</dt>
+        <dd class="font-medium">{{ compose.senderName().trim() || 'Default sender name' }}</dd>
+        <dt class="text-muted-foreground">To</dt>
+        <dd>
+          <span class="font-medium">{{ recipients.selected().size }} users</span>
+          <div class="text-muted-foreground mt-1 max-h-20 overflow-y-auto text-xs">
+            @for (user of recipients.selectedUsers(); track user.id; let last = $last) {
+              {{ user.email }}{{ last ? '' : ', ' }}
+            }
+          </div>
+        </dd>
+        <dt class="text-muted-foreground">Subject</dt>
+        <dd class="font-medium">{{ compose.subject() }}</dd>
+      </dl>
+
+      <nma-email-preview [bodyHtml]="previewBody()" />
+    </div>
+  </div>
+
+  @if (wizard.progress(); as result) {
+    <div class="flex flex-col gap-2 rounded-lg border p-4 text-sm">
+      @if (wizard.sending()) {
+        <div class="font-medium">Sending… {{ result.queued + result.failed.length }} / {{ result.requested }}</div>
+      } @else {
+        <div class="font-medium">{{ result.queued }} of {{ result.requested }} emails queued for delivery.</div>
+      }
+      @if (wizard.failedRecipients().length > 0) {
+        <div class="text-destructive font-medium">{{ wizard.failedRecipients().length }} failed:</div>
+        <ul class="text-destructive max-h-40 list-disc overflow-y-auto pl-5 text-xs">
+          @for (failure of wizard.failedRecipients(); track failure.label) {
+            <li>{{ failure.label }}: {{ failure.error }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+
+  <div class="flex items-center justify-between">
+    <button
+      hlmBtn
+      type="button"
+      variant="outline"
+      [disabled]="wizard.sending()"
+      spartanStepperPrevious>
+      Back
+    </button>
+
+    <hlm-alert-dialog #confirmDialog="hlmAlertDialog">
+      <button
+        hlmAlertDialogTrigger
+        hlmBtn
+        type="button"
+        [disabled]="wizard.sending()">
+        {{ wizard.sending() ? 'Sending…' : 'Send to ' + recipients.selected().size + ' users' }}
+      </button>
+      <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+        <hlm-alert-dialog-header>
+          <h2 hlmAlertDialogTitle>Send this email?</h2>
+          <p hlmAlertDialogDescription>
+            The email will be sent to {{ recipients.selected().size }} users. This cannot be undone.
+          </p>
+        </hlm-alert-dialog-header>
+        <hlm-alert-dialog-footer>
+          <button hlmAlertDialogCancel>Cancel</button>
+          <button
+            hlmAlertDialogAction
+            (click)="confirmDialog.close(); wizard.send()">
+            Send
+          </button>
+        </hlm-alert-dialog-footer>
+      </hlm-alert-dialog-content>
+    </hlm-alert-dialog>
+  </div>
+</section>

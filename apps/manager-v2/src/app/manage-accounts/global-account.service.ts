@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
 import {
   AccountBudget,
+  AccountSubscriptionSummary,
   AccountPatchPayload,
   AccountSummary,
   AccountUserType,
@@ -91,6 +92,9 @@ export class GlobalAccountService {
   getSearchPrice(usageType: 'licensed' | 'metered', accountType?: AccountTypes) {
     const params = `usage_type=${usageType}` + (accountType ? `&account_type=${accountType}` : '');
     return this.sdk.nuclia.rest.get<SearchPrice[]>(`/billing/stripe/search_prices?${params}`);
+  }
+  getSubscriptions(): Observable<AccountSubscriptionSummary[]> {
+    return this.sdk.nuclia.rest.get<AccountSubscriptionSummary[]>('/billing/subscriptions');
   }
   getBillingFormulas() {
     return this.sdk.nuclia.rest.get<BillingFormula[]>(`/billing/formula`);

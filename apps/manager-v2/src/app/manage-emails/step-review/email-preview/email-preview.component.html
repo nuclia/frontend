@@ -1,0 +1,46 @@
+<div class="bg-muted/40 px-4 py-6">
+  <div class="mx-auto max-w-[680px] bg-white font-[Arial,sans-serif] text-black shadow-sm">
+    <div class="pt-10 pb-5 pl-10">
+      <img
+        class="h-auto"
+        width="190"
+        height="64"
+        alt="Progress"
+        [src]="emailLogoUrl" />
+    </div>
+    <div
+      class="px-10 pt-10 text-sm leading-5"
+      [innerHTML]="safeBody()"></div>
+    <div class="flex flex-col gap-2.5 px-[60px] pt-[30px] pb-[45px] text-xs leading-[18px] [&>p]:m-0">
+      <p>
+        Copyright &copy; {{ currentYear }} Progress Software Corporation and/or its subsidiaries or affiliates. All
+        rights reserved
+      </p>
+      <p>
+        NOTICE: This is a transactional/service email from Progress Software Corporation or its affiliates
+        (&ldquo;Progress&rdquo;), headquartered at 15 Wayside Rd, Suite 400, Burlington, MA 01803 USA. For information
+        about Progress Privacy practices, please
+        <a
+          class="text-[#225eff]"
+          href="https://www.progress.com/legal/privacy-center"
+          target="_blank"
+          rel="noopener noreferrer">
+          click here
+        </a>
+        .
+      </p>
+      <p>
+        Progress and certain product names used herein are trademarks or registered trademarks of Progress Software
+        Corporation and/or one of its subsidiaries or affiliates in the U.S. and/or other countries. See
+        <a
+          class="text-[#225eff]"
+          href="https://www.progress.com/legal/trademarks"
+          target="_blank"
+          rel="noopener noreferrer">
+          Trademarks
+        </a>
+        for appropriate markings. Any other trademarks contained herein are the property of their respective owners.
+      </p>
+    </div>
+  </div>
+</div>

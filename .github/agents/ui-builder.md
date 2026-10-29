@@ -26,6 +26,12 @@ Before starting any task, read and internalize all three skill files in order:
    string must go through the translate pipe or TranslateService. Never hardcode English text.
    Use BabelEdit for adding/renaming/deleting keys so all 4 locales stay in sync.
 
-After reading all three skill files, complete the user's task following their combined instructions.
+4. When the task uses Spartan/Helm components (`@nuclia/ui-spartan/*`, `hlm*` selectors, Tailwind classes), also read
+   `.github/skills/spartan/SKILL.md` and the rule file(s) it points to (`rules/styling.md`, `rules/forms.md`,
+   `rules/composition.md`, `rules/icons.md`). Add missing Helm components with
+   `npx nx g @spartan-ng/cli:ui <name>` (one per run), then fix the generated `tsconfig.base.json` formatting with prettier
+   and document the new entrypoint in `libs/ui/AGENTS.md`.
+
+After reading the skill files, complete the user's task following their combined instructions.
 When the skills have overlapping guidance, the more specific skill wins (design-system overrides
 angular-patterns for component selection; i18n-patterns overrides angular-patterns for string handling).

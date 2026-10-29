@@ -1,0 +1,68 @@
+<div class="flex flex-col gap-0">
+  <h2 class="text-muted-foreground/90 text-lg leading-none">Filter the user list</h2>
+  <div class="flex flex-wrap gap-x-8 gap-y-4">
+    <div class="flex flex-col gap-1.5">
+      <div class="flex h-5 items-center">
+        <span
+          hlmLabel
+          class="text-muted-foreground/90"
+          id="segment-filter-label">
+          Customer segments
+        </span>
+      </div>
+      <hlm-toggle-group
+        type="multiple"
+        variant="outline"
+        class="flex-wrap"
+        aria-labelledby="segment-filter-label"
+        [value]="recipients.segmentFilter()"
+        (valueChange)="onSegmentChange($event)">
+        @for (item of segmentFilters; track item.id) {
+          <button
+            hlmToggleGroupItem
+            [value]="item.id"
+            [hlmTooltip]="item.description"
+            position="bottom">
+            {{ item.label }}
+          </button>
+        }
+      </hlm-toggle-group>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <div class="flex h-5 items-center gap-1">
+        <span
+          hlmLabel
+          class="text-muted-foreground/90"
+          id="role-filter-label">
+          Account role
+        </span>
+        <button
+          hlmBtn
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          class="text-muted-foreground size-5"
+          aria-label="About overlapping segments"
+          position="right"
+          hlmTooltip="A user can belong to several segments if they are linked to several accounts. Use “Account owners” to target the owner of each account and reduce overlaps.">
+          <ng-icon name="lucideInfo" />
+        </button>
+      </div>
+      <hlm-toggle-group
+        type="single"
+        variant="outline"
+        aria-labelledby="role-filter-label"
+        [value]="recipients.recipientFilter()"
+        (valueChange)="onFilterChange($event)">
+        @for (item of recipientFilters; track item.id) {
+          <button
+            hlmToggleGroupItem
+            [value]="item.id">
+            {{ item.label }}
+          </button>
+        }
+      </hlm-toggle-group>
+    </div>
+  </div>
+</div>

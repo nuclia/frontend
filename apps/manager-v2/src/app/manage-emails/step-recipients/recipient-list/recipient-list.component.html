@@ -1,0 +1,82 @@
+<div class="flex flex-col gap-0">
+  <div class="flex items-baseline justify-between gap-4">
+    <h2 class="text-muted-foreground/90 text-lg leading-none">Select recipients</h2>
+    @if (!recipients.loading() && !recipients.loadingError()) {
+      <span class="text-muted-foreground text-sm">
+        <strong class="text-foreground font-semibold">{{ recipients.selected().size }}</strong>
+        selected
+      </span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-3">
+    @if (recipients.loading()) {
+      <p class="text-muted-foreground text-sm">Loading users…</p>
+    } @else if (recipients.loadingError()) {
+      <div class="flex items-center gap-3 text-sm">
+        <span class="text-destructive">Could not load users.</span>
+        <button
+          hlmBtn
+          type="button"
+          variant="outline"
+          size="sm"
+          (click)="recipients.reload()">
+          Retry
+        </button>
+      </div>
+    } @else {
+      <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <input
+          hlmInput
+          type="search"
+          class="max-w-xs"
+          aria-label="Search users"
+          placeholder="Filter by name or email"
+          [ngModel]="recipients.search()"
+          (ngModelChange)="recipients.search.set($event)" />
+        <label class="flex items-center gap-2 text-sm">
+          <hlm-checkbox
+            [checked]="recipients.allFilteredSelected()"
+            (checkedChange)="recipients.toggleAllFiltered($event)"
+            aria-label="Select all matching users" />
+          Select all ({{ recipients.filteredUsers().length }})
+        </label>
+      </div>
+
+      @if (recipients.filteredUsers().length === 0) {
+        <div class="flex flex-col items-center gap-3 rounded-lg border px-3 py-8 text-center text-sm">
+          <p class="text-muted-foreground">
+            {{ recipients.hasActiveFilters() ? 'No users match the selected filters.' : 'No users found.' }}
+          </p>
+          @if (recipients.hasActiveFilters()) {
+            <button
+              hlmBtn
+              type="button"
+              variant="outline"
+              size="sm"
+              (click)="recipients.resetFilters()">
+              Reset filters
+            </button>
+          }
+        </div>
+      } @else {
+        <cdk-virtual-scroll-viewport
+          #userList
+          class="rounded-lg border"
+          [itemSize]="userRowHeight"
+          [style.height.px]="viewportHeight()">
+          <label
+            *cdkVirtualFor="let user of recipients.filteredUsers(); trackBy: trackUser"
+            class="hover:bg-muted flex h-10 cursor-pointer items-center gap-3 border-b px-3 text-sm last:border-b-0">
+            <hlm-checkbox
+              [checked]="recipients.isSelected(user.id)"
+              (checkedChange)="recipients.toggleUser(user, $event)"
+              [aria-label]="'Select ' + user.email" />
+            <span class="text-foreground/80 font-medium">{{ user.name || '–' }}</span>
+            <span class="text-muted-foreground truncate">{{ user.email }}</span>
+          </label>
+        </cdk-virtual-scroll-viewport>
+      }
+    }
+  </div>
+</div>

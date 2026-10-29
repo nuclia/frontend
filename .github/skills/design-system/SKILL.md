@@ -23,7 +23,13 @@ description: >
 dashboard / rao / manager-v2 / admin
 ```
 
-`@nuclia/ui-spartan` is the Spartan/Helm primitive entrypoint with Tailwind utilities. Import components from `@nuclia/ui-spartan/accordion`, `@nuclia/ui-spartan/avatar`, `@nuclia/ui-spartan/button`, or `@nuclia/ui-spartan/utils`; do not import primitives from the root entrypoints. The `libs/ui` Storybook documents design foundations under `Foundations` (colors and typography) and component stories under `Spartan`; see `libs/ui/AGENTS.md` for its structure.
+`@nuclia/ui-spartan` is the Spartan/Helm primitive entrypoint with Tailwind utilities (the strategic direction: the project is migrating to Spartan + Tailwind, so prefer it for new UI where the app already loads Tailwind, e.g. `manager-v2`). Import components from explicit subpaths such as `@nuclia/ui-spartan/button` (see `libs/ui/AGENTS.md` for the installed list); do not import primitives from the root entrypoints. **For any Spartan/Helm/Brain work — adding components, composing, styling, forms, icons — load `.github/skills/spartan/SKILL.md` first.** The `libs/ui` Storybook documents design foundations under `Foundations` (colors and typography) and component stories under `Spartan`; see `libs/ui/AGENTS.md` for its structure.
+
+> **Mandatory: a Storybook story for every Spartan component.** Whenever you add a Spartan component or block to
+> `libs/ui`, or import one in an app that has no story yet, add `hlm-<name>.stories.ts` next to it
+> (`title: 'Spartan/<Name>'`, `autodocs`, `moduleMetadata` with the `HlmXImports` array, `Default` story plus the
+> main variants and states). The full checklist is in the "Storybook stories" section of `libs/ui/AGENTS.md`;
+> follow it instead of re-reading the existing stories.
 
 **Key rule:** Always prefer `SisModalService` / `SisToastService` (from `@nuclia/sistema`) over the
 raw Pastanaga equivalents. They apply opinionated defaults (`cancelAspect: 'basic'`, toast titles).

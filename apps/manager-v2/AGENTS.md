@@ -31,6 +31,12 @@ apps/manager-v2/src/
     │   ├── regional-account.service.ts # Zone-aware REST (KBs, models, per-zone Nuclia instances)
     │   └── account-details/            # ManagerStore-backed sub-detail components (account-details.store.ts exists but is unused in app code, only referenced by spec mocks)
     ├── manage-users/               # lazy NgModule: UserService, user CRUD
+    ├── manage-emails/              # standalone email wizard (ROOT only), Spartan/Tailwind UI, 3-step linear `spartan-stepper`
+    │   ├── manage-emails.component # spine: stepper + 3 `spartan-step`; provides the 3 wizard services; on `wizard.completed$` jumps to step 1 (in `afterNextRender`, the stepper ignores steps still bound as non-editable) and shows the success toast
+    │   ├── email.service / email.models / email-wizard.service / can-send-emails.guard   # feature-wide: API, wire types, send orchestration (scoped via the spine's `providers`), ROOT guard
+    │   ├── step-recipients/        # step 1: `step-recipients`, `recipient-filters/`, `recipient-list/`, `recipients.service` (scoped), `recipients-loader.service`, `user-segments` (segment rules → `account_types` / `excluded_account_types` / `include_accounts` of `GET /manage/@users`; one request per segment, merged; subscription conditions applied client-side by joining users' `accounts` with `GET /billing/subscriptions`, see `GlobalAccountService.getSubscriptions`)
+    │   ├── step-compose/           # step 2: `step-compose`, `personalization-help/`, `compose.service` (scoped), `email-body.utils`, `sender-name.utils` (mirrors the backend `sender_name` rules)
+    │   └── step-review/            # step 3: `step-review`, `email-preview/` (preview with the backend's header/footer)
     └── manage-zones/               # lazy NgModule: ZoneService, zone CRUD
 ```
 
@@ -61,6 +67,7 @@ AppLayoutComponent (canActivate: authGuard)
 │   ├── /users              → UserListComponent
 │   ├── /users/add          → AddUserComponent
 │   └── /users/:id[/edit]   → UserDetailsComponent
+├── /emails                 → ManageEmailsComponent (lazy standalone, canSendEmailsGuard: ROOT only)
 └── /zones                  → ManageZonesModule (lazy)
     ├── /zones              → ZoneListComponent
     └── /zones/:id          → ZoneDetailsComponent  (:id = "add" → create mode)
@@ -77,7 +84,7 @@ AppLayoutComponent (canActivate: authGuard)
 BehaviorSubject-based reactive store (`providedIn: 'root'`). Central source for:
 
 - `accountDetails`, `kbList`, `kbDetails`, `blockedFeatures`, `accountUsers`, `accountModels`, `currentState` — currently loaded account data
-- `canEdit`, `canDelete`, `canFullyEditAccount`, `canSeeUsers`, `canCreateUser`, `canCreateAccount`, `canManageZones`, `canManageModels`, `canAccessKBs`, `canUseManager` — permission observables derived from `UserService.userType`
+- `canEdit`, `canDelete`, `canFullyEditAccount`, `canSeeUsers`, `canCreateUser`, `canCreateAccount`, `canManageZones`, `canSendEmails`, `canManageModels`, `canAccessKBs`, `canUseManager` — permission observables derived from `UserService.userType`
 
 **All UI permission checks use `ManagerStore` observables — never access `UserService.userType` directly from components.**
 
