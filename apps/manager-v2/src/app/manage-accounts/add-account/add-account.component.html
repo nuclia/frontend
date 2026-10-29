@@ -20,6 +20,11 @@
         Title
       </pa-input>
       <pa-input formControlName="description">Description</pa-input>
+      <pa-select
+        formControlName="campaign_id"
+        label="Campaign"
+        [options]="campaignOptions"
+        required></pa-select>
 
       <footer>
         <pa-button
