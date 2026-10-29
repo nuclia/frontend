@@ -62,7 +62,6 @@ import { BaseModalComponent, ModalRef, PaButtonModule, PaModalModule } from '@gu
 import { CommonModule } from '@angular/common';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, PaButtonModule, PaModalModule],
   template: `
     <pa-modal-dialog>

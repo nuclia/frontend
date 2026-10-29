@@ -32,7 +32,6 @@ import { Sluggable } from '../validators';
   templateUrl: './knowledge-box-settings.component.html',
   styleUrls: ['./knowledge-box-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

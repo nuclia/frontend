@@ -5,7 +5,6 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-table-pagination',
-  standalone: true,
   imports: [PaButtonModule, PaIconModule, TranslatePipe, DropdownButtonComponent, PaDropdownModule],
   templateUrl: './table-pagination.component.html',
   styleUrl: './table-pagination.component.scss',

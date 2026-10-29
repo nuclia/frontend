@@ -8,7 +8,6 @@ import { NodeConfig } from '../../../../workflow.models';
   selector: 'app-array-string-field',
   templateUrl: './array-string-field.component.html',
   styleUrls: ['./array-string-field.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslatePipe],
 })

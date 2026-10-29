@@ -19,7 +19,6 @@ export interface DynamicDriverModalData {
   templateUrl: './dynamic-driver-modal.component.html',
   styleUrls: ['./dynamic-driver-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [PaModalModule, PaButtonModule, TranslatePipe, DynamicDriverFormComponent],
 })
 export class DynamicDriverModalComponent implements OnInit {

@@ -3,7 +3,6 @@ import { filterTypeList } from '../filter-assistant.models';
 
 @Pipe({
   name: 'filterType',
-  standalone: true,
 })
 export class FilterTypePipe implements PipeTransform {
   transform(value: string): string {

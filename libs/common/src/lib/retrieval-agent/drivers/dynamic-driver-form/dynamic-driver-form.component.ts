@@ -21,7 +21,6 @@ export interface RenderableDriverField {
   templateUrl: './dynamic-driver-form.component.html',
   styleUrls: ['./dynamic-driver-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe, DriverFieldRendererComponent],
 })
 export class DynamicDriverFormComponent implements OnInit {

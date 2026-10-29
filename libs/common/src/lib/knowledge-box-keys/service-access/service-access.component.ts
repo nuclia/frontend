@@ -16,7 +16,6 @@ import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
   templateUrl: './service-access.component.html',
   styleUrls: ['./service-access.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslatePipe, PaButtonModule, ReactiveFormsModule, PaTextFieldModule, CommonModule, HintComponent],
 })
 export class ServiceAccessComponent implements OnInit, OnDestroy {

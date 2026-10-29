@@ -12,7 +12,6 @@ import {
 
 @Component({
   selector: 'nsi-dropdown-button',
-  standalone: true,
   imports: [PaButtonModule, PaIconModule, PaPopupModule],
   templateUrl: './dropdown-button.component.html',
   styleUrls: ['./dropdown-button.component.scss'],

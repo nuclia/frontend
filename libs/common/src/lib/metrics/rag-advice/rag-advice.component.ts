@@ -61,7 +61,6 @@ type NumericInputOrUndefined = string | number | null | undefined;
 
 @Component({
   selector: 'app-rag-advice-modal',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

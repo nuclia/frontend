@@ -8,7 +8,6 @@ import { WorkflowService } from '../../../../workflow.service';
   selector: 'app-model-select',
   templateUrl: './model-select.component.html',
   styleUrls: ['./model-select.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CommonModule, ModelSelectorComponent, ReactiveFormsModule],
 })

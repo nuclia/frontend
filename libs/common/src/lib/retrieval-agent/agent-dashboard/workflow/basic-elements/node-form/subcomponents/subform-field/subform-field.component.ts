@@ -1,8 +1,7 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, inject } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 
-import { FieldConfigService, FieldConfig } from '../../field-config.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import {
   ArrayStringFieldComponent,
@@ -11,9 +10,10 @@ import {
   EnumSelectComponent,
   TransportFieldComponent,
 } from '../';
-import { ModelSelectComponent } from '../model-select/model-select.component';
-import { FilteredSourceSelectComponent } from '../filtered-source-select/filtered-source-select.component';
 import { RulesFieldComponent } from '../../../rules-field/rules-field.component';
+import { FieldConfig, FieldConfigService } from '../../field-config.service';
+import { FilteredSourceSelectComponent } from '../filtered-source-select/filtered-source-select.component';
+import { ModelSelectComponent } from '../model-select/model-select.component';
 
 export interface RenderableField {
   key: string;
@@ -28,7 +28,6 @@ export interface RenderableField {
   templateUrl: './subform-field.component.html',
   styleUrls: ['./subform-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     PaTextFieldModule,

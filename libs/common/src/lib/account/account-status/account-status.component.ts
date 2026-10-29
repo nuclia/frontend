@@ -14,7 +14,6 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
 @Component({
   selector: 'app-account-status',
   imports: [CommonModule, RouterModule, TranslatePipe, PaButtonModule, PaIconModule],
-  standalone: true,
   templateUrl: './account-status.component.html',
   styleUrls: ['./account-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

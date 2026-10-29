@@ -13,7 +13,6 @@ let nextId = 0;
   templateUrl: './model-field.component.html',
   styleUrl: './model-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, ModelSelectorComponent, PaTogglesModule, ReactiveFormsModule, TranslatePipe],
 })
 export class ModelFieldComponent {

@@ -31,7 +31,6 @@ export interface TransportChangeEvent {
 
 @Component({
   selector: 'app-transport-field',
-  standalone: true,
   imports: [ReactiveFormsModule, PaButtonModule, PaTogglesModule, TranslatePipe, RouterLink],
   templateUrl: './transport-field.component.html',
   styleUrl: './transport-field.component.scss',

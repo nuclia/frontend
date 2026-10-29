@@ -24,7 +24,6 @@ import { UsersManageModule, UsersManageService } from '../users-manage';
   `,
   styleUrls: ['./knowledge-box-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   providers: [UsersManageService],
   imports: [CommonModule, TranslatePipe, UsersManageModule, BackButtonComponent],
 })

@@ -4,7 +4,6 @@ const LINE_BREAK = /\n/g;
 
 @Pipe({
   name: 'lineBreakFormatter',
-  standalone: true,
 })
 export class LineBreakFormatterPipe implements PipeTransform {
   transform(value: string): string {

@@ -10,13 +10,12 @@ import {
   Renderer2,
   ViewContainerRef,
 } from '@angular/core';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { BadgeComponent, SisModalService } from '@nuclia/sistema';
 import { UnauthorizedFeatureModalComponent } from './unauthorized-feature-modal.component';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 
 @Directive({
   selector: '[stfUnauthorizedFeature]',
-  standalone: true,
 })
 export class UnauthorizedFeatureDirective {
   private modalService = inject(SisModalService);

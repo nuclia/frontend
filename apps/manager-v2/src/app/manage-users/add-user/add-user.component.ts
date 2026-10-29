@@ -1,15 +1,13 @@
-import { ChangeDetectorRef, Component, inject, ChangeDetectionStrategy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { UserType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { UserService } from '../user.service';
-import { UserType } from '@nuclia/core';
-import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: 'add-user.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
 })

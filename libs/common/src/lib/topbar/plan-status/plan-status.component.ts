@@ -22,7 +22,6 @@ interface PlanStatusVm {
 
 @Component({
   selector: 'stf-plan-status',
-  standalone: true,
   imports: [CommonModule, TranslatePipe, PaChipsModule],
   templateUrl: './plan-status.component.html',
   styleUrl: './plan-status.component.scss',

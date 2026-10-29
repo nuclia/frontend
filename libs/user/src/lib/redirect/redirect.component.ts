@@ -17,7 +17,6 @@ const AUTHORIZED_REDIRECTS_REGEX = [/^chrome-extension:\/\/[a-z]+\/options\/opti
   templateUrl: './redirect.component.html',
   styleUrls: ['./redirect.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, PaButtonModule, PaIconModule, TranslatePipe, PaTogglesModule],
 })
 export class RedirectComponent {

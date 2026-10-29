@@ -1,11 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { LearningConfigurationOption } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
+import { LearningConfigurationOption } from '@nuclia/core';
 
 // TODO: renove
 @Pipe({
   name: 'learningOption',
-  standalone: true,
 })
 export class LearningOptionPipe implements PipeTransform {
   constructor(private translate: TranslateService) {}

@@ -1,13 +1,13 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { JSONSchema4 } from 'json-schema';
-import { DriverFieldConfig } from '../driver-field-config.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { JSONSchema4 } from 'json-schema';
 import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
 import { EnumSelectComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/enum-select/enum-select.component';
-import { DriverSubformFieldComponent } from '../driver-subform-field/driver-subform-field.component';
 import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
 import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
+import { DriverFieldConfig } from '../driver-field-config.service';
+import { DriverSubformFieldComponent } from '../driver-subform-field/driver-subform-field.component';
 
 // Driver-specific field components
 @Component({
@@ -27,7 +27,6 @@ import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea
       </pa-input>
     </div>
   `,
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, PaTextFieldModule],
 })
@@ -72,7 +71,7 @@ export class KbSelectComponent {
       }
     `,
   ],
-  standalone: true,
+
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, PaTextFieldModule],
 })
@@ -86,7 +85,7 @@ export class KeyValueFieldComponent {
 @Component({
   selector: 'app-driver-field-renderer',
   templateUrl: './driver-field-renderer.component.html',
-  standalone: true,
+
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     ReactiveFormsModule,

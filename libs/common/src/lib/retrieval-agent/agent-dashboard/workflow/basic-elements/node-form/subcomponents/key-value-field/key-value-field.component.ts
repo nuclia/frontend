@@ -14,7 +14,6 @@ let keyValueIndex = 0;
   styleUrls: ['./key-value-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
 })
 export class KeyValueFieldComponent implements OnInit, OnDestroy {

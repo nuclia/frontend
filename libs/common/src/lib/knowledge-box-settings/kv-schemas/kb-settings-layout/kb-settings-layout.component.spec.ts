@@ -7,7 +7,6 @@ import { SDKService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { of } from 'rxjs';
-import { StandaloneService } from '../../../services';
 import { KnowledgeBoxSettingsComponent } from '../../knowledge-box-settings.component';
 import { KbSettingsLayoutComponent } from './kb-settings-layout.component';
 
@@ -43,7 +42,6 @@ describe('Settings page layout', () => {
             nuclia: { auth: { getAuthInfo: () => of({}) } },
           },
         },
-        { provide: StandaloneService, useValue: { standalone: true } },
         { provide: SisToastService, useValue: {} },
         { provide: SisModalService, useValue: {} },
       ],

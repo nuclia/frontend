@@ -6,7 +6,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kb-usage-charts',
-  standalone: true,
   imports: [ChartsModule, TranslatePipe],
   templateUrl: './usage-charts.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

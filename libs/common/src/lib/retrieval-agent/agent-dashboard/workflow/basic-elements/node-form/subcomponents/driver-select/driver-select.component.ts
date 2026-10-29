@@ -14,7 +14,6 @@ import { aragUrl } from '../../../../workflow.state';
   selector: 'app-driver-select',
   templateUrl: './driver-select.component.html',
   styleUrls: ['./driver-select.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     InfoCardComponent,

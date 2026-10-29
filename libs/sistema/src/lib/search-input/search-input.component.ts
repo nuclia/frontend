@@ -34,7 +34,6 @@ import { BadgeComponent } from '../badge';
   templateUrl: './search-input.component.html',
   styleUrls: ['./search-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PaFormFieldModule,
     ReactiveFormsModule,
