@@ -78,6 +78,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     trialExpirationDate: new FormControl<string>(''),
     workflow: new FormControl<WorkflowType>('classic'),
     allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
+    allowAccessExternalModels: new FormControl<boolean>(true, { nonNullable: true }),
     zoneVisibility: new FormControl<ZoneVisibility>('DEFAULT', { nonNullable: true }),
     labels: new FormGroup({
       progress_account: new FormControl<boolean>(false, { nonNullable: true }),
@@ -201,6 +202,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
             }
             if (controls.allowAccessNonEnterpriseModels.dirty) {
               payload.allowAccessNonEnterpriseModels = rawValue.allowAccessNonEnterpriseModels;
+            }
+            if (controls.allowAccessExternalModels.dirty) {
+              payload.allowAccessExternalModels = rawValue.allowAccessExternalModels;
             }
             if (controls.labels.dirty) {
               payload.labels = rawValue.labels;

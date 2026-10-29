@@ -43,6 +43,7 @@ export interface Account {
   workflow?: WorkflowType;
   zone_visibility?: ZoneVisibility;
   allow_access_non_enterprise_models: boolean;
+  allow_access_external_models: boolean;
   labels: AccountLabels | null;
 }
 
