@@ -1,8 +1,9 @@
 @import './theme-spartan.css';
 @import './theme-tailwind.css';
+@import './fonts.css';
 
 :root :is(h1, h2, h3, h4, .display-s, .display-s-mobile, .display-m, .display-m-mobile) {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
 }
 
 @layer base {

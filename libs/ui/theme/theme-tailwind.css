@@ -71,6 +71,7 @@
   --font-sans:
     'Progress Sans Text', 'ProgressSansText', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', 'Noto Sans',
     'Liberation Sans', Arial, sans-serif;
+  --font-display: 'Progress Sans Display', sans-serif;
   --font-mono: 'Roboto Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   --font-weight-light: 300;
   --font-weight-normal: 400;
