@@ -3,34 +3,34 @@ import { RouterLink } from '@angular/router';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmBreadcrumbLink]',
-	hostDirectives: [
-		{
-			directive: RouterLink,
-			inputs: [
-				'target',
-				'queryParams',
-				'fragment',
-				'queryParamsHandling',
-				'state',
-				'info',
-				'relativeTo',
-				'preserveFragment',
-				'skipLocationChange',
-				'replaceUrl',
-				'routerLink: link',
-			],
-		},
-	],
-	host: {
-		'data-slot': 'breadcrumb-link',
-	},
+  selector: '[hlmBreadcrumbLink]',
+  hostDirectives: [
+    {
+      directive: RouterLink,
+      inputs: [
+        'target',
+        'queryParams',
+        'fragment',
+        'queryParamsHandling',
+        'state',
+        'info',
+        'relativeTo',
+        'preserveFragment',
+        'skipLocationChange',
+        'replaceUrl',
+        'routerLink: link',
+      ],
+    },
+  ],
+  host: {
+    'data-slot': 'breadcrumb-link',
+  },
 })
 export class HlmBreadcrumbLink {
-	/** The link to navigate to the page. */
-	public readonly link = input<RouterLink['routerLink']>();
+  /** The link to navigate to the page. */
+  public readonly link = input<RouterLink['routerLink']>();
 
-	constructor() {
-		classes(() => 'hover:text-foreground transition-colors');
-	}
+  constructor() {
+    classes(() => 'hover:text-foreground transition-colors');
+  }
 }

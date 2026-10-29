@@ -7,81 +7,78 @@ import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-gr
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
-	selector: 'hlm-combobox-input',
-	imports: [HlmInputGroupImports, NgIcon, BrnComboboxImports, BrnComboboxPopoverTrigger],
-	providers: [provideIcons({ lucideChevronDown, lucideX })],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	hostDirectives: [BrnComboboxAnchor, HlmInputGroup],
-	template: `
-		<input
-			brnComboboxInput
-			#comboboxInput="brnComboboxInput"
-			brnComboboxPopoverTrigger
-			[closeOnTriggerClick]="false"
-			hlmInputGroupInput
-			[id]="inputId()"
-			[placeholder]="placeholder()"
-			[forceInvalid]="forceInvalid()"
-			[aria-invalid]="ariaInvalidInput()"
-		/>
+  selector: 'hlm-combobox-input',
+  imports: [HlmInputGroupImports, NgIcon, BrnComboboxImports, BrnComboboxPopoverTrigger],
+  providers: [provideIcons({ lucideChevronDown, lucideX })],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  hostDirectives: [BrnComboboxAnchor, HlmInputGroup],
+  template: `
+    <input
+      brnComboboxInput
+      #comboboxInput="brnComboboxInput"
+      brnComboboxPopoverTrigger
+      [closeOnTriggerClick]="false"
+      hlmInputGroupInput
+      [id]="inputId()"
+      [placeholder]="placeholder()"
+      [forceInvalid]="forceInvalid()"
+      [aria-invalid]="ariaInvalidInput()" />
 
-		<hlm-input-group-addon align="inline-end">
-			@if (showTrigger()) {
-				<button
-					brnComboboxPopoverTrigger
-					hlmInputGroupButton
-					data-slot="input-group-button"
-					[disabled]="comboboxInput.disabled()"
-					[attr.aria-label]="triggerAriaLabel()"
-					size="icon-xs"
-					variant="ghost"
-					class="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
-				>
-					<ng-icon name="lucideChevronDown" />
-				</button>
-			}
+    <hlm-input-group-addon align="inline-end">
+      @if (showTrigger()) {
+        <button
+          brnComboboxPopoverTrigger
+          hlmInputGroupButton
+          data-slot="input-group-button"
+          [disabled]="comboboxInput.disabled()"
+          [attr.aria-label]="triggerAriaLabel()"
+          size="icon-xs"
+          variant="ghost"
+          class="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent">
+          <ng-icon name="lucideChevronDown" />
+        </button>
+      }
 
-			@if (showClear()) {
-				<button
-					*brnComboboxClear
-					hlmInputGroupButton
-					data-slot="combobox-clear"
-					[disabled]="comboboxInput.disabled()"
-					[attr.aria-label]="clearAriaLabel()"
-					size="icon-xs"
-					variant="ghost"
-				>
-					<ng-icon name="lucideX" />
-				</button>
-			}
-		</hlm-input-group-addon>
+      @if (showClear()) {
+        <button
+          *brnComboboxClear
+          hlmInputGroupButton
+          data-slot="combobox-clear"
+          [disabled]="comboboxInput.disabled()"
+          [attr.aria-label]="clearAriaLabel()"
+          size="icon-xs"
+          variant="ghost">
+          <ng-icon name="lucideX" />
+        </button>
+      }
+    </hlm-input-group-addon>
 
-		<ng-content />
-	`,
+    <ng-content />
+  `,
 })
 export class HlmComboboxInput {
-	private static _id = 0;
+  private static _id = 0;
 
-	public readonly inputId = input<string>(`hlm-combobox-input-${HlmComboboxInput._id++}`);
-	public readonly placeholder = input<string>('');
+  public readonly inputId = input<string>(`hlm-combobox-input-${HlmComboboxInput._id++}`);
+  public readonly placeholder = input<string>('');
 
-	public readonly showTrigger = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
-	public readonly showClear = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
-	public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly showTrigger = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
+  public readonly showClear = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
 
-	/** Accessible name for the icon-only popover trigger button. */
-	public readonly triggerAriaLabel = input<string>('Toggle options');
+  /** Accessible name for the icon-only popover trigger button. */
+  public readonly triggerAriaLabel = input<string>('Toggle options');
 
-	/** Accessible name for the icon-only clear button. */
-	public readonly clearAriaLabel = input<string>('Clear selection');
+  /** Accessible name for the icon-only clear button. */
+  public readonly clearAriaLabel = input<string>('Clear selection');
 
-	/** Manual override for aria-invalid. When not set, auto-detects from the parent combobox error state. */
-	public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(undefined, {
-		transform: (v: BooleanInput) => (v === '' || v === undefined ? undefined : booleanAttribute(v)),
-		alias: 'aria-invalid',
-	});
+  /** Manual override for aria-invalid. When not set, auto-detects from the parent combobox error state. */
+  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(undefined, {
+    transform: (v: BooleanInput) => (v === '' || v === undefined ? undefined : booleanAttribute(v)),
+    alias: 'aria-invalid',
+  });
 
-	constructor() {
-		classes(() => 'w-auto');
-	}
+  constructor() {
+    classes(() => 'w-auto');
+  }
 }

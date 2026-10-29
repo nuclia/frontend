@@ -3,19 +3,19 @@ import { BrnMessageScrollerItem } from '@spartan-ng/brain/message-scroller';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmMessageScrollerItem],hlm-message-scroller-item',
-	hostDirectives: [
-		{
-			directive: BrnMessageScrollerItem,
-			inputs: ['messageId', 'scrollAnchor'],
-		},
-	],
-	host: {
-		'data-slot': 'message-scroller-item',
-	},
+  selector: '[hlmMessageScrollerItem],hlm-message-scroller-item',
+  hostDirectives: [
+    {
+      directive: BrnMessageScrollerItem,
+      inputs: ['messageId', 'scrollAnchor'],
+    },
+  ],
+  host: {
+    'data-slot': 'message-scroller-item',
+  },
 })
 export class HlmMessageScrollerItem {
-	constructor() {
-		classes(() => 'min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]');
-	}
+  constructor() {
+    classes(() => 'min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]');
+  }
 }

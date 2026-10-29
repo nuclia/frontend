@@ -3,20 +3,20 @@ import { BrnQuestionnaireDescription } from '@spartan-ng/brain/questionnaire';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmQuestionnaireDescription]',
-	exportAs: 'hlmQuestionnaireDescription',
-	hostDirectives: [
-		{
-			directive: BrnQuestionnaireDescription,
-			inputs: ['id'],
-		},
-	],
-	host: {
-		'data-slot': 'questionnaire-description',
-	},
+  selector: '[hlmQuestionnaireDescription]',
+  exportAs: 'hlmQuestionnaireDescription',
+  hostDirectives: [
+    {
+      directive: BrnQuestionnaireDescription,
+      inputs: ['id'],
+    },
+  ],
+  host: {
+    'data-slot': 'questionnaire-description',
+  },
 })
 export class HlmQuestionnaireDescription {
-	constructor() {
-		classes(() => 'text-sm text-muted-foreground text-pretty');
-	}
+  constructor() {
+    classes(() => 'text-sm text-muted-foreground text-pretty');
+  }
 }

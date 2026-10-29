@@ -3,21 +3,21 @@ import { BrnQuestionnaireItem } from '@spartan-ng/brain/questionnaire';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: 'fieldset[hlmQuestionnaireItem]',
-	exportAs: 'hlmQuestionnaireItem',
-	hostDirectives: [
-		{
-			directive: BrnQuestionnaireItem,
-			inputs: ['name', 'multiple', 'required', 'disabled', 'itemInvalid', 'aria-describedby', 'aria-keyshortcuts'],
-			outputs: ['statusChange'],
-		},
-	],
-	host: {
-		'data-slot': 'questionnaire-item',
-	},
+  selector: 'fieldset[hlmQuestionnaireItem]',
+  exportAs: 'hlmQuestionnaireItem',
+  hostDirectives: [
+    {
+      directive: BrnQuestionnaireItem,
+      inputs: ['name', 'multiple', 'required', 'disabled', 'itemInvalid', 'aria-describedby', 'aria-keyshortcuts'],
+      outputs: ['statusChange'],
+    },
+  ],
+  host: {
+    'data-slot': 'questionnaire-item',
+  },
 })
 export class HlmQuestionnaireItem {
-	constructor() {
-		classes(() => 'gap-4 flex min-w-0 flex-col border-0 p-0 outline-none');
-	}
+  constructor() {
+    classes(() => 'gap-4 flex min-w-0 flex-col border-0 p-0 outline-none');
+  }
 }

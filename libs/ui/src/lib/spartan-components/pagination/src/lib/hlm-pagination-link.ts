@@ -5,47 +5,47 @@ import { buttonVariants, type ButtonVariants } from '@nuclia/ui-spartan/button';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmPaginationLink]',
-	hostDirectives: [
-		{
-			directive: RouterLink,
-			inputs: [
-				'target',
-				'queryParams',
-				'fragment',
-				'queryParamsHandling',
-				'state',
-				'info',
-				'relativeTo',
-				'preserveFragment',
-				'skipLocationChange',
-				'replaceUrl',
-				'routerLink: link',
-			],
-		},
-	],
-	host: {
-		'data-slot': 'pagination-link',
-		'[attr.data-active]': 'isActive() ? "true" : null',
-		'[attr.aria-current]': 'isActive() ? "page" : null',
-	},
+  selector: '[hlmPaginationLink]',
+  hostDirectives: [
+    {
+      directive: RouterLink,
+      inputs: [
+        'target',
+        'queryParams',
+        'fragment',
+        'queryParamsHandling',
+        'state',
+        'info',
+        'relativeTo',
+        'preserveFragment',
+        'skipLocationChange',
+        'replaceUrl',
+        'routerLink: link',
+      ],
+    },
+  ],
+  host: {
+    'data-slot': 'pagination-link',
+    '[attr.data-active]': 'isActive() ? "true" : null',
+    '[attr.aria-current]': 'isActive() ? "page" : null',
+  },
 })
 export class HlmPaginationLink {
-	/** Whether the link is active (i.e., the current page). */
-	public readonly isActive = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
-	/** The size of the button. */
-	public readonly size = input<ButtonVariants['size']>('icon');
-	/** The link to navigate to the page. */
-	public readonly link = input<RouterLink['routerLink']>();
+  /** Whether the link is active (i.e., the current page). */
+  public readonly isActive = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  /** The size of the button. */
+  public readonly size = input<ButtonVariants['size']>('icon');
+  /** The link to navigate to the page. */
+  public readonly link = input<RouterLink['routerLink']>();
 
-	constructor() {
-		classes(() => [
-			'relative',
-			buttonVariants({
-				variant: this.isActive() ? 'outline' : 'ghost',
-				size: this.size(),
-			}),
-			this.link() === undefined && 'cursor-pointer',
-		]);
-	}
+  constructor() {
+    classes(() => [
+      'relative',
+      buttonVariants({
+        variant: this.isActive() ? 'outline' : 'ghost',
+        size: this.size(),
+      }),
+      this.link() === undefined && 'cursor-pointer',
+    ]);
+  }
 }

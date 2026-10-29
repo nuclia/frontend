@@ -2,17 +2,17 @@ import { Directive } from '@angular/core';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmSidebarContent],hlm-sidebar-content',
-	host: {
-		'data-slot': 'sidebar-content',
-		'data-sidebar': 'content',
-	},
+  selector: '[hlmSidebarContent],hlm-sidebar-content',
+  host: {
+    'data-slot': 'sidebar-content',
+    'data-sidebar': 'content',
+  },
 })
 export class HlmSidebarContent {
-	constructor() {
-		classes(
-			() =>
-				'no-scrollbar gap-0 flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden',
-		);
-	}
+  constructor() {
+    classes(
+      () =>
+        'no-scrollbar gap-0 flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+    );
+  }
 }

@@ -13,10 +13,10 @@ export * from './lib/hlm-avatar-group-count';
 export * from './lib/hlm-avatar-image';
 
 export const HlmAvatarImports = [
-	HlmAvatar,
-	HlmAvatarBadge,
-	HlmAvatarFallback,
-	HlmAvatarGroup,
-	HlmAvatarGroupCount,
-	HlmAvatarImage,
+  HlmAvatar,
+  HlmAvatarBadge,
+  HlmAvatarFallback,
+  HlmAvatarGroup,
+  HlmAvatarGroupCount,
+  HlmAvatarImage,
 ] as const;

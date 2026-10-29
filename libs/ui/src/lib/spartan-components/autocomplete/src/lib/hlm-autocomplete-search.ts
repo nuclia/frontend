@@ -4,30 +4,30 @@ import { BrnPopover, provideBrnPopoverConfig, provideBrnPopoverDefaultOptions } 
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmAutocompleteSearch],hlm-autocomplete-search',
-	providers: [
-		provideBrnPopoverConfig({
-			align: 'start',
-			sideOffset: 6,
-		}),
-		provideBrnPopoverDefaultOptions({ role: null }),
-	],
-	hostDirectives: [
-		{
-			directive: BrnAutocompleteSearch,
-			inputs: ['autoHighlight', 'disabled', 'value', 'search', 'itemToString'],
-			outputs: ['valueChange', 'searchChange'],
-		},
-		{
-			directive: BrnPopover,
-			inputs: ['align', 'closeOnOutsidePointerEvents', 'sideOffset', 'state', 'offsetX', 'scrollStrategy'],
-			outputs: ['stateChanged', 'closed'],
-		},
-	],
-	host: { 'data-slot': 'autocomplete' },
+  selector: '[hlmAutocompleteSearch],hlm-autocomplete-search',
+  providers: [
+    provideBrnPopoverConfig({
+      align: 'start',
+      sideOffset: 6,
+    }),
+    provideBrnPopoverDefaultOptions({ role: null }),
+  ],
+  hostDirectives: [
+    {
+      directive: BrnAutocompleteSearch,
+      inputs: ['autoHighlight', 'disabled', 'value', 'search', 'itemToString'],
+      outputs: ['valueChange', 'searchChange'],
+    },
+    {
+      directive: BrnPopover,
+      inputs: ['align', 'closeOnOutsidePointerEvents', 'sideOffset', 'state', 'offsetX', 'scrollStrategy'],
+      outputs: ['stateChanged', 'closed'],
+    },
+  ],
+  host: { 'data-slot': 'autocomplete' },
 })
 export class HlmAutocompleteSearch {
-	constructor() {
-		classes(() => 'block');
-	}
+  constructor() {
+    classes(() => 'block');
+  }
 }

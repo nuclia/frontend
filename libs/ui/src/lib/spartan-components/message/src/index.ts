@@ -13,10 +13,10 @@ export * from './lib/hlm-message-group';
 export * from './lib/hlm-message-header';
 
 export const HlmMessageImports = [
-	HlmMessage,
-	HlmMessageAvatar,
-	HlmMessageContent,
-	HlmMessageFooter,
-	HlmMessageGroup,
-	HlmMessageHeader,
+  HlmMessage,
+  HlmMessageAvatar,
+  HlmMessageContent,
+  HlmMessageFooter,
+  HlmMessageGroup,
+  HlmMessageHeader,
 ] as const;

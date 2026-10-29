@@ -2,10 +2,10 @@ import { Directive } from '@angular/core';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: 'tanstack-chart[hlmChart]',
-	host: {
-		'data-slot': 'chart',
-		style: `
+  selector: 'tanstack-chart[hlmChart]',
+  host: {
+    'data-slot': 'chart',
+    style: `
 			--ts-chart-1: var(--chart-1);
 			--ts-chart-2: var(--chart-2);
 			--ts-chart-3: var(--chart-3);
@@ -18,10 +18,10 @@ import { classes } from '@nuclia/ui-spartan/utils';
 			--ts-chart-tooltip-color: var(--popover-foreground);
 			--ts-chart-tooltip-border: 1px solid var(--border);
 		`,
-	},
+  },
 })
 export class HlmChart {
-	constructor() {
-		classes(() => 'block w-full text-xs text-foreground');
-	}
+  constructor() {
+    classes(() => 'block w-full text-xs text-foreground');
+  }
 }

@@ -9,8 +9,8 @@ export { HlmHoverCardPortal } from './lib/hlm-hover-card-portal';
 export { HlmHoverCardTrigger } from './lib/hlm-hover-card-trigger';
 
 export const HlmHoverCardImports = [
-	HlmHoverCardContent,
-	HlmHoverCardPortal,
-	HlmHoverCard,
-	HlmHoverCardTrigger,
+  HlmHoverCardContent,
+  HlmHoverCardPortal,
+  HlmHoverCard,
+  HlmHoverCardTrigger,
 ] as const;

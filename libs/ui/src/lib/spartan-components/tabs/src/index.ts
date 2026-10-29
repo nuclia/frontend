@@ -13,10 +13,10 @@ export * from './lib/hlm-tabs-paginated-list';
 export * from './lib/hlm-tabs-trigger';
 
 export const HlmTabsImports = [
-	HlmTabs,
-	HlmTabsList,
-	HlmTabsTrigger,
-	HlmTabsContent,
-	HlmTabsContentLazy,
-	HlmTabsPaginatedList,
+  HlmTabs,
+  HlmTabsList,
+  HlmTabsTrigger,
+  HlmTabsContent,
+  HlmTabsContentLazy,
+  HlmTabsPaginatedList,
 ] as const;

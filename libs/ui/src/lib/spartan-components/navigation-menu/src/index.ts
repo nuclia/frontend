@@ -15,11 +15,11 @@ export * from './lib/hlm-navigation-menu-portal';
 export * from './lib/hlm-navigation-menu-trigger';
 
 export const HlmNavigationMenuImports = [
-	HlmNavigationMenu,
-	HlmNavigationMenuContent,
-	HlmNavigationMenuItem,
-	HlmNavigationMenuLink,
-	HlmNavigationMenuList,
-	HlmNavigationMenuPortal,
-	HlmNavigationMenuTrigger,
+  HlmNavigationMenu,
+  HlmNavigationMenuContent,
+  HlmNavigationMenuItem,
+  HlmNavigationMenuLink,
+  HlmNavigationMenuList,
+  HlmNavigationMenuPortal,
+  HlmNavigationMenuTrigger,
 ] as const;
