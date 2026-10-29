@@ -21,6 +21,7 @@ import {
   NavigationService,
   ParagraphWithTextAndClassifications,
   ParagraphWithTextAndImage,
+  renderMarkdown,
   ResourceNavigationService,
   SDKService,
   Thumbnail,
@@ -87,6 +88,7 @@ import { KeyValueFieldComponent } from './key-value-field/key-value-field.compon
 import { PreviewTableComponent } from './preview-table.component';
 import { PreviewService } from './preview.service';
 import { WarningModalComponent } from './warning-modal/warning-modal.component';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   templateUrl: './preview.component.html',
@@ -152,6 +154,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
       ),
     );
   currentAgenticAnswer = signal('');
+  renderedAgenticAnswer = toSignal(
+    toObservable(this.currentAgenticAnswer).pipe(switchMap((text) => renderMarkdown(text))),
+  );
   agenticProcessing = signal(false);
   extractConfigId: Observable<string | undefined> = this.editResourceService.fieldExtractedData.pipe(
     map((field) => (field?.value as FileField)?.extract_strategy),

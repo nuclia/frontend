@@ -136,7 +136,7 @@
           @if (agenticQuestion | async; as agenticQuestion) {
             <div class="title-xxs">{{ 'resource.agentic-question.answer' | translate }}</div>
             @if (currentAgenticAnswer()) {
-              <p>{{ currentAgenticAnswer() }}</p>
+              <div [innerHTML]="renderedAgenticAnswer() || ''"></div>
             } @else {
               <p>
                 <i>{{ 'resource.agentic-question.not-processed' | translate }}</i>
@@ -217,10 +217,7 @@
                   <div class="labels-container">
                     <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
                     @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
-                      <pa-chip
-                        [backgroundColor]="
-                          ((labelSets | async) || {})[label.labelset]?.color
-                        ">
+                      <pa-chip [backgroundColor]="((labelSets | async) || {})[label.labelset]?.color">
                         {{ label.label }}
                       </pa-chip>
                     }
