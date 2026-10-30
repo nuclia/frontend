@@ -110,40 +110,42 @@
               }
             </pa-dropdown>
           </div>
-          <div class="label-filters">
-            <app-label-dropdown
-              [labelSets]="displayedLabelSets"
-              [selection]="selectedClassifications"
-              (selectionChange)="updateClassifications($event)"
-              selectLabelsets
-              [labelsetSelection]="selectedLabelsets"
-              (labelsetSelectionChange)="updateLabelsets($event)"
-              [disabled]="filterOptions.classification.length === 0"
-              [fullWidth]="true"
-              [multiple]="true"
-              aspect="basic">
-              {{ 'resource.classification-column' | translate }}
-              {{
-                selectedClassifications.length || selectedLabelsets.length
-                  ? '(' + (selectedClassifications.length + selectedLabelsets.length) + ')'
-                  : ''
-              }}
-            </app-label-dropdown>
-            @if (selectedClassificationOptions.length + selectedLabelsetOptions.length > 1) {
-              <div class="labels-logic">
-                <pa-toggle
-                  labelOnRight
-                  [value]="andLogicForLabels"
-                  (valueChange)="updateLabelsLogic($event)"
-                  [paPopover]="labelsLogic">
-                  {{ andLogicForLabels ? 'AND' : 'OR' }}
-                </pa-toggle>
-                <pa-popover #labelsLogic>
-                  {{ (andLogicForLabels ? 'resource.filter.and' : 'resource.filter.or') | translate }}
-                </pa-popover>
-              </div>
-            }
-          </div>
+          @if (hasLabels | async) {
+            <div class="label-filters">
+              <app-label-dropdown
+                [labelSets]="displayedLabelSets"
+                [selection]="selectedClassifications"
+                (selectionChange)="updateClassifications($event)"
+                selectLabelsets
+                [labelsetSelection]="selectedLabelsets"
+                (labelsetSelectionChange)="updateLabelsets($event)"
+                [disabled]="filterOptions.classification.length === 0"
+                [fullWidth]="true"
+                [multiple]="true"
+                aspect="basic">
+                {{ 'resource.classification-column' | translate }}
+                {{
+                  selectedClassifications.length || selectedLabelsets.length
+                    ? '(' + (selectedClassifications.length + selectedLabelsets.length) + ')'
+                    : ''
+                }}
+              </app-label-dropdown>
+              @if (selectedClassificationOptions.length + selectedLabelsetOptions.length > 1) {
+                <div class="labels-logic">
+                  <pa-toggle
+                    labelOnRight
+                    [value]="andLogicForLabels"
+                    (valueChange)="updateLabelsLogic($event)"
+                    [paPopover]="labelsLogic">
+                    {{ andLogicForLabels ? 'AND' : 'OR' }}
+                  </pa-toggle>
+                  <pa-popover #labelsLogic>
+                    {{ (andLogicForLabels ? 'resource.filter.and' : 'resource.filter.or') | translate }}
+                  </pa-popover>
+                </div>
+              }
+            </div>
+          }
 
           <div>
             <nsi-dropdown-button
@@ -191,6 +193,7 @@
           @if (hiddenResourcesEnabled | async) {
             <div>
               <nsi-dropdown-button
+                class="visibility-filter"
                 freeWidth
                 aspect="basic"
                 [popupRef]="visibilityFilters">
@@ -217,77 +220,86 @@
           }
         </div>
 
-        <div class="header-actions">
-          @if (isMainView || isProcessedView) {
+        <div class="header-actions-group">
+          <ng-template #statusFilters>
+            @if (!isMainView || ((statusCount | async)?.pending || 0) + ((statusCount | async)?.error || 0) > 0) {
+              <div class="active-filters">
+                @if ((statusCount | async)?.processed || 0 > 0) {
+                  <pa-chip-selectionable
+                    [selected]="isProcessedView"
+                    (select)="goToView(isProcessedView ? '' : 'processed')"
+                    [icon]="{ name: 'circle-check' }"
+                    [backgroundColor]="isProcessedView ? 'var(--color-primary-lighter)' : undefined">
+                    {{ 'resource.processed' | translate }} ({{ (statusCount | async)?.processed }})
+                  </pa-chip-selectionable>
+                }
+                @if ((statusCount | async)?.pending || 0 > 0) {
+                  <pa-chip-selectionable
+                    [selected]="isPendingView"
+                    (select)="goToView(isPendingView ? '' : 'pending')"
+                    [icon]="{ name: 'clock-dash' }"
+                    [backgroundColor]="isPendingView ? 'var(--color-primary-lighter)' : undefined">
+                    {{ 'resource.processing' | translate }} ({{ (statusCount | async)?.pending }})
+                  </pa-chip-selectionable>
+                }
+                @if ((statusCount | async)?.error || 0 > 0) {
+                  <pa-chip-selectionable
+                    [selected]="isErrorView"
+                    (select)="goToView(isErrorView ? '' : 'error')"
+                    [icon]="{ name: 'warning' }"
+                    [backgroundColor]="isErrorView ? 'var(--color-primary-lighter)' : undefined">
+                    {{ 'resource.errors' | translate }} ({{ (statusCount | async)?.error }})
+                  </pa-chip-selectionable>
+                }
+              </div>
+            }
+          </ng-template>
+          @if (!pageStatus) {
+            <ng-container [ngTemplateOutlet]="statusFilters"></ng-container>
+          }
+          <div class="header-actions">
+            @if (isMainView || isProcessedView) {
+              <pa-button
+                kind="primary"
+                aspect="basic"
+                icon="refresh"
+                iconAndText
+                (click)="refresh()">
+                {{ 'generic.refresh' | translate }}
+              </pa-button>
+            }
+
+            @if (isAdminOrContrib | async) {
+              <stf-upload-button></stf-upload-button>
+            }
+
             <pa-button
-              kind="primary"
+              icon="more-vertical"
               aspect="basic"
-              icon="refresh"
-              iconAndText
-              (click)="refresh()">
-              {{ 'generic.refresh' | translate }}
+              [paTooltip]="'resource.menu.label' | translate"
+              [paPopup]="moreMenu">
+              {{ 'resource.menu.label' | translate }}
             </pa-button>
-          }
-
-          @if (isAdminOrContrib | async) {
-            <stf-upload-button></stf-upload-button>
-          }
-
-          <pa-button
-            icon="more-vertical"
-            aspect="basic"
-            [paTooltip]="'resource.menu.label' | translate"
-            [paPopup]="moreMenu">
-            {{ 'resource.menu.label' | translate }}
-          </pa-button>
-          <pa-dropdown #moreMenu>
-            <pa-option
-              icon="download"
-              [disabled]="downloading"
-              (selectOption)="downloadList()">
-              {{
-                (downloading
-                  ? 'resource.pagination.downloading'
-                  : isErrorView
-                    ? 'resource.pagination.download-errors'
-                    : 'resource.pagination.download'
-                ) | translate
-              }}
-            </pa-option>
-          </pa-dropdown>
+            <pa-dropdown #moreMenu>
+              <pa-option
+                icon="download"
+                [disabled]="downloading"
+                (selectOption)="downloadList()">
+                {{
+                  (downloading
+                    ? 'resource.pagination.downloading'
+                    : isErrorView
+                      ? 'resource.pagination.download-errors'
+                      : 'resource.pagination.download'
+                  ) | translate
+                }}
+              </pa-option>
+            </pa-dropdown>
+          </div>
         </div>
       </div>
 
-      <div class="active-filters">
-        @if (!isMainView || ((statusCount | async)?.pending || 0) + ((statusCount | async)?.error || 0) > 0) {
-          @if ((statusCount | async)?.processed || 0 > 0) {
-            <pa-chip-selectionable
-              [selected]="isProcessedView"
-              (select)="goToView(isProcessedView ? '' : 'processed')"
-              [icon]="{ name: 'circle-check' }"
-              [backgroundColor]="isProcessedView ? '#EDEBFD' : undefined">
-              {{ 'resource.processed' | translate }} ({{ (statusCount | async)?.processed }})
-            </pa-chip-selectionable>
-          }
-          @if ((statusCount | async)?.pending || 0 > 0) {
-            <pa-chip-selectionable
-              [selected]="isPendingView"
-              (select)="goToView(isPendingView ? '' : 'pending')"
-              [icon]="{ name: 'clock-dash' }"
-              [backgroundColor]="isPendingView ? '#EDEBFD' : undefined">
-              {{ 'resource.processing' | translate }} ({{ (statusCount | async)?.pending }})
-            </pa-chip-selectionable>
-          }
-          @if ((statusCount | async)?.error || 0 > 0) {
-            <pa-chip-selectionable
-              [selected]="isErrorView"
-              (select)="goToView(isErrorView ? '' : 'error')"
-              [icon]="{ name: 'warning' }"
-              [backgroundColor]="isErrorView ? '#EDEBFD' : undefined">
-              {{ 'resource.errors' | translate }} ({{ (statusCount | async)?.error }})
-            </pa-chip-selectionable>
-          }
-        }
+      <div class="active-filters filter-summary">
         @if (isFiltering | async) {
           <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
         }
@@ -321,7 +333,7 @@
         @if (showClearButton | async) {
           <pa-button
             size="small"
-            aspect="basic"
+            kind="secondary"
             (click)="clearFilters()">
             {{ 'resource.filter.clear' | translate }}
           </pa-button>

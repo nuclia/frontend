@@ -71,13 +71,11 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
   );
   labelSets = this.resourceListService.labelSets;
+  hasLabels = this.resourceListService.hasLabels;
   isReady = this.resourceListService.ready;
   tableLoading = this.resourceListService.tableLoading;
   status = this.resourceListService.status;
   selectedColumns = this.resourceListService.selectedColumns;
-  isFiltering = combineLatest([this.resourceListService.filters, this.resourceListService.query]).pipe(
-    map(([filters, query]) => filters.length > 0 || query !== ''),
-  );
   hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   protected override defaultColumns: ColumnHeader[] = [
@@ -133,11 +131,13 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     this.isAdminOrContrib,
     this.hiddenResourcesEnabled,
     this.selectedColumns,
+    this.hasLabels,
   ]).pipe(
-    map(([canEdit, hiddenResourcesEnabled, selectedColumns]) => {
+    map(([canEdit, hiddenResourcesEnabled, selectedColumns, hasLabels]) => {
       const visibleColumns = this.defaultColumns
         .map(this.getApplySortingMapper())
-        .filter((column) => !column.optional || selectedColumns.includes(column.id));
+        .filter((column) => !column.optional || selectedColumns.includes(column.id))
+        .filter((column) => column.id !== 'classification' || hasLabels);
       const extraColumns: ColumnHeader[] = [];
       if (hiddenResourcesEnabled) {
         extraColumns.push({ id: 'visibility', label: 'resource.visibility', size: '80px' });

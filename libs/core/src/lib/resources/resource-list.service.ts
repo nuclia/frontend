@@ -111,6 +111,10 @@ export class ResourceListService {
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),
   );
+  hasLabels = this.labelSets.pipe(
+    map((labelSets) => Object.values(labelSets).some((labelSet) => labelSet.labels.length > 0)),
+    distinctUntilChanged(),
+  );
 
   totalKbResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
   hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
