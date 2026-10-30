@@ -88,7 +88,6 @@
           </pa-table-cell>
         }
       </pa-table-sortable-header>
-
       @for (row of data | async; track row.resource.id) {
         <pa-table-row>
           @if (isAdminOrContrib | async) {

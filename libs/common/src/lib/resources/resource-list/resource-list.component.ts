@@ -1,5 +1,13 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { AsyncPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, LabelModule, ResourceListService, SDKService, SearchModes, UploadService } from '@flaps/core';
@@ -40,6 +48,7 @@ import {
 import { endOfDay } from 'date-fns';
 import { distinctUntilChanged, filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
 import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { DataPageStatusService } from '../../data/data-page/data-page-status.service';
 import { ResourceCacheService } from '../resource-cache.service';
 import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
@@ -50,6 +59,7 @@ import { ProcessedResourcesTableComponent } from './processed-resources-table/pr
 import { ResourcesTableComponent } from './resources-table/resources-table.component';
 
 @Component({
+  selector: 'stf-resource-list',
   templateUrl: './resource-list.component.html',
   styleUrls: ['./resource-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,11 +85,17 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
     PendingResourcesTableComponent,
     ErrorResourcesTableComponent,
     AsyncPipe,
+    NgTemplateOutlet,
     DatePipe,
     TranslatePipe,
   ],
 })
 export class ResourceListComponent implements OnDestroy {
+  protected readonly pageStatus = inject(DataPageStatusService, { optional: true });
+  @ViewChild('statusFilters')
+  set statusFilters(template: TemplateRef<unknown> | undefined) {
+    this.pageStatus?.template.set(template || null);
+  }
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
 
   unsubscribeAll = new Subject<void>();
@@ -98,6 +114,7 @@ export class ResourceListComponent implements OnDestroy {
   hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   labelSets = this.resourceListService.labelSets;
+  hasLabels = this.resourceListService.hasLabels;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   status = this.route.params.pipe(map((params) => this.getStatusFromParam(params['status'] || '')));
@@ -211,6 +228,7 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.pageStatus?.template.set(null);
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }

@@ -1,22 +1,53 @@
 @use 'apps/dashboard/src/variables' as *;
 
+:host {
+  container-type: inline-size;
+  display: block;
+  --data-page-content-width: calc(100cqw - var(--app-layout-padding-left, 0px) - var(--app-layout-padding-right, 0px));
+}
+
+// Only the resource list's table can be wider than the screen, so only it lets the page grow sideways
+.page-spacing:has(stf-resource-list) {
+  min-width: min-content;
+
+  > header,
+  .tabs-row {
+    left: var(--app-layout-padding-left, 0px);
+    max-width: var(--data-page-content-width);
+    position: sticky;
+  }
+}
+
 header {
   display: flex;
   flex-direction: column;
   gap: rhythm(1);
-  margin-bottom: rhythm(5);
+  margin-bottom: rhythm(3);
 }
 
 .page-title {
   justify-content: space-between;
 }
 
-pa-tabs {
+.tabs-row {
+  align-items: center;
   background: $color-light-stronger;
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(2);
+  justify-content: space-between;
+}
+
+pa-tabs {
   display: block;
-  position: sticky;
-  top: 0;
-  z-index: 1;
+
+  ::ng-deep .pa-tabs-list {
+    width: fit-content;
+  }
+}
+
+.resource-status {
+  margin-left: auto;
 }
 
 /* Be aware that if you change this padding-top value, you need to change the margin-top value of .edit-resource (in edit-resource.component.scss) accordingly */

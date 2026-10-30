@@ -39,6 +39,7 @@
 
           @if (hasLabelSets | async) {
             <app-label-dropdown
+              class="add-label-dropdown"
               [labelSets]="labelSets | async"
               (selectionChange)="updateAddLabelList($event)"
               (dropdownClose)="addLabelsToSelection()"
@@ -70,8 +71,12 @@
               <pa-dropdown
                 #visibilityActions
                 dontAdjustPosition>
-                <pa-option (selectOption)="bulkChangeVisibility(true)">{{ 'resource.hide' | translate }}</pa-option>
-                <pa-option (selectOption)="bulkChangeVisibility(false)">{{ 'resource.unhide' | translate }}</pa-option>
+                <pa-option (selectOption)="bulkChangeVisibility(true)">
+                  {{ 'resource.hide' | translate }}
+                </pa-option>
+                <pa-option (selectOption)="bulkChangeVisibility(false)">
+                  {{ 'resource.unhide' | translate }}
+                </pa-option>
               </pa-dropdown>
             </div>
           }
@@ -110,12 +115,15 @@
           #visibleColumns
           dontAdjustPosition>
           @for (column of optionalColumns; track column.id) {
+            @let unavailable = column.id === 'classification' && (hasLabels | async) !== true;
             <pa-option
               [value]="column.id"
+              [disabled]="unavailable"
               (selectOption)="toggleColumn(column, $event)"
               dontCloseOnSelect>
               <pa-checkbox
-                [value]="(selectedColumns | async)?.includes(column.id)"
+                [disabled]="unavailable"
+                [value]="!unavailable && (selectedColumns | async)?.includes(column.id)"
                 (valueChange)="toggleColumn(column)">
                 {{ column.label | translate }}
               </pa-checkbox>
@@ -133,55 +141,16 @@
         {{ bulkAction.done }} / {{ bulkAction.total }}
       </div>
     }
-    @if (
-      allResourcesSelected ||
-      ((allSelected | async) === true &&
-        !bulkAction.inProgress &&
-        !status &&
-        ((totalItems | async) || 0) > selection.length)
-    ) {
-      <div class="selection-bar">
-        <div class="title-xxs">
-          @if (allResourcesSelected) {
-            @if (isFiltering | async) {
-              {{ 'resource.select.filtered-resources-selected' | translate: { num: totalItems | async } }}
-            } @else {
-              {{ 'resource.select.kb-resources-selected' | translate: { num: totalItems | async } }}
-            }
-          } @else {
-            {{ 'resource.select.page-resources-selected' | translate: { num: selection.length } }}
-          }
-        </div>
-        @if (allResourcesSelected) {
-          <pa-button
-            aspect="basic"
-            kind="secondary"
-            size="small"
-            (click)="clearSelection()"
-            [disabled]="bulkAction.inProgress">
-            {{ 'generic.clear-selection' | translate }}
-          </pa-button>
-        } @else {
-          <pa-button
-            aspect="basic"
-            kind="secondary"
-            size="small"
-            (click)="selectAllResources()"
-            [disabled]="bulkAction.inProgress">
-            @if (isFiltering | async) {
-              {{ 'resource.select.select-filtered-resources' | translate: { num: totalItems | async } }}
-            } @else {
-              {{ 'resource.select.select-kb-resources' | translate: { num: totalItems | async } }}
-            }
-          </pa-button>
-        }
-      </div>
-    }
-    <div class="table-container">
+    <div
+      class="table-container"
+      [class.expanded-rows]="fullLabels || fullKeyValue">
       <pa-table [columns]="tableLayout | async">
+        @let canSelectAllResources =
+          (allSelected | async) === true && !bulkAction.inProgress && ((totalItems | async) || 0) > selection.length;
+        @let showSelectionHeader = (isAdminOrContrib | async) && (allResourcesSelected || canSelectAllResources);
         <pa-table-sortable-header
           noBackground
-          [cells]="headerCells | async"
+          [cells]="showSelectionHeader ? (headerCells | async | slice: 1) : (headerCells | async)"
           (sort)="sortBy($event)">
           @if (isAdminOrContrib | async) {
             <pa-table-cell header>
@@ -195,8 +164,24 @@
                 (change)="toggleAll()"></pa-checkbox>
             </pa-table-cell>
           }
+          @if (showSelectionHeader) {
+            <pa-table-cell header>
+              @if (!allResourcesSelected) {
+                <nsi-button-mini
+                  [disabled]="bulkAction.inProgress"
+                  (click)="selectAllResources()">
+                  {{ 'resource.select.select-kb-resources' | translate: { num: totalItems | async } }}
+                </nsi-button-mini>
+              } @else {
+                <nsi-button-mini
+                  [disabled]="bulkAction.inProgress"
+                  (click)="clearSelection()">
+                  {{ 'resource.select.deselect-all' | translate }}
+                </nsi-button-mini>
+              }
+            </pa-table-cell>
+          }
         </pa-table-sortable-header>
-
         @if ((tableLoading | async) === true) {
           @for (_ of skeletonRows; track $index) {
             <pa-table-row>
@@ -259,8 +244,12 @@
 
               @if (visibleColumnsId | async; as visibleColumns) {
                 @if (visibleColumns.includes('classification')) {
-                  <pa-table-cell class="classification-cell">
-                    <div class="row-container">
+                  <pa-table-cell
+                    class="classification-cell"
+                    [class.collapsed-labels]="!fullLabels">
+                    <div
+                      class="row-container"
+                      [class.expanded-labels]="fullLabels">
                       @for (label of row.labels; track label.labelset + label.label) {
                         @if (!fullLabels && label.label.length > 7) {
                           <nsi-label
@@ -299,17 +288,6 @@
                     <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
                   </pa-table-cell>
                 }
-                @if (visibleColumns.includes('visibility')) {
-                  <pa-table-cell center>
-                    @if (row.resource.hidden) {
-                      <pa-icon
-                        class="hidden"
-                        name="eye-closed"
-                        size="small"
-                        paTooltip="resource.hidden"></pa-icon>
-                    }
-                  </pa-table-cell>
-                }
                 @if (visibleColumns.includes('key-value-fields')) {
                   <pa-table-cell>
                     @let fields = row.keyValue || {} | keyvalue;
@@ -342,6 +320,16 @@
                     } @else {
                       -
                     }
+                  </pa-table-cell>
+                }
+                @if (visibleColumns.includes('visibility')) {
+                  <pa-table-cell center>
+                    <pa-icon
+                      [name]="row.resource.hidden ? 'eye-closed' : 'eye'"
+                      size="small"
+                      [paTooltip]="row.resource.hidden ? 'resource.hidden' : 'resource.non-hidden'"
+                      [attr.aria-label]="(row.resource.hidden ? 'resource.hidden' : 'resource.non-hidden') | translate"
+                      role="img"></pa-icon>
                   </pa-table-cell>
                 }
               }
