@@ -8,9 +8,21 @@
         alt="Progress"
         [src]="emailLogoUrl" />
     </div>
-    <div
-      class="px-10 pt-10 text-sm leading-5"
-      [innerHTML]="safeBody()"></div>
+    <div class="px-10 pt-10 text-sm leading-5">
+      @if (heading()) {
+        <h1 class="mb-8 text-[28px] leading-8 font-semibold text-black">{{ heading() }}</h1>
+      }
+      @for (lines of paragraphs(); track $index) {
+        <p class="mb-4 text-justify">
+          @for (line of lines; track $index; let last = $last) {
+            {{ line }}
+            @if (!last) {
+              <br />
+            }
+          }
+        </p>
+      }
+    </div>
     <div class="flex flex-col gap-2.5 px-[60px] pt-[30px] pb-[45px] text-xs leading-[18px] [&>p]:m-0">
       <p>
         Copyright &copy; {{ currentYear }} Progress Software Corporation and/or its subsidiaries or affiliates. All

@@ -1,7 +1,17 @@
-import { buildEmailBody, textToHtml } from './email-body.utils';
+import { buildEmailBody, splitParagraphs, textToHtml } from './email-body.utils';
 
 const P = 'margin: 0 0 16px;text-align: justify';
 const H1 = 'margin: 0 0 32px; font-size: 28px; line-height: 32px; color: #000000; font-weight: 600;';
+
+describe('splitParagraphs', () => {
+  it('should split on blank lines and keep single line breaks as lines', () => {
+    expect(splitParagraphs('\r\nHello\nthere\r\n\r\nBye\n')).toEqual([['Hello', 'there'], ['Bye']]);
+  });
+
+  it('should return no paragraph for a blank text', () => {
+    expect(splitParagraphs('  \n ')).toEqual([]);
+  });
+});
 
 describe('textToHtml', () => {
   it('should wrap paragraphs and convert single line breaks', () => {

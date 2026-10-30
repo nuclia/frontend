@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { HlmAlertDialogImports } from '@nuclia/ui-spartan/alert-dialog';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
@@ -17,6 +17,4 @@ export class StepReviewComponent {
   protected recipients = inject(RecipientsService);
   protected compose = inject(ComposeService);
   protected wizard = inject(EmailWizardService);
-
-  previewBody = computed(() => this.compose.buildBody());
 }

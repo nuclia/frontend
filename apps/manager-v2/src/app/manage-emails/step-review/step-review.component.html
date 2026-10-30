@@ -18,7 +18,9 @@
         <dd class="font-medium">{{ compose.subject() }}</dd>
       </dl>
 
-      <nma-email-preview [bodyHtml]="previewBody()" />
+      <nma-email-preview
+        [title]="compose.title()"
+        [text]="compose.body()" />
     </div>
   </div>
 
