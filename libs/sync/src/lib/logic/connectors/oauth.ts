@@ -31,8 +31,13 @@ export class OAuthConnector implements IConnector {
         title: 'sync.connectors.oauth.folder.title',
         fields: [
           {
+            id: 'drive_name',
+            label: 'sync.connectors.oauth.drive_name.label',
+            type: 'text',
+          },
+          {
             id: 'drive_id',
-            label: 'sync.connectors.oauth.drive.label',
+            label: 'sync.connectors.oauth.drive_id.label',
             type: 'text',
             required: true,
           },
