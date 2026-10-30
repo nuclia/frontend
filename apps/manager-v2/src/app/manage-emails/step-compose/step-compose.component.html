@@ -1,0 +1,149 @@
+<section class="flex flex-col gap-8 px-1 pt-6 pb-1">
+  <div class="flex flex-col gap-0">
+    <h2 class="text-muted-foreground/90 text-lg leading-none">Email details</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="flex flex-col gap-1.5">
+        <div class="flex h-5 items-center gap-1">
+          <label
+            hlmLabel
+            class="text-muted-foreground/90"
+            for="email-sender-name">
+            Sender name (optional)
+          </label>
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            class="text-muted-foreground size-5"
+            aria-label="About sender name"
+            position="right"
+            [hlmTooltip]="senderNameHelp">
+            <ng-icon name="lucideInfo" />
+          </button>
+        </div>
+        <input
+          hlmInput
+          id="email-sender-name"
+          type="text"
+          [attr.aria-invalid]="compose.senderNameError() ? 'true' : null"
+          [attr.aria-describedby]="compose.senderNameError() ? 'email-sender-name-error' : null"
+          [ngModel]="compose.senderName()"
+          (ngModelChange)="compose.senderName.set($event)" />
+        @if (compose.senderNameError(); as error) {
+          <p
+            id="email-sender-name-error"
+            class="text-destructive text-xs">
+            {{ error }}
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <div class="flex h-5 items-center">
+          <label
+            hlmLabel
+            class="text-muted-foreground/90"
+            for="email-subject">
+            Subject
+          </label>
+        </div>
+        <input
+          hlmInput
+          id="email-subject"
+          type="text"
+          [ngModel]="compose.subject()"
+          (ngModelChange)="compose.subject.set($event)" />
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 flex flex-col gap-0">
+    <h2 class="text-muted-foreground/90 text-lg leading-none">Message</h2>
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1.5">
+        <div class="flex h-5 items-center gap-1">
+          <label
+            hlmLabel
+            class="text-muted-foreground/90"
+            for="email-title">
+            Title (optional)
+          </label>
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            class="text-muted-foreground size-5"
+            aria-label="About title"
+            position="right"
+            hlmTooltip="Shown as a large heading at the top of the message, like in our other emails.">
+            <ng-icon name="lucideInfo" />
+          </button>
+        </div>
+        <input
+          hlmInput
+          id="email-title"
+          type="text"
+          [ngModel]="compose.title()"
+          (ngModelChange)="compose.title.set($event)" />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <div class="flex h-5 items-center gap-1">
+          <label
+            hlmLabel
+            class="text-muted-foreground/90"
+            for="email-body">
+            Message text
+          </label>
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            class="text-muted-foreground size-5"
+            aria-label="About message formatting"
+            position="right"
+            hlmTooltip="Write your message as plain text. Leave an empty line to start a new paragraph. The standard header and footer are added automatically.">
+            <ng-icon name="lucideInfo" />
+          </button>
+        </div>
+        <textarea
+          hlmTextarea
+          id="email-body"
+          rows="14"
+          [ngModel]="compose.body()"
+          (ngModelChange)="compose.body.set($event)"></textarea>
+      </div>
+      <nma-personalization-help />
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <button
+      hlmBtn
+      type="button"
+      variant="outline"
+      spartanStepperPrevious>
+      Back
+    </button>
+    <div class="flex gap-2">
+      <button
+        hlmBtn
+        type="button"
+        variant="outline"
+        [disabled]="!compose.isComplete() || compose.sendingTest()"
+        (click)="compose.sendTest()">
+        {{ compose.sendingTest() ? 'Sending test…' : 'Send test to me' }}
+      </button>
+      <button
+        hlmBtn
+        type="button"
+        [disabled]="!wizard.canReview()"
+        spartanStepperNext>
+        Next: review
+      </button>
+    </div>
+  </div>
+</section>

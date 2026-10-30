@@ -1,0 +1,38 @@
+<hlm-accordion
+  type="single"
+  class="rounded-lg border px-4 [&_h3:has([data-state=closed])]:mb-0!">
+  <hlm-accordion-item>
+    <hlm-accordion-trigger class="text-muted-foreground/90 font-semibold">
+      Personalize your message
+    </hlm-accordion-trigger>
+    <hlm-accordion-content>
+      <div class="flex flex-col gap-3 px-1 pb-1 text-sm">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-muted-foreground text-xs">Add to the end of the message:</span>
+          @for (placeholder of placeholders; track placeholder.snippet) {
+            <button
+              hlmBtn
+              type="button"
+              variant="outline"
+              size="xs"
+              (click)="compose.insert(placeholder.snippet)">
+              {{ placeholder.label }}
+            </button>
+          }
+        </div>
+        <p class="text-muted-foreground text-xs">
+          Text between double curly braces is replaced for each recipient. Examples:
+        </p>
+        <dl class="grid grid-cols-[auto_auto_1fr] items-baseline gap-x-4 gap-y-2 text-xs">
+          @for (example of personalizationExamples; track example.code) {
+            <dt>
+              <code class="bg-muted rounded px-1.5 py-0.5">{{ example.code }}</code>
+            </dt>
+            <dd class="font-medium">→ {{ example.result }}</dd>
+            <dd class="text-muted-foreground">{{ example.description }}</dd>
+          }
+        </dl>
+      </div>
+    </hlm-accordion-content>
+  </hlm-accordion-item>
+</hlm-accordion>

@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "angular-new-app/SKILL.md",
       "computedHash": "49bd84ab08bd3498c52f476bed48fbb942dc6dbc0925607e84549adbed34bccf"
+    },
+    "spartan": {
+      "source": "spartan-ng/spartan",
+      "sourceType": "github",
+      "skillPath": "skills/spartan/SKILL.md",
+      "computedHash": "817cb48b0e5d7e266610ccb5daeea8add5788a0ee5c701403da68fcfa9fc38be"
     }
   }
 }

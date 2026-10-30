@@ -19,6 +19,16 @@
             Users
           </li>
         }
+        <!-- Disabled: waiting for the 'unsubscribe' button from the backend side
+        @if (canSendEmails | async) {
+          <li
+            routerLink="emails"
+            routerLinkActive="active">
+            Emails
+          </li>
+        }
+        -->
+
         @if (canManageZones | async) {
           <li
             routerLink="zones"

@@ -1,0 +1,24 @@
+<div class="mx-auto flex max-w-4xl flex-col gap-8 p-6">
+  <spartan-stepper
+    linear
+    indicatorMode="completion"
+    stepperAriaLabel="Email wizard steps">
+    <spartan-step
+      label="Recipients"
+      [completed]="wizard.canCompose()"
+      [editable]="!wizard.sending()">
+      <nma-step-recipients />
+    </spartan-step>
+
+    <spartan-step
+      label="Compose"
+      [completed]="wizard.canReview()"
+      [editable]="!wizard.sending()">
+      <nma-step-compose />
+    </spartan-step>
+
+    <spartan-step label="Review & send">
+      <nma-step-review />
+    </spartan-step>
+  </spartan-stepper>
+</div>

@@ -5,36 +5,76 @@ import { HlmToggle } from './hlm-toggle';
 interface ToggleStoryArgs {
   variant: 'default' | 'outline';
   size: 'default' | 'sm' | 'lg';
-  state: 'on' | 'off';
   disabled: boolean;
+  state: 'on' | 'off';
+  label: string;
 }
 
 const meta: Meta<ToggleStoryArgs> = {
   title: 'Spartan/Toggle',
   component: HlmToggle,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmToggleImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmToggleImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
-        component: `A button with a persistent pressed or unpressed state. Use it to activate a mode or formatting option, such as bold text, rather than perform a one-off action.`,
+        component: `A two-state button that can be either on or off.
+Import <code>HlmToggleImports</code> from <code>@nuclia/ui-spartan/toggle</code> and apply <code>hlmToggle</code> to a native <code>&lt;button&gt;</code>.
+
+Use <code>state</code> to set the initial state and listen to <code>stateChange</code> for updates. Icon-only toggles should include an <code>aria-label</code>.`,
       },
     },
   },
-  args: { variant: 'default', size: 'default', state: 'off', disabled: false },
-  argTypes: {
-    variant: { control: 'select', options: ['default', 'outline'] },
-    size: { control: 'select', options: ['sm', 'default', 'lg'] },
-    state: { control: 'select', options: ['on', 'off'] },
-    disabled: { control: 'boolean' },
+  args: {
+    variant: 'default',
+    size: 'default',
+    disabled: false,
+    state: 'off',
+    label: 'Toggle',
   },
-  render: ({ variant, size, state, disabled }) => ({
-    props: { variant, size, state, disabled },
+  argTypes: {
+    variant: {
+      description: 'Visual style of the toggle.',
+      control: 'select',
+      options: ['default', 'outline'],
+    },
+    size: {
+      description: 'Size of the toggle.',
+      control: 'select',
+      options: ['default', 'sm', 'lg'],
+    },
+    disabled: {
+      description: 'Disables the toggle.',
+      control: 'boolean',
+    },
+    state: {
+      description: 'Initial pressed state of the toggle.',
+      control: 'select',
+      options: ['on', 'off'],
+    },
+    label: {
+      description: 'Toggle text.',
+      control: 'text',
+    },
+  },
+  render: (args) => ({
+    props: args,
     template: `
-      <button hlmToggle type="button" aria-label="Pin resource" [variant]="variant" [size]="size" [state]="state" [disabled]="disabled">
-        Pin resource
-      </button>
-    `,
+            <button
+                hlmToggle
+                type="button"
+                [variant]="variant"
+                [size]="size"
+                [disabled]="disabled"
+                [state]="state"
+            >
+                {{ label }}
+            </button>
+        `,
   }),
 };
 
@@ -44,8 +84,37 @@ type Story = StoryObj<ToggleStoryArgs>;
 
 export const Default: Story = {};
 
-export const Pressed: Story = { args: { state: 'on' } };
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+  },
+};
 
-export const Outline: Story = { args: { variant: 'outline' } };
+export const On: Story = {
+  args: {
+    state: 'on',
+  },
+};
 
-export const Disabled: Story = { args: { disabled: true } };
+export const Sizes: Story = {
+  parameters: {
+    controls: {
+      disable: true,
+    },
+  },
+  render: () => ({
+    template: `
+            <div class="flex items-center gap-3">
+                <button hlmToggle type="button" variant="outline" size="sm">Small</button>
+                <button hlmToggle type="button" variant="outline" size="default">Default</button>
+                <button hlmToggle type="button" variant="outline" size="lg">Large</button>
+            </div>
+        `,
+  }),
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+};

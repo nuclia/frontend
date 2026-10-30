@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Observable, of } from 'rxjs';
-import { AuthenticatedUser, User, UserSearch, UserSummary } from './user.models';
-import { UserType } from '@nuclia/core';
+import { AuthenticatedUser, User, UserFilters, UserSearch, UserSummary } from './user.models';
+import { AccountRoles, UserType } from '@nuclia/core';
 
 const USERS_ENDPOINT = '/manage/@users';
 const USER_ENDPOINT = '/manage/@user';
@@ -15,8 +15,18 @@ export const SEARCH_USERS_ACCOUNT_ENDPOINT = '/manage/@search_users_account';
 export class UserService {
   constructor(private sdk: SDKService) {}
 
-  getUsers(): Observable<UserSummary[]> {
-    return this.sdk.nuclia.rest.get(`${USERS_ENDPOINT}`);
+  getUsers(accountRole?: AccountRoles, filters: UserFilters = {}): Observable<UserSummary[]> {
+    const params = new URLSearchParams();
+    if (accountRole) {
+      params.set('account_role', accountRole);
+    }
+    filters.accountTypes?.forEach((type) => params.append('account_types', type));
+    filters.excludedAccountTypes?.forEach((type) => params.append('excluded_account_types', type));
+    if (filters.includeAccounts) {
+      params.set('include_accounts', 'true');
+    }
+    const query = params.toString();
+    return this.sdk.nuclia.rest.get(`${USERS_ENDPOINT}${query ? `?${query}` : ''}`);
   }
 
   getUser(userId: string): Observable<User> {

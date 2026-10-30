@@ -1,5 +1,5 @@
 import { Language } from '@flaps/core';
-import { UserType } from '@nuclia/core';
+import { AccountRoles, AccountTypes, UserType } from '@nuclia/core';
 
 export type LoginProvider = 'GOOGLE' | 'APPLE' | 'LOCAL' | 'SAML';
 
@@ -20,12 +20,28 @@ export interface UserSearch {
   email: string;
 }
 
+export type CustomerSubscriptionType = 'stripe' | 'aws_marketplace' | 'manual' | 'cloud_zero';
+export type UserSubscriptionType = CustomerSubscriptionType | 'none';
+
+export interface UserFilters {
+  accountTypes?: AccountTypes[];
+  excludedAccountTypes?: AccountTypes[];
+  includeAccounts?: boolean;
+}
+
+export interface UserAccountLink {
+  id: string;
+  role: AccountRoles;
+  type: AccountTypes;
+}
+
 export interface UserSummary {
   id: string;
   name: string | null;
   email: string;
   last_login: string | null;
   '@id': string;
+  accounts?: UserAccountLink[];
 }
 
 export interface AuthenticatedUser {

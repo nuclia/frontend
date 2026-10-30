@@ -65,7 +65,12 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `Visualizes data to make comparisons, trends, and relationships easier to understand. Use charts in reports and dashboards, with consistent colors, labels, and tooltips to support interpretation.`,
+        component: `Visualize data to make comparisons, trends and relationships easier to understand. Use charts in reports and dashboards, with consistent colors, labels and tooltips.
+Import <code>HlmChartImports</code> from <code>@nuclia/ui-spartan/chart</code> and add the <code>hlmChart</code> directive to a <code>&lt;tanstack-chart&gt;</code> element (TanStack Charts for Angular).
+
+<code>hlmChart</code> only applies the Spartan theme (the <code>--chart-1</code>…<code>--chart-5</code> palette, tooltip colors). The chart itself is configured through the <code>options</code> input of <code>tanstack-chart</code>:
+build a <code>definition</code> with <code>defineChart</code>, pass <code>HLM_CHART_THEME</code> as <code>theme</code> and <code>hlmChartTooltip()</code> as tooltip, then set <code>height</code> or <code>aspectRatio</code>.
+Always provide <code>ariaLabel</code> and <code>ariaDescription</code> in the options so screen reader users get a summary of the data. The chart has no Storybook controls as it is configured through the options object.`,
       },
     },
     controls: {

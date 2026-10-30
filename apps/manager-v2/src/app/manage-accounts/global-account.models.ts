@@ -9,6 +9,7 @@ import {
   WelcomeUser,
   WorkflowType,
 } from '@nuclia/core';
+import { CustomerSubscriptionType } from '../manage-users/user.models';
 import { AccountLabels, DedicatedProcessorsState } from './regional-account.models';
 import { ZoneVisibility } from '../manage-zones/zone.models';
 
@@ -187,6 +188,11 @@ export interface ManagerSubscriptionDetails {
 export interface ManagerAccountSubscription {
   provider: ManagerSubscriptionProvider;
   subscription: ManagerSubscriptionDetails;
+}
+
+export interface AccountSubscriptionSummary {
+  account_id: string;
+  type: CustomerSubscriptionType;
 }
 
 export type ProductCatalog = {

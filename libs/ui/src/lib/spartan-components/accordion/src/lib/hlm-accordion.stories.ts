@@ -20,7 +20,13 @@ const meta: Meta<AccordionStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `A vertically stacked set of headings that reveal or hide related sections of content. Use it for FAQs, settings, or detailed information that users can explore without seeing everything at once.`,
+        component: `Import <code>HlmAccordionImports</code> from <code>@nuclia/ui-spartan/accordion</code> into your component's imports.
+Compose <code>hlm-accordion</code> with <code>hlm-accordion-item</code>, <code>hlm-accordion-trigger</code>, and <code>hlm-accordion-content</code>.
+
+Use <code>type="single"</code> to open one item at a time or <code>type="multiple"</code> to open several items independently.
+Set <code>isOpened</code> and <code>disabled</code> on individual items; <code>openedChange</code> emits when an item's expanded state changes.
+
+Triggers support keyboard navigation and expose their expanded state to assistive technology.`,
       },
     },
   },

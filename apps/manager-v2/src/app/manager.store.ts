@@ -18,6 +18,7 @@ export class ManagerStore {
   readonly canDelete = this.userService.userType.pipe(map((t) => t == 'ROOT'));
   readonly canEdit = this.userService.userType.pipe(map((t) => !!t && t !== 'USER' && t !== 'READONLY'));
   readonly canManageZones = this.userService.userType.pipe(map((t) => t == 'ROOT'));
+  readonly canSendEmails = this.userService.userType.pipe(map((t) => t === 'ROOT'));
   readonly canSeeUsers = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'READONLY' || t === 'MANAGER'));
   readonly canManageModels = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
   readonly canCreateAccount = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));

@@ -130,25 +130,26 @@ These are the most commonly violated patterns. Apply them on every Angular task 
 
 Load the full skill file **only when the task needs deep reference** — creating a new component from scratch, debugging a non-obvious issue, or when the critical rules above aren't enough.
 
-| Skill                 | Trigger                                                                | File                                        |
-| --------------------- | ---------------------------------------------------------------------- | ------------------------------------------- |
-| **angular-patterns**  | Angular components, services, state, routes, guards, signals, inject() | `.github/skills/angular-patterns/SKILL.md`  |
-| **rxjs-patterns**     | `.pipe()`, Subject, switchMap, combineLatest, stream debugging         | `.github/skills/rxjs-patterns/SKILL.md`     |
-| **design-system**     | `nsi-*`/`pa-*` components, SCSS tokens, modals, toasts, tables, forms  | `.github/skills/design-system/SKILL.md`     |
-| **api-sdk**           | Nuclia API, SDK, KnowledgeBox, RetrievalAgent, SDKService              | `.github/skills/api-sdk/SKILL.md`           |
-| **error-handling**    | catchError, IErrorResponse, SisToastService, retry logic               | `.github/skills/error-handling/SKILL.md`    |
-| **testing-patterns**  | `*.spec.ts`, TestBed, ng-mocks, Vitest, fixture.detectChanges()        | `.github/skills/testing-patterns/SKILL.md`  |
-| **i18n-patterns**     | Translation keys, translate pipe, BabelEdit, locale files              | `.github/skills/i18n-patterns/SKILL.md`     |
-| **nx-monorepo**       | nx commands, project.json, generators, module boundaries, tags         | `.github/skills/nx-monorepo/SKILL.md`       |
-| **performance**       | @for loops, signal vs computed, lazy routes, shareReplay, debounce     | `.github/skills/performance/SKILL.md`       |
-| **code-review**       | "review", "code review", "review this PR/diff/file"                    | `.github/skills/code-review/SKILL.md`       |
-| **bug-finder**        | "find bugs", "check for bugs", "is this correct?"                      | `.github/skills/bug-finder/SKILL.md`        |
-| **knowledge-sync**    | "sync knowledge", "update AGENTS.md", stale docs after commit/PR       | `.github/skills/knowledge-sync/SKILL.md`    |
-| **agents-review**     | Review, create, or improve an AGENTS.md file                           | `.github/skills/agents-review/SKILL.md`     |
-| **skill-creator**     | Create, improve, or evaluate a skill                                   | `.github/skills/skill-creator/SKILL.md`     |
-| **product-knowledge** | Platform capabilities, API behaviour, feature feasibility              | `.github/skills/product-knowledge/SKILL.md` |
-| **slack-bolt-py**     | Slack bot, Bolt for Python, slack-bolt                                 | `.github/skills/slack-bolt-py/SKILL.md`     |
-| **teams-py-sdk**      | Teams bot, teams.py, microsoft-teams-apps                              | `.github/skills/teams-py-sdk/SKILL.md`      |
+| Skill                 | Trigger                                                                             | File                                        |
+| --------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------- |
+| **angular-patterns**  | Angular components, services, state, routes, guards, signals, inject()              | `.github/skills/angular-patterns/SKILL.md`  |
+| **rxjs-patterns**     | `.pipe()`, Subject, switchMap, combineLatest, stream debugging                      | `.github/skills/rxjs-patterns/SKILL.md`     |
+| **design-system**     | `nsi-*`/`pa-*` components, SCSS tokens, modals, toasts, tables, forms               | `.github/skills/design-system/SKILL.md`     |
+| **spartan**           | spartan/ui, `@nuclia/ui-spartan/*`, `hlm*` directives, `@spartan-ng/*`, Tailwind UI | `.github/skills/spartan/SKILL.md`           |
+| **api-sdk**           | Nuclia API, SDK, KnowledgeBox, RetrievalAgent, SDKService                           | `.github/skills/api-sdk/SKILL.md`           |
+| **error-handling**    | catchError, IErrorResponse, SisToastService, retry logic                            | `.github/skills/error-handling/SKILL.md`    |
+| **testing-patterns**  | `*.spec.ts`, TestBed, ng-mocks, Vitest, fixture.detectChanges()                     | `.github/skills/testing-patterns/SKILL.md`  |
+| **i18n-patterns**     | Translation keys, translate pipe, BabelEdit, locale files                           | `.github/skills/i18n-patterns/SKILL.md`     |
+| **nx-monorepo**       | nx commands, project.json, generators, module boundaries, tags                      | `.github/skills/nx-monorepo/SKILL.md`       |
+| **performance**       | @for loops, signal vs computed, lazy routes, shareReplay, debounce                  | `.github/skills/performance/SKILL.md`       |
+| **code-review**       | "review", "code review", "review this PR/diff/file"                                 | `.github/skills/code-review/SKILL.md`       |
+| **bug-finder**        | "find bugs", "check for bugs", "is this correct?"                                   | `.github/skills/bug-finder/SKILL.md`        |
+| **knowledge-sync**    | "sync knowledge", "update AGENTS.md", stale docs after commit/PR                    | `.github/skills/knowledge-sync/SKILL.md`    |
+| **agents-review**     | Review, create, or improve an AGENTS.md file                                        | `.github/skills/agents-review/SKILL.md`     |
+| **skill-creator**     | Create, improve, or evaluate a skill                                                | `.github/skills/skill-creator/SKILL.md`     |
+| **product-knowledge** | Platform capabilities, API behaviour, feature feasibility                           | `.github/skills/product-knowledge/SKILL.md` |
+| **slack-bolt-py**     | Slack bot, Bolt for Python, slack-bolt                                              | `.github/skills/slack-bolt-py/SKILL.md`     |
+| **teams-py-sdk**      | Teams bot, teams.py, microsoft-teams-apps                                           | `.github/skills/teams-py-sdk/SKILL.md`      |
 
 ---
 
