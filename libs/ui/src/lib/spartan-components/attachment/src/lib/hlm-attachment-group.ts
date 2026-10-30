@@ -2,14 +2,14 @@ import { Directive } from '@angular/core';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmAttachmentGroup],hlm-attachment-group',
-	host: { 'data-slot': 'attachment-group' },
+  selector: '[hlmAttachmentGroup],hlm-attachment-group',
+  host: { 'data-slot': 'attachment-group' },
 })
 export class HlmAttachmentGroup {
-	constructor() {
-		classes(
-			() =>
-				'scroll-fade-x no-scrollbar flex min-w-0 snap-x snap-mandatory scroll-px-1 gap-3 overflow-x-auto overscroll-x-contain py-1 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start',
-		);
-	}
+  constructor() {
+    classes(
+      () =>
+        'scroll-fade-x no-scrollbar flex min-w-0 snap-x snap-mandatory scroll-px-1 gap-3 overflow-x-auto overscroll-x-contain py-1 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start',
+    );
+  }
 }

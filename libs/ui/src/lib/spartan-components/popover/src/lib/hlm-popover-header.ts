@@ -2,11 +2,11 @@ import { Directive } from '@angular/core';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmPopoverHeader],hlm-popover-header',
-	host: { 'data-slot': 'popover-header' },
+  selector: '[hlmPopoverHeader],hlm-popover-header',
+  host: { 'data-slot': 'popover-header' },
 })
 export class HlmPopoverHeader {
-	constructor() {
-		classes(() => 'flex flex-col gap-0.5 text-sm');
-	}
+  constructor() {
+    classes(() => 'flex flex-col gap-0.5 text-sm');
+  }
 }

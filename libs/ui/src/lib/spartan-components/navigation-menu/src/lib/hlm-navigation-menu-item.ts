@@ -3,14 +3,14 @@ import { BrnNavigationMenuItem } from '@spartan-ng/brain/navigation-menu';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: 'li[hlmNavigationMenuItem]',
-	hostDirectives: [{ directive: BrnNavigationMenuItem, inputs: ['id'] }],
-	host: {
-		'data-slot': 'navigation-menu-item',
-	},
+  selector: 'li[hlmNavigationMenuItem]',
+  hostDirectives: [{ directive: BrnNavigationMenuItem, inputs: ['id'] }],
+  host: {
+    'data-slot': 'navigation-menu-item',
+  },
 })
 export class HlmNavigationMenuItem {
-	constructor() {
-		classes(() => 'relative has-[:focus]:z-10 data-active:z-10');
-	}
+  constructor() {
+    classes(() => 'relative has-[:focus]:z-10 data-active:z-10');
+  }
 }

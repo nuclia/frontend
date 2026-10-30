@@ -3,33 +3,33 @@ import { classes } from '@nuclia/ui-spartan/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 
 const emptyMediaVariants = cva(
-	'mb-2 flex shrink-0 items-center justify-center [&_ng-icon]:pointer-events-none [&_ng-icon]:shrink-0',
-	{
-		variants: {
-			variant: {
-				default: 'bg-transparent',
-				icon: "bg-muted text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(4)]",
-			},
-		},
-		defaultVariants: {
-			variant: 'default',
-		},
-	},
+  'mb-2 flex shrink-0 items-center justify-center [&_ng-icon]:pointer-events-none [&_ng-icon]:shrink-0',
+  {
+    variants: {
+      variant: {
+        default: 'bg-transparent',
+        icon: "bg-muted text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(4)]",
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
 );
 
 export type EmptyMediaVariants = VariantProps<typeof emptyMediaVariants>;
 
 @Directive({
-	selector: '[hlmEmptyMedia],hlm-empty-media',
-	host: {
-		'data-slot': 'empty-media',
-		'[attr.data-variant]': 'variant()',
-	},
+  selector: '[hlmEmptyMedia],hlm-empty-media',
+  host: {
+    'data-slot': 'empty-media',
+    '[attr.data-variant]': 'variant()',
+  },
 })
 export class HlmEmptyMedia {
-	public readonly variant = input<EmptyMediaVariants['variant']>();
+  public readonly variant = input<EmptyMediaVariants['variant']>();
 
-	constructor() {
-		classes(() => emptyMediaVariants({ variant: this.variant() }));
-	}
+  constructor() {
+    classes(() => emptyMediaVariants({ variant: this.variant() }));
+  }
 }

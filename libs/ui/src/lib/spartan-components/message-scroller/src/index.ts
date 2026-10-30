@@ -13,10 +13,10 @@ export * from './lib/hlm-message-scroller-provider';
 export * from './lib/hlm-message-scroller-viewport';
 
 export const HlmMessageScrollerImports = [
-	HlmMessageScrollerProvider,
-	HlmMessageScroller,
-	HlmMessageScrollerViewport,
-	HlmMessageScrollerContent,
-	HlmMessageScrollerItem,
-	HlmMessageScrollerButton,
+  HlmMessageScrollerProvider,
+  HlmMessageScroller,
+  HlmMessageScrollerViewport,
+  HlmMessageScrollerContent,
+  HlmMessageScrollerItem,
+  HlmMessageScrollerButton,
 ] as const;

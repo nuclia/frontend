@@ -3,14 +3,14 @@ import { BrnCommandSeparator } from '@spartan-ng/brain/command';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
-	selector: '[hlmCommandSeparator],hlm-command-separator',
-	hostDirectives: [BrnCommandSeparator],
-	host: {
-		'data-slot': 'command-separator',
-	},
+  selector: '[hlmCommandSeparator],hlm-command-separator',
+  hostDirectives: [BrnCommandSeparator],
+  host: {
+    'data-slot': 'command-separator',
+  },
 })
 export class HlmCommandSeparator {
-	constructor() {
-		classes(() => 'bg-border -mx-1 h-px block data-hidden:hidden');
-	}
+  constructor() {
+    classes(() => 'bg-border -mx-1 h-px block data-hidden:hidden');
+  }
 }

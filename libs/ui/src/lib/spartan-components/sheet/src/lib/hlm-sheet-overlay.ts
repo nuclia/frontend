@@ -5,18 +5,23 @@ import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Directive({
-	selector: '[hlmSheetOverlay],hlm-sheet-overlay',
-	hostDirectives: [BrnSheetOverlay],
+  selector: '[hlmSheetOverlay],hlm-sheet-overlay',
+  hostDirectives: [BrnSheetOverlay],
 })
 export class HlmSheetOverlay {
-	private readonly _classSettable = injectCustomClassSettable({ optional: true, host: true });
-	public readonly userClass = input<ClassValue>('', { alias: 'class' });
-	protected readonly _computedClass = computed(() => hlm('data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 isolate bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs', this.userClass()));
+  private readonly _classSettable = injectCustomClassSettable({ optional: true, host: true });
+  public readonly userClass = input<ClassValue>('', { alias: 'class' });
+  protected readonly _computedClass = computed(() =>
+    hlm(
+      'data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 isolate bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs',
+      this.userClass(),
+    ),
+  );
 
-	constructor() {
-		effect(() => {
-			const classValue = this._computedClass();
-			untracked(() => this._classSettable?.setClassToCustomElement(classValue));
-		});
-	}
+  constructor() {
+    effect(() => {
+      const classValue = this._computedClass();
+      untracked(() => this._classSettable?.setClassToCustomElement(classValue));
+    });
+  }
 }

@@ -11,9 +11,9 @@ export * from './lib/hlm-input-otp-separator';
 export * from './lib/hlm-input-otp-slot';
 
 export const HlmInputOtpImports = [
-	HlmInputOtp,
-	HlmInputOtpGroup,
-	HlmInputOtpSeparator,
-	HlmInputOtpSlot,
-	HlmInputOtpFakeCaret,
+  HlmInputOtp,
+  HlmInputOtpGroup,
+  HlmInputOtpSeparator,
+  HlmInputOtpSlot,
+  HlmInputOtpFakeCaret,
 ] as const;

@@ -13,10 +13,10 @@ export * from './lib/hlm-empty-media';
 export * from './lib/hlm-empty-title';
 
 export const HlmEmptyImports = [
-	HlmEmpty,
-	HlmEmptyContent,
-	HlmEmptyDescription,
-	HlmEmptyHeader,
-	HlmEmptyTitle,
-	HlmEmptyMedia,
+  HlmEmpty,
+  HlmEmptyContent,
+  HlmEmptyDescription,
+  HlmEmptyHeader,
+  HlmEmptyTitle,
+  HlmEmptyMedia,
 ] as const;

@@ -19,13 +19,13 @@ export * from './lib/hlm-attachment-title';
 export * from './lib/hlm-attachment-trigger';
 
 export const HlmAttachmentImports = [
-	HlmAttachment,
-	HlmAttachmentAction,
-	HlmAttachmentActions,
-	HlmAttachmentContent,
-	HlmAttachmentDescription,
-	HlmAttachmentGroup,
-	HlmAttachmentMedia,
-	HlmAttachmentTitle,
-	HlmAttachmentTrigger,
+  HlmAttachment,
+  HlmAttachmentAction,
+  HlmAttachmentActions,
+  HlmAttachmentContent,
+  HlmAttachmentDescription,
+  HlmAttachmentGroup,
+  HlmAttachmentMedia,
+  HlmAttachmentTitle,
+  HlmAttachmentTrigger,
 ] as const;
