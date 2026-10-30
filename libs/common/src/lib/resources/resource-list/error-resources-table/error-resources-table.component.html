@@ -33,11 +33,17 @@
           </div>
         }
         <span class="selected-count title-xxs">
-          {{ 'resource.selected_count' | translate: { num: selection.length } }}
+          {{
+            'resource.selected_count'
+              | translate: { num: allResourcesSelected ? (totalItems | async) : selection.length }
+          }}
         </span>
       </div>
     }
   </div>
+</div>
+
+<div class="table-card">
   @if (
     allResourcesSelected ||
     ((allSelected | async) === true && !bulkAction.inProgress && ((totalCount | async) || 0) > selection.length)
@@ -69,9 +75,7 @@
       }
     </div>
   }
-</div>
 
-<div class="table-card">
   <div class="table-container">
     <pa-table [columns]="tableLayout | async">
       <pa-table-sortable-header
@@ -81,9 +85,9 @@
         @if (isAdminOrContrib | async) {
           <pa-table-cell header>
             <pa-checkbox
-              [value]="allSelected | async"
+              [value]="(allSelected | async) || allResourcesSelected"
               [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
-              [disabled]="bulkAction.inProgress"
+              [disabled]="bulkAction.inProgress || allResourcesSelected"
               (change)="toggleAll()"></pa-checkbox>
           </pa-table-cell>
         }
@@ -94,8 +98,9 @@
           @if (isAdminOrContrib | async) {
             <pa-table-cell>
               <pa-checkbox
-                [value]="selection.includes(row.resource.id)"
-                (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+                [value]="selection.includes(row.resource.id) || allResourcesSelected"
+                (change)="toggleSelection(row.resource.id)"
+                [disabled]="allResourcesSelected"></pa-checkbox>
             </pa-table-cell>
           }
 
