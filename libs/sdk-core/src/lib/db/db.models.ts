@@ -104,6 +104,7 @@ export interface AccountCreation {
   eula_accepted?: boolean;
   zone?: string;
   workflow?: WorkflowType;
+  campaign_id?: string;
 }
 
 export interface SamlConfig {
