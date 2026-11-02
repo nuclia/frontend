@@ -4,11 +4,10 @@
     "outDir": "../../dist/out-tsc",
     "module": "preserve",
     "target": "es2016",
-    "types": ["jest", "node"],
+    "types": ["vitest/globals", "node"],
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"],
     "moduleResolution": "bundler",
-    "emitDecoratorMetadata": false,
-    "isolatedModules": true
+    "emitDecoratorMetadata": false
   },
-  "files": ["src/test-setup.ts"],
-  "include": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
+  "include": ["src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
 }

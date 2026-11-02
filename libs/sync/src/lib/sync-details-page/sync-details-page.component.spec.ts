@@ -23,10 +23,10 @@ describe('SyncDetailsPageComponent', () => {
     get: (key: string | string[]) => of(`[${key as string}]`),
   };
 
-  global.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
+  global.ResizeObserver = vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
   }));
 
   beforeEach(async () => {
@@ -35,7 +35,7 @@ describe('SyncDetailsPageComponent', () => {
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { params: of({ syncId: '123' }), url: of([]), queryParams: of({}) } },
-        { provide: SisToastService, useValue: { error: jest.fn(), success: jest.fn() } },
+        { provide: SisToastService, useValue: { error: vi.fn(), success: vi.fn() } },
         { provide: TranslateService, useValue: fakeTranslateService as unknown as TranslateService },
         {
           provide: SDKService,
@@ -49,7 +49,7 @@ describe('SyncDetailsPageComponent', () => {
         {
           provide: SyncService,
           useValue: {
-            setCurrentSyncId: jest.fn(),
+            setCurrentSyncId: vi.fn(),
             cacheUpdated: of(new Date().toISOString()),
             getSync: (syncId: string) =>
               of({
@@ -74,15 +74,15 @@ describe('SyncDetailsPageComponent', () => {
                 },
               },
             },
-            getConnector: jest.fn(() => ({
+            getConnector: vi.fn(() => ({
               allowToSelectFolders: true,
               canSyncLastChanges: true,
               getParametersSections: () => of([]),
             })),
-            updateSync: jest.fn(() => of(undefined)),
+            updateSync: vi.fn(() => of(undefined)),
             isSyncing: of(false),
             syncJobs: of([]),
-            getLogs: jest.fn(() =>
+            getLogs: vi.fn(() =>
               of([
                 {
                   message: 'Synchronization finished',
@@ -142,7 +142,7 @@ describe('SyncDetailsPageComponent', () => {
 
   it('should open confirm dialog when triggering sync', () => {
     const modalService = TestBed.inject(SisModalService);
-    const openConfirm = jest.spyOn(modalService, 'openConfirm');
+    const openConfirm = vi.spyOn(modalService, 'openConfirm');
     element.querySelector<HTMLElement>('[data-cy="sync-now"]')!.click();
     fixture.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
@@ -150,7 +150,7 @@ describe('SyncDetailsPageComponent', () => {
 
   it('should open confirm dialog when deleting sync', () => {
     const modalService = TestBed.inject(SisModalService);
-    const openConfirm = jest.spyOn(modalService, 'openConfirm');
+    const openConfirm = vi.spyOn(modalService, 'openConfirm');
     element.querySelector<HTMLElement>('[data-cy="delete"]')!.click();
     fixture.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
