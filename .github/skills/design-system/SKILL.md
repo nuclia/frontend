@@ -18,12 +18,12 @@ description: >
 ```
 @guillotinaweb/pastanaga-angular  ← base (pa- prefix, NgModule-based, general UI)
         ↓ theme overrides via SCSS @forward…with()
-@nuclia/sistema                   ← Nuclia layer (nsi- prefix, mostly standalone)
+@nuclia/sistema                   ← Nuclia layer (nsi- prefix, standalone)
         ↓ import in apps
 dashboard / rao / manager-v2 / admin
 ```
 
-`@nuclia/ui-spartan` is the Spartan/Helm primitive entrypoint with Tailwind utilities (the strategic direction: the project is migrating to Spartan + Tailwind, so prefer it for new UI where the app already loads Tailwind, e.g. `manager-v2`). Import components from explicit subpaths such as `@nuclia/ui-spartan/button` (see `libs/ui/AGENTS.md` for the installed list); do not import primitives from the root entrypoints. **For any Spartan/Helm/Brain work — adding components, composing, styling, forms, icons — load `.github/skills/spartan/SKILL.md` first.** The `libs/ui` Storybook documents design foundations under `Foundations` (colors and typography) and component stories under `Spartan`; see `libs/ui/AGENTS.md` for its structure.
+`@nuclia/ui-spartan` is the Spartan/Helm primitive entrypoint with Tailwind utilities (the strategic direction: the project is migrating to Spartan + Tailwind, so prefer it for new UI). No app stylesheet currently imports `libs/ui/theme/tailwind.css` / `theme.css` (only Storybook does; apps just register `@tailwindcss/postcss` in `.postcssrc.json`), so an app must `@use` them before Spartan/Tailwind classes render. Import components from explicit subpaths such as `@nuclia/ui-spartan/button` (see `libs/ui/AGENTS.md` for the installed list); do not import primitives from the root entrypoints. **For any Spartan/Helm/Brain work — adding components, composing, styling, forms, icons — load `.github/skills/spartan/SKILL.md` first.** The `libs/ui` Storybook documents design foundations under `Foundations` (colors and typography) and component stories under `Spartan`; see `libs/ui/AGENTS.md` for its structure.
 
 > **Mandatory: a Storybook story for every Spartan component.** Whenever you add a Spartan component or block to
 > `libs/ui`, or import one in an app that has no story yet, add `hlm-<name>.stories.ts` next to it
@@ -54,7 +54,6 @@ Create `sistema-pages/<component-name>/` with these files:
   selector: 'nsd-sistema-<name>',
   templateUrl: './<component-name>.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,           // ← always false in this module
 })
 export class Sistema<Name>DemoComponent { ... }
 ```
@@ -85,7 +84,7 @@ Add `<component-name>.component.scss` only when additional demo-page styles are 
 
 In `apps/sistema-demo/src/app/sistema-pages/sistema-pages.module.ts`:
 
-- Add the demo component class to `declarations`
+- Add the demo component class (standalone) to `imports`
 - Add any new `NsiXxxComponent` (or module) from `@nuclia/sistema` to `imports`
 
 ### 3 — Export from `index.ts`
@@ -102,7 +101,7 @@ In `apps/sistema-demo/src/app/app.component.ts`, add an entry to the `menu` arra
 `'Nuclia Sistema'` section, keeping **alphabetical order by `title`**:
 
 ```ts
-{ path: 'sistema-<name>', title: '<Display Name>' }
+{ view: '<name>', title: '<Display Name>', type: Sistema<Name>Component }
 ```
 
 ### Reference example
@@ -139,12 +138,12 @@ In component `.scss` files bind to tokens via the `includePaths` alias:
 // Sistema standalone components (import directly):
 import {
   BadgeComponent,
-  StatusComponent,
+  SisStatusComponent,
   BackButtonComponent,
   ButtonMiniComponent,
   DropdownButtonComponent,
   SegmentedButtonsComponent,
-  SearchInputComponent,
+  SisSearchInputComponent,
   ExpandableTextareaComponent,
   ActionCardComponent,
   InfoCardComponent,
@@ -154,13 +153,16 @@ import {
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
   ProgressBarComponent,
+  SpinnerComponent,
+  DelayedSpinnerComponent,
+  NsiSkeletonComponent,
   JsonViewerComponent,
   LabelsExpanderComponent,
-  StandaloneMimeIconPipe,
+  MimeIconPipe,
 } from '@nuclia/sistema';
 
-// Sistema NgModules (non-standalone legacy):
-import { SisLabelModule, SisPasswordInputModule, SisProgressModule } from '@nuclia/sistema';
+// Sistema wrapper NgModules (the only two; `LabelComponent` / `PasswordInputComponent` are also standalone):
+import { SisLabelModule, SisPasswordInputModule } from '@nuclia/sistema';
 
 // Sistema services (providedIn: 'root' — inject, don't provide):
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -297,10 +299,10 @@ chevron-right  chevron-left  chevron-up  chevron-down
 more-options  close  expand  collapse
 ```
 
-> Register the sprite once per app: `AngularSvgIconModule.forRoot()` in the root module,
-> and include `assets/glyphs-sprite.svg` in `angular.json` assets.
+> Register the sprite once per app: `AngularSvgIconModule.forRoot()` via `importProvidersFrom(...)` in `main.ts`,
+> and include `assets/glyphs-sprite.svg` in the app's `project.json` assets.
 
-For file-type icons, use the `mimeIcon` pipe: `{{ mimeType | mimeIcon }}` or `StandaloneMimeIconPipe`.
+For file-type icons, use the `mimeIcon` pipe: `{{ mimeType | mimeIcon }}` (import `MimeIconPipe`).
 
 ---
 

@@ -4,7 +4,7 @@
 
 `apps/dashboard` is the primary Angular frontend for Nuclia's ARAG platform, built with standalone components. Lets users manage Knowledge Boxes (KBs) and Retrieval Agents (ARAGs), upload resources, monitor usage, configure AI models, and interact with Nuclia's search/RAG capabilities.
 
-**Entry point:** `main.ts` (`bootstrapApplication(AppComponent, …)`) — legacy providers/lazy route groupings are still pulled in via `importProvidersFrom()`.  
+**Entry point:** `main.ts` (`bootstrapApplication(AppComponent, …)`) — zoneless (`provideZonelessChangeDetection()`); legacy providers/lazy route groupings are still pulled in via `importProvidersFrom()`. Translations come from `provideTranslateService({ loader: provideTranslateHttpLoader(…) })` loading `assets/i18n/{user,common,sync}/<lang>.json`; there is no `TranslateModule.forRoot` and no `BrowserAnimationsModule`.  
 All ARAG workflow code lives in `libs/common` and is shared with `apps/rao`.
 
 ---
@@ -19,18 +19,22 @@ apps/dashboard/src/app/
 ├── app-title.strategy.ts
 └── knowledge-box/             # KB feature module + KnowledgeBoxHomeComponent
     ├── knowledge-box-home/    # kb-header/, kb-onboarding/ (KbOnboardingHeaderComponent), kb-more-actions/
-    │                          # (settings/developer-integrations/test-page menu), developer-integrations-modal/,
-    │                          # kb-usage/ (UsageChartsComponent), last-resources/ — composed into KnowledgeBoxHomeComponent
-    └── simple/                # SimplePageModule (lazy) — "Context Box" frictionless UI
-        ├── simple-page.component.ts   # Routes to ReaderExperienceComponent (reader) or SimpleKBComponent (admin/contrib);
-        │                               # also shows TrialExpiredModalComponent (non-dismissable) if the account trial expired
-        ├── simple-kb/                 # SimpleKBComponent + SimpleKBService — upload + search for admins/contributors
+    │                          # (settings/developer-integrations/test-page menu, used by KbHeaderComponent),
+    │                          # developer-integrations-modal/, test-page-modal/, kb-usage/ (UsageChartsComponent),
+    │                          # last-resources/ — composed into KnowledgeBoxHomeComponent
+    └── context-box/           # ContextBoxPageModule (lazy, URL `/simple`) — "Context Box" frictionless UI
+        ├── context-box-page.component.ts  # Routes to ReaderExperienceComponent (reader) or ContextBoxComponent (admin/contrib);
+        │                                   # also blocks with a payment redirect or TrialExpiredModalComponent (see convention 10)
+        ├── context-box-page-routing.module.ts  # '' and ':externalConnectionId' both render ContextBoxPageComponent
+        ├── context-box/               # ContextBoxComponent + ContextBoxService (uploads) + ContextBoxShareFileService
+        │                              # (ShareFile sync connector) — upload, ShareFile and search for admins/contributors
         ├── reader-experience/         # ReaderExperienceComponent — search-only view for readers
-        ├── history-table/, resource-table/  # tables rendered inside SimpleKBComponent
+        ├── history-table/, resource-table/  # tables (with modal variants) rendered inside ContextBoxComponent
+        ├── trial-expired-modal/       # non-dismissable TrialExpiredModalComponent; `context-box.utils.ts` has isTrialExpired()
         └── mcp-endpoint/              # McpEndpointModalComponent — MCP server connection details modal
 ```
 
-`apps/dashboard/src/app` only has one top-level feature folder (`knowledge-box/`) — everything else (accounts, resources, entities, label-sets, settings, ARAG workflows, onboarding wizard) lives in `libs/common` and is lazy-loaded via `app-routing.lazy.ts`. The old app-local `onboarding/` folder (`GettingStartedComponent`, `WelcomeInExistingKBComponent`) was removed when KB onboarding was rebuilt as `KbOnboardingHeaderComponent` (see Knowledge Box Home below); a separate, unrelated `OnboardingComponent` (account/KB creation wizard) lives in `libs/common` and is routed at `/user/onboarding`.
+`apps/dashboard/src/app` only has one top-level feature folder (`knowledge-box/`) — everything else (accounts, resources, data page, entities, label-sets, settings, ARAG workflows, onboarding wizard) lives in `libs/common` and is lazy-loaded via `app-routing.lazy.ts`. A separate `OnboardingComponent` (account/KB creation wizard) lives in `libs/common` and is routed at `/user/onboarding`; KB-level onboarding is `KbOnboardingHeaderComponent` (see Knowledge Box Home below).
 
 ---
 
@@ -40,28 +44,26 @@ apps/dashboard/src/app/
 /  [rootGuard]             → EmptyComponent (redirects based on auth)
 /redirect                  → RedirectComponent
 
-/at/:account  [setAccountGuard]           ← also sets NavigationService.simpleMode = (account.workflow === 'cowork')
-  /manage                  → [redirectToAdminGuard] EmptyComponent — never renders; guard does a real
+/at/:account  [setAccountGuard]           ← also calls NavigationService.setContextBoxMode(account.workflow === 'cowork')
+  /                        → redirectTo 'manage'
+  /manage/**               → [redirectToAdminGuard] EmptyComponent — never renders; guard does a real
                                (cross-origin) redirect to the standalone `admin` app's account-management
                                pages (billing, users, ARAGs list), preserving the sub-path and query params
   /:zone/:kb  [setKbGuard]
-    /                      [simpleModeGuard] → KnowledgeBoxHomeComponent (redirects to ./simple when simpleMode is true)
-    /simple                → SimplePageModule (lazy) → SimplePageComponent
+    /                      [contextBoxModeGuard] → KnowledgeBoxHomeComponent (redirects to ./simple when contextBoxMode is true)
+    /simple                → ContextBoxPageModule (lazy) → ContextBoxPageComponent
                              ├─ reader role  → ReaderExperienceComponent
-                             └─ admin/contrib → SimpleKBComponent
-        /data                  → DATA_ROUTES (lazy) → DataPageComponent tab shell
-                  ├─ /resources       → RESOURCE_ROUTES (resource list, upload actions, editor)
-                  └─ /sync            → SYNC_ROUTES
-                    ├─ /           → SynchronizeComponent
-                    └─ /connect    → ConnectComponent
-                  The Resources, Synchronize, and Connect tabs are shown when
-                  `FeaturesService.unstable.agenticSearch` is enabled.
+                             └─ admin/contrib → ContextBoxComponent
+    /data                  → DATA_ROUTES (lazy) → DataPageComponent tab shell (default child: resources)
+      ├─ /resources        → RESOURCE_ROUTES (resource list, upload actions, resource editor)
+      └─ /sync             → SYNC_ROUTES: '' SynchronizeComponent, 'connect' ConnectComponent (Connect tab only when
+                             `FeaturesService.unstable.agenticSearch` is on), plus add/:connector, :syncId, add-source/:type
     /search                → SearchPageComponent
-    /sync                  → SYNC_ROUTES (lazy)
+    /search/:widgetSlug    → SearchPageComponent (preselects that saved widget: `initialWidgetSlug`)
+    /widgets, /widgets/:slug → redirectTo 'search', 'search/:slug' (KB-level widget routes are redirects)
     /entities              → EntitiesModule (lazy)
     /label-sets            → LabelSetsModule (lazy)
     /ai-models             [knowledgeBoxOwnerGuard] → AiModelsComponent
-    /widgets               [knowledgeBoxOwnerGuard] → WIDGETS_ROUTES (lazy)
     /manage                [knowledgeBoxOwnerGuard] → KbSettingsModule (lazy)
                              ├─ general             → KnowledgeBoxSettingsComponent
                              └─ kv-schemas          → KvSchemasComponent
@@ -73,7 +75,7 @@ apps/dashboard/src/app/
     /metrics               [knowledgeBoxOwnerGuard] → MetricsModule (lazy)
       /detailed            → ActivityModule (lazy) ← "Detailed logs" CSV/NDJSON download
   /:zone/arag/:agent  [setAgentGuard]
-    /                      → redirect to /workflows
+    /                      [redirectToWorkflowGuard] → redirects to /workflows/:id of the last-used workflow (else `default`)
     /workflows             → WorkflowsComponent
       /                    → WorkflowsListComponent
       /:id                 → AgentDashboardComponent
@@ -95,37 +97,31 @@ apps/dashboard/src/app/
 /user/callbacks/saml         → CallbackComponent (data: { saml: true }) ← TEMPORARY IDP-initiated SAML
 /user/login-redirect         → AppLoginComponent (starts the OAuth flow)
 /user/signup    [redirectToSignUp] → PageNotFoundComponent — guard hard-redirects to the external progress.com sign-up page and returns false, so this component never renders
-/user/test-signup            → TestingAppSignupComponent
-/user/contextbox-signup      → TemporaryContextBoxSignupComponent — signup for "Context Box" (cowork) accounts
 /user/onboarding              → OnboardingComponent (KB/account creation wizard)
-/user/set-password            → SetPasswordComponent
-/user/login                   → redirectTo: '' (backwards compat)
 /**                           → PageNotFoundComponent
 ```
 
-**Note:** all `/user/*` components above are imported directly from `@nuclia/user`/`@flaps/common` into `app-routing.module.ts` — there is no `LazyUserModule` wrapper (removed). See `libs/user/AGENTS.md` for what each component does; this file is the source of truth for their exact paths in `dashboard`.
+**Note:** all `/user/*` components above are imported directly from `@nuclia/user`/`@flaps/common` into `app-routing.module.ts` (no lazy wrapper module). Signup/set-password routes (`/user/test-signup`, `/user/contextbox-signup`, `/user/set-password`) are served by `apps/admin`, not here. See `libs/user/AGENTS.md` for what each component does.
 
 ---
 
 ## Core Modules
 
-### `AppModule`
+### Bootstrap providers (`main.ts`)
 
-`STFConfigModule.forRoot(environment)`, `TranslateModule.forRoot(MultiTranslateHttpLoader)`, `BaseModule`, `PaToastModule`, `TitleStrategy → AppTitleStrategy`. Also declares `ChatAdviceBubbleComponent` globally in `AppComponent`'s template, shown when `features.unstable.chatAdvice` is enabled.
+There is no `AppModule`. `main.ts` provides `STFConfigModule.forRoot(environment)`, `BaseModule`, `PaToastModule`, `provideTranslateService(…)`, `TitleStrategy → AppTitleStrategy`. `AppComponent`'s template renders `<stf-chat-advice-bubble>` (`ChatAdviceBubbleComponent`) when `features.unstable.chatAdvice` is enabled.
 
-**No auth HTTP interceptor** — `provideHttpClient(withInterceptorsFromDi())` is configured but nothing provides `HTTP_INTERCEPTORS`; auth headers are attached by the SDK itself, not by an Angular interceptor (removed in #2680, "Angular interceptor is never used since we use the SDK to fetch"). Don't assume one exists when debugging auth headers on HTTP calls.
+**No auth HTTP interceptor** — `provideHttpClient(withInterceptorsFromDi())` is configured but nothing provides `HTTP_INTERCEPTORS`; auth headers are attached by the SDK itself, not by an Angular interceptor. Don't assume one exists when debugging auth headers on HTTP calls.
 
-### `KnowledgeBoxModule`
-
-`KnowledgeBoxComponent` (thin router-outlet wrapper) + `KnowledgeBoxHomeComponent` (KB dashboard). `SimplePageModule` is a separately lazy-loaded route at `/simple` (not part of `KnowledgeBoxModule`'s own imports) — gated by whether the current account's `workflow === 'cowork'` (a "Context Box" account), not by a feature flag. `SimplePageComponent` (inside `SimplePageModule`) routes to `ReaderExperienceComponent` for read-only KB users or `SimpleKBComponent` for admins/contributors.
+`KnowledgeBoxModule` only wraps `KnowledgeBoxComponent` (router-outlet shell) + `KnowledgeBoxHomeComponent`; `/simple` (`ContextBoxPageModule`) is a separate lazy route (convention 10).
 
 ---
 
 ## Knowledge Box Home
 
-`KnowledgeBoxHomeComponent` composes several sub-components: `KbOnboardingHeaderComponent` (admin-only, wraps `KbHeaderComponent` once onboarding is done — KB name, storage summary popup, search/upload buttons, `KbMoreActionsComponent` "more actions" menu shared between both headers for KB settings / `DeveloperIntegrationsModalComponent` / test page), a KB summary grid (region, generative model, status, semantic model), account-manager-only usage charts + a usage summary table, a health-status card (REMI, shown when `isKBContrib` and `authorized.remiMetrics`, "more metrics" link goes to `/metrics/remi-analytics`), and `LastResourcesComponent` (recent resources preview). The `app-account-status` trial banner (`isAccountManager && isTrial`) was removed from this page.
+`KnowledgeBoxHomeComponent` composes: `KbOnboardingHeaderComponent` (admin-only; renders the step cards — upload via `<stf-upload-button>` from `@flaps/common`, "Try search" calls `markDone` — and embeds `KbHeaderComponent` once onboarding is done), `KbHeaderComponent` (KB name, storage summary popup, search/upload buttons, and the only `KbMoreActionsComponent` "more actions" menu: KB settings / `DeveloperIntegrationsModalComponent` / test page), a KB summary grid (region, generative model, status, semantic model), account-manager-only usage charts + a usage summary table, a health-status card (REMI, shown when `isKBContrib` and `authorized.remiMetrics`, "more metrics" link goes to `/metrics/remi-analytics`), and `LastResourcesComponent` (recent resources preview). Resource-list/search links come from `NavigationService.getResourceListUrl()` / `getSearchUrl()` (both return Observables and resolve to `/data/resources` and `/search`).
 
-Build KB URLs through `NavigationService.getKbUrl(account.slug, kb.slug)` rather than assembling the route locally; this keeps navigation consistent with app-origin routing when links are shared across dashboard and admin surfaces.
+Build KB URLs through `NavigationService.getKbUrl(account.slug, kb.slug)` rather than assembling the route locally.
 
 ---
 
@@ -133,35 +129,29 @@ Build KB URLs through `NavigationService.getKbUrl(account.slug, kb.slug)` rather
 
 `AgentDashboardComponent` is the ARAG workflow editor — shared with `apps/rao`.
 
-**`WorkflowService`** orchestrates the canvas:
-
-- Dynamically creates node form components via `createComponent()` + `ApplicationRef.attachView()`.
-- Sidebar panels (rules, add-node, test, import, export) are rendered this way — **no `@if`/`*ngIf` template slots for sidebar content**.
-- `openSidebar(type, component)` — renders any component into the sidebar.
-
-**Workflow state** — Angular signals (no NgRx), in `workflow.state.ts`:
-`aragUrl`, `sidebar`, `selectedNode`, `preprocessNodes`, `contextNodes`, `generationNodes`, `postprocessNodes`, `childNodes`, `workflow`, `testAgent`
+**`WorkflowService`** creates node form components and sidebar panels dynamically (`createComponent()` + `ApplicationRef.attachView()`, `openSidebar(type, component)`) — there are no `@if`/`*ngIf` template slots for sidebar content. Workflow state is Angular signals (no NgRx) in `workflow.state.ts`.
 
 ---
 
 ## Guards Summary
 
-| Guard                    | Purpose                                                                                                                                                               |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authGuard`              | Requires authenticated user (`JWT_KEY` in localStorage)                                                                                                               |
-| `rootGuard`              | Redirects to first account/KB or login                                                                                                                                |
-| `setAccountGuard`        | Sets active account in SDK; also sets `NavigationService.simpleMode` from `account.workflow === 'cowork'`                                                             |
-| `setKbGuard`             | Sets active KB in SDK                                                                                                                                                 |
-| `setAgentGuard`          | Sets active ARAG in SDK                                                                                                                                               |
-| `selectAccountGuard`     | Ensures account selection flow                                                                                                                                        |
-| `selectKbGuard`          | Ensures KB selection flow                                                                                                                                             |
-| `knowledgeBoxOwnerGuard` | KB owner/admin required                                                                                                                                               |
-| `aragOwnerGuard`         | ARAG owner/admin required                                                                                                                                             |
-| `awsGuard`               | AWS Marketplace onboarding                                                                                                                                            |
-| `redirectToAdminGuard`   | On `/manage`: redirects (same-origin route or cross-origin, via `NavigationService.resolveGuardRedirect()`) to the standalone `admin` app's account-management pages. |
-| `redirectToSignUp`       | On `/user/signup`: always redirects to the external marketing sign-up page and blocks activation                                                                      |
-| `inviteInProgressGuard`  | `canDeactivate` on `/users`: confirms navigation away while a multi-user invite is in progress                                                                        |
-| `simpleModeGuard`        | On KB home (`/`): redirects to `/simple` when `NavigationService.simpleMode` is true                                                                                  |
+| Guard                     | Purpose                                                                                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard`               | Requires authenticated user (`JWT_KEY` in localStorage)                                                                                                               |
+| `rootGuard`               | Redirects to first account/KB or login                                                                                                                                |
+| `setAccountGuard`         | Sets active account in SDK; also calls `NavigationService.setContextBoxMode(account.workflow === 'cowork')`                                                           |
+| `setKbGuard`              | Sets active KB in SDK                                                                                                                                                 |
+| `setAgentGuard`           | Sets active ARAG in SDK                                                                                                                                               |
+| `selectAccountGuard`      | On `/select`: no accounts → onboarding (if user can create) or logout; exactly one account → redirects to `/select/:slug` (skips account picker); several → picker    |
+| `selectKbGuard`           | Ensures KB selection flow                                                                                                                                             |
+| `knowledgeBoxOwnerGuard`  | KB owner/admin required                                                                                                                                               |
+| `aragOwnerGuard`          | ARAG owner/admin required                                                                                                                                             |
+| `awsGuard`                | AWS Marketplace onboarding                                                                                                                                            |
+| `redirectToAdminGuard`    | On `/manage`: redirects (same-origin route or cross-origin, via `NavigationService.resolveGuardRedirect()`) to the standalone `admin` app's account-management pages. |
+| `redirectToSignUp`        | On `/user/signup`: always redirects to the external marketing sign-up page and blocks activation                                                                      |
+| `inviteInProgressGuard`   | `canDeactivate` on `/users`: confirms navigation away while a multi-user invite is in progress                                                                        |
+| `contextBoxModeGuard`     | On KB home (`/`): redirects to `/simple` when `NavigationService.contextBoxMode` is true                                                                              |
+| `redirectToWorkflowGuard` | On the bare ARAG entry: redirects to the last-used workflow canvas (else `default`); explicit `/workflows` still shows the list                                       |
 
 ---
 
@@ -196,18 +186,17 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 1. **Signal-based workflow state** — mutations via exported state functions in `workflow.state.ts` (`addNode()`, `deleteNode()`, `updateNode()`). Never mutate signals from outside the state file.
 2. **Dynamic sidebar** — `WorkflowService.openSidebar()` uses `createComponent()`. No template slots.
 3. **Shared ARAG code** — `AgentDashboardComponent` + all workflow code in `libs/common`. Dashboard-specific code: `app/` directory only.
-4. **Standalone-first** — components are standalone; a handful of `@NgModule`s remain only as route-grouping wrappers for lazy-loaded feature areas (e.g. `KnowledgeBoxModule`, `SimplePageModule`, `AppRoutingModule`) or to import legacy library modules — they no longer declare/wrap component logic.
+4. **Standalone by default** — components, directives and pipes are standalone without a `standalone: true` flag (Angular 22 default); don't add it. The `@NgModule`s that exist (`KnowledgeBoxModule`, `ContextBoxPageModule`, `ContextBoxPageRoutingModule`, `AppRoutingModule`) are route-grouping/import wrappers and declare no components.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
-6. **Lazy routes** — `DATA_ROUTES`, `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `TASK_AUTOMATION_ROUTES`, `WIDGETS_ROUTES`, `SimplePageModule`, and `LabelSetsModule` are re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. Resource listing and editing are child routes of `/data/resources`; upload actions are available there rather than through a separate `/upload` route. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module). Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
-7. **`/metrics` always loads `MetricsModule`** — the legacy REMI-only page and the `metricsDisabledGuard`/`metricsEnabledGuard` split were removed. `MetricsModule` is always loaded when the `/metrics` route is activated.
+6. **Lazy routes** — `DATA_ROUTES`, `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `TASK_AUTOMATION_ROUTES`, `WIDGETS_ROUTES` (ARAG only), `ContextBoxPageModule`, and `LabelSetsModule` are re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. Resource listing and editing are child routes of `/data/resources`; upload actions live there (there is no `/upload` route), and sync is `/data/sync`. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module). Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
+7. **`/metrics` always loads `MetricsModule`** — there is no REMI-only page or enabled/disabled guard split.
 8. **Activity logs live at `/metrics/detailed`** — `ActivityModule` (`libs/common/src/lib/metrics/activity/`) is lazy-loaded inside `MetricsModule` at the `detailed` child route. There is no standalone `/activity` route on the KB.
 9. **`/user/callbacks/saml` is temporary** — added for IDP-initiated SAML clients whose `RelayState` points here. Remove once those clients are updated to use the auth app's URL.
-10. **`/simple` "Context Box" UI** — `SimplePageModule` is lazy-loaded; `SimplePageComponent` inspects the user role and routes to `ReaderExperienceComponent` (reader: search-only) or `SimpleKBComponent` (admin/contrib: upload + search). Gated by `account.workflow === 'cowork'`, not a feature flag — see `setAccountGuard`. `SimplePageComponent` also blocks the page with a non-dismissable `TrialExpiredModalComponent` when the account's trial has expired. When `FeaturesService.unstable.contextBoxNoTrial` (`context-box-no-trial`) is on, account managers of a `cowork`-type account with no subscription (`BillingService.hasSubscription()`, not the trial expiration date) are redirected straight to the billing/upgrade URL instead; if the subscription lookup fails, nothing blocks (and `stf-plan-status` hides the trial label and days-left pill for cowork accounts); non-managers still get the modal. On the admin billing page, `BillingService.isContextBoxPaymentRequired` (unpaid cowork + flag on) hides the back link, and Cancel asks for confirmation then logs out; with the flag off, unpaid cowork accounts still get the activation checkout but keep back/Cancel. The activation form is its own component, `CheckoutContextBoxComponent` (`apps/admin/.../billing/checkout-context-box`); the classic `CheckoutComponent` shares the whole payment flow with it: `CheckoutService` (component-provided: form, customer, card, review → subscribe → redirect; each page passes a `CheckoutStrategy` with its plan details, redirect URL and error hook) (`checkout.service.ts`). The billing-details and card forms are one shared component, `CheckoutFormComponent` (`billing/checkout-form`, `section` = `billing` or `card`), that reads the form state from the page's `CheckoutService`; the card section mounts Stripe itself. Change the Stripe flow and the forms there, not in the pages.
-11. **Context Box uploads keyed by batch, not global state** — `SimpleKBService.uploadStatus` is a map of `{ [uploadIndex]: UploadStatus }` (one entry per `uploadFiles()` call), not a single status object. This is what makes concurrent/simultaneous upload batches possible (#2996) without one batch's progress overwriting another's; `cleanUploads()` prunes completed entries on each new upload to avoid unbounded growth. `visibleUploads` flattens all batches' files for display.
-12. **Media-file-blocked sentinel** — in `SimpleKBComponent.onFilesSelected()`, `maxMediaFileSize === 1` (from `account.limits.upload.upload_limit_max_media_file_size`) means "media files are not supported at all" for this account/plan, not a literal 1-byte limit — it drives the `simple.no-media-files` toast instead of the size-limit toast (#2995). Don't treat `1` as a real byte limit when touching this logic.
-13. **ARAG routes now under `/workflows`** — `/:zone/arag/:agent` redirects to `./workflows`. `WorkflowsListComponent` shows all workflows; `AgentDashboardComponent` is at `./workflows/:id`.
-14. **`/user/set-password`** — `SetPasswordComponent` is a dedicated route for setting a password after being invited or after signup. Distinct from `/user/reset` (which uses a magic token from an email link).
-15. **KB routes guarded by `knowledgeBoxOwnerGuard`** — `/manage`, `/ai-models`, `/widgets`, `/users`, `/keys` under `/:zone/:kb` all require `knowledgeBoxOwnerGuard` (KB owner/admin). ARAG equivalents use `aragOwnerGuard`. `/users` also has `canDeactivate: [inviteInProgressGuard]` on both.
-16. **`/prompt-lab` redirect** — permanently redirects to `/rag-lab`. Old bookmarks continue to work.
-17. **ARAG `/sources` route** — rendered by `DriversPageComponent`; note the component name doesn't match the route.
-18. **Account management lives in `apps/admin`, not here.** `/at/:account/manage/**` hits `redirectToAdminGuard`, which builds the equivalent URL on the `admin` app's own origin (via `NavigationService.getAccountManageUrl()`/`resolveGuardRedirect()`) and does a real cross-origin navigation, appending `from`/`app` query params so `admin` can offer a "back to workspace" link. Any in-app link pointing at account-management pages (billing, invite-collaborators, KB/ARAG "table inside a page" links, etc.) must go through `NavigationService.navigateExternal()`/`getAccountManageUrl()` instead of the Angular router — see `libs/core/AGENTS.md`.
+10. **`/simple` "Context Box" UI** — gated by `account.workflow === 'cowork'` (`NavigationService.contextBoxMode`), not a feature flag. `ContextBoxPageComponent` shows `ReaderExperienceComponent` (reader) or `ContextBoxComponent` (admin/contrib: upload, ShareFile sync, search), and blocks on an expired trial: with `FeaturesService.unstable.contextBoxNoTrial` (`context-box-no-trial`) on, account managers of a `cowork` account without a subscription (`BillingService.hasSubscription()`; a failed lookup blocks nothing) are sent to `getUpgradeUrl()` via `navigateExternal`; everyone else with an expired trial gets the non-dismissable `TrialExpiredModalComponent`. The payment flow itself (`BillingService.isContextBoxPaymentRequired`, `CheckoutContextBoxComponent`) lives in `apps/admin`.
+11. **Context Box uploads keyed by batch** — `ContextBoxService.uploadStatus` is a map `{ [uploadIndex]: UploadStatus }` (one entry per `uploadFiles()` call) so concurrent batches don't overwrite each other's progress; `cleanUploads()` prunes completed entries on each new upload; `visibleUploads` flattens all batches.
+12. **Media-file-blocked sentinel** — in `ContextBoxComponent.onFilesSelected()`, `maxMediaFileSize === 1` (from `account.limits.upload.upload_limit_max_media_file_size`) means "media files not supported on this plan" (shows the `context-box.no-media-files` toast), not a 1-byte limit.
+13. **ARAG routes under `/workflows`** — `/:zone/arag/:agent` is handled by `redirectToWorkflowGuard` (last-used workflow, else `default`). `WorkflowsListComponent` shows all workflows; `AgentDashboardComponent` is at `./workflows/:id`.
+14. **KB routes guarded by `knowledgeBoxOwnerGuard`** — `/manage`, `/ai-models`, `/users`, `/keys`, `/metrics` under `/:zone/:kb` require `knowledgeBoxOwnerGuard` (KB owner/admin). ARAG equivalents (plus `/widgets`) use `aragOwnerGuard`. `/users` also has `canDeactivate: [inviteInProgressGuard]` on both. KB `/widgets` has no guard — it is a redirect to `/search`; saved widgets are managed from the search page.
+15. **`/prompt-lab` redirect** — permanently redirects to `/rag-lab`. Old bookmarks continue to work.
+16. **ARAG `/sources` route** — rendered by `DriversPageComponent`; note the component name doesn't match the route.
+17. **Account management lives in `apps/admin`, not here.** `/at/:account/manage/**` hits `redirectToAdminGuard`, which builds the equivalent URL on the `admin` app's own origin (via `NavigationService.getAccountManageUrl()`/`resolveGuardRedirect()`) and does a real cross-origin navigation, appending `from`/`app` query params so `admin` can offer a "back to workspace" link. Any in-app link pointing at account-management pages (billing, invite-collaborators, KB/ARAG "table inside a page" links, etc.) must go through `NavigationService.navigateExternal()`/`getAccountManageUrl()` instead of the Angular router — see `libs/core/AGENTS.md`.

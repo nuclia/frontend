@@ -134,13 +134,13 @@ Spaces inside `{{` `}}` are optional but consistent — pick a style and keep it
 <p [innerHTML]="'account.invite-collaborators.set-password' | translate: { email: userEmail() }"></p>
 ```
 
-The component must import `TranslateModule`:
+The component must import `TranslatePipe` (standalone pipe; apps provide the service via `provideTranslateService()` in `main.ts`):
 
 ```ts
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  imports: [TranslateModule, ...],
+  imports: [TranslatePipe, ...],
 })
 ```
 

@@ -92,7 +92,7 @@ rest.get<T>(path, extraHeaders?, doNotParse?, zoneSlug?): Observable<T>
 rest.post<T>(path, body, extraHeaders?, doNotParse?, synchronous?, zoneSlug?): Observable<T>
 rest.put<T>(path, body, extraHeaders?, doNotParse?, synchronous?, zoneSlug?): Observable<T>
 rest.patch<T>(path, body, extraHeaders?, doNotParse?, synchronous?, zoneSlug?): Observable<T>
-rest.delete<T>(path, extraHeaders?, synchronous?, zoneSlug?): Observable<T>
+rest.delete<T>(path, extraHeaders?, synchronous?, zoneSlug?, body?, doNotParse = true): Observable<T>
 rest.head(path, extraHeaders?): Observable<Response>
 ```
 

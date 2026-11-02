@@ -139,18 +139,18 @@ export class DriversPageComponent {
 import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { DriversService } from './drivers.service';
 
 @Component({
   selector: 'app-drivers-panel',
-  imports: [TranslateModule, PaButtonModule, PaTableModule, InfoCardComponent],
+  imports: [TranslatePipe, PaButtonModule, PaTableModule, InfoCardComponent],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // Note: no `standalone: true` — it's implicit in Angular 19+
+  // Note: no `standalone: true` — it's the default
 })
 export class DriversPageComponent implements OnInit, OnDestroy {
   private driversService = inject(DriversService);
