@@ -9,7 +9,7 @@ import { ... } from '@flaps/common'; // → libs/common/src/index.ts
 ```
 
 ```bash
-nx test common       # Jest unit tests (no build/lint targets)
+nx test common       # Vitest unit tests via Angular builder (no build/lint targets; own test-build target)
 ```
 
 ---

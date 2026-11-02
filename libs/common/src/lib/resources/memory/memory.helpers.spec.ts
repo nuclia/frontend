@@ -1,4 +1,5 @@
 import { ConversationField, ConversationFieldPages, Message, Resource } from '@nuclia/core';
+import { MEMORY_FACTS_FIELD_PREFIX, MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 import {
   factsFieldIdFromSessionFieldId,
   getConversationMessages,
@@ -11,7 +12,6 @@ import {
   parseMemoryFact,
   sessionFieldIdFromFactsFieldId,
 } from './memory.helpers';
-import { MEMORY_FACTS_FIELD_PREFIX, MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 
 function message(text: string, overrides: Partial<Message> = {}): Message {
   return {
@@ -45,7 +45,7 @@ describe('Memory helpers', () => {
   describe('isMemoryResource', () => {
     it('should return false when resource has no conversation fields', () => {
       expect(isMemoryResource({ data: {} })).toBe(false);
-      expect(isMemoryResource({ data: undefined } as Pick<Resource, 'data'>)).toBe(false);
+      expect(isMemoryResource({ data: undefined } as unknown as Pick<Resource, 'data'>)).toBe(false);
     });
 
     it('should return false when conversation fields are all non-memory', () => {

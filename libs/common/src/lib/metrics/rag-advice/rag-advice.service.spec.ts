@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { MockProvider } from 'ng-mocks';
@@ -6,10 +7,10 @@ import { RagAdviceService } from './rag-advice.service';
 
 describe('RagAdviceService', () => {
   let service: RagAdviceService;
-  let post: jest.Mock;
+  let post: Mock;
 
   beforeEach(() => {
-    post = jest.fn();
+    post = vi.fn();
 
     TestBed.configureTestingModule({
       providers: [RagAdviceService, MockProvider(HttpClient, { post })],

@@ -27,7 +27,7 @@ describe('OtpInputComponent', () => {
 
   describe('onInput()', () => {
     it('typing a digit in box 0 sets digits[0] and emits otpChange', () => {
-      const otpChangeSpy = jest.fn();
+      const otpChangeSpy = vi.fn();
       component.otpChange.subscribe(otpChangeSpy);
 
       inputs[0].value = '1';
@@ -39,7 +39,7 @@ describe('OtpInputComponent', () => {
     });
 
     it('typing a digit in the last box (index 5) does not advance focus beyond array', () => {
-      const otpChangeSpy = jest.fn();
+      const otpChangeSpy = vi.fn();
       component.otpChange.subscribe(otpChangeSpy);
 
       // Fill first 5 to be safe
@@ -63,8 +63,8 @@ describe('OtpInputComponent', () => {
   function paste(text: string): void {
     // ClipboardEvent is not available in jsdom — call onPaste directly with a mock.
     const mockEvent = {
-      preventDefault: jest.fn(),
-      clipboardData: { getData: jest.fn().mockReturnValue(text) },
+      preventDefault: vi.fn(),
+      clipboardData: { getData: vi.fn().mockReturnValue(text) },
     } as unknown as ClipboardEvent;
     component.onPaste(mockEvent);
     fixture.detectChanges();
@@ -72,7 +72,7 @@ describe('OtpInputComponent', () => {
 
   describe('onPaste()', () => {
     it('pasting 6 digits fills all boxes and emits otpComplete', () => {
-      const otpCompleteSpy = jest.fn();
+      const otpCompleteSpy = vi.fn();
       component.otpComplete.subscribe(otpCompleteSpy);
 
       paste('123456');
@@ -82,8 +82,8 @@ describe('OtpInputComponent', () => {
     });
 
     it('pasting 3 digits fills first 3 boxes, does not emit otpComplete, emits otpChange', () => {
-      const otpCompleteSpy = jest.fn();
-      const otpChangeSpy = jest.fn();
+      const otpCompleteSpy = vi.fn();
+      const otpChangeSpy = vi.fn();
       component.otpComplete.subscribe(otpCompleteSpy);
       component.otpChange.subscribe(otpChangeSpy);
 
@@ -97,7 +97,7 @@ describe('OtpInputComponent', () => {
     });
 
     it('pasting non-digit characters extracts only the digits', () => {
-      const otpChangeSpy = jest.fn();
+      const otpChangeSpy = vi.fn();
       component.otpChange.subscribe(otpChangeSpy);
 
       paste('abc123');
@@ -109,8 +109,8 @@ describe('OtpInputComponent', () => {
     });
 
     it('clears stale trailing digits and does not emit otpComplete after a short paste', () => {
-      const otpCompleteSpy = jest.fn();
-      const otpChangeSpy = jest.fn();
+      const otpCompleteSpy = vi.fn();
+      const otpChangeSpy = vi.fn();
       component.otpComplete.subscribe(otpCompleteSpy);
       component.otpChange.subscribe(otpChangeSpy);
 
@@ -145,7 +145,7 @@ describe('OtpInputComponent', () => {
       inputs[1].value = '';
       fixture.detectChanges();
 
-      const focusSpy = jest.spyOn(inputs[0], 'focus');
+      const focusSpy = vi.spyOn(inputs[0], 'focus');
 
       inputs[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true }));
       fixture.detectChanges();
@@ -172,7 +172,7 @@ describe('OtpInputComponent', () => {
   // ─── otpComplete emission ────────────────────────────────────────────────────
 
   it('emits otpComplete exactly once when the 6th digit is entered', () => {
-    const otpCompleteSpy = jest.fn();
+    const otpCompleteSpy = vi.fn();
     component.otpComplete.subscribe(otpCompleteSpy);
 
     // Fill the first 5 digits manually

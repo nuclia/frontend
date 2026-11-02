@@ -1,22 +1,23 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
-import { MockProvider } from 'ng-mocks';
 import { SDKService, UserService } from '@flaps/core';
-import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivityLogItem } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
+import { MockProvider } from 'ng-mocks';
+import { of, throwError } from 'rxjs';
+import type { Mock } from 'vitest';
 import { ResourceActivityPageService } from './resource-activity-page.service';
 
-const makeItem = (date: string): ActivityLogItem => ({ date } as any);
+const makeItem = (date: string): ActivityLogItem => ({ date }) as any;
 
 describe('ResourceActivityPageService', () => {
   let service: ResourceActivityPageService;
-  let queryActivityLogs: jest.Mock;
-  let getMonthsWithActivity: jest.Mock;
+  let queryActivityLogs: Mock;
+  let getMonthsWithActivity: Mock;
 
   beforeEach(() => {
-    queryActivityLogs = jest.fn();
-    getMonthsWithActivity = jest.fn().mockReturnValue(of({ downloads: [] }));
+    queryActivityLogs = vi.fn();
+    getMonthsWithActivity = vi.fn().mockReturnValue(of({ downloads: [] }));
     const mockKb = { activityMonitor: { queryActivityLogs, getMonthsWithActivity } };
 
     TestBed.configureTestingModule({
@@ -25,7 +26,7 @@ describe('ResourceActivityPageService', () => {
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),
           currentAccount: of({ id: 'acc-1' } as any),
-          nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+          nuclia: { db: { getUsage: vi.fn().mockReturnValue(of([])) } } as any,
         }),
         MockProvider(UserService),
         MockProvider(SisToastService),
@@ -62,11 +63,12 @@ describe('ResourceActivityPageService', () => {
 
     it('unions months from all three event types and deduplicates, sorted descending', () => {
       TestBed.resetTestingModule();
-      const gmwa = jest.fn()
+      const gmwa = vi
+        .fn()
         .mockReturnValueOnce(of({ downloads: ['2024-01', '2024-02'] })) // NEW
         .mockReturnValueOnce(of({ downloads: ['2024-02', '2024-03'] })) // MODIFIED
         .mockReturnValueOnce(of({ downloads: ['2024-01', '2024-03'] })); // PROCESSED
-      const qal = jest.fn().mockReturnValue(of([]));
+      const qal = vi.fn().mockReturnValue(of([]));
       const freshKb = { activityMonitor: { queryActivityLogs: qal, getMonthsWithActivity: gmwa } };
       TestBed.configureTestingModule({
         providers: [
@@ -74,7 +76,7 @@ describe('ResourceActivityPageService', () => {
           MockProvider(SDKService, {
             currentKb: of(freshKb as any),
             currentAccount: of({ id: 'acc-1' } as any),
-            nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+            nuclia: { db: { getUsage: vi.fn().mockReturnValue(of([])) } } as any,
           }),
           MockProvider(UserService),
           MockProvider(SisToastService),
@@ -88,16 +90,16 @@ describe('ResourceActivityPageService', () => {
 
     it('remains empty when getMonthsWithActivity errors', () => {
       TestBed.resetTestingModule();
-      const gmwa = jest.fn().mockReturnValue(throwError(() => new Error('err')));
-      const qal = jest.fn().mockReturnValue(of([]));
+      const gmwa = vi.fn().mockReturnValue(throwError(() => new Error('err')));
+      const qal = vi.fn().mockReturnValue(of([]));
       const freshKb = { activityMonitor: { queryActivityLogs: qal, getMonthsWithActivity: gmwa } };
       TestBed.configureTestingModule({
         providers: [
           ResourceActivityPageService,
           MockProvider(SDKService, {
-            currentKb: of(freshKb),
-            currentAccount: of({ id: 'acc-1' }),
-            nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+            currentKb: of(freshKb as any),
+            currentAccount: of({ id: 'acc-1' } as any),
+            nuclia: { db: { getUsage: vi.fn().mockReturnValue(of([])) } } as any,
           }),
           MockProvider(UserService),
           MockProvider(SisToastService),

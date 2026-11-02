@@ -1,21 +1,22 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { MockProvider } from 'ng-mocks';
 import { SDKService, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
+import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import type { Mock } from 'vitest';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 
 describe('UsageAnalyticsPageService', () => {
   let service: UsageAnalyticsPageService;
-  let queryRemiScores: jest.Mock;
+  let queryRemiScores: Mock;
 
   beforeEach(() => {
-    queryRemiScores = jest.fn().mockReturnValue(of({ data: [], has_more: false }));
+    queryRemiScores = vi.fn().mockReturnValue(of({ data: [], has_more: false }));
     const mockKb = {
       activityMonitor: {
         queryRemiScores,
-        getRemiScores: jest.fn().mockReturnValue(of([])),
+        getRemiScores: vi.fn().mockReturnValue(of([])),
       },
     };
     const mockAccount = {
@@ -27,7 +28,7 @@ describe('UsageAnalyticsPageService', () => {
         UsageAnalyticsPageService,
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
-        MockProvider(UserService, { userPrefs: of({ email: 'test@example.com' }) }),
+        MockProvider(UserService, { userPrefs: of({ email: 'test@example.com', type: 'USER' }) }),
         MockProvider(SisToastService),
       ],
     });

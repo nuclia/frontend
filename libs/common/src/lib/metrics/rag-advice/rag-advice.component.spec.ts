@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
@@ -30,10 +31,10 @@ function makeEditableParams() {
 describe('RagAdviceModalComponent', () => {
   let component: RagAdviceModalComponent;
   let fixture: ComponentFixture<RagAdviceModalComponent>;
-  let generateAdvice: jest.Mock;
+  let generateAdvice: Mock;
 
   beforeEach(async () => {
-    generateAdvice = jest.fn().mockReturnValue(
+    generateAdvice = vi.fn().mockReturnValue(
       of({
         diagnosis: 'diagnosis',
         suggestions: [],
@@ -56,7 +57,7 @@ describe('RagAdviceModalComponent', () => {
         MockProvider(RagAdviceService, { generateAdvice }),
         MockProvider(SDKService, {
           currentKb: of({
-            getLearningSchema: jest.fn().mockReturnValue(of({ generative_model: { options: [] } })),
+            getLearningSchema: vi.fn().mockReturnValue(of({ generative_model: { options: [] } })),
           } as any),
         }),
         MockProvider(SearchWidgetService),

@@ -15,8 +15,8 @@ describe('ResourceActivityPageComponent', () => {
   beforeEach(async () => {
     const mockKb = {
       activityMonitor: {
-        queryActivityLogs: jest.fn().mockReturnValue(of([])),
-        getMonthsWithActivity: jest.fn().mockReturnValue(of({ downloads: [] })),
+        queryActivityLogs: vi.fn().mockReturnValue(of([])),
+        getMonthsWithActivity: vi.fn().mockReturnValue(of({ downloads: [] })),
       },
     };
 
@@ -26,7 +26,7 @@ describe('ResourceActivityPageComponent', () => {
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),
           currentAccount: of({ id: 'acc-1' } as any),
-          nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+          nuclia: { db: { getUsage: vi.fn().mockReturnValue(of([])) } } as any,
         }),
         MockProvider(UserService),
         MockProvider(SisToastService),

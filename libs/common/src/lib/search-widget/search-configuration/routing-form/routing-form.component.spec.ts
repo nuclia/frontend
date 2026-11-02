@@ -1,4 +1,5 @@
-import { CommonModule, NO_ERRORS_SCHEMA } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
@@ -46,7 +47,7 @@ describe('RoutingFormComponent', () => {
   let fixture: ComponentFixture<RoutingFormComponent>;
 
   beforeEach(async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     await TestBed.configureTestingModule({
       imports: [RoutingFormComponent],
       providers: [
@@ -83,7 +84,7 @@ describe('RoutingFormComponent', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('should create', () => {
@@ -105,7 +106,7 @@ describe('RoutingFormComponent', () => {
       expect(component.rulesControls.length).toBe(3);
 
       // Clean up pending timer
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
 
     it('1b — double switch A(2) → B(3) → A(2) leaves exactly 2 rules', () => {
@@ -120,17 +121,17 @@ describe('RoutingFormComponent', () => {
 
       expect(component.rulesControls.length).toBe(2);
 
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
 
-    it('1c — after jest.advanceTimersByTime(500), form values reflect the CURRENT config only', () => {
+    it('1c — after vi.advanceTimersByTime(500), form values reflect the CURRENT config only', () => {
       component.config = configWith2Rules;
       fixture.detectChanges();
 
       component.config = configWith3Rules;
       fixture.detectChanges();
 
-      jest.advanceTimersByTime(500); // trigger the patchValue
+      vi.advanceTimersByTime(500); // trigger the patchValue
       fixture.detectChanges();
 
       const raw = component.form.getRawValue();
@@ -146,7 +147,7 @@ describe('RoutingFormComponent', () => {
     it('1d — setting config to undefined resets the array to 0 rules', () => {
       component.config = configWith2Rules;
       fixture.detectChanges();
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
 
       component.config = undefined;
       fixture.detectChanges();
@@ -173,7 +174,7 @@ describe('RoutingFormComponent', () => {
       expect(component.rulesControls.length).toBe(3);
 
       // After the timer fires, values must be B's — A's patchValue must be cancelled
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       fixture.detectChanges();
 
       const raw = component.form.getRawValue();
@@ -184,27 +185,27 @@ describe('RoutingFormComponent', () => {
     });
 
     it("2b — A's timer does not fire after B is set; patchValue called exactly once", () => {
-      const patchValueSpy = jest.spyOn(component.form, 'patchValue');
+      const patchValueSpy = vi.spyOn(component.form, 'patchValue');
 
       // Set config A — starts a 500 ms timer
       component.config = configWith2Rules;
       fixture.detectChanges();
 
       // Advance 400 ms — A's timer has NOT fired yet
-      jest.advanceTimersByTime(400);
+      vi.advanceTimersByTime(400);
 
       // Now set config B — should cancel A's timer and start a new one
       component.config = configWith3Rules;
       fixture.detectChanges();
 
       // Advance past the original A deadline without reaching B's deadline
-      jest.advanceTimersByTime(100); // total = 500 ms since A was set; A should NOT fire
+      vi.advanceTimersByTime(100); // total = 500 ms since A was set; A should NOT fire
 
       // patchValue must NOT have been called yet (B's timer needs 500 more ms)
       expect(patchValueSpy).not.toHaveBeenCalled();
 
       // Now let B's timer fire
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       expect(patchValueSpy).toHaveBeenCalledTimes(1);
       expect(patchValueSpy).toHaveBeenCalledWith(expect.objectContaining({ useRouting: configWith3Rules.useRouting }));
     });
@@ -229,7 +230,7 @@ describe('RoutingFormComponent', () => {
 
       component.rulesControls[0].controls.search_config.valueChanges.subscribe((v) => searchConfigValues.push(v));
 
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       expect(emittedValues.length).toBe(0);
       // pa-select only refreshes its displayed label on valueChanges
       expect(searchConfigValues).toEqual([configWith2Rules.routing.rules[0].search_config]);
@@ -249,7 +250,7 @@ describe('RoutingFormComponent', () => {
       // Populate the form first
       component.config = configWith2Rules;
       fixture.detectChanges();
-      jest.advanceTimersByTime(500); // let patchValue fire
+      vi.advanceTimersByTime(500); // let patchValue fire
 
       const emittedValues: Widget.RoutingConfig[] = [];
       component.configChanged.subscribe((v) => emittedValues.push(v));
@@ -285,7 +286,7 @@ describe('RoutingFormComponent', () => {
       // Populate with two rules that have distinct values
       component.config = configWith2Rules;
       fixture.detectChanges();
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       fixture.detectChanges();
 
       expect(component.rulesControls.length).toBe(2);
@@ -306,7 +307,7 @@ describe('RoutingFormComponent', () => {
 
   describe('ngOnDestroy()', () => {
     it('5 — cancels the pending patchValue timer when destroyed before 500ms', () => {
-      const patchValueSpy = jest.spyOn(component.form, 'patchValue');
+      const patchValueSpy = vi.spyOn(component.form, 'patchValue');
 
       // Set a config — starts the 500ms timer
       component.config = configWith2Rules;
@@ -316,7 +317,7 @@ describe('RoutingFormComponent', () => {
       component.ngOnDestroy();
 
       // Advance past the 500ms threshold
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
 
       // patchValue must NOT have been called
       expect(patchValueSpy).not.toHaveBeenCalled();
@@ -333,7 +334,7 @@ describe('RoutingFormComponent', () => {
 
       component.config = configWith2Rules; // useRouting: true
       fixture.detectChanges();
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       fixture.detectChanges();
 
       expect(component.useRouting).toBe(true);

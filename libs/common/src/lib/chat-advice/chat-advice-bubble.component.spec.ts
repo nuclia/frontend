@@ -32,7 +32,7 @@ describe('ChatAdviceBubbleComponent', () => {
           get: (key: string) => of(key),
         }),
         MockProvider(ChatAdviceService, {
-          ask: jest.fn(),
+          ask: vi.fn(),
         }),
         MockProvider(FeaturesService, {
           authorized: { showDemoButton: of(showDemoButton) } as unknown as FeaturesService['authorized'],
@@ -67,7 +67,7 @@ describe('ChatAdviceBubbleComponent', () => {
 
     it('should hide the book-demo pill once the user has sent a message', () => {
       component.updateInput({ target: { value: 'hello' } } as unknown as Event);
-      jest.spyOn(chatAdviceService, 'ask').mockReturnValue(of({ role: 'assistant', content: 'hi' } as ChatMessage));
+      vi.spyOn(chatAdviceService, 'ask').mockReturnValue(of({ role: 'assistant', content: 'hi' } as ChatMessage));
 
       component.sendMessage();
 
@@ -75,7 +75,7 @@ describe('ChatAdviceBubbleComponent', () => {
     });
 
     it('should open the book-demo URL in a new tab', () => {
-      jest.spyOn(window, 'open').mockImplementation(() => null);
+      vi.spyOn(window, 'open').mockImplementation(() => null);
 
       component.openBookDemoPill();
 
@@ -112,7 +112,7 @@ describe('ChatAdviceBubbleComponent', () => {
 
     it('should append the assistant response and set state to answered', () => {
       component.updateInput({ target: { value: 'hello' } } as unknown as Event);
-      jest.spyOn(chatAdviceService, 'ask').mockReturnValue(of({ role: 'assistant', content: 'hi there' }));
+      vi.spyOn(chatAdviceService, 'ask').mockReturnValue(of({ role: 'assistant', content: 'hi there' }));
 
       component.sendMessage();
 
@@ -122,7 +122,7 @@ describe('ChatAdviceBubbleComponent', () => {
 
     it('should set state to error and expose the error message when the service call fails', () => {
       component.updateInput({ target: { value: 'hello' } } as unknown as Event);
-      jest.spyOn(chatAdviceService, 'ask').mockReturnValue(throwError(() => new Error('boom')));
+      vi.spyOn(chatAdviceService, 'ask').mockReturnValue(throwError(() => new Error('boom')));
 
       component.sendMessage();
 

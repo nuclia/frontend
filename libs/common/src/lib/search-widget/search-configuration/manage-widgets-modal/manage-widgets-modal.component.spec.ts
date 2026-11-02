@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { SDKService } from '@flaps/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import type { Mock } from 'vitest';
 import { SearchWidgetService } from '../../search-widget.service';
 import { ManageWidgetsModalComponent } from './manage-widgets-modal.component';
 
@@ -22,13 +23,13 @@ describe('ManageWidgetsModalComponent', () => {
 
   let searchConfigurations: BehaviorSubject<Widget.AnySearchConfiguration[]>;
   let widgetList: BehaviorSubject<Widget.Widget[]>;
-  let close: jest.Mock;
+  let close: Mock;
   let component: ManageWidgetsModalComponent;
 
   beforeEach(() => {
     searchConfigurations = new BehaviorSubject<Widget.AnySearchConfiguration[]>([savedConfig]);
     widgetList = new BehaviorSubject<Widget.Widget[]>([linkedWidget]);
-    close = jest.fn();
+    close = vi.fn();
 
     TestBed.configureTestingModule({
       providers: [
@@ -77,11 +78,7 @@ describe('ManageWidgetsModalComponent', () => {
       savedConfig.id,
       undeployedConfig.id,
     ]);
-    expect(items.map((item) => item.displayName)).toEqual([
-      'Agentic RAG default',
-      savedConfig.id,
-      undeployedConfig.id,
-    ]);
+    expect(items.map((item) => item.displayName)).toEqual(['Agentic RAG default', savedConfig.id, undeployedConfig.id]);
     expect(items.find((item) => item.config.id === undeployedConfig.id)?.widget).toBeUndefined();
   });
 
@@ -104,7 +101,7 @@ describe('ManageWidgetsModalComponent', () => {
     const secondWidget: Widget.Widget = {
       ...linkedWidget,
       slug: 'saved-configuration-chat',
-      widgetConfig: { widgetMode: 'chat' },
+      widgetConfig: { widgetMode: 'chat' } as Widget.WidgetConfiguration,
     };
     widgetList.next([linkedWidget, secondWidget]);
 
@@ -112,10 +109,7 @@ describe('ManageWidgetsModalComponent', () => {
     const savedConfigurationItems = items.filter((item) => item.config.id === savedConfig.id);
 
     expect(savedConfigurationItems).toHaveLength(2);
-    expect(savedConfigurationItems.map((item) => item.widget?.slug)).toEqual([
-      linkedWidget.slug,
-      secondWidget.slug,
-    ]);
+    expect(savedConfigurationItems.map((item) => item.widget?.slug)).toEqual([linkedWidget.slug, secondWidget.slug]);
 
     component.selectConfiguration(savedConfigurationItems[1]);
 

@@ -1,3 +1,4 @@
+import { cloneDeep } from '@flaps/core';
 import {
   DEFAULT_GENERATIVE_ANSWER_CONFIG,
   DEFAULT_RESULT_DISPLAY_CONFIG,
@@ -8,7 +9,6 @@ import {
   NUCLIA_STANDARD_SEARCH_CONFIG,
   Widget,
 } from '@nuclia/core';
-import { cloneDeep } from '@flaps/core';
 import {
   DEFAULT_WIDGET_CONFIG,
   findLinkedWidget,
@@ -26,7 +26,7 @@ describe('search widget editor normalization', () => {
         unsupported: { features: { structured_output: false } },
       },
     },
-  } as GenerativeProviders;
+  } as unknown as GenerativeProviders;
 
   function standardConfig(overrides: Partial<Widget.TypedSearchConfiguration> = {}): Widget.TypedSearchConfiguration {
     return {
@@ -105,7 +105,11 @@ describe('search widget editor normalization', () => {
   });
 
   it('removes stale agentic state after returning to a non-agentic mode', () => {
-    const saved = normalizeSearchConfigurationForEditor(standardConfig(), providers, 'supported');
+    const saved = normalizeSearchConfigurationForEditor(
+      standardConfig(),
+      providers,
+      'supported',
+    ) as Widget.TypedSearchConfiguration;
     const returnedToSimpleRag = normalizeSearchConfigurationForEditor(
       {
         ...saved,

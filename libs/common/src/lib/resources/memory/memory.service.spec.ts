@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { EditResourceService } from '@flaps/core';
 import { Message, Resource } from '@nuclia/core';
@@ -10,11 +11,11 @@ describe('MemoryService', () => {
   const sessionFieldId = `${MEMORY_SESSION_FIELD_PREFIX}s1`;
 
   let service: MemoryService;
-  let getFieldSpy: jest.Mock;
+  let getFieldSpy: Mock;
   let resourceSubject: BehaviorSubject<Resource | null>;
 
-  function setup(getFieldReturn: () => ReturnType<jest.Mock>) {
-    getFieldSpy = jest.fn(getFieldReturn);
+  function setup(getFieldReturn: () => ReturnType<Mock>) {
+    getFieldSpy = vi.fn(getFieldReturn);
     const fakeResource = {
       data: { conversations: { [sessionFieldId]: {} } },
       getField: getFieldSpy,
@@ -98,8 +99,8 @@ describe('MemoryService', () => {
       return { ident, content: { text: JSON.stringify({ text }) }, timestamp: '2024-05-01T10:00:00.000Z' };
     }
 
-    function setupTwoSessions(getFieldReturn: () => ReturnType<jest.Mock>) {
-      getFieldSpy = jest.fn(getFieldReturn);
+    function setupTwoSessions(getFieldReturn: () => ReturnType<Mock>) {
+      getFieldSpy = vi.fn(getFieldReturn);
       const fakeResource = {
         data: { conversations: { [sessionFieldId]: {}, [sessionFieldId2]: {} } },
         getField: getFieldSpy,
