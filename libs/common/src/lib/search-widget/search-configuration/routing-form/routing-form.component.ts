@@ -16,7 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { GenerativeProviders, LearningConfigurations, Widget } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { ModelSelectorComponent } from '../../../ai-models';
 import { SearchWidgetStorageService } from '../../search-widget-storage.service';
 
@@ -42,6 +42,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   private searchWidgetStorage = inject(SearchWidgetStorageService);
   private cdr = inject(ChangeDetectorRef);
   private configPatchTimer: ReturnType<typeof setTimeout> | null = null;
+  private loadingConfig = false;
   searchConfigs = this.searchWidgetStorage.searchAPIConfigs.pipe(
     map((configs) => Object.entries(configs).map(([id, config]) => ({ id, kind: config.kind }))),
   );
@@ -65,9 +66,9 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       // Delay the value patch so the config selects are updated according to the kind
       this.configPatchTimer = setTimeout(() => {
         this.configPatchTimer = null;
-        // emitEvent: false — see search-box-form's config setter for rationale: loading a config into
-        // the form must not itself be treated as a user edit.
-        this.form.patchValue(value, { emitEvent: false });
+        this.loadingConfig = true;
+        this.form.patchValue(value);
+        this.loadingConfig = false;
         this.cdr.markForCheck();
       }, 500);
     } else {
@@ -112,9 +113,14 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.configChanged.emit(this.form.getRawValue());
-    });
+    this.form.valueChanges
+      .pipe(
+        filter(() => !this.loadingConfig),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => {
+        this.configChanged.emit(this.form.getRawValue());
+      });
   }
 
   ngOnDestroy() {
