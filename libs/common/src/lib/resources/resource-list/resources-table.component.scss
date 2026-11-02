@@ -107,9 +107,6 @@ $toolbar-height: rhythm(7);
   .hidden-resource pa-table-cell ::ng-deep .pa-table-grid--cell {
     color: $color-neutral-regular;
   }
-  &.expanded-rows ::ng-deep .pa-table-grid--cell {
-    align-items: flex-start;
-  }
 }
 
 table {

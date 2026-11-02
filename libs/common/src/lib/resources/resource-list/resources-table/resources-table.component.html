@@ -141,9 +141,7 @@
         {{ bulkAction.done }} / {{ bulkAction.total }}
       </div>
     }
-    <div
-      class="table-container"
-      [class.expanded-rows]="fullLabels || fullKeyValue">
+    <div class="table-container">
       <pa-table [columns]="tableLayout | async">
         @let canSelectAllResources =
           (allSelected | async) === true && !bulkAction.inProgress && ((totalItems | async) || 0) > selection.length;
