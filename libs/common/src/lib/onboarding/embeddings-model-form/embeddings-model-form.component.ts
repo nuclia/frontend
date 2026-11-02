@@ -110,7 +110,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
     }
     if (embeddingsSchema) {
       const huggingFaceProperties = Object.entries(embeddingsSchema.properties || {});
-      this.huggingFaceRequiredFields = embeddingsSchema.required.map((key) => ({
+      this.huggingFaceRequiredFields = (embeddingsSchema.required || []).map((key) => ({
         key,
         value: {
           ...embeddingsSchema.properties[key],
@@ -121,7 +121,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
       }));
       const optionalFields: { key: string; value: LearningConfigurationProperty }[] = [];
       huggingFaceProperties
-        .filter(([key]) => !embeddingsSchema.required.includes(key))
+        .filter(([key]) => !embeddingsSchema.required?.includes(key))
         .forEach(([key, value]) => {
           optionalFields.push({ key, value });
         });
@@ -129,7 +129,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
 
       const form = new FormGroup({});
       huggingFaceProperties.forEach(([key, property]) => {
-        const validators = embeddingsSchema.required.includes(key) ? [Validators.required] : [];
+        const validators = embeddingsSchema.required?.includes(key) ? [Validators.required] : [];
         switch (property.type) {
           case 'integer':
           case 'number':
