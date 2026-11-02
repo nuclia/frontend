@@ -352,7 +352,7 @@ export interface LearningConfigurationSchema {
   title: string;
   type: 'integer' | 'number' | 'string' | 'boolean';
   properties: { [key: string]: LearningConfigurationProperty };
-  required: string[];
+  required?: string[];
   $defs?: { [key: string]: LearningConfigurationSchema };
   enum?: number[];
   titles?: string[];
