@@ -167,7 +167,7 @@ ARAG-specific tokens are in `libs/common/src/lib/retrieval-agent/agent-dashboard
 nx serve rao           # against Nuclia stage (default)
 nx serve rao -c local-prod  # against rag.progress.cloud
 nx build rao           # production build → dist/apps/rao
-nx test rao
+nx test rao   # @angular/build:unit-test (smoke spec: AppComponent)
 ```
 
 ---

@@ -263,6 +263,17 @@
               "output": "assets"
             }
           ]
+        },
+        "unit-test": {
+          "polyfills": [],
+          "styles": [],
+          "assets": [],
+          "aot": false,
+          "subresourceIntegrity": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
         }
       }
     },
@@ -295,13 +306,21 @@
       }
     },
     "test": {
+      "executor": "@angular/build:unit-test",
+      "outputs": ["{workspaceRoot}/coverage/apps/rao"],
       "options": {
-        "passWithNoTests": true
+        "buildTarget": "rao:build:unit-test",
+        "tsConfig": "apps/rao/tsconfig.spec.json",
+        "providersFile": "test/translate-test-provider.ts",
+        "runnerConfig": true,
+        "watch": false
       },
       "configurations": {
         "ci": {
-          "ci": true,
           "coverage": true
+        },
+        "watch": {
+          "watch": true
         }
       }
     },
