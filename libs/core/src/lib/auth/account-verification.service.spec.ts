@@ -17,14 +17,14 @@ describe('AccountVerificationService', () => {
         MockProvider(SDKService, {
           nuclia: {
             auth: {
-              getJWTUser: jest.fn().mockReturnValue(null),
-              requestEmailOtp: jest.fn().mockReturnValue(of(undefined)),
-              redirectToOAuth: jest.fn(),
+              getJWTUser: vi.fn().mockReturnValue(null),
+              requestEmailOtp: vi.fn().mockReturnValue(of(undefined)),
+              redirectToOAuth: vi.fn(),
             },
           } as any,
         }),
         MockProvider(AuthService, {
-          setNextUrl: jest.fn(),
+          setNextUrl: vi.fn(),
         }),
       ],
     });
@@ -41,12 +41,12 @@ describe('AccountVerificationService', () => {
 
   describe('getLastVerifiedAt()', () => {
     it('returns null when getJWTUser returns null', () => {
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue(null);
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue(null);
       expect(service.getLastVerifiedAt()).toBeNull();
     });
 
     it('returns null when JWT has no ext.last_verified_at', () => {
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
         ext: { first_name: 'Test', type: 'microsoft' },
       } as any);
       expect(service.getLastVerifiedAt()).toBeNull();
@@ -54,7 +54,7 @@ describe('AccountVerificationService', () => {
 
     it('returns the timestamp when JWT has ext.last_verified_at', () => {
       const timestamp = 1700000000;
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
         ext: { last_verified_at: timestamp, first_name: 'Test', type: 'microsoft' },
       } as any);
       expect(service.getLastVerifiedAt()).toBe(timestamp);
@@ -65,12 +65,12 @@ describe('AccountVerificationService', () => {
 
   describe('supportsForceReauth()', () => {
     it('returns false when last_verified_at is absent', () => {
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue(null);
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue(null);
       expect(service.supportsForceReauth()).toBe(false);
     });
 
     it('returns true when last_verified_at is present', () => {
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
         ext: { last_verified_at: 1700000000, first_name: 'Test', type: 'microsoft' },
       } as any);
       expect(service.supportsForceReauth()).toBe(true);
@@ -81,14 +81,14 @@ describe('AccountVerificationService', () => {
 
   describe('isRecentlyVerified()', () => {
     it('returns false when last_verified_at is absent', () => {
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue(null);
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue(null);
       expect(service.isRecentlyVerified()).toBe(false);
     });
 
     it('returns true when last_verified_at is within the last 5 minutes', () => {
       const nowSeconds = Math.floor(Date.now() / 1000);
       const twoMinutesAgo = nowSeconds - 120;
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
         ext: { last_verified_at: twoMinutesAgo, first_name: 'Test', type: 'microsoft' },
       } as any);
       expect(service.isRecentlyVerified()).toBe(true);
@@ -97,7 +97,7 @@ describe('AccountVerificationService', () => {
     it('returns false when last_verified_at is more than 5 minutes ago', () => {
       const nowSeconds = Math.floor(Date.now() / 1000);
       const sixMinutesAgo = nowSeconds - 360;
-      jest.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
+      vi.spyOn(service['sdk'].nuclia.auth, 'getJWTUser').mockReturnValue({
         ext: { last_verified_at: sixMinutesAgo, first_name: 'Test', type: 'microsoft' },
       } as any);
       expect(service.isRecentlyVerified()).toBe(false);
@@ -125,8 +125,8 @@ describe('AccountVerificationService', () => {
 
     it('sets the next URL to the returnUrl pathname and redirects through OAuth', () => {
       const returnUrl = 'https://app.example.com/account/delete?from=settings#confirm';
-      const setNextUrlSpy = jest.spyOn(authService, 'setNextUrl');
-      const redirectToOAuthSpy = jest.spyOn(sdkService.nuclia.auth, 'redirectToOAuth');
+      const setNextUrlSpy = vi.spyOn(authService, 'setNextUrl');
+      const redirectToOAuthSpy = vi.spyOn(sdkService.nuclia.auth, 'redirectToOAuth');
 
       service.forceReauth(returnUrl, 'account-1');
 
@@ -201,7 +201,7 @@ describe('AccountVerificationService', () => {
   describe('requestEmailOtp()', () => {
     it('delegates to sdk.nuclia.auth.requestEmailOtp()', () => {
       const mockOtp$ = of(undefined);
-      const requestEmailOtpSpy = jest.spyOn(service['sdk'].nuclia.auth, 'requestEmailOtp').mockReturnValue(mockOtp$);
+      const requestEmailOtpSpy = vi.spyOn(service['sdk'].nuclia.auth, 'requestEmailOtp').mockReturnValue(mockOtp$);
 
       const result = service.requestEmailOtp();
 

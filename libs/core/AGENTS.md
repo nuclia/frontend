@@ -13,7 +13,7 @@ Component selector prefixes are mixed: `stf-` for most, `app-` for label/upload 
 ## Run Commands
 
 ```bash
-nx test core    # Jest (no build / lint targets)
+nx test core    # Vitest via Angular builder (no build / lint targets; own test-build target)
 ```
 
 ---
