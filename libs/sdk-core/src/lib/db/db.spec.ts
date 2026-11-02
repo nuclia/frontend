@@ -1,3 +1,4 @@
+import { firstValueFrom } from 'rxjs';
 import { Nuclia } from '../core';
 import { IAuthentication, INuclia } from '../models';
 import { mockFetch } from '../test.utils.spec';
@@ -22,21 +23,19 @@ describe('Db', () => {
     } as unknown as INuclia);
   });
 
-  it('should get accounts', (done) => {
+  it('should get accounts', async () => {
     mockFetch([{ id: '123456789', slug: 'gotham', title: 'Gotham City', zone: 'DC', type: 'stash-basic' }]);
-    db.getAccounts().subscribe((res) => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/accounts',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(res[0].slug).toEqual('gotham');
-      done();
-    });
+    const res = await firstValueFrom(db.getAccounts());
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://accounts.here/v1/accounts',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(res[0].slug).toEqual('gotham');
   });
 
-  it('should get knowledge boxes', (done) => {
+  it('should get knowledge boxes', async () => {
     mockFetch([
       {
         id: 'qwerty',
@@ -48,32 +47,30 @@ describe('Db', () => {
         description: null,
       },
     ]);
-    db.getKnowledgeBoxes('my-account', 'dc-id').subscribe((res) => {
-      expect(global.fetch).toHaveBeenCalledTimes(3);
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/account/my-account/zones',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/account/my-account/index/kbs',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://geb.dp.here/v1/account/dc-id/kbs',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(res[0].slug).toEqual('geb');
-      done();
-    });
+    const res = await firstValueFrom(db.getKnowledgeBoxes('my-account', 'dc-id'));
+    expect(global.fetch).toHaveBeenCalledTimes(3);
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://accounts.here/v1/account/my-account/zones',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://accounts.here/v1/account/my-account/index/kbs',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://geb.dp.here/v1/account/dc-id/kbs',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(res[0].slug).toEqual('geb');
   });
 
-  it('should get retrieval agents', (done) => {
+  it('should get retrieval agents', async () => {
     mockFetch([
       {
         id: 'qwerty',
@@ -85,32 +82,30 @@ describe('Db', () => {
         description: null,
       },
     ]);
-    db.getRetrievalAgents('my-account', 'dc-id').subscribe((res) => {
-      expect(global.fetch).toHaveBeenCalledTimes(3);
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/account/my-account/zones',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://accounts.here/v1/account/my-account/index/kbs',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://geb.dp.here/v1/account/dc-id/kbs?mode=agents',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(res[0].slug).toEqual('geb');
-      done();
-    });
+    const res = await firstValueFrom(db.getRetrievalAgents('my-account', 'dc-id'));
+    expect(global.fetch).toHaveBeenCalledTimes(3);
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://accounts.here/v1/account/my-account/zones',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://accounts.here/v1/account/my-account/index/kbs',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://geb.dp.here/v1/account/dc-id/kbs?mode=agents',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(res[0].slug).toEqual('geb');
   });
 
-  it('should get a knowledge box', (done) => {
+  it('should get a knowledge box', async () => {
     mockFetch({
       id: 'qwerty',
       slug: 'geb',
@@ -119,19 +114,17 @@ describe('Db', () => {
       state: 'PRIVATE',
       description: null,
     });
-    db.getKnowledgeBox().subscribe((res) => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.dp.here/v1/account/dc-id/kb/gotham',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(res.slug).toEqual('geb');
-      done();
-    });
+    const res = await firstValueFrom(db.getKnowledgeBox());
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/account/dc-id/kb/gotham',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(res.slug).toEqual('geb');
   });
 
-  it('should get a retrieval agent', (done) => {
+  it('should get a retrieval agent', async () => {
     mockFetch({
       id: 'qwerty',
       slug: 'geb',
@@ -140,15 +133,13 @@ describe('Db', () => {
       state: 'PRIVATE',
       description: null,
     });
-    db.getRetrievalAgent().subscribe((res) => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.dp.here/v1/account/dc-id/kb/gotham',
-        expect.objectContaining({
-          method: 'GET',
-        }),
-      );
-      expect(res.slug).toEqual('geb');
-      done();
-    });
+    const res = await firstValueFrom(db.getRetrievalAgent());
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/account/dc-id/kb/gotham',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+    expect(res.slug).toEqual('geb');
   });
 });

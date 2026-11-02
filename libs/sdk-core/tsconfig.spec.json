@@ -2,8 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
-    "types": ["jest", "node"]
+    "module": "esnext",
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"],
+    "types": ["vitest/globals", "node"]
   },
   "include": [
     "**/*.spec.ts",

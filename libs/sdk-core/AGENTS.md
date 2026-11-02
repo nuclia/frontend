@@ -226,8 +226,7 @@ import { AccountBlockingState, KBRoles } from '@nuclia/core';
 
 ```bash
 nx build sdk-core        # rollup → dist/sdk-core/ (ESM + UMD)
-nx test sdk-core         # Jest, jsdom environment
-nx test sdk-core --watch
+nx test sdk-core         # plain Vitest, jsdom environment (libs/sdk-core/vitest.config.mts)
 ```
 
 Tests are co-located as `*.spec.ts` files alongside source in `src/lib/`.
