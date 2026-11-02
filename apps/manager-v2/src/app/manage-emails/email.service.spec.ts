@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SDKService } from '@flaps/core';
 import { MockProvider } from 'ng-mocks';
@@ -7,10 +8,10 @@ import { BroadcastEmailResponse, BroadcastProgress } from './email.models';
 
 describe('EmailService', () => {
   let service: EmailService;
-  let post: jest.Mock;
+  let post: Mock;
 
   beforeEach(() => {
-    post = jest.fn();
+    post = vi.fn();
     TestBed.configureTestingModule({
       providers: [MockProvider(SDKService, { nuclia: { rest: { post } } } as unknown as SDKService)],
     });

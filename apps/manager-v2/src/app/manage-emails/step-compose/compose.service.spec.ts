@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
@@ -7,14 +8,14 @@ import { EmailService } from '../email.service';
 
 describe('ComposeService', () => {
   let service: ComposeService;
-  let sendTestEmail: jest.Mock;
-  let error: jest.Mock;
-  let success: jest.Mock;
+  let sendTestEmail: Mock;
+  let error: Mock;
+  let success: Mock;
 
   beforeEach(() => {
-    error = jest.fn();
-    success = jest.fn();
-    sendTestEmail = jest.fn().mockReturnValue(of({ preview_recipient: 'root@nuclia.com' }));
+    error = vi.fn();
+    success = vi.fn();
+    sendTestEmail = vi.fn().mockReturnValue(of({ preview_recipient: 'root@nuclia.com' }));
     TestBed.configureTestingModule({
       providers: [
         ComposeService,

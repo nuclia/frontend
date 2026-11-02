@@ -1,9 +1,3 @@
-import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { translateTestProviders } from '../../../test/translate-test-provider';
-
-setupZonelessTestEnv({ extraProviders: translateTestProviders });
-
 // Standalone components now pull in real Pastanaga directives (tooltip, textarea, modal)
 // that use ResizeObserver, which jsdom doesn't implement.
 Object.defineProperty(globalThis, 'ResizeObserver', {

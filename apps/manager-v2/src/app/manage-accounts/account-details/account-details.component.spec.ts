@@ -21,7 +21,7 @@ describe('AccountDetailsComponent', () => {
       providers: [
         MockProvider(AccountService),
         MockProvider(ZoneService, {
-          loadZones: jest.fn(() => of([])),
+          loadZones: vi.fn(() => of([])),
         }),
         MockProvider(AccountDetailsStore),
         MockProvider(FeaturesService, {

@@ -7,7 +7,7 @@ import { ManagerStore } from '../../../manager.store';
 import { AccountService } from '../../account.service';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ExtendedAccount } from '../../global-account.models';
-import { ACCOUNT_DETAILS } from '../../test-utils';
+import { ACCOUNT_DETAILS, DEFAULT_LIMITS } from '../../test-utils';
 import { AccountDetailsStore } from '../account-details.store';
 import { LimitsComponent } from './limits.component';
 
@@ -20,9 +20,11 @@ describe('LimitsComponent', () => {
       imports: [LimitsComponent, MockComponent(FormFooterComponent)],
       providers: [
         MockProvider(AccountDetailsStore, {
-          getAccount: jest.fn(() => of({} as ExtendedAccount)),
+          getAccount: vi.fn(() => of({} as ExtendedAccount)),
         }),
-        MockProvider(AccountService),
+        MockProvider(AccountService, {
+          getDefaultLimits: vi.fn(() => of(DEFAULT_LIMITS)),
+        }),
         MockProvider(SisToastService),
         MockProvider(ManagerStore, {
           canEdit: of(true),

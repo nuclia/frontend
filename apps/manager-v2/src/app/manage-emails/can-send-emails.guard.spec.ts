@@ -13,7 +13,7 @@ describe('canSendEmailsGuard', () => {
     TestBed.configureTestingModule({
       providers: [
         MockProvider(UserService, { userType } as unknown as UserService),
-        MockProvider(Router, { createUrlTree: jest.fn().mockReturnValue(tree) }),
+        MockProvider(Router, { createUrlTree: vi.fn().mockReturnValue(tree) }),
       ],
     });
   });

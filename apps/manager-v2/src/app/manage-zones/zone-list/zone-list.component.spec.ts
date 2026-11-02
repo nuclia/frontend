@@ -30,7 +30,7 @@ describe('ZoneListComponent', () => {
       declarations: [ZoneListComponent],
       providers: [
         MockProvider(ZoneService, {
-          loadZones: jest.fn(() => of([])),
+          loadZones: vi.fn(() => of([])),
           zones: of([]),
         }),
         MockProvider(SisModalService),

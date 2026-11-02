@@ -8,7 +8,7 @@ import { AccountService } from '../../account.service';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ExtendedAccount } from '../../global-account.models';
 import { GlobalAccountService } from '../../global-account.service';
-import { ACCOUNT_DETAILS } from '../../test-utils';
+import { ACCOUNT_DETAILS, DEFAULT_LIMITS } from '../../test-utils';
 import { AccountDetailsStore } from '../account-details.store';
 import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 import { ConfigurationComponent } from './configuration.component';
@@ -22,16 +22,30 @@ describe('ConfigurationComponent', () => {
       imports: [ConfigurationComponent, MockComponent(FormFooterComponent), MockComponent(BlockedFeaturesComponent)],
       providers: [
         MockProvider(AccountDetailsStore, {
-          getAccount: jest.fn(() => of({} as ExtendedAccount)),
+          getAccount: vi.fn(() => of({} as ExtendedAccount)),
         }),
         MockProvider(ManagerStore, {
           canFullyEditAccount: of(true),
           canEdit: of(true),
           accountDetails: of(ACCOUNT_DETAILS),
         }),
-        MockProvider(AccountService),
+        MockProvider(AccountService, {
+          getDefaultLimits: vi.fn(() => of(DEFAULT_LIMITS)),
+          getSubscription: vi.fn(() =>
+            of({
+              provider: 'MANUAL' as const,
+              subscription: {
+                on_demand_budget: null,
+                action_on_budget_exhausted: null,
+                free_tokens_per_billing_cycle: 0,
+              },
+            }),
+          ),
+        }),
         MockProvider(SisToastService),
-        MockProvider(GlobalAccountService),
+        MockProvider(GlobalAccountService, {
+          getBudget: vi.fn(() => of({ budget_value: null, action_on_budget_exhausted: 'BLOCK_ACCOUNT' as const })),
+        }),
         {
           provide: SvgIconRegistryService,
           useValue: {

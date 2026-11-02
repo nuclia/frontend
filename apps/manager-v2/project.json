@@ -120,6 +120,15 @@
             }
           ]
         },
+        "unit-test": {
+          "polyfills": [],
+          "aot": false,
+          "subresourceIntegrity": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        },
         "local-stage": {
           "subresourceIntegrity": false,
           "optimization": false,
@@ -260,13 +269,22 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
+      "executor": "@angular/build:unit-test",
+      "outputs": ["{workspaceRoot}/coverage/apps/manager-v2"],
       "options": {
-        "passWithNoTests": true
+        "buildTarget": "manager-v2:build:unit-test",
+        "tsConfig": "apps/manager-v2/tsconfig.spec.json",
+        "providersFile": "test/translate-test-provider.ts",
+        "setupFiles": ["apps/manager-v2/src/test-setup.ts"],
+        "runnerConfig": true,
+        "watch": false
       },
       "configurations": {
         "ci": {
-          "ci": true,
           "coverage": true
+        },
+        "watch": {
+          "watch": true
         }
       }
     }

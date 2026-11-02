@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
@@ -19,21 +20,21 @@ describe('EmailWizardService', () => {
   let wizard: EmailWizardService;
   let recipients: RecipientsService;
   let compose: ComposeService;
-  let sendToUsers: jest.Mock;
-  let error: jest.Mock;
-  let completed: jest.Mock;
+  let sendToUsers: Mock;
+  let error: Mock;
+  let completed: Mock;
   const selectedIds = () => Array.from(recipients.selected().keys());
 
   beforeEach(() => {
-    error = jest.fn();
-    completed = jest.fn();
-    sendToUsers = jest.fn().mockReturnValue(of({ requested: 2, queued: 2, failed: [] }));
+    error = vi.fn();
+    completed = vi.fn();
+    sendToUsers = vi.fn().mockReturnValue(of({ requested: 2, queued: 2, failed: [] }));
     TestBed.configureTestingModule({
       providers: [
         RecipientsService,
         ComposeService,
         EmailWizardService,
-        MockProvider(RecipientsLoaderService, { load: jest.fn().mockReturnValue(of(users)) }),
+        MockProvider(RecipientsLoaderService, { load: vi.fn().mockReturnValue(of(users)) }),
         MockProvider(EmailService, { sendToUsers }),
         MockProvider(SisToastService, { error }),
       ],

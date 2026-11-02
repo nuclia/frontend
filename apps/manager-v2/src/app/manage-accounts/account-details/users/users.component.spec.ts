@@ -40,7 +40,9 @@ describe('UsersComponent', () => {
         MockProvider(AccountDetailsStore, {
           accountDetails: of(null),
         }),
-        MockProvider(AccountService),
+        MockProvider(AccountService, {
+          loadAccountUsers: vi.fn(() => of([])),
+        }),
         MockProvider(UserService),
         MockProvider(SisToastService),
         MockProvider(ManagerStore, {
