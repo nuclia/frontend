@@ -30,12 +30,13 @@ MockProvider(ResourceService, {
 
 ```ts
 MockProvider(SisToastService, {
-  error: jest.fn(),
-  success: jest.fn(),
-  warning: jest.fn(),
+  error: vi.fn(),
+  success: vi.fn(),
+  warning: vi.fn(),
 });
 ```
 
+ng-mocks stubs are plain no-op functions, not spies (no `autoSpy` configured), so `vi.fn()` must be explicit.
 Then assert with: `expect(TestBed.inject(SisToastService).error).toHaveBeenCalledWith('my.key')`.
 
 ### Partial mock — only override what the test cares about
@@ -69,13 +70,17 @@ imports but the test doesn't care about:
 ```ts
 imports: [
   MyComponent,
-  MockModule(PaTranslateModule), // Pastanaga translate pipe/directive
-  MockModule(PaButtonModule), // Pastanaga NgModule-based components
+  MockModule(ReactiveFormsModule), // for legacy non-standalone forms
   MockModule(RouterModule), // link directives won't navigate
 ];
 ```
 
 Do NOT mock `CommonModule` — it's almost always already included in standalone imports.
+
+A standalone component resolves its template dependencies from its own `imports`, so a TestBed-level
+`MockModule(X)` is inert (or conflicts with the real `X`) when `X` is already in the component's decorator. To
+swap those, use `TestBed.overrideComponent(Sut, { remove: { imports: [...] }, add: { imports: [MockComponent(...)] } })`
+before `compileComponents()`. For translations use `TranslateModule.forRoot()`, not `MockModule(TranslateModule)`.
 
 ---
 
@@ -129,6 +134,5 @@ it('shows error toast on failure', () => {
 
 - **Providing the real service** — any service with HTTP calls or side-effects must be mocked.
 - **Providing `HttpClientModule`** — use `provideHttpClientTesting()` instead.
-- **Using `spyOn` on an already-mocked method** — `MockProvider` already returns `jest.fn()`; just
-  assert directly on the mock.
+- **Using `spyOn` on an already-mocked method** — pass `vi.fn()` in the `MockProvider` override and assert directly on it.
 - **Forgetting `async` on `beforeEach`** when `compileComponents()` is called — it returns a Promise.

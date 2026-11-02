@@ -95,12 +95,16 @@ Key points:
 
 ```jsonc
 "test": {
-  "executor": "@nx/jest:jest",
+  "executor": "@angular/build:unit-test",
   "outputs": ["{workspaceRoot}/coverage/apps/dashboard"],
   "options": {
-    "jestConfig": "apps/dashboard/jest.config.js",
-    "tsConfig": "apps/dashboard/tsconfig.spec.json"
-  }
+    "buildTarget": "dashboard:build:unit-test",
+    "tsConfig": "apps/dashboard/tsconfig.spec.json",
+    "providersFile": "test/translate-test-provider.ts",
+    "runnerConfig": true,
+    "watch": false
+  },
+  "configurations": { "ci": { "coverage": true }, "watch": { "watch": true } }
 }
 ```
 
@@ -119,9 +123,10 @@ Key points:
 
 ## Angular Library — Minimal Target Set
 
-Angular libs in this workspace typically have only `test` (and sometimes `lint`) declared
+Angular libs in this workspace typically have `test-build`, `test` (and sometimes `lint`) declared
 in `project.json`. There is **no `build` target** because libs are consumed directly via
 path aliases (see `tsconfig.base.json`) — they compile as part of the app, not standalone.
+`test-build` only supplies compiler options to the unit-test builder.
 
 ```jsonc
 // libs/common/project.json
@@ -138,12 +143,28 @@ path aliases (see `tsconfig.base.json`) — they compile as part of the app, not
     },
   },
   "targets": {
+    "test-build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "tsConfig": "libs/common/tsconfig.spec.json",
+        "outputPath": "dist/test-build/common",
+        "polyfills": [],
+        "styles": [],
+        "assets": [],
+        "aot": false,
+        "stylePreprocessorOptions": { "includePaths": ["libs/sistema/styles", "."] },
+      },
+    },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@angular/build:unit-test",
       "outputs": ["{workspaceRoot}/coverage/libs/common"],
       "options": {
-        "jestConfig": "libs/common/jest.config.js",
+        "buildTarget": "common:test-build",
         "tsConfig": "libs/common/tsconfig.spec.json",
+        "providersFile": "test/translate-test-provider.ts",
+        "setupFiles": ["libs/common/src/test-setup.ts"],
+        "runnerConfig": true,
+        "watch": false,
       },
     },
   },

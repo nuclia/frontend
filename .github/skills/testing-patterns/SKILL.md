@@ -1,8 +1,9 @@
 ---
 name: testing-patterns
 description: >
-  Testing patterns for the Nuclia frontend monorepo — covering Jest + jest-preset-angular for
-  Angular apps/libs and Vitest for search-widget (Svelte 5). Use this
+  Testing patterns for the Nuclia frontend monorepo — covering Vitest 5 via the Angular
+  `@angular/build:unit-test` builder (zoneless) for Angular apps/libs, plain Vitest for sdk-core
+  and search-widget (Svelte 5). Use this
   skill whenever you are writing or modifying a spec file, debugging a failing test, setting up a
   new TestBed configuration, mocking Angular services, working with OnPush components in tests,
   or using Vitest with Svelte/React. Do not wait to be asked about "testing patterns" specifically —
@@ -25,33 +26,46 @@ when they decide the feature is stable enough. Agents must follow these rules:
 
 ---
 
-Two separate test stacks live in this repo. Match the stack to the project:
+All first-party projects use **Vitest 5**; the entry point differs. Match the setup to the project:
 
-| Projects                                                                                                                                                        | Runner                              | Config                                          |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------- |
-| Angular apps & libs (`dashboard`, `rao`, `admin`, `auth`, `manager-v2`, `sistema-demo`, `core`, `common`, `sistema`, `user`, `sync`, `ui`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
-| `libs/search-widget` (Svelte 5)                                                                                                                                 | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
+| Projects                                                                                                                       | Setup                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `admin`, `auth`, `dashboard`, `manager-v2`, `rao`, `sistema-demo`, `common`, `core`, `sistema`, `sync`, `ui`, `user` (Angular) | `@angular/build:unit-test` executor — jsdom, zoneless, `globals: true`                       |
+| `sdk-core`                                                                                                                     | Plain Vitest — `libs/sdk-core/vitest.config.mts` (jsdom, `globals`, `resolve.tsconfigPaths`) |
+| `chrome-ext`                                                                                                                   | Plain Vitest, inferred `test` target                                                         |
+| `search-widget`, `search-widget-demo` (Svelte 5)                                                                               | Plain Vitest — `libs/search-widget/vite.config.mjs`                                          |
 
-Run with `nx test <project-name>` in all cases.
+Run with `nx test <project-name>` in all cases (`yarn test` runs everything). `libs/pastanaga-angular` is
+external and still uses Jest + Zone — don't edit or migrate it.
 
 ---
 
-## Angular Testing (Jest + jest-preset-angular)
+## Angular Testing (`@angular/build:unit-test` + Vitest)
 
 ### Global setup
 
-Each Angular project's `jest.config.js` points to a `test-setup.ts`:
-
-```ts
-// src/test-setup.ts
-import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
-import { translateTestProviders } from '../../../test/translate-test-provider';
-setupZonelessTestEnv({ extraProviders: translateTestProviders });
-```
-
-All first-party apps and libs (except `pastanaga-angular` and `ui`, which use `setupZoneTestEnv` from `setup-env/zone`) run zoneless: `waitForAsync()` and `fakeAsync()`/`tick()` are unavailable — use `async`/`await` and `jest.useFakeTimers()`. `dashboard`, `manager-v2`, `user`, `sync` and `common` also register `translateTestProviders` (`test/translate-test-provider.ts`): a fake `TranslateService` whose `instant`/`get`/`translate` return the key, so specs don't need to mock `TranslatePipe`/`TranslateService` themselves.
-
-The workspace-level `jest.preset.js` also maps `d3` to a stub (`test/d3.js`) — you don't need to mock d3 yourself.
+- **Zoneless:** there is no `zone.js` and no `test-setup.ts` that bootstraps one. `fakeAsync`, `tick`,
+  `flush` and `waitForAsync` do **not** work — see _Async & timers_ below.
+- **Build target:** apps use their own `<app>:build:unit-test` configuration. Libs (`common`, `core`, `sistema`,
+  `sync`, `ui`, `user`) each own a `test-build` target (`@angular/build:application`, `outputPath`
+  `dist/test-build/<lib>`) and set `test.buildTarget` to `<lib>:test-build`. It sets `polyfills: []`
+  deliberately: any file-path polyfill makes Angular load `zone.js`. Sistema Sass is found via the direct include path
+  `libs/sistema/styles`, so libs never depend on an app.
+- **Translate:** `test/translate-test-provider.ts` is the `providersFile` (in `dashboard`, `manager-v2`,
+  `common`, `sync`, `user`) and already stubs `TranslateService` (keys are returned as-is).
+- **jsdom shims:** `ResizeObserver` and `matchMedia` are stubbed through `setupFiles` in `libs/common/src/test-setup.ts`
+  and `apps/manager-v2/src/test-setup.ts` only. Add a shim there if a real Pastanaga directive needs another browser API.
+- **Browserslist:** `.env.test` forces `BROWSERSLIST=last 2 Chrome versions`; app browserslists are too old for
+  the builder's top-level await.
+- **Globals:** `describe`/`it`/`expect`/`vi` need no import (`vitest/globals` in `tsconfig.spec.json`);
+  import only types, e.g. `import type { Mock } from 'vitest'`. Prefer `vi.fn()`, `vi.spyOn()` — never `jest.*`.
+- **Run options:** `watch` is `false` by default — use `nx test <name> --watch` or `--configuration=watch`;
+  `--configuration=ci` enables coverage (`coverage/{apps,libs}/<name>`);
+  `--include='**/foo.spec.ts'` runs a single file and `--filter=<regex>` a test name.
+- `vi.mock()` with relative paths is not supported by this builder; inject a mock provider instead.
+- The builder fails with "No tests found" on a project without specs and has no `passWithNoTests` option, so every
+  Angular project keeps at least one real spec (`auth`, `rao`, `sistema-demo` and `ui` each have a smoke spec on a
+  root component, guard or directive). Plain Vitest has no Angular template compiler, so never use it for Angular code.
 
 ---
 
@@ -123,19 +137,25 @@ it('shows updated label', () => {
 });
 ```
 
-For timer-based or async work:
+---
+
+### Async & timers (zoneless)
+
+Use `async`/`await` and Vitest fake timers — never `fakeAsync`/`tick`/`waitForAsync`:
 
 ```ts
-import { fakeAsync, tick } from '@angular/core/testing';
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => vi.useRealTimers());
 
-it('debounces search', fakeAsync(() => {
+it('debounces search', async () => {
   component.searchTerm.set('hello');
-  fixture.detectChanges();
-  tick(300); // advance virtual clock
+  await vi.advanceTimersByTimeAsync(300); // or `await vi.runAllTimersAsync()`
   fixture.detectChanges(); // re-render after async work
   expect(component.results().length).toBeGreaterThan(0);
-}));
+});
 ```
+
+For promise-only work, `await fixture.whenStable()` before the assertion.
 
 ---
 
@@ -157,10 +177,10 @@ providers: [
     nuclia: { options: {}, db: {} },
   }),
 
-  // Make a jest.fn() available via injection
+  // Make a vi.fn() available via injection
   MockProvider(SisToastService, {
-    error: jest.fn(),
-    success: jest.fn(),
+    error: vi.fn(),
+    success: vi.fn(),
   }),
 
   // Manual mock for full control
@@ -173,6 +193,9 @@ providers: [
 ];
 ```
 
+`MockProvider` methods are plain no-op functions, not spies (no `ngMocks.autoSpy` is configured). Pass `vi.fn()`
+explicitly for anything you assert on, and `vi.fn().mockReturnValue(of(...))` when it must return an observable.
+
 Never import the real `HttpClientModule` or call real network in unit tests; use `MockProvider` with stub return values instead.
 
 ---
@@ -182,9 +205,9 @@ Never import the real `HttpClientModule` or call real network in unit tests; use
 When testing a service in isolation, skip `compileComponents()` and inject via `TestBed.inject()`:
 
 ```ts
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { MockProvider } from 'ng-mocks';
-import { skip, take } from 'rxjs';
+import { firstValueFrom, skip } from 'rxjs';
 
 describe('SomeService', () => {
   let service: SomeService;
@@ -196,27 +219,26 @@ describe('SomeService', () => {
     service = TestBed.inject(SomeService);
   });
 
-  it('emits updated state after action', waitForAsync(() => {
+  it('emits updated state after action', async () => {
     // skip(1) skips the initial BehaviorSubject emission
-    service.items$.pipe(skip(1), take(1)).subscribe((items) => {
-      expect(items).toEqual([{ id: '1' }]);
-    });
+    const next = firstValueFrom(service.items$.pipe(skip(1)));
     service.loadItems();
-  }));
+    expect(await next).toEqual([{ id: '1' }]);
+  });
 });
 ```
 
 Key patterns:
 
-- `skip(1)` + `take(1)` to assert on the _next_ emission from a `BehaviorSubject`
+- `firstValueFrom(obs$.pipe(skip(1)))` to assert on the _next_ emission from a `BehaviorSubject`; subscribe before triggering the action
 - `// @ts-ignore access to private member` when seeding internal state directly
-- `jest.fn()` for methods that should be called (not `vi.fn()` — that's Vitest)
+- `vi.fn()` for methods that should be called; `done` callbacks are discouraged — use `async`/`await`
 
 ---
 
 ### Spectator (pastanaga-angular only)
 
-The `libs/pastanaga-angular` lib uses `@ngneat/spectator/jest` with `createHostFactory` for host-component-based tests. Don't introduce Spectator in app code — it's only for that lib.
+The external `libs/pastanaga-angular` lib still runs on Jest and uses `@ngneat/spectator/jest` with `createHostFactory` for host-component-based tests. Don't introduce Spectator or Jest APIs in first-party code, and don't edit that lib.
 
 ```ts
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
@@ -237,21 +259,22 @@ beforeEach(() => {
 
 ### Translate in tests
 
-Components import `TranslatePipe` (not `TranslateModule`). In projects whose `test-setup.ts` registers `translateTestProviders` (see Global setup) nothing more is needed: translations return the key string. Elsewhere either:
+Components import `TranslatePipe` (not `TranslateModule`). Where the project sets `providersFile` (see _Global setup_), `TranslateService` is already stubbed and keys are
+returned as-is: translations return the key string. Elsewhere either:
 
 1. **`MockProvider(TranslateService, { instant: (key) => key })`** (plus `MockPipe(TranslatePipe)` if the template uses the pipe) — returns the key string.
 2. **`provideTranslateService({ loader: { provide: TranslateLoader, useFactory: () => ({ getTranslation: () => of(EN) }) } })`** — loads real translations. Use only when the test asserts on translated text.
 
 ---
 
-## Vitest Testing (search-widget)
+## Plain Vitest (search-widget, sdk-core)
 
 ### Environment & globals
 
-Both Vitest projects run with:
+These projects run with:
 
 ```ts
-// vite.config.{mjs,ts}
+// vite.config.{mjs,ts} / vitest.config.mts
 test: {
   globals: true,       // describe/it/expect available without import
   environment: 'jsdom',
@@ -259,7 +282,8 @@ test: {
 }
 ```
 
-Use `vi.fn()` for mocks (not `jest.fn()`).
+Use `vi.fn()` for mocks (not `jest.fn()`). The root `vitest.config.ts` aggregates only these plain projects
+(not the Angular ones), so run them through `nx test <name>`.
 
 ---
 
@@ -309,11 +333,13 @@ describe('Button', () => {
 
 ## Common Pitfalls
 
-| Symptom                                         | Cause                                         | Fix                                                                                        |
-| ----------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `NullInjectorError: No provider for X`          | Forgot to mock a transitive dependency        | Add `MockProvider(X)` to providers                                                         |
-| Template renders stale data                     | OnPush not re-checked                         | Call `fixture.detectChanges()` after mutation                                              |
-| `ExpressionChangedAfterItHasBeenCheckedError`   | State mutated after CD                        | Move initialization to `ngOnInit` or use signals                                           |
-| Signal input throws required input error        | `setInput` called after first `detectChanges` | Set all required signal inputs before first `detectChanges`                                |
-| `Cannot read property 'subscribe' of undefined` | `MockProvider` missing an Observable property | Pass `{ myObs$: of(value) }` as the override                                               |
-| `ERROR: 'describe' is not defined` in Vitest    | `globals: true` missing in vite config        | Already set in both widget configs — check you're running `nx test`, not `vitest` directly |
+| Symptom                                                                | Cause                                         | Fix                                                                                      |
+| ---------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `NullInjectorError: No provider for X`                                 | Forgot to mock a transitive dependency        | Add `MockProvider(X)` to providers                                                       |
+| Template renders stale data                                            | OnPush not re-checked                         | Call `fixture.detectChanges()` after mutation                                            |
+| `ExpressionChangedAfterItHasBeenCheckedError`                          | State mutated after CD                        | Move initialization to `ngOnInit` or use signals                                         |
+| Signal input throws required input error                               | `setInput` called after first `detectChanges` | Set all required signal inputs before first `detectChanges`                              |
+| `Cannot read property 'subscribe' of undefined`                        | `MockProvider` missing an Observable property | Pass `{ myObs$: of(value) }` as the override                                             |
+| `ERROR: 'describe' is not defined` in Vitest                           | `globals: true` missing in vite config        | Already set in the plain configs — check you're running `nx test`, not `vitest` directly |
+| `fakeAsync`/`waitForAsync` throws (zone.js missing)                    | Tests are zoneless                            | Use `async`/`await` + `vi.useFakeTimers()` / `vi.advanceTimersByTimeAsync()`             |
+| `expect(mockedMethod).toHaveBeenCalled()` fails on `MockProvider` stub | ng-mocks stubs are not spies                  | Pass `vi.fn()` in the `MockProvider` overrides                                           |

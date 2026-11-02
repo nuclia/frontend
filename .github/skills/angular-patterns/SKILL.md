@@ -29,11 +29,10 @@ many features; this covers only what the team has adopted. When in doubt, match 
      Promises, and third-party async callbacks do **not** trigger change detection on their own.
      Every state mutation reachable from one of these must go through a signal write,
      `ChangeDetectorRef.markForCheck()`, or `ApplicationRef.tick()`.
-   - Tests: `waitForAsync()` and `fakeAsync()`/`tick()` require `zone.js` and will throw under
-     `setupZonelessTestEnv()` (used by every app + `libs/core`, `libs/user`, `libs/sistema`,
-     `libs/sync`, `libs/common`). Use plain `async`/`await` for async `TestBed` setup, and
-     `jest.useFakeTimers()`/`jest.advanceTimersByTime()` for tests that need to control real timers.
-   - `libs/pastanaga-angular` is the **only** exception — it intentionally keeps `zone.js` and
+   - Tests: `waitForAsync()` and `fakeAsync()`/`tick()` require `zone.js` and will throw, because every
+     first-party test setup is zoneless (Vitest via `@angular/build:unit-test`). Use plain `async`/`await` for
+     async `TestBed` setup, and `vi.useFakeTimers()`/`vi.advanceTimersByTimeAsync()` for tests that need to control timers.
+   - `libs/pastanaga-angular` is the **only** exception — it is external, intentionally keeps `zone.js`, Jest and
      `setup-env/zone` (slated for replacement, not migrated). Watch for zoneless-related
      rendering bugs originating from its `pa-*` components when auditing new code.
 3. **`inject()` instead of constructor injection** — all new services and components use `inject()` as property initializers. Constructor injection is legacy only.

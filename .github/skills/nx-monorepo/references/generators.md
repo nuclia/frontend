@@ -19,14 +19,14 @@ From `nx.json` — these apply to every `nx g` invocation automatically:
 // Angular library
 "@nx/angular:library": {
   "linter": "eslint",
-  "unitTestRunner": "jest"
+  "unitTestRunner": "vitest-angular"
 }
 
 // Angular application
 "@nx/angular:application": {
   "style": "scss",
   "linter": "eslint",
-  "unitTestRunner": "jest",
+  "unitTestRunner": "vitest-angular",
   "e2eTestRunner": "none"
 }
 

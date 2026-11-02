@@ -30,32 +30,35 @@ Recurring failures and their fixes, sorted by symptom.
 
 ## Async / Observable gaps
 
-| Symptom                                               | Fix                                                                        |
-| ----------------------------------------------------- | -------------------------------------------------------------------------- |
-| Observable subscription never fires in test           | Wrap assertion in `waitForAsync` or use `fakeAsync` + `tick()`             |
-| BehaviorSubject initial value swallowing assertion    | `service.data$.pipe(skip(1), take(1)).subscribe(...)`                      |
-| `firstValueFrom` hangs                                | Observable never emits; check `MockProvider` returns `of(...)` not `NEVER` |
-| `fakeAsync` complains about pending timers            | Add `discardPeriodicTasks()` or `flush()` before test ends                 |
-| `setInterval` inside component causes fakeAsync error | Component must clear the interval in `ngOnDestroy`; fix the component      |
+| Symptom                                            | Fix                                                                                                                 |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Observable subscription never fires in test        | `await firstValueFrom(obs$)` or `await vi.runAllTimersAsync()` (no `fakeAsync`/`waitForAsync`: tests are zoneless)  |
+| BehaviorSubject initial value swallowing assertion | `await firstValueFrom(service.data$.pipe(skip(1)))` (subscribe before triggering the action)                        |
+| `firstValueFrom` hangs                             | Observable never emits; check `MockProvider` returns `of(...)` not `NEVER`                                          |
+| Debounce/timer assertion fails                     | `vi.useFakeTimers()` then `await vi.advanceTimersByTimeAsync(ms)`; restore with `vi.useRealTimers()` in `afterEach` |
+| Test with a `done` callback times out or is flaky  | Rewrite with `async`/`await`                                                                                        |
 
 ---
 
 ## ng-mocks specific
 
-| Symptom                                                | Fix                                                                                           |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| `MockProvider` method not being called                 | Check method name spelling; mocked methods are `jest.fn()` — assert with `toHaveBeenCalled()` |
-| `MockProvider` observable property returns `undefined` | Pass `{ myObs$: of(value) }` as second arg to `MockProvider`                                  |
-| Child component input not binding                      | Use `fixture.componentRef.setInput()` for signal inputs, `[attr]` binding for legacy          |
-| `MockComponent` input type mismatch                    | Cast the mock instance: `childInstance as MockedComponent<ChildType>`                         |
+| Symptom                                                | Fix                                                                                                                              |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `MockProvider` method not being called                 | Check method name spelling; ng-mocks stubs are not spies, so pass `vi.fn()` in the override and assert with `toHaveBeenCalled()` |
+| `MockProvider` observable property returns `undefined` | Pass `{ myObs$: of(value) }` as second arg to `MockProvider`                                                                     |
+| Child component input not binding                      | Use `fixture.componentRef.setInput()` for signal inputs, `[attr]` binding for legacy                                             |
+| `MockComponent` input type mismatch                    | Cast the mock instance: `childInstance as MockedComponent<ChildType>`                                                            |
 
 ---
 
-## Vitest-specific (search-widget / rao-widget)
+## Vitest-specific (plain Vitest: search-widget, sdk-core)
 
-| Symptom                               | Fix                                                                    |
-| ------------------------------------- | ---------------------------------------------------------------------- |
-| `describe is not defined`             | Run via `nx test`, not `vitest` directly                               |
-| DOM not cleaned between tests         | Always call `unmount(component)` in `afterEach`                        |
-| Store state bleeds between tests      | Reset Svelte stores explicitly: `storeVar.set(initialValue)`           |
-| `vi.fn()` not resetting between tests | Add `vi.clearAllMocks()` in `beforeEach` or use `vi.restoreAllMocks()` |
+| Symptom                                                    | Fix                                                                                                                  |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `describe is not defined`                                  | Run via `nx test`, not `vitest` directly                                                                             |
+| Angular builder: "No tests found"                          | The builder has no `passWithNoTests` option: keep at least one real spec in every Angular project                    |
+| `vi.mock('./relative')` throws in an Angular spec          | Unsupported by `@angular/build:unit-test`; provide a mock through DI                                                 |
+| Angular test pulls in `zone.js` / fails on top-level await | Keep `polyfills: []` in the `test-build` (libs) / `build:unit-test` (apps) config; `.env.test` sets the browserslist |
+| DOM not cleaned between tests                              | Always call `unmount(component)` in `afterEach`                                                                      |
+| Store state bleeds between tests                           | Reset Svelte stores explicitly: `storeVar.set(initialValue)`                                                         |
+| `vi.fn()` not resetting between tests                      | Add `vi.clearAllMocks()` in `beforeEach` or use `vi.restoreAllMocks()`                                               |
