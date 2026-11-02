@@ -18,3 +18,5 @@ const fakeTranslateService: Partial<ITranslateService> = {
 export const translateTestProviders = [
   { provide: TranslateService, useValue: fakeTranslateService as unknown as TranslateService },
 ];
+
+export default translateTestProviders;

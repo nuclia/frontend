@@ -4,6 +4,7 @@ import { BillingService, NavigationService, SDKService, StripeCustomer, UserServ
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, EMPTY, lastValueFrom, of, throwError } from 'rxjs';
+import type { Mock } from 'vitest';
 import { SubscriptionService } from '../subscription.service';
 import { CheckoutComponent } from './checkout.component';
 import { CheckoutError } from './checkout.model';
@@ -29,13 +30,13 @@ describe('CheckoutComponent', () => {
   let component: CheckoutComponent;
   let checkoutService: CheckoutService;
   let queryParams: BehaviorSubject<Record<string, string>>;
-  let createToken: jest.Mock;
-  let billing: Record<string, jest.Mock | unknown>;
-  let openModal: jest.Mock;
-  let showError: jest.Mock;
-  let showSuccess: jest.Mock;
-  let navigateExternal: jest.Mock;
-  let setAccount: jest.Mock;
+  let createToken: Mock;
+  let billing: Record<string, Mock | unknown>;
+  let openModal: Mock;
+  let showError: Mock;
+  let showSuccess: Mock;
+  let navigateExternal: Mock;
+  let setAccount: Mock;
   let storedCustomer: StripeCustomer | null;
 
   function createComponent(params: Record<string, string>) {
@@ -51,7 +52,7 @@ describe('CheckoutComponent', () => {
 
   async function subscribe() {
     checkoutService.subscribe(component['strategy']);
-    await jest.runAllTimersAsync();
+    await vi.runAllTimersAsync();
   }
 
   function stripeWith(stripe: object) {
@@ -65,30 +66,30 @@ describe('CheckoutComponent', () => {
   }
 
   beforeEach(async () => {
-    jest.useFakeTimers();
-    jest.spyOn(CheckoutService.prototype, 'initStripe').mockImplementation();
+    vi.useFakeTimers();
+    vi.spyOn(CheckoutService.prototype, 'initStripe').mockImplementation(() => undefined);
     storedCustomer = null;
     queryParams = new BehaviorSubject<Record<string, string>>({});
-    openModal = jest.fn();
-    showError = jest.fn();
-    showSuccess = jest.fn();
-    navigateExternal = jest.fn();
-    setAccount = jest.fn();
-    createToken = jest.fn().mockResolvedValue({ token });
+    openModal = vi.fn();
+    showError = vi.fn();
+    showSuccess = vi.fn();
+    navigateExternal = vi.fn();
+    setAccount = vi.fn();
+    createToken = vi.fn().mockResolvedValue({ token });
     billing = {
       isSubscribedToStripe: of(true),
-      getCustomer: jest.fn().mockImplementation(() => of(storedCustomer)),
-      createCustomer: jest.fn().mockReturnValue(of(customer)),
-      modifyCustomer: jest.fn().mockReturnValue(of(undefined)),
-      createPaymentMethod: jest.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
-      createSubscription: jest.fn().mockReturnValue(of({ status: 'active' })),
-      getCurrency: jest.fn().mockReturnValue(of('USD')),
-      getPrices: jest.fn().mockReturnValue(
+      getCustomer: vi.fn().mockImplementation(() => of(storedCustomer)),
+      createCustomer: vi.fn().mockReturnValue(of(customer)),
+      modifyCustomer: vi.fn().mockReturnValue(of(undefined)),
+      createPaymentMethod: vi.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
+      createSubscription: vi.fn().mockReturnValue(of({ status: 'active' })),
+      getCurrency: vi.fn().mockReturnValue(of('USD')),
+      getPrices: vi.fn().mockReturnValue(
         of({
           v3starter: { recurring: { month: { price: 10 }, year: { price: 100 } }, usage: {} },
         }),
       ),
-      saveBudget: jest.fn(),
+      saveBudget: vi.fn(),
     };
     await TestBed.configureTestingModule({
       imports: [CheckoutComponent],
@@ -99,7 +100,7 @@ describe('CheckoutComponent', () => {
           provide: SDKService,
           useValue: {
             currentAccount: of(account),
-            nuclia: { db: { getAccount: jest.fn().mockReturnValue(of({ ...account, type: 'v3starter' })) } },
+            nuclia: { db: { getAccount: vi.fn().mockReturnValue(of({ ...account, type: 'v3starter' })) } },
             set account(value: unknown) {
               setAccount(value);
             },
@@ -115,7 +116,7 @@ describe('CheckoutComponent', () => {
           },
         },
         { provide: SisModalService, useValue: { openModal } },
-        { provide: SisToastService, useValue: { error: showError, success: showSuccess, warning: jest.fn() } },
+        { provide: SisToastService, useValue: { error: showError, success: showSuccess, warning: vi.fn() } },
         { provide: TranslateService, useValue: { instant: (key: string) => key } },
         { provide: SubscriptionService, useValue: { initialCurrency: of('USD') } },
       ],
@@ -126,8 +127,8 @@ describe('CheckoutComponent', () => {
 
   afterEach(() => {
     fixture.destroy();
-    jest.useRealTimers();
-    jest.restoreAllMocks();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   describe('initialisation', () => {
@@ -196,7 +197,7 @@ describe('CheckoutComponent', () => {
     it('flags the VAT field when the backend rejects the VAT id', async () => {
       createComponent({ type: 'v3starter' });
       checkoutService.customerForm.patchValue({ ...customer.billing_details, not_company: true });
-      (billing['createCustomer'] as jest.Mock).mockReturnValue(
+      (billing['createCustomer'] as Mock).mockReturnValue(
         throwError(() => ({ status: 422, body: { detail: [{ loc: ['billing_details', 'vat'] }] } })),
       );
       component.saveCustomer();
@@ -209,7 +210,7 @@ describe('CheckoutComponent', () => {
     it('shows a generic error for any other failure', async () => {
       createComponent({ type: 'v3starter' });
       checkoutService.customerForm.patchValue({ ...customer.billing_details, not_company: true });
-      (billing['createCustomer'] as jest.Mock).mockReturnValue(throwError(() => ({ status: 500 })));
+      (billing['createCustomer'] as Mock).mockReturnValue(throwError(() => ({ status: 500 })));
       component.saveCustomer();
 
       expect(showError).toHaveBeenCalledTimes(1);
@@ -224,7 +225,7 @@ describe('CheckoutComponent', () => {
     });
 
     it('keeps the card form closed once the payment method is saved', () => {
-      jest.spyOn(checkoutService, 'createPaymentMethod').mockReturnValue(of(undefined));
+      vi.spyOn(checkoutService, 'createPaymentMethod').mockReturnValue(of(undefined));
       component.createPaymentMethod();
 
       expect(component.editCard).toBe(false);
@@ -232,9 +233,9 @@ describe('CheckoutComponent', () => {
     });
 
     it('reports a failed card and stays on the card form', () => {
-      jest
-        .spyOn(checkoutService, 'createPaymentMethod')
-        .mockReturnValue(throwError(() => new CheckoutError('Card declined')));
+      vi.spyOn(checkoutService, 'createPaymentMethod').mockReturnValue(
+        throwError(() => new CheckoutError('Card declined')),
+      );
       component.createPaymentMethod();
 
       expect(showError).toHaveBeenCalledWith('Card declined');
@@ -245,7 +246,7 @@ describe('CheckoutComponent', () => {
 
   it('subscribes with its strategy', () => {
     createComponent({ type: 'v3starter' });
-    const subscribeSpy = jest.spyOn(checkoutService, 'subscribe').mockImplementation();
+    const subscribeSpy = vi.spyOn(checkoutService, 'subscribe').mockImplementation(() => undefined);
     component.doSubscribe();
 
     expect(subscribeSpy).toHaveBeenCalledWith(component['strategy']);
@@ -289,9 +290,9 @@ describe('CheckoutComponent', () => {
       reviewWith(true);
       component.budget = { on_demand_budget: 250 };
       checkoutService.subscribe(component['strategy']);
-      await jest.advanceTimersByTimeAsync(1999);
+      await vi.advanceTimersByTimeAsync(1999);
       expect(checkoutService.loading()).toBe(true);
-      await jest.advanceTimersByTimeAsync(1);
+      await vi.advanceTimersByTimeAsync(1);
 
       expect(billing['createSubscription']).toHaveBeenCalledWith({
         payment_method_id: 'payment-method',
@@ -305,7 +306,7 @@ describe('CheckoutComponent', () => {
     });
 
     it('subscribes yearly when the plan has no monthly price', async () => {
-      (billing['getPrices'] as jest.Mock).mockReturnValue(
+      (billing['getPrices'] as Mock).mockReturnValue(
         of({ v3starter: { recurring: { year: { price: 100 } }, usage: {} } }),
       );
       createComponent({ type: 'v3starter' });
@@ -317,7 +318,7 @@ describe('CheckoutComponent', () => {
     });
 
     it('reopens the card form and forgets the card when the payment method is rejected', async () => {
-      (billing['createSubscription'] as jest.Mock).mockReturnValue(
+      (billing['createSubscription'] as Mock).mockReturnValue(
         throwError(() => ({ body: { error_code: 'payment_method_not_attached' } })),
       );
       reviewWith(true);
@@ -331,7 +332,7 @@ describe('CheckoutComponent', () => {
     });
 
     it('reopens the billing form when the address is rejected', async () => {
-      (billing['createSubscription'] as jest.Mock).mockReturnValue(
+      (billing['createSubscription'] as Mock).mockReturnValue(
         throwError(() => ({ body: { error_code: 'customer_tax_location_invalid' } })),
       );
       reviewWith(true);

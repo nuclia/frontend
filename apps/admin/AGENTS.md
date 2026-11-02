@@ -25,7 +25,7 @@ origin/subdomain, same pattern as `dashboard`/`rao`/`platform`/`auth`. `main.ts`
 nx serve admin -c local-stage    # Dev server against stage backend (Nuclia employees)
 nx serve admin -c local-prod     # Dev server against real prod backend, remoteLogin flow
 nx build admin                   # Production build
-nx test admin                    # Jest tests
+nx test admin                    # Vitest (Angular builder)
 ```
 
 ---

@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
@@ -26,16 +27,16 @@ describe('AccountConsumptionComponent', () => {
   let component: AccountConsumptionComponent;
   let currentAccount$: BehaviorSubject<{ id: string; slug: string }>;
   let zonesForAccount: { [accountId: string]: Zone[] };
-  let getKnowledgeBoxesForZone: jest.Mock;
-  let getNUAClientsForZone: jest.Mock;
-  let getUsage: jest.Mock;
+  let getKnowledgeBoxesForZone: Mock;
+  let getNUAClientsForZone: Mock;
+  let getUsage: Mock;
 
   beforeEach(async () => {
     currentAccount$ = new BehaviorSubject({ id: 'acc-1', slug: 'acc-1-slug' });
     zonesForAccount = {};
-    getKnowledgeBoxesForZone = jest.fn().mockReturnValue(of([] as IKnowledgeBoxItem[]));
-    getNUAClientsForZone = jest.fn().mockReturnValue(of([] as NUAClient[]));
-    getUsage = jest.fn().mockReturnValue(of(mockUsage()));
+    getKnowledgeBoxesForZone = vi.fn().mockReturnValue(of([] as IKnowledgeBoxItem[]));
+    getNUAClientsForZone = vi.fn().mockReturnValue(of([] as NUAClient[]));
+    getUsage = vi.fn().mockReturnValue(of(mockUsage()));
 
     await TestBed.configureTestingModule({
       imports: [AccountConsumptionComponent],
@@ -43,8 +44,8 @@ describe('AccountConsumptionComponent', () => {
         MockProvider(MetricsService, {
           account$: currentAccount$ as any,
           period: of({ start: new Date('2024-01-01'), end: new Date('2024-01-31') }),
-          getUsageCount: jest.fn().mockReturnValue(of({ year: 0, month: 0, sinceCreation: 0 })),
-          getTokensCountByKey: jest.fn().mockReturnValue({}),
+          getUsageCount: vi.fn().mockReturnValue(of({ year: 0, month: 0, sinceCreation: 0 })),
+          getTokensCountByKey: vi.fn().mockReturnValue({}),
         }),
         MockProvider(SDKService, {
           currentAccount: currentAccount$ as any,
@@ -57,7 +58,7 @@ describe('AccountConsumptionComponent', () => {
         MockProvider(FeaturesService, { unstable: { viewNuaActivity: of(false) } as any }),
         MockProvider(ZoneService, {
           // Reads the zone list for whichever account is currently active, so switching accounts changes the zones returned.
-          getZones: jest.fn(() => of(zonesForAccount[currentAccount$.value.id] || [])),
+          getZones: vi.fn(() => of(zonesForAccount[currentAccount$.value.id] || [])),
         }),
       ],
     })

@@ -25,17 +25,17 @@ describe('NucliaTokensComponent', () => {
           kbList: sdkKbList$ as any,
           currentAccount: of({ id: 'acc-1', slug: 'acc-1-slug' }) as any,
           nuclia: {
-            db: { getKnowledgeBoxes: jest.fn().mockReturnValue(of([])) },
+            db: { getKnowledgeBoxes: vi.fn().mockReturnValue(of([])) },
             options: {},
           } as any,
         }),
         MockProvider(MetricsService, {
           isSubscribedToStripe: of(false),
           period: of({ start: new Date('2024-01-01'), end: new Date('2024-01-31') }),
-          getLastMonths: jest.fn().mockReturnValue([]),
-          getLastStripePeriods: jest.fn().mockReturnValue([]),
+          getLastMonths: vi.fn().mockReturnValue([]),
+          getLastStripePeriods: vi.fn().mockReturnValue([]),
         }),
-        MockProvider(TranslateService, { instant: jest.fn((key: string) => key) }),
+        MockProvider(TranslateService, { instant: vi.fn((key: string) => key) }),
       ],
     })
       .overrideComponent(NucliaTokensComponent, { set: { template: '<div></div>' } })
