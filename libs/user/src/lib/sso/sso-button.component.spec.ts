@@ -17,7 +17,7 @@ describe('SsoButtonComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SsoButtonComponent],
       providers: [
-        MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => of(`sso/login/${provider}`)) }),
+        MockProvider(SsoService, { getSsoLoginUrl: vi.fn((provider) => of(`sso/login/${provider}`)) }),
         MockProvider(WINDOW, { location: { href: '' } } as Window),
         {
           provide: SvgIconRegistryService,
@@ -29,8 +29,8 @@ describe('SsoButtonComponent', () => {
         },
         MockProvider(TranslateService, {
           translate: (key) => signal(`translate--${typeof key === 'function' ? key() : key}`),
-          instant: jest.fn((key) => `translate--${key}`),
-          get: jest.fn((key) => of(`translate--${key}`)),
+          instant: vi.fn((key) => `translate--${key}`),
+          get: vi.fn((key) => of(`translate--${key}`)),
           onTranslationChange: new EventEmitter(),
           onLangChange: new EventEmitter(),
           onFallbackLangChange: new EventEmitter(),

@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import type { Mock } from 'vitest';
 
 import { SisModalService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -14,11 +15,11 @@ describe('RecoverComponent', () => {
   let fixture: ComponentFixture<RecoverComponent>;
   let queryParams$: BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>;
 
-  let loginService: { recover: jest.Mock };
-  let reCaptchaV3Service: { execute: jest.Mock };
-  let config: { getRecaptchaKey: jest.Mock; getAppName: jest.Mock };
-  let modalService: { openConfirm: jest.Mock };
-  let translateService: { get: jest.Mock };
+  let loginService: { recover: Mock };
+  let reCaptchaV3Service: { execute: Mock };
+  let config: { getRecaptchaKey: Mock; getAppName: Mock };
+  let modalService: { openConfirm: Mock };
+  let translateService: { get: Mock };
   beforeEach(async () => {
     queryParams$ = new BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>({
       login_challenge: 'challenge-1',
@@ -26,24 +27,24 @@ describe('RecoverComponent', () => {
     });
 
     loginService = {
-      recover: jest.fn(() => of({ action: 'check-mail' })),
+      recover: vi.fn(() => of({ action: 'check-mail' })),
     };
 
     reCaptchaV3Service = {
-      execute: jest.fn(() => of('captcha-token')),
+      execute: vi.fn(() => of('captcha-token')),
     };
 
     config = {
-      getRecaptchaKey: jest.fn(() => 'key'),
-      getAppName: jest.fn(() => 'platform'),
+      getRecaptchaKey: vi.fn(() => 'key'),
+      getAppName: vi.fn(() => 'platform'),
     };
 
     modalService = {
-      openConfirm: jest.fn(() => ({ onClose: of(undefined) })),
+      openConfirm: vi.fn(() => ({ onClose: of(undefined) })),
     };
 
     translateService = {
-      get: jest.fn(() => of('translated-message')),
+      get: vi.fn(() => of('translated-message')),
     };
 
     TestBed.configureTestingModule({
@@ -91,7 +92,7 @@ describe('RecoverComponent', () => {
   });
 
   it('should execute captcha and call recover with token when submit is valid', () => {
-    const recoverSpy = jest.spyOn(component, 'recover');
+    const recoverSpy = vi.spyOn(component, 'recover');
     component.recoverForm.controls.email.setValue('user@example.com');
 
     component.submit();
@@ -135,9 +136,17 @@ describe('RecoverComponent', () => {
   it('should not call recover when recaptcha execution fails', () => {
     reCaptchaV3Service.execute.mockReturnValueOnce(throwError(() => new Error('recaptcha failed')));
     component.recoverForm.controls.email.setValue('user@example.com');
-    const recoverSpy = jest.spyOn(component, 'recover');
+    const recoverSpy = vi.spyOn(component, 'recover');
+    vi.useFakeTimers();
 
-    component.submit();
+    try {
+      component.submit();
+
+      // RxJS reports errors thrown from a subscriber's error callback asynchronously.
+      expect(() => vi.runAllTimers()).toThrow('Recaptcha error');
+    } finally {
+      vi.useRealTimers();
+    }
 
     expect(reCaptchaV3Service.execute).toHaveBeenCalledWith('recover');
     expect(recoverSpy).not.toHaveBeenCalled();
