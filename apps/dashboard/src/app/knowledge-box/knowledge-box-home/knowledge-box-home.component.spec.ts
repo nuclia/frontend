@@ -99,12 +99,12 @@ describe('KnowledgeBoxHomeComponent', () => {
             creation_date: '2023-01-01',
           } as Account),
           counters: of({ resources: 1, index_size: 1024, paragraphs: 2, fields: 3, sentences: 4 }),
-          refreshCounter: jest.fn(),
+          refreshCounter: vi.fn(),
           nuclia: {
             options: { backend: 'https://nuclia.cloud' },
             db: {},
           },
-        } as SDKService),
+        } as unknown as SDKService),
         MockProvider(FeaturesService, {
           isTrial: of(true),
           isAccountManager: of(true),
@@ -133,7 +133,7 @@ describe('KnowledgeBoxHomeComponent', () => {
           },
         },
         MockProvider(SisModalService, {
-          openModal: jest.fn(),
+          openModal: vi.fn(),
         }),
         {
           provide: ZoneService,
@@ -154,20 +154,20 @@ describe('KnowledgeBoxHomeComponent', () => {
         },
         MockProvider(RemiMetricsService, {
           healthCheckData: of([]),
-          updatePeriod: jest.fn(),
+          updatePeriod: vi.fn(),
         }),
         MockProvider(KbOnboardingStateService, {
           onboardingState$: of(null),
-          updateState: jest.fn(),
-          skip: jest.fn(),
-          restart: jest.fn(),
-          markDone: jest.fn(),
+          updateState: vi.fn(),
+          skip: vi.fn(),
+          restart: vi.fn(),
+          markDone: vi.fn(),
         }),
         MockProvider(UploadEventService, {
           processingStarted$: of(false),
           searchPerformed$: of(false),
-          clearProcessingStarted: jest.fn(),
-          clearSearchPerformed: jest.fn(),
+          clearProcessingStarted: vi.fn(),
+          clearSearchPerformed: vi.fn(),
         }),
       ],
     }).compileComponents();

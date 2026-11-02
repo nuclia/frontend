@@ -13,14 +13,14 @@ describe('SkipOnboardingModalComponent', () => {
 
   beforeEach(async () => {
     modalRef = new ModalRef({ id: 0, config: new ModalConfig({}) });
-    jest.spyOn(modalRef, 'close');
+    vi.spyOn(modalRef, 'close');
 
     await TestBed.configureTestingModule({
       imports: [SkipOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule)],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(KbOnboardingStateService, {
-          skip: jest.fn(),
+          skip: vi.fn(),
         }),
       ],
     }).compileComponents();
@@ -51,8 +51,8 @@ describe('SkipOnboardingModalComponent', () => {
 
     it('should call skip() before close()', () => {
       const callOrder: string[] = [];
-      jest.spyOn(stateService, 'skip').mockImplementation(() => callOrder.push('skip'));
-      jest.spyOn(modalRef, 'close').mockImplementation(() => callOrder.push('close'));
+      vi.spyOn(stateService, 'skip').mockImplementation(() => callOrder.push('skip'));
+      vi.spyOn(modalRef, 'close').mockImplementation(() => callOrder.push('close'));
 
       component.confirmSkip();
 
