@@ -25,8 +25,8 @@ describe('SisModalService', () => {
     paModalServiceMock = MockService(ModalService);
     service = new SisModalService(paModalServiceMock);
 
-    jest.spyOn(paModalServiceMock, 'openConfirm');
-    jest.spyOn(paModalServiceMock, 'openModal');
+    vi.spyOn(paModalServiceMock, 'openConfirm');
+    vi.spyOn(paModalServiceMock, 'openModal');
   });
 
   describe('openConfirm', () => {

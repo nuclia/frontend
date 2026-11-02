@@ -149,7 +149,7 @@ Path alias: `"@nuclia/sistema": ["libs/sistema/src/index.ts"]`
 ## Run Commands
 
 ```bash
-nx test sistema    # Jest unit tests
+nx test sistema    # Vitest unit tests via Angular builder (own test-build target)
 nx lint sistema    # ESLint
 ```
 

@@ -11,10 +11,10 @@ describe('SisToastService', () => {
     mockToastService = MockService(ToastService);
     service = new SisToastService(mockToastService);
 
-    jest.spyOn(mockToastService, 'openInfo');
-    jest.spyOn(mockToastService, 'openSuccess');
-    jest.spyOn(mockToastService, 'openWarning');
-    jest.spyOn(mockToastService, 'openError');
+    vi.spyOn(mockToastService, 'openInfo');
+    vi.spyOn(mockToastService, 'openSuccess');
+    vi.spyOn(mockToastService, 'openWarning');
+    vi.spyOn(mockToastService, 'openError');
   });
 
   it('should open info toast', () => {
