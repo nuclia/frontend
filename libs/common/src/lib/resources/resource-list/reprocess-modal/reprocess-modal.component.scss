@@ -1,0 +1,8 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  padding: rhythm(1) 0;
+}

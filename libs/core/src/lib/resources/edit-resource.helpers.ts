@@ -27,6 +27,7 @@ import {
   IFieldData,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
+import { MEMORY_FACTS_FIELD_PREFIX, MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 
 export type Thumbnail = { uri: string; blob: SafeUrl };
 export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'memory' | 'add-field';
@@ -527,4 +528,25 @@ export function formatKeyValue(value: KVValue): string {
     return `${range.lower} – ${range.upper}`;
   }
   return String(value);
+}
+
+export function isOriginalFieldId(fieldId: string): boolean {
+  return !fieldId.startsWith('da-') && !isMemoryFieldId(fieldId);
+}
+
+export function isGeneratedFieldId(fieldId: string): boolean {
+  return fieldId.startsWith('da-') && !isMemoryFieldId(fieldId);
+}
+
+export function isMemorySessionFieldId(fieldId: string): boolean {
+  return fieldId.startsWith(MEMORY_SESSION_FIELD_PREFIX);
+}
+
+export function isMemoryFactsFieldId(fieldId: string): boolean {
+  return fieldId.startsWith(MEMORY_FACTS_FIELD_PREFIX);
+}
+
+/** Any conversation field belonging to the memory feature (session or facts). */
+export function isMemoryFieldId(fieldId: string): boolean {
+  return isMemorySessionFieldId(fieldId) || isMemoryFactsFieldId(fieldId);
 }

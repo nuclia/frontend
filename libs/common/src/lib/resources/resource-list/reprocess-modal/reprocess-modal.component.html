@@ -1,0 +1,58 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    {{ 'resource.reprocess-modal.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div
+      class="modal-container"
+      [formGroup]="form">
+      @if (extractStrategies() || {} | keyvalue; as strategies) {
+        <pa-select
+          formControlName="extractStrategy"
+          [label]="'resource.reprocess-modal.extract-configuration' | translate"
+          [readonly]="strategies.length === 0">
+          @for (strategy of strategies; track strategy.key) {
+            <pa-option
+              [value]="strategy.key"
+              [description]="
+                fieldStrategy() === strategy.key
+                  ? '(' + ('resource.reprocess-modal.current-config' | translate) + ')'
+                  : ''
+              ">
+              {{ strategy.value.name || strategy.key }}
+            </pa-option>
+          }
+        </pa-select>
+        @if (strategies.length === 0) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'resource.reprocess-modal.no-configs' | translate }}
+          </nsi-info-card>
+        }
+      }
+      @if ((fields() || []).length > 1) {
+        <pa-select
+          formControlName="field"
+          [label]="'resource.reprocess-modal.field-to-reprocess' | translate">
+          @for (field of fields(); track field.field_id) {
+            <pa-option [value]="field.field_id">{{ field.field_id }}</pa-option>
+          }
+        </pa-select>
+      }
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine || loading()"
+      (click)="submit()">
+      {{ 'resource.reprocess' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

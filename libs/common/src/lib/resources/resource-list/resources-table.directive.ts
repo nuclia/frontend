@@ -11,7 +11,7 @@ import {
   SDKService,
   UNAUTHORIZED_ICON,
 } from '@flaps/core';
-import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
+import { HeaderCell, IconModel, ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HIDDEN_PREFIX, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -33,6 +33,7 @@ import {
 import { delay, finalize, map, switchMap } from 'rxjs/operators';
 import { ResourceCacheService } from '../resource-cache.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReprocessModalComponent } from './reprocess-modal/reprocess-modal.component';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false },
@@ -187,6 +188,9 @@ export class ResourcesTableDirective implements OnInit {
         break;
       case 'reprocess':
         this.reprocess([resource]).subscribe();
+        break;
+      case 'reprocess-strategy':
+        this.reprocessStrategy(resource).subscribe();
         break;
       case 'summarize':
         this.isSummarizationAuthorized
@@ -409,6 +413,15 @@ export class ResourcesTableDirective implements OnInit {
           this.sdk.refreshCounter(true);
           this.cdr.markForCheck();
         }),
+      );
+  }
+
+  reprocessStrategy(resources: Resource) {
+    return this.modalService
+      .openModal(ReprocessModalComponent, new ModalConfig({ data: { resourceId: resources.id } }))
+      .onClose.pipe(
+        filter((refresh) => !!refresh),
+        switchMap(() => this.resourceListService.loadResources(true, false)),
       );
   }
 

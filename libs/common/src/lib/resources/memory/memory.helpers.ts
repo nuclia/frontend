@@ -1,19 +1,6 @@
 import { ConversationField, ConversationFieldPages, Message, Resource } from '@nuclia/core';
-import { MEMORY_FACTS_FIELD_PREFIX, MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 import { MemoryEntry, MemoryEntryContent, MemoryFact, MemoryFactContent, MemorySessionInfo } from './memory.model';
-
-export function isMemorySessionFieldId(fieldId: string): boolean {
-  return fieldId.startsWith(MEMORY_SESSION_FIELD_PREFIX);
-}
-
-export function isMemoryFactsFieldId(fieldId: string): boolean {
-  return fieldId.startsWith(MEMORY_FACTS_FIELD_PREFIX);
-}
-
-/** Any conversation field belonging to the memory feature (session or facts). */
-export function isMemoryFieldId(fieldId: string): boolean {
-  return isMemorySessionFieldId(fieldId) || isMemoryFactsFieldId(fieldId);
-}
+import { isMemorySessionFieldId, MEMORY_FACTS_FIELD_PREFIX } from '@flaps/core';
 
 /** Derives a session's facts-field id from its own field id. */
 export function factsFieldIdFromSessionFieldId(sessionFieldId: string): string {
