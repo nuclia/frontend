@@ -1,9 +1,8 @@
 import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { EditResourceService } from '@flaps/core';
+import { EditResourceService, MEMORY_SESSION_FIELD_PREFIX } from '@flaps/core';
 import { Message, Resource } from '@nuclia/core';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 import { MemoryEntry } from './memory.model';
 import { MemoryService } from './memory.service';
 

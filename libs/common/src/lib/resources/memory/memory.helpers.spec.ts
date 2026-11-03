@@ -1,17 +1,20 @@
 import { ConversationField, ConversationFieldPages, Message, Resource } from '@nuclia/core';
-import { MEMORY_FACTS_FIELD_PREFIX, MEMORY_SESSION_FIELD_PREFIX } from './memory.config';
 import {
   factsFieldIdFromSessionFieldId,
   getConversationMessages,
   getMemorySessionInfos,
-  isMemoryFactsFieldId,
-  isMemoryFieldId,
   isMemoryResource,
-  isMemorySessionFieldId,
   parseMemoryEntry,
   parseMemoryFact,
   sessionFieldIdFromFactsFieldId,
 } from './memory.helpers';
+import {
+  isMemoryFactsFieldId,
+  isMemoryFieldId,
+  isMemorySessionFieldId,
+  MEMORY_FACTS_FIELD_PREFIX,
+  MEMORY_SESSION_FIELD_PREFIX,
+} from '@flaps/core';
 
 function message(text: string, overrides: Partial<Message> = {}): Message {
   return {
