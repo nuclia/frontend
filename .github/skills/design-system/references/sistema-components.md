@@ -1,7 +1,7 @@
 # Sistema Components Reference — `@nuclia/sistema`
 
 All components use selector prefix `nsi-`. Import path: `@nuclia/sistema`.  
-**Angular rule: `OnPush` everywhere.** All new components must be standalone.
+**Angular rule: `OnPush` everywhere.** All components are standalone (no `standalone` flag).
 
 ---
 
@@ -198,7 +198,7 @@ Two-option pill toggle (left / right). Labels are i18n keys or plain strings.
 
 ### `<nsi-password-input>`
 
-**Module:** `SisPasswordInputModule` (non-standalone) | **Import:** `SisPasswordInputModule`
+**Standalone:** yes | **Import:** `PasswordInputComponent` (or the wrapper `SisPasswordInputModule`)
 
 Password field with show/hide toggle. Extends Pastanaga `NativeTextFieldDirective`.
 Inherits all standard `pa-text-field` inputs: `label`, `placeholder`, `help`, `errorMessage`, `disabled`, `required`, etc.
@@ -215,7 +215,7 @@ Works with `ngModel`, `formControl`, `formControlName`.
 
 ### `<nsi-search-input>`
 
-**Standalone:** yes | **Import:** `SearchInputComponent`
+**Standalone:** yes | **Import:** `SisSearchInputComponent`
 
 Search text field. Optional mode selector (badges) for search type switching.
 Inherits all Pastanaga `NativeTextFieldDirective` inputs.
@@ -288,7 +288,7 @@ Small informational chip for counts, icons, or short text.
 
 ### `<nsi-status>`
 
-**Standalone:** yes | **Import:** `StatusComponent`
+**Standalone:** yes | **Import:** `SisStatusComponent`
 
 Coloured icon for resource processing states.
 
@@ -505,7 +505,7 @@ Horizontal progress bar. Pass `null`/`undefined` for indeterminate mode.
 
 ### `<nsi-spinner>`
 
-**Module:** `SisProgressModule` | **Import:** `SisProgressModule`
+**Standalone:** yes | **Import:** `SpinnerComponent`
 
 | Input  | Type                | Default    |
 | ------ | ------------------- | ---------- |
@@ -519,7 +519,7 @@ Horizontal progress bar. Pass `null`/`undefined` for indeterminate mode.
 
 ### `<nsi-delayed-spinner>`
 
-**Module:** `SisProgressModule` | **Import:** `SisProgressModule`
+**Standalone:** yes | **Import:** `DelayedSpinnerComponent`
 
 Shows spinner only after a configurable delay. Prevents flash for fast operations.
 
@@ -562,16 +562,29 @@ Shows spinner only after a configurable delay. Prevents flash for fast operation
 
 ---
 
+### `<nsi-skeleton>`
+
+**Standalone:** yes | **Import:** `NsiSkeletonComponent`
+
+Placeholder block. Signal inputs: `width` (default `'100%'`), `height` (default `'1rem'`), `borderRadius` (`'small'` | `'medium'` | `'round'`, default `'small'`).
+
+---
+
+### `<nsi-country-select>`
+
+**Standalone:** yes | **Import:** `CountrySelectComponent`
+
+Searchable country dropdown (`ControlValueAccessor`, wraps `pa-typeahead-select`). Signal inputs: `id`, `readonly`, `errorMessages`, `externalLabel`.
+
+---
+
 ## Pipes & Utilities
 
 ### `StandaloneMimeIconPipe` / `MimeIconPipe`
 
 Returns a Pastanaga icon name for a MIME type string.
 
-| Module                            | Use when              |
-| --------------------------------- | --------------------- |
-| `StandaloneMimeIconPipe`          | Standalone components |
-| `SisIconsModule` + `MimeIconPipe` | NgModule components   |
+Both are standalone pipes named `mimeIcon`; import `MimeIconPipe` (`StandaloneMimeIconPipe` extends it with identical behaviour).
 
 ```html
 <pa-icon [name]="file.mimeType | mimeIcon"></pa-icon>
@@ -596,11 +609,9 @@ message/*                → chat
 
 ## NgModule Summary
 
-| Module                   | Declares                                      |
-| ------------------------ | --------------------------------------------- |
-| `SisLabelModule`         | `LabelComponent`                              |
-| `SisPasswordInputModule` | `PasswordInputComponent`                      |
-| `SisProgressModule`      | `SpinnerComponent`, `DelayedSpinnerComponent` |
-| `SisIconsModule`         | `MimeIconPipe`                                |
+| Module                   | Re-exports               |
+| ------------------------ | ------------------------ |
+| `SisLabelModule`         | `LabelComponent`         |
+| `SisPasswordInputModule` | `PasswordInputComponent` |
 
-All other Sistema symbols are **standalone** — import them directly in `imports: []`.
+Both are thin wrappers; every Sistema component and pipe is **standalone** — import it directly in `imports: []`.

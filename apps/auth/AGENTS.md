@@ -27,10 +27,10 @@ nx test auth         # Jest tests
 
 ```
 apps/auth/src/
+├── main.ts                      # bootstrapApplication, zoneless; translate (user/common/sync), HttpClient, toast
 ├── app/
-│   ├── app.module.ts            # Root NgModule — translate, toast, splash screen
-│   ├── app.component.ts         # Root component — minimal shell
-│   ├── app-routing.module.ts    # Root routes (see below)
+│   ├── app.component.ts         # Root component — translations, logout → OAuth redirect, splash screen
+│   ├── app-routing.module.ts    # Root routes (see below) — the only NgModule besides lazy-user.module.ts
 │   ├── app-title.strategy.ts    # Page title strategy
 │   ├── fallback-redirect.guard.ts # Catch-all: redirects unknown routes to rag app
 │   └── lazy-user.module.ts      # Lazy loader for @nuclia/user authRoutes
@@ -52,7 +52,7 @@ The root app owns the shell and delegates all auth pages to `@nuclia/user` via a
   /redirect               → RedirectComponent
 /feedback                 → FeedbackComponent (requires authGuard)
 /farewell                 → FarewellComponent
-/setup/invite             → InviteComponent (requires authGuard)
+/setup/user               → SetupUserComponent (no guard; ?app=platform|rag picks the came_from app)
 /setup_account            → AwsOnboardingComponent (requires awsGuard)
 /user/*                   → LazyUserModule (loads authRoutes from @nuclia/user)
   /user/callback          → CallbackComponent
@@ -60,6 +60,7 @@ The root app owns the shell and delegates all auth pages to `@nuclia/user` via a
   /user/callbacks/google  → CallbackComponent (data: { google: true })
   /user/callbacks/github  → CallbackComponent (data: { github: true })
   /user/callbacks/microsoft → CallbackComponent (data: { microsoft: true })
+  /user/saml-login        → SamlLoginComponent (SAML IdP-initiated entry; see State & Auth Flow)
   /user/login             → LoginComponent (resolve: loginResolver)
   /user/recover           → RecoverComponent
   /user/reset             → ResetComponent
@@ -108,11 +109,13 @@ and `@nuclia/user` components. The app is a pure routing host.
 OAuth callbacks land at `/user/callback` (or `/user/callbacks/<provider>` for named providers).
 The `CallbackComponent` in `@nuclia/user` handles token exchange and redirect after auth.
 
-SAML flows have two paths:
+SAML flows have three paths:
 
 - Legacy: goes through the standard `/user/callback` path
-- New: goes through `/user/callbacks/saml`
-  Both are supported simultaneously during the migration period.
+- SP-initiated: goes through `/user/callbacks/saml`
+- IdP-initiated: the flow lands on `/user/saml-login?ref&nonce&came_from`. `SamlLoginComponent` validates `came_from` (http/https, no credentials, `isCameFromLegit`; does nothing otherwise) and redirects to that app's root with `saml_ref`, `nonce`, `came_from`. There `authGuard` forces a login (even with a stored JWT) → `AppLoginComponent` restarts OAuth with `prompt: 'login'` → `CallbackComponent` authenticates directly when the OAuth state carries `saml_ref`.
+
+Expired reset links (HTTP 410 from the reset endpoint) show a message mapped from the backend `error_code` by `getLoginErrorMessageKey` in `libs/user`.
 
 ---
 
@@ -145,14 +148,14 @@ nx test user        # all auth flow tests live here
 
 - **Auth pages are not in this app.** They live in `libs/user/src/lib/`. If you need to add or
   change a login/signup/callback flow, work in `libs/user`, not here.
-- **The `**`wildcard redirects to the rag app, not a 404 page — unless`cameFrom`fails validation.** The auth app uses a`fallbackRedirectGuard`on the catch-all route that normally redirects unmatched URLs to the rag app
-(via`OAuthService.getCameFrom()`) preserving the full path and query parameters. This
-prevents dead-end 404 pages for routes like `/select`, `/user/login-redirect`,
-`/user/onboarding`, `/at/:account/...`, or any other route that shared libs navigate to but
-only exists in the dashboard/rao apps. **Security:** `cameFrom`is validated via`getSafeOrigin()`—
-it must be`https:`(or`http://localhost`) and share the same main domain as the backend API. If
-validation fails, the guard returns `true`, allowing `PageNotFoundComponent` to render rather than
-  guessing an unsafe redirect target. So the 404 page CAN render in this one error case.
+- **Unmatched routes redirect to the rag app, not a 404 page — unless `cameFrom` fails validation.**
+  `fallbackRedirectGuard` (on the catch-all route) normally redirects to the rag app via
+  `OAuthService.getCameFrom()`, preserving path and query. This prevents dead-end 404 pages for
+  routes like `/select`, `/user/login-redirect`, `/user/onboarding`, `/at/:account/...` that shared
+  libs navigate to but only exist in the dashboard/rao apps. **Security:** `cameFrom` is validated
+  via `getSafeOrigin()` — it must be `https:` (or `http://localhost`) and share the same main
+  domain as the backend API. If validation fails the guard returns `true` and
+  `PageNotFoundComponent` renders.
 - **`came_from` can equal the auth app's own origin.** When the OAuth flow is initiated from
   the auth app itself (e.g. after logout + re-auth), `redirectToOAuth()` sets
   `came_from = window.location.origin` (auth.progress.cloud). On callback, the check
@@ -165,8 +168,11 @@ validation fails, the guard returns `true`, allowing `PageNotFoundComponent` to 
 - **`/user/magic` and `/user/join` are the same component.** `MagicComponent` handles both
   magic-link login and team-join flows.
 - **Two SAML callback paths exist.** Both `/user/callback` (with no data) and
-  `/user/callbacks/saml` (with `data: { saml: true }`) route to `CallbackComponent`. This is
-  intentional for backward compatibility during migration — do not remove the legacy path.
+  `/user/callbacks/saml` (with `data: { saml: true }`) route to `CallbackComponent`. Keep both
+  — the legacy path is still used by existing SAML setups.
+- **`/setup/user` is public and cross-app.** `apps/manager-v2` builds `<auth origin>/setup/user?app=<platform|rag>`
+  as the "User setup URL" for users who never logged in. `SetupUserComponent` offers "set password"
+  (→ admin `/user/set-password`, which starts OAuth with `initial_setpassword`) or "use SSO".
 - **The `came_from` parameter** is threaded through the entire OAuth flow (including SAML and
   signup) so the user is redirected back to their original URL after auth. It is stored in the
   OAuth `state` parameter. Do not break the `came_from` → `state` encoding in `CallbackComponent`.

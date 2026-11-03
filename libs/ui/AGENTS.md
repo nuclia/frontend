@@ -14,13 +14,10 @@ nx run ui:static-storybook
 
 ## Structure
 
-- `src/lib/spartan-components/accordion/` — accordion primitives; exported from `@nuclia/ui-spartan/accordion`.
-- `src/lib/spartan-components/avatar/` — avatar, fallback, image, badge, and group primitives; exported from `@nuclia/ui-spartan/avatar`.
-- `src/lib/spartan-components/button/` — button primitive and tokens; exported from `@nuclia/ui-spartan/button`.
-- `src/lib/spartan-components/{input,textarea,label,checkbox,badge,alert-dialog,toggle,toggle-group,tooltip}/` — form, badge, alert-dialog, toggle and tooltip primitives; each exported from `@nuclia/ui-spartan/<name>`.
+- `src/lib/spartan-components/<name>/` — one folder per Spartan primitive (≈65, e.g. accordion, button, dialog, select, sidebar, sonner, table, tabs, tooltip, typography), each with `src/index.ts` (exports a `Hlm<Name>Imports` array), `src/lib/hlm-*.ts` and a `hlm-<name>.stories.ts`; exported from `@nuclia/ui-spartan/<name>` (one `tsconfig.base.json` path per folder). Folders `bubble`, `message`, `message-scroller`, `marker`, `attachment`, `questionnaire` are chat/form composites built from the same primitives.
 - `src/lib/spartan-components/stepper/` — Spartan **block** (not a CLI primitive), copied from `spartan-ng/spartan` `apps/app/src/app/pages/(blocks)/blocks/stepper/lib`; exported from `@nuclia/ui-spartan/stepper`. Selectors keep the upstream `spartan-*` names (`spartan-stepper`, `spartan-step`, `spartanStepperNext/Previous`). `next()` is patched to only touch `AbstractControl` step controls (the CDK `StepControl` type also allows signal-forms `Field`). `indicatorMode` has an added `completion` value (upstream only has `number | state | icon`): `state` checks every reached step, `completion` checks only completed steps that are not selected. To add another block, copy its `lib/` folder and rewrite `@spartan-ng/helm/*` imports to `@nuclia/ui-spartan/*`.
 - `src/lib/spartan-components/utils/` — class merging and Spartan provider helpers; exported from `@nuclia/ui-spartan/utils`.
-- `theme/` — Tailwind, theme, and font styles.
+- `theme/` — `tailwind.css` (Tailwind layers + Spartan preset) and `theme.css`, which imports `theme-spartan.css` (Spartan/shadcn CSS variables), `theme-tailwind.css` (Tailwind-side variables) and `fonts.css`. Keep Spartan and Tailwind variables in their own file. Only Storybook (`.storybook/storybook-styles.css`) imports these; no app stylesheet, `project.json` `styles` entry or TS file does (apps only register `@tailwindcss/postcss` in their `.postcssrc.json`), so Spartan/Tailwind classes only render in an app once it imports `libs/ui/theme/*.css`.
 - `docs/` — Storybook foundations pages for colors and typography.
 - `.storybook/` — Angular Storybook configuration, theme switcher, and story ordering (`Foundations`, then `Spartan`).
 

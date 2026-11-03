@@ -39,7 +39,9 @@ Ask yourself (or confirm with the user) which of these applies:
 | **Full audit**         | Periodic maintenance or "everything feels stale" | Run the staleness script (see Step 2) |
 | **Just new apps/libs** | After a scaffold-only change                     | Check for missing AGENTS.md files     |
 
-Default to `git diff main...HEAD --name-only` if no explicit scope is given.
+Default to `git diff <code_docs.last_synced_commit>..HEAD --name-only`, where the commit is read from
+`.github/skills/product-knowledge/meta.json`. Fall back to `git diff main...HEAD --name-only` if the field is missing.
+After a sync, set `code_docs.last_synced_commit` to the current `HEAD` hash and `code_docs.updated_at` to now.
 
 ### Step 2 — Detect Staleness
 

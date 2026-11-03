@@ -10,12 +10,12 @@ Nx project name: **admin**. Selector prefix: **app-**.
 
 ## Purpose
 
-Previously, account-management pages (billing, members, API keys, account deletion, etc.) lived
-inside `dashboard` under `/at/:account/manage/**`. They're being extracted into this standalone
-`admin` app so that PDP Studio (and eventually other white-label surfaces) can reuse them without
-pulling in the rest of the KB/ARAG dashboard. Links from the KB dashboard into account pages are
+`admin` hosts all account-management pages (billing, members, API keys, account deletion, etc.)
+that the KB/ARAG `dashboard` does not, so PDP Studio (and other white-label surfaces) can reuse
+them without the rest of the dashboard. Links from the KB dashboard into account pages are
 real navigations (`<a>`/`window.location.href`), not Angular routing — `admin` is a separate
-origin/subdomain, same pattern as `dashboard`/`rao`/`platform`/`auth`.
+origin/subdomain, same pattern as `dashboard`/`rao`/`platform`/`auth`. `main.ts` bootstraps with
+`bootstrapApplication` (zoneless, `provideTranslateService` + `provideTranslateHttpLoader`).
 
 ---
 
@@ -35,10 +35,12 @@ nx test admin                    # Jest tests
 ```
 apps/admin/src/
 ├── app/
-│   ├── app.component.ts           # Root component — minimal shell (same as auth/dashboard)
+│   ├── app.component.ts           # Root component — translations, remoteLogin token intake, splash
 │   ├── app-routing.module.ts      # Root routes as a legacy NgModule wrapper (see below)
 │   ├── app-title.strategy.ts      # Page title strategy
-│   └── fallback-redirect.guard.ts # Catch-all: redirects unknown routes to dashboard
+│   ├── capture-entry-context.guard.ts # Persists `from`/`app` query params (see Guards)
+│   ├── fallback-redirect.guard.ts # Catch-all: redirects unknown routes to dashboard
+│   └── account/                   # Lazy AccountModule (see "Account routes")
 ├── environments/
 │   ├── environment.ts             # Dev: client='admin'
 │   └── environment.prod.ts        # Prod: client='admin'
@@ -66,11 +68,30 @@ apps/admin/src/
 /setup_account             → AwsOnboardingComponent (requires awsGuard)
 /user/callback              → CallbackComponent
 /user/login-redirect        → AppLoginComponent
+/user/callbacks/saml        → CallbackComponent (data: { saml: true }) — TEMPORARY, for IdP-initiated
+                               SAML clients whose RelayState still points here
 /user/signup                → PageNotFoundComponent + redirectToSignUp guard (real signup lives
                                in the `auth` app)
+/user/test-signup           → TestingAppSignupComponent (signup-key gated test signup)
+/user/contextbox-signup     → TemporaryContextBoxSignupComponent
+/user/set-password          → SetPasswordComponent (starts OAuth with `initial_setpassword`; target of
+                               `apps/auth` `/setup/user` "set password")
+/user/login                 → redirectTo '' (pathMatch full)
 /**                          → fallbackRedirectGuard → external redirect to dashboard, or 404
                                 if cameFrom fails validation
 ```
+
+### Account routes (`account/account.module.ts`, children of `/at/:account`)
+
+`''` → `home`; every page below is guarded by `accountOwnerGuard`. Pages are tab shells with child routes:
+
+- `home` — `ContextBoxAccountHomeComponent` when `canMatchContextBoxMode` matches (account `workflow === 'cowork'`), else `AccountSettingsComponent` (`consumption`, `preferences`, `account-settings`, `api-keys`)
+- `administration` — `knowledge-boxes` (+`/create`), `users`, `retrieval-agents` (`agentFeatureEnabledGuard`)
+- `configuration` — `nua`, `nua/:id/activity`, `nua-guard`, `models`
+- `billing` — `subscriptions`, `checkout`, `my-subscription`, `usage`, `history`
+- Legacy URLs (`settings`, `nua`, `kbs`, `arag`, `models`, `users`, …) redirect to the tab routes above.
+
+Checkout: `CheckoutComponent` (plan checkout, `/billing/checkout`) and `CheckoutContextBoxComponent` (ContextBox/cowork activation, rendered inside `SubscriptionsComponent` when `isContextBoxActivation()`) both provide their own `CheckoutService` instance (Stripe customer form, card, review, subscribe) and pass it a `CheckoutStrategy` (`details`, `redirectUrl`, optional `onError`) — customise behaviour via the strategy, not by forking the service. The ContextBox flow redirects to `AccountEntryContextService.getReturnUrl()`.
 
 ---
 
@@ -109,33 +130,31 @@ have their own registered `oauth.client_id` (a distinct UUID per environment, e.
 - **`remoteLogin` bounce-back is local-testing-only.** It relies on two shared-lib fixes in
   `libs/user` (`login.component.ts` using `window.location.origin` instead of a hardcoded port,
   and `redirect.component.ts`'s `AUTHORIZED_REDIRECTS` allowlist including this app's local port)
-- **`AppComponent` must consume `access_token`/`refresh_token` from the URL.** `apps/admin` was
-  scaffolded from `apps/auth`, which never needs this (it issues tokens, not receives them) — so
-  the initial copy was missing the `remoteLogin()` method that `dashboard`/`rao`/`platform` all
-  have. Without it, tokens appended to the URL by `/redirect` are never stored, `authGuard` never
-  sees a JWT, and the user gets bounced to `/user/login-redirect` → a real OAuth attempt. Fixed by
-  porting the same `remoteLogin()` method (gated by `config.useRemoteLogin()`) into
-  `apps/admin/src/app/app.component.ts`.
-- **`admin` now has its own Hydra `oauth.client_id`**, a distinct UUID registered in Hydra per
+- **`AppComponent` consumes `access_token`/`refresh_token` from the URL** via `remoteLogin()` (gated by
+  `config.useRemoteLogin()`), like `dashboard`/`rao`/`platform`. Without it, tokens appended to the
+  URL by `/redirect` are never stored, `authGuard` never sees a JWT, and the user gets bounced to
+  `/user/login-redirect` → a real OAuth attempt. (`apps/auth` has no equivalent — it issues tokens.)
+- **`admin` has its own Hydra `oauth.client_id`**, a distinct UUID registered in Hydra per
   environment (`local-dev`, `local-stage`, `local-prod`, `production` via
-  `STF_DOCKER_CONFIG_OAUTH_CLIENT_ID`). This means a cold/direct visit (no token in the URL) also
-  works: `authGuard` → `/user/login-redirect` →
-  `AppLoginComponent` → `redirectToOAuth()` succeeds instead of throwing. `remoteLogin: true` is
-  kept alongside it everywhere — it's what makes manually visiting the `auth` app's `/redirect?
+  `STF_DOCKER_CONFIG_OAUTH_CLIENT_ID`). A cold/direct visit (no token in the URL) works:
+  `authGuard` → `/user/login-redirect` → `AppLoginComponent` → `redirectToOAuth()`. `remoteLogin: true`
+  is kept alongside it everywhere — it's what makes manually visiting the `auth` app's `/redirect?
 redirect=http://localhost:PORT` page (after already being logged in there) bounce back with a
   token `admin` can consume, which is a faster local-testing loop than a full Hydra round-trip.
 - **EULA gating is intentionally skipped here.** `DashboardLayoutComponent` normally forces a
   non-dismissable EULA modal for account managers; that's disabled when `navigation.inAdminApp`
   is true (whether PDP Studio end-users should be forced through Nuclia's own EULA is an
   unresolved legal/product question, deliberately not defaulted to "on").
-- **Nothing left pending from the scaffold.** The entry-context capture/consumption mechanism
-  and the full cross-app navigation conversion are both implemented:
-  `AccountEntryContextService`, `captureEntryContextGuard`, `NavigationService.fromApp()`
-  (there is no `effectiveClient` property — the private `resolvedFromApp` field backs `fromApp()`),
-  `navigateExternal()`/`resolveGuardRedirect()`, the `backLink`/`nsi-back-button` external-href
-  fixes, and every KB/ARAG "table inside a page" reverse-direction link (`kb-list`, `arag-list`,
-  `account-home`, `account-consumption`, `account-users`, `invite-collaborators-modal`,
-  `checkout`) now leave `admin` via a real navigation instead of Angular routing.
+- **Cross-app navigation uses real navigations.** Entry-context capture/consumption
+  (`AccountEntryContextService`, `captureEntryContextGuard`, `NavigationService.fromApp()` — backed by
+  the private `resolvedFromApp`, there is no `effectiveClient` property),
+  `navigateExternal()`/`resolveGuardRedirect()`/`getAdminOrigin()`, the `backLink`/`nsi-back-button`
+  external-href handling, and every KB/ARAG "table inside a page" reverse-direction link (`kb-list`,
+  `arag-list`, `account-home`, `account-consumption`, `account-users`, `invite-collaborators-modal`,
+  `checkout`) leave `admin` via a real navigation instead of Angular routing.
+- **`/user/callbacks/saml` here is a stopgap** for IdP-initiated SAML clients. The SAML account form
+  (`AccountManageComponent`) also edits `idp_initiated_target`. New SAML wiring belongs in the `auth`
+  app / `libs/user` (see `libs/user/AGENTS.md` conventions #10).
 - **`environment.client` is a loose `string`**, not a TS union — `'admin'` is a valid value today
   only because nothing enforces the union. Some `NavigationService`/guard logic keyed off
   `environment.client` (`inRaoApp`/`inPlatformApp`/`inDashboard`) will need updating once

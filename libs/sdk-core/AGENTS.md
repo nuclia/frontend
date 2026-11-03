@@ -4,7 +4,7 @@
 
 `libs/sdk-core` is the **Nuclia JavaScript/TypeScript SDK** — the single source of truth for all Nuclia backend communication.
 
-- **npm package:** `@nuclia/core` (v1.32.0, MIT)
+- **npm package:** `@nuclia/core` (version in `package.json`; unreleased changes are tracked in `CHANGELOG.md` — add an entry there for every SDK-facing change; MIT)
 - **Internal alias:** `@nuclia/core → libs/sdk-core/src/index.ts` (no build step needed for workspace consumers)
 - **Framework-agnostic** — no Angular/React/DOM dependency; works in browser, Node.js (with polyfills), and as UMD bundle
 - **Observable-first** — every async operation returns `Observable<T>`. `asyncKnowledgeBox` proxy wraps them as Promises when needed.
@@ -26,7 +26,7 @@ libs/sdk-core/
         ├── models.ts       # INuclia, IAuthentication, IRest, IDb, NucliaOptions, IErrorResponse, PromiseMapper
         ├── events.ts       # Events class — lightweight pub/sub & debug logging
         ├── auth/
-        │   ├── auth.ts          # Authentication (JWT + API-key + standalone); REFRESH_DELAY = 6 hours
+        │   ├── auth.ts          # Authentication (JWT + API-key); REFRESH_DELAY = 6 hours
         │   ├── auth.models.ts   # AuthTokens, NucliaDBRole, AuthInfo
         │   └── jwt-helpers.ts   # JwtHelper (base64 decode), JwtUser interface
         ├── rest/
@@ -39,6 +39,7 @@ libs/sdk-core/
             ├── kb/
             │   ├── kb.ts            # KnowledgeBox (read) + WritableKnowledgeBox (write)
             │   ├── kb.models.ts     # IKnowledgeBoxBase, KBRoles, LabelSet, SearchConfig…
+            │   ├── kb-agentic.models.ts # AgenticConfig/AgenticSources models + getAgenticConfigDefaults()
             │   └── activity/
             │       ├── activity-monitor.ts  # ActivityMonitor — download + queryActivityLogs()
             │       ├── activity.models.ts   # ActivityLogItem, EventType, RemiQueryCriteria…
@@ -49,10 +50,12 @@ libs/sdk-core/
             │   ├── ask.ts           # ask() — SSE streaming → assembled Ask.Answer
             │   ├── ask.models.ts    # Ask namespace (Answer, Features, AskResponseItem)
             │   ├── agentic.ts       # Agentic RAG pipeline engine — backs createAgenticRAGPipeline()
+            │   ├── widget.ts        # `Widget` namespace — search-widget config types + defaults (DEFAULT_SEARCH_BOX_CONFIG…)
             │   └── filter.ts        # Filter prefix constants (LABEL_FILTER_PREFIX, NER_FILTER_PREFIX…)
             ├── resource/
             │   ├── resource.ts         # ReadableResource + Resource classes
             │   ├── resource.models.ts  # IResource, FIELD_TYPE, Relation…
+            │   ├── resource.mapper.ts  # getDataKeyFromFieldType(), longToShortFieldType()
             │   └── resource.helpers.ts # retry429Config, setLabels, sliceUnicode
             ├── retrieval-agent/
             │   ├── retrieval-agent.ts        # RetrievalAgent (extends WritableKnowledgeBox)
@@ -60,6 +63,7 @@ libs/sdk-core/
             │   ├── retrieval-agent.types.ts  # AragModule, ProviderType, type guards
             │   ├── memory.models.ts          # Memory namespace — NucliaDBMemoryConfig, MemoryConfig, Rule, Rules…
             │   ├── interactions.models.ts    # InteractionOperation, AnswerOperation, AragAnswer, InteractionRequest
+            │   ├── agentic-websocket.ts      # Shared WebSocket handler wiring for RetrievalAgent interactions and KnowledgeBox.askViaWS()
             │   ├── driver.models.ts          # IDriver, DriverCreation, and driver config types (BraveConfig, CypherConfig, NucliaDBConfig, McpSseConfig…)
             │   ├── session.ts                # ReadableSession + Session classes (RetrievalAgent session storage)
             │   └── session.models.ts         # ISession model
@@ -141,6 +145,16 @@ kb.createResource(data, true).subscribe(() => console.log('fully created'));
 ### Zone resolution: global vs account-scoped
 
 `Rest.getZones()` fetches **all** zones platform-wide (`GET /zones`, cached in-instance). `Rest.getAccountZones(accountId)` fetches only the zones **that account uses** (`GET /account/:id/zones`, cached per-account-id in a `Map`, `shareReplay(1)`d so concurrent callers share one request). `Db` methods that list an account's KBs/agents/NUA clients (`getKnowledgeBoxIndex`, `_getKnowledgeBoxesForZone`, `getNUAClients`) use `getAccountZones()`, not `getZones()`, so private zones with a custom origin resolve correctly. Both populate the same `zoneOrigins` cache (via `Rest.toZoneMap()`) as a side effect.
+
+### Bulk resource deletion and `Rest.delete()` body
+
+`WritableKnowledgeBox.deleteAllResources({ filter_expression: { resource } })` issues `DELETE {kb}/resources` **with a JSON body** (`resource` is a `ResourceFilterExpression`) and returns `{ delete_id, resources }`. The caller must always supply a filter; the resources table in `libs/common` deletes everything by passing a match-all expression (`{ not: { prop: 'resource', id: '<non-existent uuid>' } }`).
+
+`Rest.delete(path, headers?, synchronous?, zoneSlug?, body?, doNotParse = true)` does **not** parse the response by default (single-resource deletes get the raw `Response` cast to `T`); pass `doNotParse: false`, as `deleteAllResources` does, to get parsed JSON.
+
+### Optional fields that look required
+
+`LearningConfigurationSchema.required` is optional — default it (`schema.required ?? []`) before iterating. `ModelConfigurationItem.kbids` and `nua_client_ids` are optional lists restricting a model configuration to specific KBs / NUA keys; the manager UI sends `[]` when unrestricted.
 
 ### Custom headers
 

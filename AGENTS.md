@@ -86,20 +86,20 @@ Test files are co-located alongside source as `*.spec.ts`.
 ### Angular components
 
 - **Change detection:** zoneless (`provideZonelessChangeDetection()`) — no `zone.js` in any of
-  the 6 first-party apps (`auth`, `dashboard`, `rao`, `admin`, `manager-v2`, `sistema-demo`).
+  the 6 first-party apps (`auth`, `dashboard`, `rao`, `admin`, `manager-v2`, `sistema-demo`; the last has no explicit provider and no `zone.js` polyfill).
   `OnPush` is still required everywhere, but CD is now purely
   signal/`markForCheck()`/`ApplicationRef.tick()`-driven — never assume a native event listener,
   `setTimeout`, or unpatched async callback will trigger a re-render on its own.
 - **Selector prefixes:** declared in each lib's `project.json` (`nsi-`, `nus-`, `nsy-`, `stf-`, `nma-`).
-- **New components:** standalone by default; NgModules kept only for legacy compatibility.
+- **Components:** standalone by default (no `standalone` flag); first-party components are never declared in an NgModule — the few `*.module.ts` files are import/route wrappers. Templates import `TranslatePipe` (apps provide `provideTranslateService()` in `main.ts`).
 - **State files:** `*.state.ts` = Angular signal store. Older services use RxJS `BehaviorSubject`.
 - **Testing:** `nx test <app>` uses `jest-preset-angular/setup-env/zoneless` (`setupZonelessTestEnv`)
-  for all 7 apps and for `libs/core`, `libs/user`, `libs/sistema`, `libs/sync`, `libs/common`.
+  for all 6 Angular apps and for `libs/core`, `libs/user`, `libs/sistema`, `libs/sync`, `libs/common`. `dashboard`, `manager-v2`, `common`, `user` and `sync` also pass `translateTestProviders` (`test/translate-test-provider.ts`, a key-returning fake `TranslateService`).
   `waitForAsync()` and `fakeAsync()`/`tick()` **do not work** without `zone.js` — use
   `async`/`await` for async `beforeEach`/`compileComponents()`, and `jest.useFakeTimers()` /
   `jest.advanceTimersByTime()` for tests that need to control real timers.
-  `libs/pastanaga-angular` is the sole exception — it keeps `zone.js` and `setup-env/zone`
-  intentionally (slated for replacement, not worth migrating).
+  `libs/pastanaga-angular` and `libs/ui` use `setup-env/zone` (`libs/pastanaga-angular` keeps `zone.js`
+  intentionally; slated for replacement, not worth migrating).
 
 ### Code comments
 

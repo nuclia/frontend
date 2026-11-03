@@ -40,7 +40,7 @@ cat apps/dashboard/src/app/app-routing.module.ts
 cat apps/dashboard/src/app/app-routing.lazy.ts
 
 # Common lib modules (most feature routes live here)
-cat libs/common/src/lib/account/account.module.ts
+cat apps/admin/src/app/account/account.module.ts
 cat libs/common/src/lib/metrics/metrics.module.ts
 cat libs/common/src/lib/tasks-automation/tasks-automation.routes.ts
 cat libs/common/src/lib/search-widget/widgets/widgets.routes.ts
@@ -154,12 +154,12 @@ Add an entry to the `pages` array in `libs/common/src/lib/chat-advice/pages.json
 
 ## Example: Deriving an entry from source
 
-**Route:** `/at/:account/manage/home` → `AccountHomeComponent`
+**Route:** `/at/:account/manage/home/consumption` → `AccountConsumptionComponent`
 
-**Read template** (`libs/common/src/lib/account/account-home/account-home.component.html`):
+**Read template** (`apps/admin/src/app/account/account-home/account-consumption.component.html`):
 
-- `{{ 'account.consumption' | translate }}` → resolve → `"Consumption"`
-- `{{ 'account.consumption-description' | translate }}` → `"Consumption based on your activity."`
+- `{{ 'account.nuclia-tokens.tokens-consumed' | translate }}` → resolve → `"Agentic RAG consumed"`
+- `{{ 'metrics.units.queries' | translate }}` with `metrics.period.last-30-days` / `metrics.period.since-creation` → query counts per period
 - `<app-nuclia-tokens>` component → shows token usage widget with period selector
 - `@for (kb of kbs)` → list of KBs with click-to-navigate
 - `totalQueries` → shows counts for last 30 days, last 12 months, since creation
@@ -169,7 +169,7 @@ Add an entry to the `pages` array in `libs/common/src/lib/chat-advice/pages.json
 ```json
 {
   "id": "account-home",
-  "route": "/at/:account/manage/home",
+  "route": "/at/:account/manage/home/consumption",
   "title": "Consumption",
   "summary": "Overview of your account's consumption: token usage and total query counts across all Knowledge Boxes.",
   "capabilities": [
@@ -231,39 +231,40 @@ grep -oh "'[a-z._-]*' | translate" libs/common/src/lib/<feature>/*.html \
 
 ## Quick reference: route → component → file location
 
-| Route segment                              | Component                                       | File                                             |
-| ------------------------------------------ | ----------------------------------------------- | ------------------------------------------------ |
-| `/at/:account/manage/home`                 | `AccountHomeComponent`                          | `libs/common/src/lib/account/account-home/`      |
-| `/at/:account/manage/settings`             | `AccountManageComponent`                        | `libs/common/src/lib/account/account-manage/`    |
-| `/at/:account/manage/kbs`                  | `AccountKbsComponent`                           | `libs/common/src/lib/account/account-kbs/`       |
-| `/at/:account/manage/arag`                 | `AccountAragComponent`                          | `libs/common/src/lib/account/account-arag/`      |
-| `/at/:account/manage/users`                | `AccountUsersComponent`                         | `libs/common/src/lib/account/account-users/`     |
-| `/at/:account/manage/models`               | `AccountModelsComponent`                        | `libs/common/src/lib/account/account-models/`    |
-| `/at/:account/manage/nua`                  | `AccountNUAComponent`                           | `libs/common/src/lib/account/account-nua/`       |
-| `/at/:account/manage/billing`              | `BillingComponent`                              | `libs/common/src/lib/account/billing/`           |
-| `/:zone/:kb` (home)                        | `KnowledgeBoxHomeComponent`                     | `apps/dashboard/src/app/knowledge-box/`          |
-| `/at/:account/:zone/:kb/data/resources`    | `ResourcesComponent`                            | `libs/common/src/lib/resources/`                 |
-| `/at/:account/:zone/:kb/data/sync`         | `SynchronizeComponent`                          | `libs/sync/src/lib/home-page/synchronize/`       |
-| `/at/:account/:zone/:kb/data/sync/connect` | `ConnectComponent`                              | `libs/sync/src/lib/home-page/connect/`           |
-| `/:zone/:kb/search`                        | `SearchPageComponent`                           | `libs/common/src/lib/search/`                    |
-| `/:zone/:kb/entities`                      | (EntitiesModule)                                | `libs/common/src/lib/entities/`                  |
-| `/:zone/:kb/label-sets`                    | (LabelSetsModule)                               | `libs/core/src/lib/label-sets/`                  |
-| `/:zone/:kb/ai-models`                     | `AiModelsComponent`                             | `libs/common/src/lib/ai-models/`                 |
-| `/:zone/:kb/widgets`                       | `WidgetsComponent`                              | `libs/common/src/lib/search-widget/widgets/`     |
-| `/:zone/:kb/manage/general`                | `KnowledgeBoxSettingsComponent`                 | `libs/common/src/lib/knowledge-box-settings/`    |
-| `/:zone/:kb/metrics/usage-analytics`       | `UsageAnalyticsPageComponent`                   | `libs/common/src/lib/metrics/`                   |
-| `/:zone/:kb/metrics/search-activity`       | `SearchActivityPageComponent`                   | `libs/common/src/lib/metrics/`                   |
-| `/:zone/:kb/metrics/resource-activity`     | `ResourceActivityPageComponent`                 | `libs/common/src/lib/metrics/`                   |
-| `/:zone/:kb/metrics/tokens-and-time-usage` | `CostTokenUsagePageComponent`                   | `libs/common/src/lib/metrics/`                   |
-| `/:zone/:kb/metrics/remi-analytics`        | `RemiAnalyticsPageComponent`                    | `libs/common/src/lib/metrics/`                   |
-| `/:zone/:kb/metrics/user-feedback`         | `UserFeedbackPageComponent`                     | `libs/common/src/lib/metrics/`                   |
-| `/:zone/:kb/rag-lab`                       | `RagLabPageComponent`                           | `libs/common/src/lib/rag-lab/`                   |
-| `/:zone/:kb/tasks`                         | `TasksAutomationComponent`                      | `libs/common/src/lib/tasks-automation/`          |
-| `/:zone/arag/:agent/workflows`             | `WorkflowsComponent` / `WorkflowsListComponent` | `libs/common/src/lib/retrieval-agent/workflows/` |
-| `/:zone/arag/:agent/sessions`              | `SessionsComponent`                             | `libs/common/src/lib/retrieval-agent/sessions/`  |
-| `/:zone/arag/:agent/sources`               | `DriversPageComponent`                          | `libs/common/src/lib/retrieval-agent/drivers/`   |
-| `/:zone/arag/:agent/search`                | `SearchPageComponent`                           | `libs/common/src/lib/search/`                    |
-| `/:zone/arag/:agent/widgets`               | (WIDGETS_ROUTES)                                | `libs/common/src/lib/search-widget/widgets/`     |
-| `/:zone/arag/:agent/manage`                | `KnowledgeBoxSettingsComponent`                 | `libs/common/src/lib/knowledge-box-settings/`    |
-| `/:zone/arag/:agent/activity`              | `AgentActivityComponent`                        | `libs/common/src/lib/retrieval-agent/activity/`  |
-| `/:zone/arag/:agent/ai-models`             | `AiModelsComponent`                             | `libs/common/src/lib/ai-models/`                 |
+| Route segment                                         | Component                                                                                                           | File                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `/at/:account/manage/home/consumption`                | `AccountConsumptionComponent`                                                                                       | `apps/admin/src/app/account/account-home/`       |
+| `/at/:account/manage/home/preferences`                | `ProfileComponent`                                                                                                  | `libs/common/src/lib/profile/`                   |
+| `/at/:account/manage/home/account-settings`           | `AccountManageComponent`                                                                                            | `apps/admin/src/app/account/account-manage/`     |
+| `/at/:account/manage/home/api-keys`                   | `KnowledgeBoxKeysComponent`                                                                                         | `libs/common/src/lib/knowledge-box-keys/`        |
+| `/at/:account/manage/administration/knowledge-boxes`  | `KbListComponent`                                                                                                   | `apps/admin/src/app/account/account-kbs/`        |
+| `/at/:account/manage/administration/retrieval-agents` | `AragListComponent`                                                                                                 | `apps/admin/src/app/account/account-arag/`       |
+| `/at/:account/manage/administration/users`            | `AccountUsersComponent`                                                                                             | `apps/admin/src/app/account/account-users/`      |
+| `/at/:account/manage/configuration/nua`               | `AccountNUAComponent`                                                                                               | `apps/admin/src/app/account/account-nua/`        |
+| `/at/:account/manage/configuration/models`            | `AccountModelsComponent`                                                                                            | `apps/admin/src/app/account/account-models/`     |
+| `/at/:account/manage/billing/*`                       | `SubscriptionsComponent`, `MySubscriptionComponent`, `UsageTableComponent`, `HistoryComponent`, `CheckoutComponent` | `apps/admin/src/app/account/billing/`            |
+| `/:zone/:kb` (home)                                   | `KnowledgeBoxHomeComponent`                                                                                         | `apps/dashboard/src/app/knowledge-box/`          |
+| `/at/:account/:zone/:kb/data/resources`               | `ResourcesComponent`                                                                                                | `libs/common/src/lib/resources/`                 |
+| `/at/:account/:zone/:kb/data/sync`                    | `SynchronizeComponent`                                                                                              | `libs/sync/src/lib/home-page/synchronize/`       |
+| `/at/:account/:zone/:kb/data/sync/connect`            | `ConnectComponent`                                                                                                  | `libs/sync/src/lib/home-page/connect/`           |
+| `/:zone/:kb/search`, `/search/:widgetSlug`            | `SearchPageComponent`                                                                                               | `libs/common/src/lib/search-widget/`             |
+| `/:zone/:kb/entities`                                 | (EntitiesModule)                                                                                                    | `libs/common/src/lib/entities/`                  |
+| `/:zone/:kb/label-sets`                               | (LabelSetsModule)                                                                                                   | `libs/core/src/lib/label/label-sets/`            |
+| `/:zone/:kb/ai-models`                                | `AiModelsComponent`                                                                                                 | `libs/common/src/lib/ai-models/`                 |
+| `/:zone/:kb/manage/general`                           | `KnowledgeBoxSettingsComponent`                                                                                     | `libs/common/src/lib/knowledge-box-settings/`    |
+| `/:zone/:kb/metrics/usage-analytics`                  | `UsageAnalyticsPageComponent`                                                                                       | `libs/common/src/lib/metrics/`                   |
+| `/:zone/:kb/metrics/search-activity`                  | `SearchActivityPageComponent`                                                                                       | `libs/common/src/lib/metrics/`                   |
+| `/:zone/:kb/metrics/resource-activity`                | `ResourceActivityPageComponent`                                                                                     | `libs/common/src/lib/metrics/`                   |
+| `/:zone/:kb/metrics/tokens-and-time-usage`            | `CostTokenUsagePageComponent`                                                                                       | `libs/common/src/lib/metrics/`                   |
+| `/:zone/:kb/metrics/remi-analytics`                   | `RemiAnalyticsPageComponent`                                                                                        | `libs/common/src/lib/metrics/`                   |
+| `/:zone/:kb/metrics/user-feedback`                    | `UserFeedbackPageComponent`                                                                                         | `libs/common/src/lib/metrics/`                   |
+| `/:zone/:kb/rag-lab`                                  | `RagLabPageComponent`                                                                                               | `libs/common/src/lib/rag-lab/`                   |
+| `/:zone/:kb/tasks`                                    | `TasksAutomationComponent`                                                                                          | `libs/common/src/lib/tasks-automation/`          |
+| `/:zone/arag/:agent/workflows`                        | `WorkflowsComponent` / `WorkflowsListComponent`                                                                     | `libs/common/src/lib/retrieval-agent/workflows/` |
+| `/:zone/arag/:agent/sessions`                         | `SessionsComponent`                                                                                                 | `libs/common/src/lib/retrieval-agent/sessions/`  |
+| `/:zone/arag/:agent/sources`                          | `DriversPageComponent`                                                                                              | `libs/common/src/lib/retrieval-agent/drivers/`   |
+| `/:zone/arag/:agent/search`                           | `SearchPageComponent`                                                                                               | `libs/common/src/lib/search-widget/`             |
+| `/:zone/arag/:agent/widgets`                          | (WIDGETS_ROUTES)                                                                                                    | `libs/common/src/lib/search-widget/widgets/`     |
+| `/:zone/arag/:agent/manage`                           | `KnowledgeBoxSettingsComponent`                                                                                     | `libs/common/src/lib/knowledge-box-settings/`    |
+| `/:zone/arag/:agent/activity`                         | `AgentActivityComponent`                                                                                            | `libs/common/src/lib/retrieval-agent/activity/`  |
+| `/:zone/arag/:agent/ai-models`                        | `AiModelsComponent`                                                                                                 | `libs/common/src/lib/ai-models/`                 |

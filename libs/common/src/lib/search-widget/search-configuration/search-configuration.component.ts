@@ -750,7 +750,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         .openConfirm({
           title: this.translate.instant('search.configuration.overwrite-config-confirm.title', { configName }),
           description: 'search.configuration.overwrite-config-confirm.description',
-          confirmLabel: 'search.configuration.action.overwrite',
+          confirmLabel: 'search.configuration.action.overwrite-short',
         })
         .onClose.pipe(
           filter((confirm) => !!confirm),

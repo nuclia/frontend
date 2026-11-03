@@ -133,6 +133,8 @@ Load the full skill file **only when the task needs deep reference** — creatin
 | Skill                 | Trigger                                                                             | File                                        |
 | --------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------- |
 | **angular-patterns**  | Angular components, services, state, routes, guards, signals, inject()              | `.github/skills/angular-patterns/SKILL.md`  |
+| **angular-developer** | Angular CLI/API guidance from `angular/skills` (signals, forms, SSR, a11y, testing) | `.agents/skills/angular-developer/SKILL.md` |
+| **angular-new-app**   | Creating a brand-new Angular app with the Angular CLI                               | `.agents/skills/angular-new-app/SKILL.md`   |
 | **rxjs-patterns**     | `.pipe()`, Subject, switchMap, combineLatest, stream debugging                      | `.github/skills/rxjs-patterns/SKILL.md`     |
 | **design-system**     | `nsi-*`/`pa-*` components, SCSS tokens, modals, toasts, tables, forms               | `.github/skills/design-system/SKILL.md`     |
 | **spartan**           | spartan/ui, `@nuclia/ui-spartan/*`, `hlm*` directives, `@spartan-ng/*`, Tailwind UI | `.github/skills/spartan/SKILL.md`           |
@@ -148,8 +150,6 @@ Load the full skill file **only when the task needs deep reference** — creatin
 | **agents-review**     | Review, create, or improve an AGENTS.md file                                        | `.github/skills/agents-review/SKILL.md`     |
 | **skill-creator**     | Create, improve, or evaluate a skill                                                | `.github/skills/skill-creator/SKILL.md`     |
 | **product-knowledge** | Platform capabilities, API behaviour, feature feasibility                           | `.github/skills/product-knowledge/SKILL.md` |
-| **slack-bolt-py**     | Slack bot, Bolt for Python, slack-bolt                                              | `.github/skills/slack-bolt-py/SKILL.md`     |
-| **teams-py-sdk**      | Teams bot, teams.py, microsoft-teams-apps                                           | `.github/skills/teams-py-sdk/SKILL.md`      |
 
 ---
 

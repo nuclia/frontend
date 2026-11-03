@@ -206,10 +206,7 @@ describe('RoutingFormComponent', () => {
       // Now let B's timer fire
       jest.advanceTimersByTime(500);
       expect(patchValueSpy).toHaveBeenCalledTimes(1);
-      // emitEvent: false: loading a config is not a user edit and must not trigger configChanged.
-      expect(patchValueSpy).toHaveBeenCalledWith(expect.objectContaining({ useRouting: configWith3Rules.useRouting }), {
-        emitEvent: false,
-      });
+      expect(patchValueSpy).toHaveBeenCalledWith(expect.objectContaining({ useRouting: configWith3Rules.useRouting }));
     });
   });
 
@@ -218,9 +215,10 @@ describe('RoutingFormComponent', () => {
   // =========================================================================
 
   describe('configChanged emission', () => {
-    it('3a — no emission when loading a config, even after the delayed patch fires (emitEvent:false)', () => {
+    it('3a — no configChanged when loading a config, but child controls still get valueChanges', () => {
       const emittedValues: Widget.RoutingConfig[] = [];
       component.configChanged.subscribe((v) => emittedValues.push(v));
+      const searchConfigValues: string[] = [];
 
       // Set a config with 2 rules — array is pushed with emitEvent:false
       component.config = configWith2Rules;
@@ -229,10 +227,12 @@ describe('RoutingFormComponent', () => {
       // Before the 500ms patch-value timer fires, there must be no emissions
       expect(emittedValues.length).toBe(0);
 
-      // The delayed patchValue also uses emitEvent:false: loading a config must never itself count
-      // as a user edit, so there should still be no emission after the timer fires.
+      component.rulesControls[0].controls.search_config.valueChanges.subscribe((v) => searchConfigValues.push(v));
+
       jest.advanceTimersByTime(500);
       expect(emittedValues.length).toBe(0);
+      // pa-select only refreshes its displayed label on valueChanges
+      expect(searchConfigValues).toEqual([configWith2Rules.routing.rules[0].search_config]);
     });
 
     it('3b — addRule() emits configChanged', () => {

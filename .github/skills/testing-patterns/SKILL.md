@@ -27,10 +27,10 @@ when they decide the feature is stable enough. Agents must follow these rules:
 
 Two separate test stacks live in this repo. Match the stack to the project:
 
-| Projects                                                                                                                 | Runner                              | Config                                          |
-| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- | ----------------------------------------------- |
-| Angular apps & libs (`dashboard`, `rao`, `manager-v2`, `core`, `common`, `sistema`, `user`, `sync`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
-| `libs/search-widget` (Svelte 5)                                                                                          | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
+| Projects                                                                                                                                                        | Runner                              | Config                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------- |
+| Angular apps & libs (`dashboard`, `rao`, `admin`, `auth`, `manager-v2`, `sistema-demo`, `core`, `common`, `sistema`, `user`, `sync`, `ui`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
+| `libs/search-widget` (Svelte 5)                                                                                                                                 | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
 
 Run with `nx test <project-name>` in all cases.
 
@@ -44,11 +44,12 @@ Each Angular project's `jest.config.js` points to a `test-setup.ts`:
 
 ```ts
 // src/test-setup.ts
-import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
-setupZoneTestEnv();
+import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
+import { translateTestProviders } from '../../../test/translate-test-provider';
+setupZonelessTestEnv({ extraProviders: translateTestProviders });
 ```
 
-This bootstraps Zone.js for Angular's async model. Never remove or replace it.
+All first-party apps and libs (except `pastanaga-angular` and `ui`, which use `setupZoneTestEnv` from `setup-env/zone`) run zoneless: `waitForAsync()` and `fakeAsync()`/`tick()` are unavailable — use `async`/`await` and `jest.useFakeTimers()`. `dashboard`, `manager-v2`, `user`, `sync` and `common` also register `translateTestProviders` (`test/translate-test-provider.ts`): a fake `TranslateService` whose `instant`/`get`/`translate` return the key, so specs don't need to mock `TranslatePipe`/`TranslateService` themselves.
 
 The workspace-level `jest.preset.js` also maps `d3` to a stub (`test/d3.js`) — you don't need to mock d3 yourself.
 
@@ -60,8 +61,7 @@ New standalone components use `imports:` in `TestBed`, **not** `declarations:`.
 
 ```ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule } from '@ngx-translate/core';
+import { MockProvider } from 'ng-mocks';
 import { MyFeatureComponent } from './my-feature.component';
 import { SomeService } from './some.service';
 import { of } from 'rxjs';
@@ -74,7 +74,6 @@ describe('MyFeatureComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         MyFeatureComponent, // standalone component under test
-        MockModule(TranslateModule), // mock heavy modules
       ],
       providers: [MockProvider(SomeService, { items$: of([]) })],
     }).compileComponents();
@@ -90,7 +89,7 @@ describe('MyFeatureComponent', () => {
 });
 ```
 
-**Legacy non-standalone components** still use `declarations: [MyComponent]` alongside `imports: [MockModule(...)]`.
+Components are all standalone, so `declarations:` is not needed. Use `MockModule(SomeModule)` only for NgModule imports such as `PaTranslateModule`.
 
 ---
 
@@ -155,7 +154,7 @@ providers: [
   // Override specific properties/methods only — rest are auto-mocked
   MockProvider(SDKService, {
     currentKb: of(mockKb), // BehaviorSubject / Observable override
-    nuclia: { options: { standalone: false }, db: {} },
+    nuclia: { options: {}, db: {} },
   }),
 
   // Make a jest.fn() available via injection
@@ -238,10 +237,10 @@ beforeEach(() => {
 
 ### Translate in tests
 
-For components that use `TranslateModule`, use either:
+Components import `TranslatePipe` (not `TranslateModule`). In projects whose `test-setup.ts` registers `translateTestProviders` (see Global setup) nothing more is needed: translations return the key string. Elsewhere either:
 
-1. **`MockModule(TranslateModule)`** — all translations return the key string. Simple and fast.
-2. **`TranslateModule.forRoot({ loader: { provide: TranslateLoader, useFactory: () => ({ getTranslation: () => of(EN) }) } })`** — loads real translations. Use only when the test asserts on translated text.
+1. **`MockProvider(TranslateService, { instant: (key) => key })`** (plus `MockPipe(TranslatePipe)` if the template uses the pipe) — returns the key string.
+2. **`provideTranslateService({ loader: { provide: TranslateLoader, useFactory: () => ({ getTranslation: () => of(EN) }) } })`** — loads real translations. Use only when the test asserts on translated text.
 
 ---
 

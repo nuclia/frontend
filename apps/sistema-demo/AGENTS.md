@@ -4,7 +4,7 @@
 
 `sistema-demo` is a **live interactive showcase** for `libs/sistema`. It demonstrates every UI component, token, and theme customisation that Sistema provides. Not a production app — purely a developer/designer reference tool.
 
-Tech stack: **Angular 22** (NgModule-based with some standalone) · `@guillotinaweb/pastanaga-angular` · `PaDemoModule` · `PaTranslateModule`.
+Tech stack: **Angular 22** (standalone `AppComponent` bootstrapped via `bootstrapApplication`; feature NgModules for routing/pages) · `@guillotinaweb/pastanaga-angular` · `PaDemoModule` · `PaTranslateModule`.
 
 ---
 
@@ -12,16 +12,16 @@ Tech stack: **Angular 22** (NgModule-based with some standalone) · `@guillotina
 
 ```
 apps/sistema-demo/src/
+├── main.ts                              # bootstrapApplication(AppComponent, …): providers + translations
 ├── styles.scss                          # imports sistema + pastanaga core
 ├── _variables.scss                      # forwards libs/sistema/styles/variables
 ├── pastanaga-core-overrides.scss        # sistema theme overrides for pa-core
 ├── pastanaga-component-overrides.scss   # sistema theme overrides for pa-components
 ├── environments/
 └── app/
-    ├── app.module.ts           # Root NgModule; menu array drives routing
-    ├── app-routing.module.ts   # Routes auto-derived from menu array in AppComponent
+    ├── app-routing.module.ts   # AppRoutingModule: routes auto-derived from menu array in AppComponent
     ├── app.component.ts        # Root; `menu` array defines all component demos
-    ├── sistema-pages/          # All nsi-* component demo pages
+    ├── sistema-pages/          # All nsi-* component demo pages (+ sistema-pages.module.ts)
     │   ├── pastanaga-pages-override/  # Overrides for Pastanaga component demos
     │   └── index.ts
     └── welcome-page/           # Root route ('') component, shown before picking a demo
@@ -109,7 +109,7 @@ nx lint sistema-demo
 2. **`inlineStyle: true`, `skipTests: true`** — generator defaults in `project.json`.
 3. **Routes auto-derived from menu** — edit only `app.component.ts` `menu` array to add/remove demo pages.
 4. **`PaDemoModule` scaffold** — every demo page uses `<pa-demo-page>` slots. Do not create custom layouts.
-5. **i18n via `PaTranslateModule`** — default `en_US`; `latin` test locale available. Add translations via `addTranslations` in `AppModule`.
+5. **i18n via `PaTranslateModule`** — default `en_US`; `latin` test locale available. Add translations via `PaTranslateModule.addTranslations([...])` in `main.ts`.
 6. **Assets** — SVG sprite at `libs/sistema/assets/glyphs-sprite.svg`; loaded via `angular-svg-icon`.
 7. **Production base href** — `baseHref: /frontend/` in production build config.
 8. **Overriding Pastanaga demos** — use `sistema-pages/pastanaga-pages-override/`; register in `menu` to replace the default Pastanaga demo page.

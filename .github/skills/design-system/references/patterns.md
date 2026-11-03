@@ -624,9 +624,7 @@ onSelectionChange(newSelection: { [key: string]: boolean }): void {
 
 <!-- MIME type icon via pipe -->
 <pa-icon [name]="resource.mimeType | mimeIcon"></pa-icon>
-<!-- SisIconsModule -->
-<pa-icon [name]="resource.mimeType | standaloneMimeIcon"></pa-icon>
-<!-- StandaloneMimeIconPipe -->
+<!-- MimeIconPipe (standalone; StandaloneMimeIconPipe is an equivalent subclass) -->
 
 <!-- Notification badge with icon -->
 <nsi-badge
@@ -721,7 +719,7 @@ imports: [
 
   // Sistema standalone
   BadgeComponent,
-  StatusComponent,
+  SisStatusComponent,
   ButtonMiniComponent,
   DropdownButtonComponent,
   TwoColumnsConfigurationItemComponent,
@@ -729,15 +727,16 @@ imports: [
   ProgressBarComponent,
   ActionCardComponent,
   InfoCardComponent,
-  SearchInputComponent,
+  SisSearchInputComponent,
   BackButtonComponent,
   FolderTreeComponent,
   LabelsExpanderComponent,
-  StandaloneMimeIconPipe,
+  MimeIconPipe,
+  SpinnerComponent, // nsi-spinner
+  DelayedSpinnerComponent, // nsi-delayed-spinner
 
-  // Sistema NgModules
+  // Sistema wrapper NgModules
   SisLabelModule,
   SisPasswordInputModule,
-  SisProgressModule, // nsi-spinner, nsi-delayed-spinner
 ];
 ```

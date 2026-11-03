@@ -69,8 +69,8 @@ imports but the test doesn't care about:
 ```ts
 imports: [
   MyComponent,
-  MockModule(TranslateModule), // translate pipe returns the key string
-  MockModule(ReactiveFormsModule), // for legacy non-standalone forms
+  MockModule(PaTranslateModule), // Pastanaga translate pipe/directive
+  MockModule(PaButtonModule), // Pastanaga NgModule-based components
   MockModule(RouterModule), // link directives won't navigate
 ];
 ```

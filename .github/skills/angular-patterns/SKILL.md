@@ -37,7 +37,7 @@ many features; this covers only what the team has adopted. When in doubt, match 
      `setup-env/zone` (slated for replacement, not migrated). Watch for zoneless-related
      rendering bugs originating from its `pa-*` components when auditing new code.
 3. **`inject()` instead of constructor injection** — all new services and components use `inject()` as property initializers. Constructor injection is legacy only.
-4. **Standalone components by default** — new components simply omit the `standalone` property (defaults to `true` in Angular 19+); do not add them to an NgModule. Only use `standalone: false` (declaring a component in an existing NgModule) when maintaining or extending genuinely legacy NgModule-based code — never for new features.
+4. **Standalone components by default** — components omit the `standalone` property (defaults to `true`) and are imported directly. No first-party component sets `standalone: false` (only `libs/pastanaga-angular` does); the remaining `*.module.ts` files are import/route wrappers (e.g. `loadChildren` targets, `SisLabelModule`), not `declarations` holders. Never add a component to an NgModule `declarations`.
 5. **Do NOT write `standalone: true`** — writing it explicitly is redundant noise. Omit it. When you want a standalone component, simply omit the `standalone` property entirely.
 6. **`@Input()`/`@Output()` decorators are legacy** — use `input()` / `output()` signal APIs for new components.
 7. **`styleUrl` (singular string), not `styleUrls` (array)** — since Angular 17 the shorthand `styleUrl: './foo.component.scss'` replaces `styleUrls: ['./foo.component.scss']`. Always use the singular form in new code.
@@ -781,7 +781,7 @@ Two styles coexist — prefer the route-array style for new features:
     import('./drivers/drivers-page.component').then((m) => m.DriversPageComponent),
 }
 
-// ── Legacy: NgModule lazy loading (maintain, don't create new) ────
+// ── NgModule lazy loading (existing modules only, don't create new) ────
 {
   path: 'resources',
   loadChildren: () =>
