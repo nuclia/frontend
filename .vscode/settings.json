@@ -17,5 +17,11 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "https-sonar-progress-com",
     "projectKey": "nuclia-frontend"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "/^bash \\.github/skills/knowledge-sync/scripts/check-staleness\\.sh$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
   }
 }
