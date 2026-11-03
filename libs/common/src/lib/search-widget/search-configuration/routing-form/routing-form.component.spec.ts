@@ -233,7 +233,7 @@ describe('RoutingFormComponent', () => {
       vi.advanceTimersByTime(500);
       expect(emittedValues.length).toBe(0);
       // pa-select only refreshes its displayed label on valueChanges
-      expect(searchConfigValues).toEqual([configWith2Rules.routing.rules[0].search_config]);
+      expect(searchConfigValues).toEqual([configWith2Rules.routing?.rules[0].search_config]);
     });
 
     it('3b — addRule() emits configChanged', () => {
