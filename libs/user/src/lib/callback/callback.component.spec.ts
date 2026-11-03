@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { DOCUMENT } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router, RouterModule } from '@angular/router';
@@ -13,23 +14,23 @@ describe('CallbackComponent', () => {
   let fixture: ComponentFixture<CallbackComponent>;
 
   let route: ActivatedRoute;
-  let router: { navigate: jest.Mock };
-  let samlService: { getToken: jest.Mock };
-  let ssoService: { login: jest.Mock; decodeState: jest.Mock };
-  let config: { getAPIOrigin: jest.Mock };
+  let router: { navigate: Mock };
+  let samlService: { getToken: Mock };
+  let ssoService: { login: Mock; decodeState: Mock };
+  let config: { getAPIOrigin: Mock };
   let sdk: {
     nuclia: {
       auth: {
-        authenticate: jest.Mock;
-        getToken: jest.Mock;
-        getRefreshToken: jest.Mock;
-        processAuthorizationResponse: jest.Mock;
-        redirectToOAuth: jest.Mock;
+        authenticate: Mock;
+        getToken: Mock;
+        getRefreshToken: Mock;
+        processAuthorizationResponse: Mock;
+        redirectToOAuth: Mock;
       };
     };
   };
-  let toaster: { error: jest.Mock };
-  let translate: { instant: jest.Mock };
+  let toaster: { error: Mock };
+  let translate: { instant: Mock };
   let mockLocation: { href: string };
   let documentMock: Document;
 
@@ -77,28 +78,28 @@ describe('CallbackComponent', () => {
       },
     } as unknown as ActivatedRoute;
 
-    router = { navigate: jest.fn() };
-    samlService = { getToken: jest.fn(() => of({ access_token: 'saml-access', refresh_token: 'saml-refresh' })) };
+    router = { navigate: vi.fn() };
+    samlService = { getToken: vi.fn(() => of({ access_token: 'saml-access', refresh_token: 'saml-refresh' })) };
     ssoService = {
-      login: jest.fn(() => of({ access_token: 'sso-access', refresh_token: 'sso-refresh' })),
-      decodeState: jest.fn(() => ({ came_from: undefined })),
+      login: vi.fn(() => of({ access_token: 'sso-access', refresh_token: 'sso-refresh' })),
+      decodeState: vi.fn(() => ({ came_from: undefined })),
     };
     config = {
-      getAPIOrigin: jest.fn(() => 'https://api.progress.cloud'),
+      getAPIOrigin: vi.fn(() => 'https://api.progress.cloud'),
     };
     sdk = {
       nuclia: {
         auth: {
-          authenticate: jest.fn(),
-          getToken: jest.fn(() => 'saml-oauth-access'),
-          getRefreshToken: jest.fn(() => 'saml-oauth-refresh'),
-          processAuthorizationResponse: jest.fn(() => of({ success: true, state: {} })),
-          redirectToOAuth: jest.fn(),
+          authenticate: vi.fn(),
+          getToken: vi.fn(() => 'saml-oauth-access'),
+          getRefreshToken: vi.fn(() => 'saml-oauth-refresh'),
+          processAuthorizationResponse: vi.fn(() => of({ success: true, state: {} })),
+          redirectToOAuth: vi.fn(),
         },
       },
     };
-    toaster = { error: jest.fn() };
-    translate = { instant: jest.fn((key) => key) };
+    toaster = { error: vi.fn() };
+    translate = { instant: vi.fn((key) => key) };
     mockLocation = { href: '' };
     // Proxy the real document so TestBed can still render the component (it needs the real
     // querySelectorAll/createElement etc.), while `location` is stubbed to avoid jsdom's
@@ -112,7 +113,7 @@ describe('CallbackComponent', () => {
         return typeof value === 'function' ? value.bind(target) : value;
       },
     });
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create', async () => {
@@ -133,7 +134,7 @@ describe('CallbackComponent', () => {
   it('should call loadUrlToken when token and refresh_token are present', async () => {
     snapshotQueryParams = { token: 'a', refresh_token: 'b' };
     await createComponent();
-    const loadUrlTokenSpy = jest.spyOn(component, 'loadUrlToken');
+    const loadUrlTokenSpy = vi.spyOn(component, 'loadUrlToken');
 
     component.ngOnInit();
 
@@ -143,7 +144,7 @@ describe('CallbackComponent', () => {
   it('should call handleSAMLCallback when saml flag is present', async () => {
     snapshotData = { saml: true };
     await createComponent();
-    const handleSAMLSpy = jest.spyOn(component, 'handleSAMLCallback');
+    const handleSAMLSpy = vi.spyOn(component, 'handleSAMLCallback');
 
     component.ngOnInit();
 
@@ -154,7 +155,7 @@ describe('CallbackComponent', () => {
     snapshotData = { google: true };
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     await createComponent();
-    const ssoLoginSpy = jest.spyOn(component, 'ssoLogin');
+    const ssoLoginSpy = vi.spyOn(component, 'ssoLogin');
 
     component.ngOnInit();
 
@@ -178,7 +179,7 @@ describe('CallbackComponent', () => {
       of({ success: true, state: { saml_ref: 'single-use-ref', came_from: 'https://app.progress.cloud' } }),
     );
     await createComponent();
-    const authenticateSpy = jest.spyOn(component as any, 'authenticate');
+    const authenticateSpy = vi.spyOn(component as any, 'authenticate');
 
     component.ngOnInit();
 
@@ -220,7 +221,7 @@ describe('CallbackComponent', () => {
 
   it('should load URL token and authenticate once', async () => {
     await createComponent();
-    const authenticateSpy = jest.spyOn(component as any, 'authenticate');
+    const authenticateSpy = vi.spyOn(component as any, 'authenticate');
     queryParams$.next({ token: 'url-access', refresh_token: 'url-refresh' });
 
     component.loadUrlToken();
@@ -252,7 +253,7 @@ describe('CallbackComponent', () => {
   it('should exchange saml token and authenticate in handleSAMLCallback', async () => {
     snapshotQueryParams = { token: 'saml-token', state: 'state-1' };
     await createComponent();
-    const authenticateSpy = jest.spyOn(component as any, 'authenticate');
+    const authenticateSpy = vi.spyOn(component as any, 'authenticate');
 
     component.handleSAMLCallback();
 
@@ -289,7 +290,7 @@ describe('CallbackComponent', () => {
     ssoService.decodeState.mockReturnValue({ came_from: undefined });
     ssoService.login.mockReturnValue(of({ access_token: 'sso-access', refresh_token: 'sso-refresh' }));
     await createComponent();
-    const authenticateSpy = jest.spyOn(component as any, 'authenticate');
+    const authenticateSpy = vi.spyOn(component as any, 'authenticate');
 
     component.ssoLogin();
 

@@ -6,6 +6,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
+import type { Mock } from 'vitest';
 import { RagAdviceModalComponent } from '../rag-advice/rag-advice.component';
 import { UsageAnalyticsPageComponent } from './usage-analytics-page.component';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
@@ -13,14 +14,14 @@ import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 describe('UsageAnalyticsPageComponent', () => {
   let component: UsageAnalyticsPageComponent;
   let fixture: ComponentFixture<UsageAnalyticsPageComponent>;
-  let openModal: jest.Mock;
+  let openModal: Mock;
 
   beforeEach(async () => {
-    openModal = jest.fn();
+    openModal = vi.fn();
     const mockKb = {
       activityMonitor: {
-        queryRemiScores: jest.fn().mockReturnValue(of({ data: [], has_more: false })),
-        getRemiScores: jest.fn().mockReturnValue(of([])),
+        queryRemiScores: vi.fn().mockReturnValue(of({ data: [], has_more: false })),
+        getRemiScores: vi.fn().mockReturnValue(of([])),
       },
     };
     const mockAccount = {
@@ -31,9 +32,9 @@ describe('UsageAnalyticsPageComponent', () => {
       imports: [UsageAnalyticsPageComponent],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
-        MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),
+        MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } as FeaturesService['unstable'] }),
         MockProvider(SisModalService, { openModal }),
-        MockProvider(UserService, { userPrefs: of({ email: 'test@example.com' }) }),
+        MockProvider(UserService, { userPrefs: of({ email: 'test@example.com', type: 'USER' }) }),
         MockProvider(SisToastService),
         DatePipe,
         {
@@ -59,7 +60,7 @@ describe('UsageAnalyticsPageComponent', () => {
 
   it('passes result_per_page as topK when opening advice', () => {
     const service = fixture.debugElement.injector.get(UsageAnalyticsPageService);
-    jest.spyOn(service, 'fetchActivityParams').mockReturnValue(
+    vi.spyOn(service, 'fetchActivityParams').mockReturnValue(
       of({
         id: 42,
         question: 'How many tokens?',

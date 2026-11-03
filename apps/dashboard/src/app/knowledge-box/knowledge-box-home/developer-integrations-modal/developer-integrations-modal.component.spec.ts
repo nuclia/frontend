@@ -27,10 +27,10 @@ describe('DeveloperIntegrationsModalComponent', () => {
 
   beforeEach(async () => {
     modalRef = new ModalRef({ id: 0, config: new ModalConfig({}) });
-    jest.spyOn(modalRef, 'close');
+    vi.spyOn(modalRef, 'close');
 
     Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText: jest.fn().mockResolvedValue(undefined) },
+      value: { writeText: vi.fn().mockResolvedValue(undefined) },
       configurable: true,
     });
 
@@ -63,52 +63,52 @@ describe('DeveloperIntegrationsModalComponent', () => {
   });
 
   it('should expose the endpoint, uid and mcp signals from the current KB', () => {
-    expect(component.endpoint()).toBe(kb.fullpath);
-    expect(component.uid()).toBe(kb.id);
-    expect(component.mcp()).toBe('https://test-zone.dp.nuclia.cloud/v1/v1/kb/kb-id/mcp');
+    expect(component['endpoint']()).toBe(kb.fullpath);
+    expect(component['uid']()).toBe(kb.id);
+    expect(component['mcp']()).toBe('https://test-zone.dp.nuclia.cloud/v1/v1/kb/kb-id/mcp');
   });
 
   describe('copy()', () => {
     it('should write the value to the clipboard and mark the field as copied', () => {
-      component.copy('endpoint', kb.fullpath);
+      component['copy']('endpoint', kb.fullpath);
 
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(kb.fullpath);
-      expect(component.copiedField()).toBe('endpoint');
+      expect(component['copiedField']()).toBe('endpoint');
     });
 
     it('should reset copiedField after the timeout', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
-      component.copy('uid', kb.id);
-      expect(component.copiedField()).toBe('uid');
+      component['copy']('uid', kb.id);
+      expect(component['copiedField']()).toBe('uid');
 
-      jest.advanceTimersByTime(1000);
-      expect(component.copiedField()).toBeNull();
+      vi.advanceTimersByTime(1000);
+      expect(component['copiedField']()).toBeNull();
 
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('should not clear a more recently copied field when an earlier timeout fires', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
-      component.copy('endpoint', kb.fullpath);
-      jest.advanceTimersByTime(500);
-      component.copy('mcp', 'https://mcp-url');
+      component['copy']('endpoint', kb.fullpath);
+      vi.advanceTimersByTime(500);
+      component['copy']('mcp', 'https://mcp-url');
 
       // The first field's timeout fires here; it must not clear the second field's state.
-      jest.advanceTimersByTime(500);
-      expect(component.copiedField()).toBe('mcp');
+      vi.advanceTimersByTime(500);
+      expect(component['copiedField']()).toBe('mcp');
 
-      jest.advanceTimersByTime(500);
-      expect(component.copiedField()).toBeNull();
+      vi.advanceTimersByTime(500);
+      expect(component['copiedField']()).toBeNull();
 
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
   });
 
   describe('close()', () => {
     it('should call ModalRef.close()', () => {
-      component.close();
+      component['close']();
 
       expect(modalRef.close).toHaveBeenCalledTimes(1);
     });

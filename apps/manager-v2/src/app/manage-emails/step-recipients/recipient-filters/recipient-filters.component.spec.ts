@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
@@ -9,10 +10,10 @@ import { RecipientsService } from '../recipients.service';
 describe('RecipientFiltersComponent', () => {
   let component: RecipientFiltersComponent;
   let recipients: RecipientsService;
-  let load: jest.Mock;
+  let load: Mock;
 
   beforeEach(() => {
-    load = jest.fn().mockReturnValue(of([]));
+    load = vi.fn().mockReturnValue(of([]));
     TestBed.configureTestingModule({
       imports: [RecipientFiltersComponent],
       providers: [RecipientsService, MockProvider(RecipientsLoaderService, { load }), MockProvider(SisToastService)],

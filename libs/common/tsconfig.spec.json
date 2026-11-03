@@ -2,11 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["jest", "node"],
-    "target": "es2016",
-    "emitDecoratorMetadata": false,
-    "isolatedModules": true
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"],
+    "types": ["vitest/globals", "node"],
+    "emitDecoratorMetadata": false
   },
-  "files": ["src/test.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]
 }

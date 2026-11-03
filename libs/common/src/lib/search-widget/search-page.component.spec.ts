@@ -4,17 +4,18 @@ import { NavigationService, UploadEventService } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { EMPTY, of } from 'rxjs';
+import type { Mock } from 'vitest';
 import { SearchPageComponent } from './search-page.component';
 import { SearchWidgetService } from './search-widget.service';
 
 describe('SearchPageComponent', () => {
   let fixture: ComponentFixture<SearchPageComponent>;
   let component: SearchPageComponent;
-  let generateWidgetSnippet: jest.Mock;
+  let generateWidgetSnippet: Mock;
   let stage: HTMLElement;
 
   beforeEach(async () => {
-    generateWidgetSnippet = jest.fn();
+    generateWidgetSnippet = vi.fn();
     await TestBed.configureTestingModule({
       imports: [SearchPageComponent],
       providers: [
@@ -28,7 +29,7 @@ describe('SearchPageComponent', () => {
             widgetPreview: EMPTY,
             searchTriggered: EMPTY,
             generateWidgetSnippet,
-            resetSearchQuery: jest.fn(),
+            resetSearchQuery: vi.fn(),
           },
         },
       ],
@@ -49,14 +50,14 @@ describe('SearchPageComponent', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it.each<Widget.WidgetConfiguration['widgetMode']>(['page', 'chat', 'popup'])(
     'does not regenerate the %s preview when the sidebar is dragged and its width transition finishes',
     (widgetMode) => {
-      component.widgetOptions = { widgetMode };
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      component.widgetOptions = { widgetMode } as Widget.WidgetConfiguration;
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
         callback(0);
         return 0;
       });
@@ -74,7 +75,11 @@ describe('SearchPageComponent', () => {
   );
 
   it('preserves the existing floating-chat resize behavior without changing its configured size', () => {
-    component.widgetOptions = { widgetMode: 'floating-chat', panelWidth: 600, panelHeight: 700 };
+    component.widgetOptions = {
+      widgetMode: 'floating-chat',
+      panelWidth: 600,
+      panelHeight: 700,
+    } as Widget.WidgetConfiguration;
     Object.defineProperties(stage, {
       clientWidth: { value: 500, configurable: true },
       clientHeight: { value: 600, configurable: true },
@@ -91,14 +96,14 @@ describe('SearchPageComponent', () => {
       '.preview-stage',
       undefined,
     );
-    expect(component.widgetOptions.panelWidth).toBe(600);
-    expect(component.widgetOptions.panelHeight).toBe(700);
+    expect(component.widgetOptions?.panelWidth).toBe(600);
+    expect(component.widgetOptions?.panelHeight).toBe(700);
   });
 
   it.each<Widget.WidgetConfiguration['widgetMode']>(['page', 'chat'])(
     'uses the %s scroll container when regenerating the widget after configuration changes',
     (widgetMode) => {
-      component.widgetOptions = { widgetMode };
+      component.widgetOptions = { widgetMode } as Widget.WidgetConfiguration;
       component.updateConfig(NUCLIA_STANDARD_SEARCH_CONFIG);
 
       expect(generateWidgetSnippet).toHaveBeenCalledWith(

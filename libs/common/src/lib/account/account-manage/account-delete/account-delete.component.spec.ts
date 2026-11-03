@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { AsyncPipe } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -21,29 +22,29 @@ describe('AccountDeleteComponent', () => {
 
   // Default mock values — overridden per-test where needed
   const mockAccount = { slug: 'test-account' };
-  let deleteAccountMock: jest.Mock;
-  let deleteAuthenticatedUserMock: jest.Mock;
+  let deleteAccountMock: Mock;
+  let deleteAuthenticatedUserMock: Mock;
   let verificationService: {
-    supportsForceReauth: jest.Mock;
-    isRecentlyVerified: jest.Mock;
-    forceReauth: jest.Mock;
-    requestEmailOtp: jest.Mock;
-    hasPendingDelete: jest.Mock;
-    clearPendingDelete: jest.Mock;
+    supportsForceReauth: Mock;
+    isRecentlyVerified: Mock;
+    forceReauth: Mock;
+    requestEmailOtp: Mock;
+    hasPendingDelete: Mock;
+    clearPendingDelete: Mock;
   };
 
   beforeEach(async () => {
     modalRef = makeModalRef();
-    deleteAccountMock = jest.fn().mockReturnValue(of(undefined));
-    deleteAuthenticatedUserMock = jest.fn().mockReturnValue(of(undefined));
+    deleteAccountMock = vi.fn().mockReturnValue(of(undefined));
+    deleteAuthenticatedUserMock = vi.fn().mockReturnValue(of(undefined));
 
     verificationService = {
-      supportsForceReauth: jest.fn().mockReturnValue(false),
-      isRecentlyVerified: jest.fn().mockReturnValue(false),
-      forceReauth: jest.fn(),
-      requestEmailOtp: jest.fn().mockReturnValue(of(undefined)),
-      hasPendingDelete: jest.fn().mockReturnValue(false),
-      clearPendingDelete: jest.fn(),
+      supportsForceReauth: vi.fn().mockReturnValue(false),
+      isRecentlyVerified: vi.fn().mockReturnValue(false),
+      forceReauth: vi.fn(),
+      requestEmailOtp: vi.fn().mockReturnValue(of(undefined)),
+      hasPendingDelete: vi.fn().mockReturnValue(false),
+      clearPendingDelete: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -52,10 +53,10 @@ describe('AccountDeleteComponent', () => {
         { provide: ModalRef, useValue: modalRef },
         MockProvider(SDKService, {
           currentAccount: of(mockAccount as any),
-          cleanAccount: jest.fn(),
+          cleanAccount: vi.fn(),
           nuclia: {
             db: {
-              getWelcome: jest.fn().mockReturnValue(of({ accounts: [] })),
+              getWelcome: vi.fn().mockReturnValue(of({ accounts: [] })),
               deleteAccount: deleteAccountMock,
             },
             auth: {
@@ -65,13 +66,13 @@ describe('AccountDeleteComponent', () => {
         }),
         MockProvider(UserService, {
           userPrefs: of({ email: 'test@example.com' } as any),
-          updateWelcome: jest.fn().mockReturnValue(of(undefined)),
+          updateWelcome: vi.fn().mockReturnValue(of(undefined)),
         }),
         MockProvider(NavigationService, {
-          getAccountSelectUrl: jest.fn().mockReturnValue('/select-account'),
+          getAccountSelectUrl: vi.fn().mockReturnValue('/select-account'),
         }),
         MockProvider(Router),
-        MockProvider(SisToastService, { error: jest.fn(), success: jest.fn() }),
+        MockProvider(SisToastService, { error: vi.fn(), success: vi.fn() }),
         { provide: AccountVerificationService, useValue: verificationService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

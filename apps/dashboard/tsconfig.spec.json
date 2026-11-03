@@ -2,14 +2,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["jest", "node"],
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"],
+    "types": ["vitest/globals", "node"],
     "resolveJsonModule": true,
     "target": "es2016",
-    "emitDecoratorMetadata": false,
-    "isolatedModules": true
+    "emitDecoratorMetadata": false
   },
   "angularCompilerOptions": {},
-  "files": ["src/test.ts", "src/polyfills.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"],
   "exclude": ["node_modules"]
 }

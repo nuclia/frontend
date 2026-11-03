@@ -5,7 +5,7 @@ Angular library of Spartan/Helm UI primitives and Tailwind utilities. Nx project
 ## Run Commands
 
 ```bash
-nx test ui
+nx test ui        # @angular/build:unit-test (own test-build target); smoke spec: HlmBadge
 nx lint ui
 nx run ui:storybook
 nx run ui:build-storybook

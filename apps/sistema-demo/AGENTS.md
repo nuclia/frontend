@@ -96,7 +96,7 @@ Customise theming via CSS `--custom-*` hooks on `:root`. Never fork token files.
 ```bash
 nx serve sistema-demo    # dev server
 nx build sistema-demo    # dist/apps/sistema-demo/ (baseHref: /frontend/)
-nx test sistema-demo     # Jest (minimal tests — real tests are in nx test sistema)
+nx test sistema-demo     # @angular/build:unit-test smoke spec (AppComponent + demo menu); component tests are in nx test sistema
 nx test sistema          # Run to verify design system components
 nx lint sistema-demo
 ```

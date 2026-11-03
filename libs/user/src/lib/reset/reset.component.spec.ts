@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,12 +14,12 @@ describe('ResetComponent', () => {
   let fixture: ComponentFixture<ResetComponent>;
 
   let loginService: {
-    reset: jest.Mock;
-    setup: jest.Mock;
+    reset: Mock;
+    setup: Mock;
   };
-  let router: { navigate: jest.Mock };
-  let reCaptchaV3Service: { execute: jest.Mock };
-  let toaster: { success: jest.Mock; error: jest.Mock };
+  let router: { navigate: Mock };
+  let reCaptchaV3Service: { execute: Mock };
+  let toaster: { success: Mock; error: Mock };
 
   let queryParams$: BehaviorSubject<Record<string, string | undefined>>;
   let url$: BehaviorSubject<{ path: string }[]>;
@@ -53,16 +54,16 @@ describe('ResetComponent', () => {
 
   beforeEach(() => {
     loginService = {
-      reset: jest.fn(() => of({ login_challenge: 'challenge-1' })),
-      setup: jest.fn(() => of({ login_challenge: 'challenge-1' })),
+      reset: vi.fn(() => of({ login_challenge: 'challenge-1' })),
+      setup: vi.fn(() => of({ login_challenge: 'challenge-1' })),
     };
-    router = { navigate: jest.fn() };
-    reCaptchaV3Service = { execute: jest.fn(() => of('captcha-token')) };
-    toaster = { success: jest.fn(), error: jest.fn() };
+    router = { navigate: vi.fn() };
+    reCaptchaV3Service = { execute: vi.fn(() => of('captcha-token')) };
+    toaster = { success: vi.fn(), error: vi.fn() };
     queryParams$ = new BehaviorSubject<Record<string, string | undefined>>({ token: 'magic-token' });
     url$ = new BehaviorSubject<{ path: string }[]>([{ path: 'reset' }]);
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create', async () => {
@@ -96,7 +97,7 @@ describe('ResetComponent', () => {
 
   it('should execute recaptcha and apply on valid submit', async () => {
     await buildComponent();
-    const applySpy = jest.spyOn(component, 'apply');
+    const applySpy = vi.spyOn(component, 'apply');
 
     component.resetForm.setValue({
       username: 'Bruce Wayne',
@@ -175,7 +176,7 @@ describe('ResetComponent', () => {
   it('should show invalid-token toast on backend 500 error', async () => {
     loginService.reset.mockReturnValue(throwError(() => ({ status: 500 })));
     await buildComponent();
-    const markForCheckSpy = jest.spyOn((component as any).cdr, 'markForCheck');
+    const markForCheckSpy = vi.spyOn((component as any).cdr, 'markForCheck');
 
     component.pending = true;
     component.resetForm.setValue({
@@ -193,7 +194,7 @@ describe('ResetComponent', () => {
   it('should show generic error toast on non-500 error', async () => {
     loginService.reset.mockReturnValue(throwError(() => ({ status: 400 })));
     await buildComponent();
-    const markForCheckSpy = jest.spyOn((component as any).cdr, 'markForCheck');
+    const markForCheckSpy = vi.spyOn((component as any).cdr, 'markForCheck');
 
     component.pending = true;
     component.resetForm.setValue({

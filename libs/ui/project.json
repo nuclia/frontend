@@ -6,12 +6,36 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+    "test-build": {
+      "executor": "@angular/build:application",
       "options": {
-        "jestConfig": "libs/ui/jest.config.cts",
-        "tsConfig": "libs/ui/tsconfig.spec.json"
+        "tsConfig": "libs/ui/tsconfig.spec.json",
+        "outputPath": "dist/test-build/ui",
+        "polyfills": [],
+        "styles": [],
+        "assets": [],
+        "aot": false,
+        "stylePreprocessorOptions": {
+          "includePaths": ["."]
+        }
+      }
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "outputs": ["{workspaceRoot}/coverage/libs/ui"],
+      "options": {
+        "buildTarget": "ui:test-build",
+        "tsConfig": "libs/ui/tsconfig.spec.json",
+        "runnerConfig": true,
+        "watch": false
+      },
+      "configurations": {
+        "ci": {
+          "coverage": true
+        },
+        "watch": {
+          "watch": true
+        }
       }
     },
     "lint": {

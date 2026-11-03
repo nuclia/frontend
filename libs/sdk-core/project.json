@@ -5,6 +5,17 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "test": {
+      "dependsOn": ["test-typecheck"]
+    },
+    "test-typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production", "{workspaceRoot}/tsconfig.base.json", "{workspaceRoot}/yarn.lock"],
+      "options": {
+        "command": "yarn tsc --project libs/sdk-core/tsconfig.spec.json --noEmit"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {
@@ -14,17 +25,6 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
-    },
-    "test": {
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "coverage": true
-        }
-      }
     }
   }
 }

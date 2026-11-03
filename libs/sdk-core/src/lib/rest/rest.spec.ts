@@ -1,3 +1,4 @@
+import { filter, firstValueFrom } from 'rxjs';
 import { Nuclia } from '../core';
 import { mockFetch, mockReadableStream } from '../test.utils.spec';
 import { Rest } from './rest';
@@ -15,104 +16,92 @@ describe('Rest', () => {
     rest = nuclia.rest as Rest;
   });
 
-  it('should GET', (done) => {
+  it('should GET', async () => {
     mockFetch({ id: 'abc', title: 'Gödel, Escher, Bach: an Eternal Golden Braid' });
-    rest.get<{ id: string; title: string }>('/somepath').subscribe((res) => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.dp.here/v1/somepath',
-        expect.objectContaining({
-          headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
-          method: 'GET',
-        }),
-      );
-      expect(res.id).toEqual('abc');
-      done();
-    });
+    const res = await firstValueFrom(rest.get<{ id: string; title: string }>('/somepath'));
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/somepath',
+      expect.objectContaining({
+        headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
+        method: 'GET',
+      }),
+    );
+    expect(res.id).toEqual('abc');
   });
 
-  it('should POST', (done) => {
+  it('should POST', async () => {
     mockFetch({});
-    rest
-      .post<{ id: string; title: string }>('/somepath', {
+    await firstValueFrom(
+      rest.post<{ id: string; title: string }>('/somepath', {
         id: 'abc',
         title: 'Gödel, Escher, Bach: an Eternal Golden Braid',
-      })
-      .subscribe(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.dp.here/v1/somepath',
-          expect.objectContaining({
-            body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
-            headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
-            method: 'POST',
-          }),
-        );
-        done();
-      });
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/somepath',
+      expect.objectContaining({
+        body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
+        headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
+        method: 'POST',
+      }),
+    );
   });
 
-  it('should PUT', (done) => {
+  it('should PUT', async () => {
     mockFetch({});
-    rest
-      .put<{ id: string; title: string }>('/somepath', {
+    await firstValueFrom(
+      rest.put<{ id: string; title: string }>('/somepath', {
         id: 'abc',
         title: 'Gödel, Escher, Bach: an Eternal Golden Braid',
-      })
-      .subscribe(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.dp.here/v1/somepath',
-          expect.objectContaining({
-            body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
-            headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
-            method: 'PUT',
-          }),
-        );
-        done();
-      });
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/somepath',
+      expect.objectContaining({
+        body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
+        headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
+        method: 'PUT',
+      }),
+    );
   });
 
-  it('should PATCH', (done) => {
+  it('should PATCH', async () => {
     mockFetch({});
-    rest
-      .patch<{ id: string; title: string }>('/somepath', {
+    await firstValueFrom(
+      rest.patch<{ id: string; title: string }>('/somepath', {
         id: 'abc',
         title: 'Gödel, Escher, Bach: an Eternal Golden Braid',
-      })
-      .subscribe(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.dp.here/v1/somepath',
-          expect.objectContaining({
-            body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
-            headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
-            method: 'PATCH',
-          }),
-        );
-        done();
-      });
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/somepath',
+      expect.objectContaining({
+        body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
+        headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
+        method: 'PATCH',
+      }),
+    );
   });
 
-  it('should DELETE', (done) => {
+  it('should DELETE', async () => {
     mockFetch('');
-    rest.delete<{ id: string; title: string }>('/somepath').subscribe(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.dp.here/v1/somepath',
-        expect.objectContaining({
-          headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
-          method: 'DELETE',
-        }),
-      );
-      done();
-    });
+    await firstValueFrom(rest.delete<{ id: string; title: string }>('/somepath'));
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://europe-1.dp.here/v1/somepath',
+      expect.objectContaining({
+        headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
+        method: 'DELETE',
+      }),
+    );
   });
 
-  it('should not prefix domain with zone for global endpoints', (done) => {
+  it('should not prefix domain with zone for global endpoints', async () => {
     mockFetch({});
-    rest.get('/account').subscribe(() => {
-      expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
-      done();
-    });
+    await firstValueFrom(rest.get('/account'));
+    expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
   });
 
-  it('should normalize rag backend to accounts for global endpoints', (done) => {
+  it('should normalize rag backend to accounts for global endpoints', async () => {
     const nuclia = new Nuclia({
       backend: 'http://rag.here',
       zone: 'europe-1',
@@ -122,13 +111,11 @@ describe('Rest', () => {
     nuclia.auth.getAuthHeaders = () => ({ Authorization: 'Bearer 12345' });
     const ragRest = nuclia.rest as Rest;
     mockFetch({});
-    ragRest.get('/account').subscribe(() => {
-      expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
-      done();
-    });
+    await firstValueFrom(ragRest.get('/account'));
+    expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
   });
 
-  it('should normalize rag backend to region.dp for regional endpoints', (done) => {
+  it('should normalize rag backend to region.dp for regional endpoints', async () => {
     const nuclia = new Nuclia({
       backend: 'http://rag.here',
       zone: 'europe-1',
@@ -138,21 +125,17 @@ describe('Rest', () => {
     nuclia.auth.getAuthHeaders = () => ({ Authorization: 'Bearer 12345' });
     const ragRest = nuclia.rest as Rest;
     mockFetch({});
-    ragRest.get('/somepath').subscribe(() => {
-      expect(global.fetch).toHaveBeenCalledWith('http://europe-1.dp.here/v1/somepath', expect.anything());
-      done();
-    });
+    await firstValueFrom(ragRest.get('/somepath'));
+    expect(global.fetch).toHaveBeenCalledWith('http://europe-1.dp.here/v1/somepath', expect.anything());
   });
 
-  it('should get readable stream', (done) => {
+  it('should get readable stream', async () => {
     mockReadableStream(['abc', 'def'], { index: 0 });
-    rest.getStreamedResponse('/somepath', {}).subscribe((res) => {
-      if (!res.incomplete) {
-        const encoder = new TextEncoder();
-        const expected = encoder.encode('abcdef');
-        expect(res.data).toEqual(expected);
-        done();
-      }
-    });
+    const res = await firstValueFrom(
+      rest.getStreamedResponse('/somepath', {}).pipe(filter((response) => !response.incomplete)),
+    );
+    const encoder = new TextEncoder();
+    const expected = new Uint8Array(encoder.encode('abcdef'));
+    expect(res.data).toEqual(expected);
   });
 });

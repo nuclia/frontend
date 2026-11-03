@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MockProvider } from 'ng-mocks';
@@ -16,10 +17,10 @@ const MOCK_ROWS: ActivityLogItem[] = [
 
 describe('ChatActivityPageService', () => {
   let service: ChatActivityPageService;
-  let queryActivityLogs: jest.Mock;
+  let queryActivityLogs: Mock;
 
   beforeEach(() => {
-    queryActivityLogs = jest.fn();
+    queryActivityLogs = vi.fn();
     const mockKb = {
       activityMonitor: {
         queryActivityLogs,
@@ -82,12 +83,12 @@ describe('ChatActivityPageService', () => {
 
   describe('availableMonths signal', () => {
     beforeAll(() => {
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date('2026-04-15T12:00:00Z'));
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-04-15T12:00:00Z'));
     });
 
     afterAll(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('is populated with months from since account creation, sorted descending', () => {

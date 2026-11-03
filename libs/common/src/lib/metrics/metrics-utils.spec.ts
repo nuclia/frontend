@@ -145,12 +145,12 @@ describe('metrics-utils', () => {
 
   describe('getMonthsSinceDate()', () => {
     beforeAll(() => {
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date('2026-02-15T00:00:00.000Z'));
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-02-15T00:00:00.000Z'));
     });
 
     afterAll(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('returns months from now back to the given month', () => {

@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { BillingService, NavigationService, SDKService, StripeCustomer, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -26,23 +27,23 @@ describe('CheckoutService', () => {
   const token = { id: 'token', card: { brand: 'Visa', last4: '4242' } };
   let service: CheckoutService;
   let billing: {
-    getCustomer: jest.Mock;
-    getCurrency: jest.Mock;
-    getPrices: jest.Mock;
-    createPaymentMethod: jest.Mock;
+    getCustomer: Mock;
+    getCurrency: Mock;
+    getPrices: Mock;
+    createPaymentMethod: Mock;
   };
-  let createToken: jest.Mock;
-  let showError: jest.Mock;
+  let createToken: Mock;
+  let showError: Mock;
 
   beforeEach(() => {
-    showError = jest.fn();
+    showError = vi.fn();
     billing = {
-      getCustomer: jest.fn().mockReturnValue(of(company)),
-      getCurrency: jest.fn().mockReturnValue(of('EUR')),
-      getPrices: jest.fn().mockReturnValue(of({ cowork: {} })),
-      createPaymentMethod: jest.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
+      getCustomer: vi.fn().mockReturnValue(of(company)),
+      getCurrency: vi.fn().mockReturnValue(of('EUR')),
+      getPrices: vi.fn().mockReturnValue(of({ cowork: {} })),
+      createPaymentMethod: vi.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
     };
-    createToken = jest.fn().mockResolvedValue({ token });
+    createToken = vi.fn().mockResolvedValue({ token });
     TestBed.configureTestingModule({
       providers: [
         CheckoutService,

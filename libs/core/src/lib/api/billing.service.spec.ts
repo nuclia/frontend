@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Account } from '@nuclia/core';
 import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
@@ -23,12 +24,12 @@ describe('BillingService Context Box activation', () => {
   };
   let currentAccount: BehaviorSubject<Account>;
   let noTrial: BehaviorSubject<boolean>;
-  let get: jest.Mock;
+  let get: Mock;
   let service: BillingService;
 
   beforeEach(() => {
     currentAccount = new BehaviorSubject(account);
-    get = jest.fn();
+    get = vi.fn();
     noTrial = new BehaviorSubject(true);
     TestBed.configureTestingModule({
       providers: [

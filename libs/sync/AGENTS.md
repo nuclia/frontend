@@ -124,7 +124,7 @@ OAuth handling and cloud-folder browsing are **not** part of `IConnector` — th
 ## Run Commands
 
 ```bash
-nx test sync
+nx test sync      # Vitest via Angular builder (own test-build target)
 nx lint sync
 # No build target — consumed as TypeScript source via @nuclia/sync alias
 ```

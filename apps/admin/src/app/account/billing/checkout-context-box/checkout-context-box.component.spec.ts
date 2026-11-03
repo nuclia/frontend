@@ -11,6 +11,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { EMPTY, Observable, of, Subject, throwError } from 'rxjs';
+import type { Mock } from 'vitest';
 import { CheckoutService } from '../checkout/checkout.service';
 import { SubscriptionService } from '../subscription.service';
 import { CheckoutContextBoxComponent } from './checkout-context-box.component';
@@ -33,25 +34,25 @@ describe('CheckoutContextBoxComponent', () => {
   let fixture: ComponentFixture<CheckoutContextBoxComponent>;
   let component: CheckoutContextBoxComponent;
   let checkoutService: CheckoutService;
-  let createToken: jest.Mock;
+  let createToken: Mock;
   let billing: {
     isContextBoxPaymentRequired: Observable<boolean>;
-    getCustomer: jest.Mock;
-    createCustomer: jest.Mock;
-    modifyCustomer: jest.Mock;
-    createPaymentMethod: jest.Mock;
-    createSubscription: jest.Mock;
-    getCurrency: jest.Mock;
-    getPrices: jest.Mock;
+    getCustomer: Mock;
+    createCustomer: Mock;
+    modifyCustomer: Mock;
+    createPaymentMethod: Mock;
+    createSubscription: Mock;
+    getCurrency: Mock;
+    getPrices: Mock;
   };
-  let openModal: jest.Mock;
-  let showError: jest.Mock;
-  let showSuccess: jest.Mock;
-  let navigateExternal: jest.Mock;
-  let logout: jest.Mock;
-  let openConfirm: jest.Mock;
+  let openModal: Mock;
+  let showError: Mock;
+  let showSuccess: Mock;
+  let navigateExternal: Mock;
+  let logout: Mock;
+  let openConfirm: Mock;
   let closeConfirm: Subject<boolean>;
-  let setAccount: jest.Mock;
+  let setAccount: Mock;
 
   function reviewWith(confirmed: boolean) {
     openModal.mockReturnValue({ onClose: of(confirmed), onDismiss: EMPTY });
@@ -59,30 +60,30 @@ describe('CheckoutContextBoxComponent', () => {
 
   async function submit() {
     checkoutService.submit(component['strategy']);
-    await jest.runAllTimersAsync();
+    await vi.runAllTimersAsync();
   }
 
   beforeEach(async () => {
-    jest.useFakeTimers();
-    jest.spyOn(CheckoutService.prototype, 'initStripe').mockImplementation();
-    openModal = jest.fn();
-    showError = jest.fn();
-    showSuccess = jest.fn();
-    navigateExternal = jest.fn();
-    logout = jest.fn();
+    vi.useFakeTimers();
+    vi.spyOn(CheckoutService.prototype, 'initStripe').mockImplementation(() => undefined);
+    openModal = vi.fn();
+    showError = vi.fn();
+    showSuccess = vi.fn();
+    navigateExternal = vi.fn();
+    logout = vi.fn();
     closeConfirm = new Subject<boolean>();
-    openConfirm = jest.fn().mockReturnValue({ onClose: closeConfirm });
-    setAccount = jest.fn();
-    createToken = jest.fn().mockResolvedValue({ token });
+    openConfirm = vi.fn().mockReturnValue({ onClose: closeConfirm });
+    setAccount = vi.fn();
+    createToken = vi.fn().mockResolvedValue({ token });
     billing = {
       isContextBoxPaymentRequired: of(true),
-      getCustomer: jest.fn().mockReturnValue(of(customer)).mockReturnValueOnce(of(null)),
-      createCustomer: jest.fn().mockReturnValue(of(customer)),
-      modifyCustomer: jest.fn().mockReturnValue(of(undefined)),
-      createPaymentMethod: jest.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
-      createSubscription: jest.fn().mockReturnValue(of({ status: 'active' })),
-      getCurrency: jest.fn().mockReturnValue(of('USD')),
-      getPrices: jest.fn().mockReturnValue(of({ cowork: { recurring: { month: { price: 29 } }, usage: {} } })),
+      getCustomer: vi.fn().mockReturnValue(of(customer)).mockReturnValueOnce(of(null)),
+      createCustomer: vi.fn().mockReturnValue(of(customer)),
+      modifyCustomer: vi.fn().mockReturnValue(of(undefined)),
+      createPaymentMethod: vi.fn().mockReturnValue(of({ payment_method_id: 'payment-method' })),
+      createSubscription: vi.fn().mockReturnValue(of({ status: 'active' })),
+      getCurrency: vi.fn().mockReturnValue(of('USD')),
+      getPrices: vi.fn().mockReturnValue(of({ cowork: { recurring: { month: { price: 29 } }, usage: {} } })),
     };
     const account = { type: 'cowork', workflow: 'cowork', slug: 'context-box' };
     await TestBed.configureTestingModule({
@@ -97,7 +98,7 @@ describe('CheckoutContextBoxComponent', () => {
           provide: SDKService,
           useValue: {
             currentAccount: of(account),
-            nuclia: { auth: { logout }, db: { getAccount: jest.fn().mockReturnValue(of(account)) } },
+            nuclia: { auth: { logout }, db: { getAccount: vi.fn().mockReturnValue(of(account)) } },
             set account(value: unknown) {
               setAccount(value);
             },
@@ -130,8 +131,8 @@ describe('CheckoutContextBoxComponent', () => {
 
   afterEach(() => {
     fixture.destroy();
-    jest.useRealTimers();
-    jest.restoreAllMocks();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('does not prepare a subscription until billing and card fields are valid', () => {
@@ -145,7 +146,7 @@ describe('CheckoutContextBoxComponent', () => {
   });
 
   it('submits the checkout with its strategy', () => {
-    const submitSpy = jest.spyOn(checkoutService, 'submit').mockImplementation();
+    const submitSpy = vi.spyOn(checkoutService, 'submit').mockImplementation(() => undefined);
     component.review();
 
     expect(submitSpy).toHaveBeenCalledWith(component['strategy']);

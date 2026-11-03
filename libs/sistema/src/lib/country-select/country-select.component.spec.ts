@@ -79,7 +79,7 @@ describe('CountrySelectComponent', () => {
   });
 
   it('writeValue should not emit a valueChanges event', () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     component.registerOnChange(onChange);
     component.writeValue('DE');
     expect(onChange).not.toHaveBeenCalled();
@@ -88,7 +88,7 @@ describe('CountrySelectComponent', () => {
   // ── 4. ControlValueAccessor — onChange propagation ───────────────────────
 
   it('should call registered onChange when innerControl value changes', () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     component.registerOnChange(onChange);
 
     (component as any).innerControl.setValue('DE');
@@ -97,7 +97,7 @@ describe('CountrySelectComponent', () => {
   });
 
   it('should call onChange with empty string when innerControl is set to empty string', () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     component.registerOnChange(onChange);
 
     (component as any).innerControl.setValue('');
@@ -106,7 +106,7 @@ describe('CountrySelectComponent', () => {
   });
 
   it('should NOT call registered onTouched when innerControl value changes', () => {
-    const onTouched = jest.fn();
+    const onTouched = vi.fn();
     component.registerOnTouched(onTouched);
 
     (component as any).innerControl.setValue('FR');
@@ -115,7 +115,7 @@ describe('CountrySelectComponent', () => {
   });
 
   it('should call registered onTouched when onTouched() is called directly (simulates blur)', () => {
-    const onTouched = jest.fn();
+    const onTouched = vi.fn();
     component.registerOnTouched(onTouched);
 
     (component as any).onTouched();
@@ -137,7 +137,7 @@ describe('CountrySelectComponent', () => {
   });
 
   it('setDisabledState should not emit a valueChanges event', () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     component.registerOnChange(onChange);
 
     component.setDisabledState(true);

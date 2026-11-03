@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
@@ -14,15 +15,15 @@ const users: UserSummary[] = [
 
 describe('RecipientsService', () => {
   let service: RecipientsService;
-  let getUsers: jest.Mock;
-  let getSubscriptions: jest.Mock;
-  let error: jest.Mock;
+  let getUsers: Mock;
+  let getSubscriptions: Mock;
+  let error: Mock;
   const selectedIds = () => Array.from(service.selected().keys());
 
   beforeEach(() => {
-    error = jest.fn();
-    getUsers = jest.fn().mockReturnValue(of(users));
-    getSubscriptions = jest.fn().mockReturnValue(of([{ account_id: 'acc-stripe', type: 'stripe' }]));
+    error = vi.fn();
+    getUsers = vi.fn().mockReturnValue(of(users));
+    getSubscriptions = vi.fn().mockReturnValue(of([{ account_id: 'acc-stripe', type: 'stripe' }]));
     TestBed.configureTestingModule({
       providers: [
         RecipientsService,

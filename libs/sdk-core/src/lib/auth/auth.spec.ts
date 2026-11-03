@@ -1,5 +1,6 @@
 import { firstValueFrom, of } from 'rxjs';
 import { take } from 'rxjs/operators';
+import type { Mock } from 'vitest';
 import { INuclia } from '../models';
 import { mockFetch } from '../test.utils.spec';
 import { Authentication } from './auth';
@@ -17,8 +18,8 @@ describe('Authentication', () => {
     rest?: Partial<INuclia['rest']>;
   }): INuclia => {
     const rest = {
-      get: jest.fn(() => of({})),
-      delete: jest.fn(() => of(void 0)),
+      get: vi.fn(() => of({})),
+      delete: vi.fn(() => of(void 0)),
       ...overrides?.rest,
     };
 
@@ -32,7 +33,7 @@ describe('Authentication', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 
@@ -157,7 +158,7 @@ describe('Authentication', () => {
     });
 
     it('should redirect to OAuth and store state, nonce and code verifier', async () => {
-      const getRandomValuesSpy = jest
+      const getRandomValuesSpy = vi
         .spyOn(crypto, 'getRandomValues')
         .mockImplementation((arr: ArrayBufferView<ArrayBuffer>) => {
           const view = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength);
@@ -166,7 +167,7 @@ describe('Authentication', () => {
           }
           return arr;
         });
-      const generateChallengeSpy = jest
+      const generateChallengeSpy = vi
         .spyOn(auth as any, 'generateCodeChallenge')
         .mockReturnValue(new Promise<string>(() => undefined));
       auth.redirectToOAuth({ custom: 'value' });
@@ -192,7 +193,7 @@ describe('Authentication', () => {
     });
 
     it('should fail processAuthorizationResponse when state does not match', async () => {
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
         /* empty */
       });
       localStorage.setItem('oauth_state', 'expected');
@@ -203,7 +204,7 @@ describe('Authentication', () => {
     });
 
     it('should fail processAuthorizationResponse when state cannot be parsed', async () => {
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
         /* empty */
       });
       localStorage.setItem('oauth_state', '%%%invalid%%%');
@@ -241,7 +242,7 @@ describe('Authentication', () => {
     });
 
     it('should call logout and return false when refresh response has no access token', async () => {
-      const logoutSpy = jest.spyOn(auth, 'logout').mockImplementation(() => undefined);
+      const logoutSpy = vi.spyOn(auth, 'logout').mockImplementation(() => undefined);
       mockFetch({ access_token: '', refresh_token: '' });
 
       const result = await firstValueFrom(auth.refresh());
@@ -251,15 +252,15 @@ describe('Authentication', () => {
     });
 
     it('should call logout when refresh request fails', async () => {
-      const logoutSpy = jest.spyOn(auth, 'logout').mockImplementation(() => undefined);
-      global.fetch = jest.fn(() =>
+      const logoutSpy = vi.spyOn(auth, 'logout').mockImplementation(() => undefined);
+      global.fetch = vi.fn(() =>
         Promise.resolve({
           ok: false,
           clone: () => ({
             json: () => Promise.resolve({}),
           }),
         }),
-      ) as jest.Mock;
+      ) as Mock;
 
       await expect(firstValueFrom(auth.refresh())).rejects.toBeTruthy();
       expect(logoutSpy).toHaveBeenCalled();
@@ -273,7 +274,7 @@ describe('Authentication', () => {
 
     it('should call setPassword endpoint and authenticate response tokens', async () => {
       mockFetch({ access_token: 'token', refresh_token: 'refresh' });
-      const authenticateSpy = jest.spyOn(auth, 'authenticate');
+      const authenticateSpy = vi.spyOn(auth, 'authenticate');
 
       const result = await firstValueFrom(auth.setPassword('new-password'));
       expect(result).toBe(true);
@@ -296,7 +297,7 @@ describe('Authentication', () => {
     });
 
     it('should call getAuthInfo endpoint with and without ip info', async () => {
-      const get = jest.fn((path: string) => of({ path }));
+      const get = vi.fn((path: string) => of({ path }));
       const nuclia = createNuclia({
         options: { knowledgeBox: 'kb' },
         rest: { get: get as unknown as INuclia['rest']['get'] },

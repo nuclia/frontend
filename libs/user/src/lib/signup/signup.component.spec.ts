@@ -39,7 +39,7 @@ describe('SignupComponent', () => {
   beforeEach(async () => {
     const originalAppendChild = document.body.appendChild.bind(document.body);
 
-    jest.spyOn(document.body, 'appendChild').mockImplementation((node: Node) => {
+    vi.spyOn(document.body, 'appendChild').mockImplementation((node: Node) => {
       if ((node as Element).tagName === 'SCRIPT') {
         const script = node as HTMLScriptElement;
         script.onload?.(new Event('load'));
@@ -53,20 +53,20 @@ describe('SignupComponent', () => {
       imports: [SignupComponent, RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }])],
       providers: [
         MockProvider(ReCaptchaV3Service, {
-          execute: jest.fn(() => of('some_token')),
+          execute: vi.fn(() => of('some_token')),
         }),
         MockProvider(LoginService, {
-          signup: jest.fn(() => signupResponse.asObservable()),
+          signup: vi.fn(() => signupResponse.asObservable()),
         }),
         MockProvider(AnalyticsService, {
-          logTrialSignup: jest.fn(),
+          logTrialSignup: vi.fn(),
         }),
         {
           provide: SDKService,
           useValue: {
             nuclia: {
               auth: {
-                redirectToOAuth: jest.fn(),
+                redirectToOAuth: vi.fn(),
               },
             },
           } as unknown as SDKService,
@@ -104,7 +104,7 @@ describe('SignupComponent', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('submitForm', () => {
@@ -119,7 +119,7 @@ describe('SignupComponent', () => {
       router = TestBed.inject(Router);
       analytics = TestBed.inject(AnalyticsService);
 
-      router.navigate = jest.fn();
+      router.navigate = vi.fn();
     });
 
     it('should do nothing when form is not valid', () => {

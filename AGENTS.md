@@ -71,13 +71,34 @@ nx run ui:storybook
 
 ## Testing
 
-| Project type                          | Runner                          | Command pattern  |
-| ------------------------------------- | ------------------------------- | ---------------- |
-| Angular apps & libs                   | Jest 30 (`jest-preset-angular`) | `nx test <name>` |
-| `search-widget`, `search-widget-demo` | Vitest 4                        | `nx test <name>` |
+| Project type                                                                                                                           | Runner                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Angular projects: `admin`, `auth`, `dashboard`, `manager-v2`, `rao`, `sistema-demo`, `common`, `core`, `sistema`, `sync`, `ui`, `user` | Vitest 5 via `@angular/build:unit-test` (jsdom, zoneless) |
+| `sdk-core`, `chrome-ext`                                                                                                               | Plain Vitest 5, `@nx/vitest`-inferred `test` target       |
+| `search-widget`, `search-widget-demo`                                                                                                  | Vitest 5 (`nx:run-commands`)                              |
 
-Test files are co-located alongside source as `*.spec.ts`.  
+All run with `nx test <name>`. Test files are co-located alongside source as `*.spec.ts`. Jest is gone from all
+first-party projects; only the external `libs/pastanaga-angular` still uses it.
 `libs/common` and `libs/core` have **no `lint` target** — linting runs as part of the app build.
+
+- **Run all:** `yarn test` (`nx run-many --all --target=test`). The root `vitest.config.ts` only aggregates the
+  plain-Vitest projects; it can't run the Angular suites, so don't call `vitest` directly for those.
+- **Watch / coverage:** Angular targets default to `watch: false`; use `nx test <name> --watch` or
+  `--configuration=watch`. Coverage: `nx test <name> --configuration=ci` → `coverage/{apps,libs}/<name>`.
+- **Single file:** `nx test <name> --include='**/foo.spec.ts'` (Angular builder; glob relative to the project source root).
+- **SDK type checking:** `sdk-core:test` runs `sdk-core:test-typecheck` before Vitest; plain Vitest only transpiles TypeScript.
+- **Libs own a `test-build` target** (`@angular/build:application`, compiler options only, no production build), and
+  `test.buildTarget` is `<lib>:test-build` for `common`, `core`, `sistema`, `sync`, `ui`, `user`. Sistema Sass resolves
+  through a direct `stylePreprocessorOptions.includePaths` of `libs/sistema/styles`, with no dependency on any app.
+  `polyfills: []` is on purpose — a file-path polyfill makes Angular load `zone.js`.
+- **Shared setup:** `test/translate-test-provider.ts` is the `providersFile` that stubs `TranslateService`;
+  jsdom shims (`ResizeObserver`, `matchMedia`) live in `setupFiles` (`libs/common`, `apps/manager-v2` only).
+  `.env.test` pins `BROWSERSLIST` to the last 2 Chrome versions so app browserslists don't break the builder.
+- **Every Angular project must have at least one spec.** `@angular/build:unit-test` fails with "No tests found" on an
+  empty project and has no `passWithNoTests` option. A new Angular project needs a `<app>:build:unit-test` build
+  configuration (`polyfills: []`, `styles: []`, `assets: []`), an official `test` target and a `vitest-base.config.mts`
+  (coverage dir only), plus a first real spec; never list it in the root `vitest.config.ts` or the `@nx/vitest` `include`.
+- Details and examples: `.github/skills/testing-patterns/SKILL.md`.
 
 ---
 
@@ -93,13 +114,11 @@ Test files are co-located alongside source as `*.spec.ts`.
 - **Selector prefixes:** declared in each lib's `project.json` (`nsi-`, `nus-`, `nsy-`, `stf-`, `nma-`).
 - **Components:** standalone by default (no `standalone` flag); first-party components are never declared in an NgModule — the few `*.module.ts` files are import/route wrappers. Templates import `TranslatePipe` (apps provide `provideTranslateService()` in `main.ts`).
 - **State files:** `*.state.ts` = Angular signal store. Older services use RxJS `BehaviorSubject`.
-- **Testing:** `nx test <app>` uses `jest-preset-angular/setup-env/zoneless` (`setupZonelessTestEnv`)
-  for all 6 Angular apps and for `libs/core`, `libs/user`, `libs/sistema`, `libs/sync`, `libs/common`. `dashboard`, `manager-v2`, `common`, `user` and `sync` also pass `translateTestProviders` (`test/translate-test-provider.ts`, a key-returning fake `TranslateService`).
+- **Testing:** every first-party test setup is zoneless (Vitest 5, `@angular/build:unit-test`).
   `waitForAsync()` and `fakeAsync()`/`tick()` **do not work** without `zone.js` — use
-  `async`/`await` for async `beforeEach`/`compileComponents()`, and `jest.useFakeTimers()` /
-  `jest.advanceTimersByTime()` for tests that need to control real timers.
-  `libs/pastanaga-angular` and `libs/ui` use `setup-env/zone` (`libs/pastanaga-angular` keeps `zone.js`
-  intentionally; slated for replacement, not worth migrating).
+  `async`/`await` for async `beforeEach`/`compileComponents()`, and `vi.useFakeTimers()` /
+  `vi.advanceTimersByTime()` / `await vi.runAllTimersAsync()` for tests that need to control timers.
+  `libs/pastanaga-angular` is external and untouched: it keeps Jest, `zone.js` and `setup-env/zone`.
 
 ### Code comments
 

@@ -24,7 +24,7 @@ describe('AccountListComponent', () => {
       ],
       providers: [
         MockProvider(AccountService, {
-          getAccounts: jest.fn(() => of([])),
+          getAccounts: vi.fn(() => of([])),
         }),
         MockProvider(SisModalService),
         MockProvider(SisToastService),

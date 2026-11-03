@@ -18,7 +18,7 @@ It is deployed as a standalone Angular app and receives callbacks from external 
 ```bash
 nx serve auth        # Dev server (default port)
 nx build auth        # Production build
-nx test auth         # Jest tests
+nx test auth         # Vitest via @angular/build:unit-test (smoke specs: AppComponent, fallbackRedirectGuard)
 ```
 
 ---
@@ -134,11 +134,13 @@ The `BackendConfigurationService` from `@flaps/core` reads this config.
 
 ## Testing
 
-Runner: Jest 30 (`jest-preset-angular`). There are currently **no spec files in `apps/auth/src`**;
-all auth flow tests live in `libs/user`.
+Runner: `@angular/build:unit-test` (Vitest 5, zoneless) using the `auth:build:unit-test` build configuration and
+`vitest-base.config.mts` (coverage dir). Specs in `apps/auth/src/app` cover `AppComponent` and `fallbackRedirectGuard`;
+the auth flow tests live in `libs/user`. Keep at least one spec here: the builder fails with "No tests found" and has
+no `passWithNoTests` option.
 
 ```bash
-nx test auth        # passes trivially (passWithNoTests) — no specs exist here yet
+nx test auth        # app smoke specs
 nx test user        # all auth flow tests live here
 ```
 

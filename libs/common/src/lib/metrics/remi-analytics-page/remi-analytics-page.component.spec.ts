@@ -16,8 +16,8 @@ describe('RemiAnalyticsPageComponent', () => {
   beforeEach(async () => {
     const mockKb = {
       activityMonitor: {
-        getRemiScores: jest.fn().mockReturnValue(of([])),
-        queryRemiScores: jest.fn().mockReturnValue(of({ data: [], has_more: false })),
+        getRemiScores: vi.fn().mockReturnValue(of([])),
+        queryRemiScores: vi.fn().mockReturnValue(of({ data: [], has_more: false })),
       },
     };
 
@@ -28,14 +28,14 @@ describe('RemiAnalyticsPageComponent', () => {
           currentKb: of(mockKb as any),
           currentAccount: of({ creation_date: '2025-01-01' } as any),
         }),
-        MockProvider(FeaturesService, { unstable: { automaticAdvice: of(false) } }),
+        MockProvider(FeaturesService, { unstable: { automaticAdvice: of(false) } as FeaturesService['unstable'] }),
         MockProvider(TranslateService, {
           instant: (key: string) => key,
           translate: (key) => signal(typeof key === 'function' ? key().toString() : key.toString()),
         }),
         MockProvider(PreviewService, { viewerWidget: of('') }),
-        MockProvider(NavigationService, { kbUrl: '' }),
-        MockProvider(Router, { navigate: jest.fn() }),
+        MockProvider(NavigationService, { kbUrl: of('') }),
+        MockProvider(Router, { navigate: vi.fn() }),
         MockProvider(ActivatedRoute, {}),
       ],
     })

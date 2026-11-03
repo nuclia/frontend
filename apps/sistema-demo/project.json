@@ -104,6 +104,17 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
+        },
+        "unit-test": {
+          "polyfills": [],
+          "styles": [],
+          "assets": [],
+          "aot": false,
+          "subresourceIntegrity": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
         }
       }
     },
@@ -126,19 +137,26 @@
         "buildTarget": "sistema-demo:build"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "test": {
+      "executor": "@angular/build:unit-test",
+      "outputs": ["{workspaceRoot}/coverage/apps/sistema-demo"],
       "options": {
-        "passWithNoTests": true
+        "buildTarget": "sistema-demo:build:unit-test",
+        "tsConfig": "apps/sistema-demo/tsconfig.spec.json",
+        "runnerConfig": true,
+        "watch": false
       },
       "configurations": {
         "ci": {
-          "ci": true,
           "coverage": true
+        },
+        "watch": {
+          "watch": true
         }
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     }
   }
 }

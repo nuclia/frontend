@@ -175,8 +175,9 @@ Quick hits (read `.github/skills/performance/SKILL.md` for full context):
 - **New exported component / service / function with no spec** — flag if no `*.spec.ts` added or updated.
 - **`fixture.detectChanges()` missing after signal input or state mutation** — OnPush requires it.
 - **Real `HttpClient` provided in a unit test** — should use `provideHttpClientTesting()`.
-- **`jest.fn()` used in a Vitest file** — should be `vi.fn()`.
-- **`vi.fn()` used in a Jest/Angular file** — should be `jest.fn()`.
+- **`jest.*` used in a first-party spec** — Jest is gone from first-party projects; use `vi.fn()` / `vi.spyOn()` / `vi.useFakeTimers()`.
+- **`fakeAsync` / `waitForAsync` / `tick` in a spec** — tests are zoneless; use `async`/`await` and `vi` fake timers.
+- **`MockProvider` method asserted without `vi.fn()`** — ng-mocks stubs are not spies; pass `vi.fn()` in the override.
 - **Real service injected without `MockProvider`** — unit tests must not make real HTTP calls.
 - **`any` cast used to bypass TypeScript in a test** — hides real typing gaps.
 

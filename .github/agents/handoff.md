@@ -112,13 +112,13 @@ export class ResourceListComponent {
 3. Mock ResourceService with MockProvider — do not instantiate it.
 
 ── CONSTRAINTS ──────────────────────────────────────────────────
-- Project: dashboard → use Jest stack (jest-preset-angular), not Vitest.
+- Project: dashboard → Vitest via the Angular builder (`vi.fn()`, zoneless: no fakeAsync/waitForAsync), not Jest.
 - Component is OnPush — call fixture.detectChanges() after every signal/state change.
 - Do NOT test ResourceService internals here.
 - Import ResourceService from @flaps/common, not a relative path.
 
 ── DEFINITION OF DONE ───────────────────────────────────────────
-All three tests pass with: nx test dashboard --testFile=resource-list.component.spec.ts
+All three tests pass with: nx test dashboard --include='**/resource-list.component.spec.ts'
 
 ━━━ END HANDOFF ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

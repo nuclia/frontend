@@ -12,10 +12,10 @@ describe('AccountEntryContextService', () => {
       providers: [
         AccountEntryContextService,
         MockProvider(BackendConfigurationService, {
-          getAPIOrigin: jest.fn().mockReturnValue('https://accounts.stashify.cloud'),
+          getAPIOrigin: vi.fn().mockReturnValue('https://accounts.stashify.cloud'),
         }),
         MockProvider(SDKService, {
-          getOriginForApp: jest.fn().mockReturnValue('https://app.stashify.cloud'),
+          getOriginForApp: vi.fn().mockReturnValue('https://app.stashify.cloud'),
         } as any),
       ],
     });

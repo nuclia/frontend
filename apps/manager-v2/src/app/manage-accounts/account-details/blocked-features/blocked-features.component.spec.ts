@@ -18,7 +18,7 @@ describe('BlockedFeaturesComponent', () => {
       imports: [BlockedFeaturesComponent, MockComponent(FormFooterComponent), MockPipe(FeatureNamePipe)],
       providers: [
         MockProvider(AccountDetailsStore, {
-          getAccount: jest.fn(() => of({} as ExtendedAccount)),
+          getAccount: vi.fn(() => of({} as ExtendedAccount)),
         }),
         MockProvider(AccountService),
         MockProvider(ManagerStore, {

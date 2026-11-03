@@ -24,7 +24,7 @@ describe('AppLayoutComponent', () => {
         MockProvider(SDKService, {
           nuclia: {
             auth: {
-              getJWTUser: jest.fn(),
+              getJWTUser: vi.fn(),
             },
           },
         } as unknown as SDKService),

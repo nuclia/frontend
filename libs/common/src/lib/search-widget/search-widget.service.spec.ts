@@ -1,11 +1,12 @@
-import { DomSanitizer } from '@angular/platform-browser';
 import { TestBed } from '@angular/core/testing';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { TranslateService } from '@ngx-translate/core';
-import { Widget, NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
+import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
+import type { Mock } from 'vitest';
 import { ResourceViewerService } from '../resources';
 import { SearchWidgetStorageService } from './search-widget-storage.service';
 import { SearchWidgetService } from './search-widget.service';
@@ -13,11 +14,11 @@ import { SearchWidgetService } from './search-widget.service';
 describe('SearchWidgetService', () => {
   let service: SearchWidgetService;
   let widgetList: BehaviorSubject<Widget.Widget[]>;
-  let storeWidgets: jest.Mock;
+  let storeWidgets: Mock;
 
   beforeEach(() => {
     widgetList = new BehaviorSubject<Widget.Widget[]>([]);
-    storeWidgets = jest.fn(() => of(undefined));
+    storeWidgets = vi.fn(() => of(undefined));
     TestBed.configureTestingModule({
       providers: [
         {
@@ -37,7 +38,7 @@ describe('SearchWidgetService', () => {
         },
         { provide: DomSanitizer, useValue: { bypassSecurityTrustHtml: (html: string) => html } },
         { provide: TranslateService, useValue: {} },
-        { provide: LOCAL_STORAGE, useValue: { getItem: () => null, setItem: jest.fn() } },
+        { provide: LOCAL_STORAGE, useValue: { getItem: () => null, setItem: vi.fn() } },
         { provide: SisModalService, useValue: {} },
         { provide: SisToastService, useValue: {} },
         { provide: ResourceViewerService, useValue: {} },
@@ -55,6 +56,8 @@ describe('SearchWidgetService', () => {
     service = TestBed.inject(SearchWidgetService);
   });
 
+  const emptyWidgetOptions = {} as Widget.WidgetConfiguration;
+
   it('generates configuration-specific embed code', async () => {
     const standardConfig = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
     const customConfig: Widget.TypedSearchConfiguration = {
@@ -67,9 +70,11 @@ describe('SearchWidgetService', () => {
     };
 
     const standardSnippet = await firstValueFrom(
-      service.generateWidgetSnippetForEmbed(standardConfig, {}, 'standard-embed'),
+      service.generateWidgetSnippetForEmbed(standardConfig, emptyWidgetOptions, 'standard-embed'),
     );
-    const customSnippet = await firstValueFrom(service.generateWidgetSnippetForEmbed(customConfig, {}, 'custom-embed'));
+    const customSnippet = await firstValueFrom(
+      service.generateWidgetSnippetForEmbed(customConfig, emptyWidgetOptions, 'custom-embed'),
+    );
 
     expect(standardSnippet.snippet).toContain('"config":"nuclia-standard","widget":"standard-embed"');
     expect(customSnippet.snippet).toContain('"config":"custom-configuration","widget":"custom-embed"');
@@ -91,11 +96,11 @@ describe('SearchWidgetService', () => {
 
   it('applies custom styles only to the preview without changing either embed snippet', async () => {
     const config = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
-    const original = await firstValueFrom(service.generateWidgetSnippetForEmbed(config, {}, 'embed'));
+    const original = await firstValueFrom(service.generateWidgetSnippetForEmbed(config, emptyWidgetOptions, 'embed'));
     const styled = await firstValueFrom(
       service.generateWidgetSnippetForEmbed(
         config,
-        {},
+        emptyWidgetOptions,
         'embed',
         '.search-preview-container',
         'https://dashboard.example/assets/search-preview.css',

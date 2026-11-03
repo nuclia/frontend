@@ -32,7 +32,7 @@ describe('UserListComponent', () => {
       declarations: [UserListComponent],
       providers: [
         MockProvider(UserService, {
-          getUsers: jest.fn(() => of([])),
+          getUsers: vi.fn(() => of([])),
         }),
         MockProvider(SDKService, {
           nuclia: {

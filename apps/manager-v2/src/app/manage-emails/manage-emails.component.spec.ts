@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
@@ -17,9 +18,9 @@ const users: UserSummary[] = [
 
 describe('ManageEmailsComponent', () => {
   let fixture: ComponentFixture<ManageEmailsComponent>;
-  let getUsers: jest.Mock;
-  let sendToUsers: jest.Mock;
-  let success: jest.Mock;
+  let getUsers: Mock;
+  let sendToUsers: Mock;
+  let success: Mock;
   const el = (): HTMLElement => fixture.nativeElement;
   const find = <T extends HTMLElement>(selector: string): T => {
     const element = el().querySelector<T>(selector);
@@ -48,16 +49,16 @@ describe('ManageEmailsComponent', () => {
   const tab = () => find('[role="tab"][aria-selected="true"]').textContent;
 
   beforeEach(async () => {
-    success = jest.fn();
-    getUsers = jest.fn().mockReturnValue(of(users));
-    sendToUsers = jest.fn().mockReturnValue(of({ requested: 2, queued: 2, failed: [] }));
+    success = vi.fn();
+    getUsers = vi.fn().mockReturnValue(of(users));
+    sendToUsers = vi.fn().mockReturnValue(of({ requested: 2, queued: 2, failed: [] }));
     await TestBed.configureTestingModule({
       imports: [ManageEmailsComponent],
       providers: [
         MockProvider(UserService, { getUsers }),
-        MockProvider(GlobalAccountService, { getSubscriptions: jest.fn().mockReturnValue(of([])) }),
+        MockProvider(GlobalAccountService, { getSubscriptions: vi.fn().mockReturnValue(of([])) }),
         MockProvider(EmailService, { sendToUsers }),
-        MockProvider(SisToastService, { error: jest.fn(), success }),
+        MockProvider(SisToastService, { error: vi.fn(), success }),
       ],
     }).compileComponents();
 

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FeaturesService } from '@flaps/core';
+import { mockResizeObserver } from '@nuclia/test';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { Step1Component } from './step1.component';
@@ -9,21 +10,7 @@ describe('Step1Component', () => {
   let fixture: ComponentFixture<Step1Component>;
 
   beforeAll(() => {
-    Object.defineProperty(globalThis, 'ResizeObserver', {
-      writable: true,
-      configurable: true,
-      value: class {
-        observe() {
-          /* empty */
-        }
-        unobserve() {
-          /* empty */
-        }
-        disconnect() {
-          /* empty */
-        }
-      },
-    });
+    mockResizeObserver();
   });
 
   async function createComponent(progressComSignup: boolean, detectChanges = true) {

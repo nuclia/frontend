@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FeaturesService } from '@flaps/core';
-import { DEFAULT_RESULT_DISPLAY_CONFIG, GenerativeProviders } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
+import { DEFAULT_RESULT_DISPLAY_CONFIG, GenerativeProviders } from '@nuclia/core';
 import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { ResultsDisplayFormComponent } from './results-display-form.component';
 
 describe('ResultsDisplayFormComponent', () => {
@@ -16,14 +17,14 @@ describe('ResultsDisplayFormComponent', () => {
         unsupported: { features: { structured_output: false } },
       },
     },
-  } as GenerativeProviders;
+  } as unknown as GenerativeProviders;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ResultsDisplayFormComponent],
       providers: [
         MockProvider(FeaturesService, {
-          unstable: { knowledgeGraph: false },
+          unstable: { knowledgeGraph: of(false) } as FeaturesService['unstable'],
         }),
         MockProvider(TranslateService, {
           instant: (key: string) => key,
@@ -50,7 +51,7 @@ describe('ResultsDisplayFormComponent', () => {
   });
 
   it('does not emit a user edit when model compatibility updates the form programmatically', () => {
-    const emitted = jest.fn();
+    const emitted = vi.fn();
     component.configChanged.subscribe(emitted);
 
     fixture.componentRef.setInput('generativeModel', 'unsupported');

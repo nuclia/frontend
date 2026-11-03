@@ -135,6 +135,15 @@
             }
           ]
         },
+        "unit-test": {
+          "polyfills": [],
+          "aot": false,
+          "subresourceIntegrity": false,
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        },
         "local-stage": {
           "aot": false,
           "subresourceIntegrity": false,
@@ -297,13 +306,20 @@
       }
     },
     "test": {
+      "executor": "@angular/build:unit-test",
+      "outputs": ["{workspaceRoot}/coverage/apps/admin"],
       "options": {
-        "passWithNoTests": true
+        "buildTarget": "admin:build:unit-test",
+        "tsConfig": "apps/admin/tsconfig.spec.json",
+        "runnerConfig": true,
+        "watch": false
       },
       "configurations": {
         "ci": {
-          "ci": true,
           "coverage": true
+        },
+        "watch": {
+          "watch": true
         }
       }
     },

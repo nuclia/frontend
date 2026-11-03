@@ -15,7 +15,7 @@ Handles: email/password login+signup, password recovery+reset, magic-link, SSO (
 
 **Used by:** `apps/auth`, `apps/admin`, `apps/dashboard`, `apps/rao`, `apps/manager-v2`
 **Path alias:** `@nuclia/user` → `libs/user/src/index.ts`  
-**Component prefix:** `nus` · **Nx project:** `user` · **Run:** `nx test user`
+**Component prefix:** `nus` · **Nx project:** `user` · **Run:** `nx test user` (Vitest via Angular builder, own `test-build` target)
 
 ---
 

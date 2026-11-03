@@ -57,14 +57,14 @@ describe('KbOnboardingHeaderComponent', () => {
         provideTranslateService({ fallbackLang: 'en' }),
         MockProvider(KbOnboardingStateService, {
           onboardingState$: stateSubject.asObservable(),
-          markDone: jest.fn(),
+          markDone: vi.fn(),
         }),
         MockProvider(SisModalService, {
-          openModal: jest.fn(),
+          openModal: vi.fn(),
         }),
         MockProvider(NavigationService, {
-          getResourceListUrl: jest.fn(() => of('/data/resources')),
-          getSearchUrl: jest.fn(() => of('/search')),
+          getResourceListUrl: vi.fn(() => of('/data/resources')),
+          getSearchUrl: vi.fn(() => of('/search')),
         }),
       ],
     }).compileComponents();

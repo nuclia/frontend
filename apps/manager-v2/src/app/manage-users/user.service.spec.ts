@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 
 import { UserService } from './user.service';
@@ -20,10 +21,10 @@ describe('UserService', () => {
   });
 
   describe('getUsers', () => {
-    let get: jest.Mock;
+    let get: Mock;
 
     beforeEach(() => {
-      get = jest.fn().mockReturnValue(of([]));
+      get = vi.fn().mockReturnValue(of([]));
       (service as unknown as { sdk: unknown }).sdk = { nuclia: { rest: { get } } };
     });
 

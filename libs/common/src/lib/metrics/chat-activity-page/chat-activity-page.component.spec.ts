@@ -14,8 +14,8 @@ describe('ChatActivityPageComponent', () => {
   beforeEach(async () => {
     const mockKb = {
       activityMonitor: {
-        queryActivityLogs: jest.fn().mockReturnValue(of([])),
-        getMonthsWithActivity: jest.fn().mockReturnValue(of({ downloads: [] })),
+        queryActivityLogs: vi.fn().mockReturnValue(of([])),
+        getMonthsWithActivity: vi.fn().mockReturnValue(of({ downloads: [] })),
       },
     };
     const mockAccount = {

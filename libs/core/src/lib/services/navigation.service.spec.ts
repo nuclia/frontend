@@ -27,9 +27,9 @@ describe('NavigationService', () => {
         MockProvider(Router, {
           url: '/',
           events: EMPTY,
-          navigate: jest.fn().mockResolvedValue(true),
-          navigateByUrl: jest.fn().mockResolvedValue(true),
-          createUrlTree: jest.fn().mockReturnValue('URL_TREE' as any),
+          navigate: vi.fn().mockResolvedValue(true),
+          navigateByUrl: vi.fn().mockResolvedValue(true),
+          createUrlTree: vi.fn().mockReturnValue('URL_TREE' as any),
         }),
         MockProvider(AuthService),
         MockProvider(SDKService, {
@@ -37,13 +37,13 @@ describe('NavigationService', () => {
           currentKb: of(null) as any,
           arag: of(null) as any,
           nuclia: { options: {} } as any,
-          getOriginForApp: jest.fn().mockReturnValue('https://rao.stashify.cloud'),
+          getOriginForApp: vi.fn().mockReturnValue('https://rao.stashify.cloud'),
         } as any),
         MockProvider(AccountEntryContextService, {
-          get: jest.fn().mockReturnValue(entryContextOverride),
+          get: vi.fn().mockReturnValue(entryContextOverride),
         }),
         MockProvider(BackendConfigurationService, {
-          getAdminOrigin: jest.fn().mockReturnValue(undefined),
+          getAdminOrigin: vi.fn().mockReturnValue(undefined),
         }),
         { provide: WINDOW, useFactory: () => fakeWindow },
         { provide: 'staticEnvironmentConfiguration', useValue: { ...STATIC_ENV, ...overrides } },
@@ -148,13 +148,13 @@ describe('NavigationService', () => {
 
     it('computes the admin origin via the SDK when no local override is configured', () => {
       const service = setup({ client: 'dashboard' });
-      jest.spyOn(service['sdk'], 'getOriginForApp').mockReturnValue('https://admin.stashify.cloud');
+      vi.spyOn(service['sdk'], 'getOriginForApp').mockReturnValue('https://admin.stashify.cloud');
       expect(service.getAccountManageUrl('my-account')).toBe('https://admin.stashify.cloud/at/my-account');
     });
 
     it('prefers the local-dev adminOrigin override when configured', () => {
       const service = setup({ client: 'dashboard' });
-      jest.spyOn(backendConfig, 'getAdminOrigin').mockReturnValue('http://localhost:4300');
+      vi.spyOn(backendConfig, 'getAdminOrigin').mockReturnValue('http://localhost:4300');
       expect(service.getAccountManageUrl('my-account')).toBe('http://localhost:4300/at/my-account');
     });
   });

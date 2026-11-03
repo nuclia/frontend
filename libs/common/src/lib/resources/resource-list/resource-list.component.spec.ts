@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, ResourceListService, SDKService, UploadService } from '@flaps/core';
@@ -10,13 +11,13 @@ describe('ResourceListComponent download action', () => {
   let fixture: ComponentFixture<ResourceListComponent>;
   let component: ResourceListComponent;
   let download: Subject<void>;
-  let service: { downloadResources: jest.Mock };
-  let toaster: { error: jest.Mock };
+  let service: { downloadResources: Mock };
+  let toaster: { error: Mock };
 
   beforeEach(() => {
     download = new Subject<void>();
-    service = { downloadResources: jest.fn(() => download) };
-    toaster = { error: jest.fn() };
+    service = { downloadResources: vi.fn(() => download) };
+    toaster = { error: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         { provide: ActivatedRoute, useValue: { params: EMPTY } },

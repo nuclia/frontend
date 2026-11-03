@@ -1,10 +1,11 @@
-import { TextEncoder, TextDecoder } from 'node:util';
+import { TextDecoder, TextEncoder } from 'node:util';
+import type { Mock } from 'vitest';
 
 Object.assign(global, { TextDecoder, TextEncoder });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mockFetch = (response: any) => {
-  global.fetch = jest.fn(() =>
+  global.fetch = vi.fn(() =>
     Promise.resolve({
       status: 200,
       ok: true,
@@ -14,11 +15,11 @@ export const mockFetch = (response: any) => {
       json: () => Promise.resolve(response),
       text: () => Promise.resolve(response),
     }),
-  ) as jest.Mock;
+  ) as Mock;
 };
 
 export const multiMockFetch = (responses: { [url: string]: any }) => {
-  global.fetch = jest.fn((url: string) => {
+  global.fetch = vi.fn((url: string) => {
     const response = responses[url];
     return Promise.resolve({
       status: 200,
@@ -29,12 +30,12 @@ export const multiMockFetch = (responses: { [url: string]: any }) => {
       json: () => Promise.resolve(response),
       text: () => Promise.resolve(response),
     });
-  }) as jest.Mock;
+  }) as Mock;
 };
 
 export const mockReadableStream = (rows: string[], counter: { index: number }) => {
   const encoder = new TextEncoder();
-  global.fetch = jest.fn(() => {
+  global.fetch = vi.fn(() => {
     return Promise.resolve({
       status: 200,
       ok: true,
@@ -55,7 +56,7 @@ export const mockReadableStream = (rows: string[], counter: { index: number }) =
         }),
       },
     });
-  }) as jest.Mock;
+  }) as Mock;
 };
 export class LocalStorageMock {
   store: { [key: string]: string } = {};
@@ -65,7 +66,7 @@ export class LocalStorageMock {
   }
 
   getItem(key: string) {
-    return this.store[key] || null;
+    return key in this.store ? this.store[key] : null;
   }
 
   setItem(key: string, value: string) {

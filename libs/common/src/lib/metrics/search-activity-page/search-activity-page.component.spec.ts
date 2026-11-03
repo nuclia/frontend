@@ -14,9 +14,9 @@ describe('SearchActivityPageComponent', () => {
   beforeEach(async () => {
     const mockKb = {
       activityMonitor: {
-        queryActivityLogs: jest.fn().mockReturnValue(of([])),
-        getMonthsWithActivity: jest.fn().mockReturnValue(of({ downloads: [] })),
-        getSearchMetrics: jest.fn().mockReturnValue(of([])),
+        queryActivityLogs: vi.fn().mockReturnValue(of([])),
+        getMonthsWithActivity: vi.fn().mockReturnValue(of({ downloads: [] })),
+        getSearchMetrics: vi.fn().mockReturnValue(of([])),
       },
     };
     const mockAccount = {

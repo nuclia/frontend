@@ -13,14 +13,14 @@ describe('RestartOnboardingModalComponent', () => {
 
   beforeEach(async () => {
     modalRef = new ModalRef({ id: 0, config: new ModalConfig({}) });
-    jest.spyOn(modalRef, 'close');
+    vi.spyOn(modalRef, 'close');
 
     await TestBed.configureTestingModule({
       imports: [RestartOnboardingModalComponent, MockModule(PaButtonModule), MockModule(PaModalModule)],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(KbOnboardingStateService, {
-          restart: jest.fn(),
+          restart: vi.fn(),
         }),
       ],
     }).compileComponents();
@@ -51,8 +51,8 @@ describe('RestartOnboardingModalComponent', () => {
 
     it('should call restart() before close()', () => {
       const callOrder: string[] = [];
-      jest.spyOn(stateService, 'restart').mockImplementation(() => callOrder.push('restart'));
-      jest.spyOn(modalRef, 'close').mockImplementation(() => callOrder.push('close'));
+      vi.spyOn(stateService, 'restart').mockImplementation(() => callOrder.push('restart'));
+      vi.spyOn(modalRef, 'close').mockImplementation(() => callOrder.push('close'));
 
       component.confirmRestart();
 

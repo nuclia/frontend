@@ -23,7 +23,7 @@ describe('KbMoreActionsComponent', () => {
       ],
       providers: [
         MockProvider(SisModalService, {
-          openModal: jest.fn(),
+          openModal: vi.fn(),
         }),
       ],
     }).compileComponents();

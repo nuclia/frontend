@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { MockProvider } from 'ng-mocks';
 import { SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
+import { MockProvider } from 'ng-mocks';
+import { firstValueFrom, of } from 'rxjs';
 import { RemiMetricsService } from './remi-metrics.service';
 
 describe('RemiMetricsService', () => {
@@ -11,9 +11,9 @@ describe('RemiMetricsService', () => {
   beforeEach(() => {
     const mockKb = {
       activityMonitor: {
-        getRemiScores: jest.fn().mockReturnValue(of([])),
-        queryRemiScores: jest.fn().mockReturnValue(of({ data: [], has_more: false })),
-        getFullContexts: jest.fn().mockReturnValue(of({})),
+        getRemiScores: vi.fn().mockReturnValue(of([])),
+        queryRemiScores: vi.fn().mockReturnValue(of({ data: [], has_more: false })),
+        getFullContexts: vi.fn().mockReturnValue(of({})),
       },
     };
 
@@ -31,18 +31,12 @@ describe('RemiMetricsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('defaults the period to 7d', (done) => {
-    service.period.subscribe((period) => {
-      expect(period).toBe('7d');
-      done();
-    });
+  it('defaults the period to 7d', async () => {
+    expect(await firstValueFrom(service.period)).toBe('7d');
   });
 
-  it('updatePeriod changes the period', (done) => {
+  it('updatePeriod changes the period', async () => {
     service.updatePeriod('24h');
-    service.period.subscribe((period) => {
-      expect(period).toBe('24h');
-      done();
-    });
+    expect(await firstValueFrom(service.period)).toBe('24h');
   });
 });

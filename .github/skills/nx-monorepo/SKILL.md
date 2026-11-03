@@ -138,7 +138,7 @@ nx g @nx/angular:library <name> --directory=libs/<name> --importPath=@nuclia/<na
 - Sets up `project.json`, `tsconfig.lib.json`, barrel `src/index.ts`
 - Register the `importPath` in `tsconfig.base.json` manually if the generator doesn't — verify
   after running.
-- Angular lib generator defaults: `linter: eslint`, `unitTestRunner: jest`.
+- Angular lib generator defaults: `linter: eslint`, `unitTestRunner: vitest-angular`.
 
 ### Application
 
@@ -146,7 +146,7 @@ nx g @nx/angular:library <name> --directory=libs/<name> --importPath=@nuclia/<na
 nx g @nx/angular:application <name> --directory=apps/<name>
 ```
 
-- Defaults: `style: scss`, `linter: eslint`, `unitTestRunner: jest`, `e2eTestRunner: none`.
+- Defaults: `style: scss`, `linter: eslint`, `unitTestRunner: vitest-angular`, `e2eTestRunner: none`.
 
 ## project.json — Targets & Executors
 
@@ -181,18 +181,27 @@ used in this workspace.
 }
 ```
 
-### Jest test (Angular / libs)
+### Angular unit test (apps / libs with specs)
 
 ```jsonc
 "test": {
-  "executor": "@nx/jest:jest",
+  "executor": "@angular/build:unit-test",
   "outputs": ["{workspaceRoot}/coverage/libs/<name>"],
   "options": {
-    "jestConfig": "<projectRoot>/jest.config.js",
-    "tsConfig": "<projectRoot>/tsconfig.spec.json"
-  }
+    "buildTarget": "<lib>:test-build", // libs own a test-build target; apps use "<app>:build:unit-test"
+    "tsConfig": "<projectRoot>/tsconfig.spec.json",
+    "providersFile": "test/translate-test-provider.ts",
+    "runnerConfig": true, // picks up <projectRoot>/vitest-base.config.mts (coverage dir)
+    "watch": false
+  },
+  "configurations": { "ci": { "coverage": true }, "watch": { "watch": true } }
 }
 ```
+
+The build configuration used as `buildTarget` must set `polyfills: []` (a file-path polyfill loads `zone.js`).
+Every Angular project needs this official `test` target and at least one spec (the builder has no `passWithNoTests`).
+`@nx/vitest` only infers a `test` target for the plain-Vitest projects (`sdk-core`, `chrome-ext`) listed in the plugin
+`include` in `nx.json`.
 
 ### ESLint lint
 
@@ -213,7 +222,6 @@ From `nx.json`, these defaults apply workspace-wide:
 | ----------------- | --------------------- | ------- |
 | `build`           | `^build` (deps first) | ✅      |
 | `test`            | —                     | ✅      |
-| `@nx/jest:jest`   | —                     | ✅      |
 | `@nx/eslint:lint` | —                     | ✅      |
 
 `dependsOn: ["^build"]` means a project's `build` will automatically build all its lib

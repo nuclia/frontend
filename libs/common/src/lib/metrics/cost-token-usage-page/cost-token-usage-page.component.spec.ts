@@ -15,7 +15,7 @@ describe('CostTokenUsagePageComponent', () => {
   beforeEach(async () => {
     const mockKb = {
       activityMonitor: {
-        queryActivityLogs: jest.fn().mockReturnValue(of([])),
+        queryActivityLogs: vi.fn().mockReturnValue(of([])),
       },
     };
 
@@ -25,7 +25,7 @@ describe('CostTokenUsagePageComponent', () => {
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),
           currentAccount: of({ id: 'acc-1' } as any),
-          nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+          nuclia: { db: { getUsage: vi.fn().mockReturnValue(of([])) } } as any,
         }),
         MockProvider(UserService),
         MockProvider(SisToastService),

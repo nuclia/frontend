@@ -38,7 +38,7 @@ function createCustomerForm() {
 }
 
 let checkoutService: Partial<CheckoutService>;
-const initStripe = jest.fn();
+const initStripe = vi.fn();
 const cardError = signal('');
 
 describe('CheckoutFormComponent', () => {

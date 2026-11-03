@@ -5,6 +5,7 @@
 `chrome-ext` is a **Chrome browser extension** called **"Agentic RAG tools"** (v0.0.6). Its sole purpose is to let users upload web page content directly into a Nuclia Knowledge Box (KB) from any page in Chrome, without leaving the browser.
 
 Key capabilities:
+
 - Adds a **right-click context menu** entry ("Upload to Agentic RAG") on every HTTP/HTTPS page.
 - Supports uploading with optional **label classification** by fetching KB labelsets dynamically and adding them as submenus.
 - Replaces `<img>` relative URLs with **base64 data URIs** before uploading, so images are self-contained.
@@ -20,7 +21,7 @@ Key capabilities:
 ```
 libs/chrome-ext/
 ├── README.md                   # Quick-start instructions
-├── jest.config.ts              # Jest configuration (ts-jest); no tests exist yet
+├── vitest.config.mts           # Plain Vitest placeholder (passWithNoTests); no tests exist yet
 ├── project.json                # Nx project definition and build/test targets
 ├── tsconfig.spec.json          # TypeScript config scoped to spec/test files
 └── src/
@@ -57,6 +58,7 @@ Defined in `project.json` under the `build` target (`nx:run-commands`), executed
 After building, the loadable extension lives at **`dist/libs/chrome-ext/`**.
 
 To build:
+
 ```bash
 nx build chrome-ext
 ```
@@ -77,11 +79,11 @@ Full instructions: [Chrome "Load unpacked" guide](https://developer.chrome.com/d
 
 ## External Dependencies
 
-| Dependency | How it arrives | Usage |
-|---|---|---|
-| `sdk-core` (workspace lib) | Built as `dist/sdk-core/umd/index.js`, copied to `vendor/nuclia-sdk.umd.min.js` | Provides `NucliaSDK.Nuclia` — the Nuclia API client class |
-| `rxjs` (npm) | `node_modules/rxjs/dist/bundles/rxjs.umd.min.js`, copied to `vendor/rxjs.umd.min.js` | RxJS operators (`switchMap`, `map`, `tap`, `catchError`, `forkJoin`, `from`, `of`) used extensively in async flows |
-| Chrome Extension APIs | Runtime APIs; no install needed | `chrome.storage`, `chrome.contextMenus`, `chrome.notifications`, `chrome.scripting`, `chrome.tabs`, `chrome.runtime` |
+| Dependency                 | How it arrives                                                                       | Usage                                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `sdk-core` (workspace lib) | Built as `dist/sdk-core/umd/index.js`, copied to `vendor/nuclia-sdk.umd.min.js`      | Provides `NucliaSDK.Nuclia` — the Nuclia API client class                                                            |
+| `rxjs` (npm)               | `node_modules/rxjs/dist/bundles/rxjs.umd.min.js`, copied to `vendor/rxjs.umd.min.js` | RxJS operators (`switchMap`, `map`, `tap`, `catchError`, `forkJoin`, `from`, `of`) used extensively in async flows   |
+| Chrome Extension APIs      | Runtime APIs; no install needed                                                      | `chrome.storage`, `chrome.contextMenus`, `chrome.notifications`, `chrome.scripting`, `chrome.tabs`, `chrome.runtime` |
 
 Both vendor bundles are loaded via `<script>` tags in `options.html` and via `importScripts()` in the service worker (`background.js`).
 
@@ -93,16 +95,16 @@ Both vendor bundles are loaded via `<script>` tags in `options.html` and via `im
 
 Loaded by both `background.js` (via `importScripts`) and `options.html` (via `<script>`).
 
-| Symbol | Signature | Description |
-|---|---|---|
-| `API_URL` | `const string` | Base API URL: `https://accounts.progress.cloud/api` |
-| `DASHBOARD_URL` | `const string` | Dashboard URL: `https://rag.progress.cloud` |
-| `SETTINGS` | `const object` | Default settings shape: `{ NUCLIA_ACCOUNT, NUCLIA_KB, NUCLIA_TOKEN, ZONE }` (all empty strings) |
-| `localStorage` | polyfill | Overrides the global `localStorage` with an in-memory object because service workers do not support the real one |
-| `getSDK(token, zone)` | `(string, string) → Nuclia` | Creates and authenticates a `NucliaSDK.Nuclia` instance. Sets `client: 'chrome_extension'` and `backend: API_URL`. Authentication uses `access_token` only (no token refresh). |
-| `getLoginUrl()` | `() → string` | Builds the OAuth redirect URL: `${DASHBOARD_URL}/redirect?redirect=<options-page-url>&fromExtension=true` |
-| `getStorage()` | `() → localStorage-like object` | Returns a plain-object-backed localStorage with `getItem`, `setItem`, `removeItem`, `clear` |
-| `getSettings()` | `() → Promise<Settings>` | Reads `{ NUCLIA_ACCOUNT, NUCLIA_KB, NUCLIA_TOKEN, ZONE }` from `chrome.storage.local` |
+| Symbol                | Signature                       | Description                                                                                                                                                                    |
+| --------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `API_URL`             | `const string`                  | Base API URL: `https://accounts.progress.cloud/api`                                                                                                                            |
+| `DASHBOARD_URL`       | `const string`                  | Dashboard URL: `https://rag.progress.cloud`                                                                                                                                    |
+| `SETTINGS`            | `const object`                  | Default settings shape: `{ NUCLIA_ACCOUNT, NUCLIA_KB, NUCLIA_TOKEN, ZONE }` (all empty strings)                                                                                |
+| `localStorage`        | polyfill                        | Overrides the global `localStorage` with an in-memory object because service workers do not support the real one                                                               |
+| `getSDK(token, zone)` | `(string, string) → Nuclia`     | Creates and authenticates a `NucliaSDK.Nuclia` instance. Sets `client: 'chrome_extension'` and `backend: API_URL`. Authentication uses `access_token` only (no token refresh). |
+| `getLoginUrl()`       | `() → string`                   | Builds the OAuth redirect URL: `${DASHBOARD_URL}/redirect?redirect=<options-page-url>&fromExtension=true`                                                                      |
+| `getStorage()`        | `() → localStorage-like object` | Returns a plain-object-backed localStorage with `getItem`, `setItem`, `removeItem`, `clear`                                                                                    |
+| `getSettings()`       | `() → Promise<Settings>`        | Reads `{ NUCLIA_ACCOUNT, NUCLIA_KB, NUCLIA_TOKEN, ZONE }` from `chrome.storage.local`                                                                                          |
 
 ---
 
@@ -112,34 +114,34 @@ Entry point for the extension's background logic. Registered as `"service_worker
 
 **Event listeners registered at module level:**
 
-| Event | Handler | Description |
-|---|---|---|
-| `chrome.runtime.onInstalled` | `createMenu()` | Rebuilds the context menu on first install or extension update |
-| `chrome.runtime.onMessage` | checks `request.action === 'UPDATE_MENU'` | Re-runs `createMenu()` so the options page can trigger a menu refresh after saving settings |
-| `chrome.contextMenus.onClicked` | upload flow | Reads settings → gets page HTML → uploads; redirects to options page if settings are missing |
+| Event                           | Handler                                   | Description                                                                                  |
+| ------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `chrome.runtime.onInstalled`    | `createMenu()`                            | Rebuilds the context menu on first install or extension update                               |
+| `chrome.runtime.onMessage`      | checks `request.action === 'UPDATE_MENU'` | Re-runs `createMenu()` so the options page can trigger a menu refresh after saving settings  |
+| `chrome.contextMenus.onClicked` | upload flow                               | Reads settings → gets page HTML → uploads; redirects to options page if settings are missing |
 
 **Functions:**
 
-| Function | Signature | Description |
-|---|---|---|
-| `createMenu()` | `() → void` | Removes all existing context menus and recreates them. If settings are fully configured it also fetches labelsets and creates label submenus. |
-| `createSubmenus(labelsets, type)` | `(Array, MenuType) → void` | Adds a nested "Upload with label…" parent menu entry, then one sub-item per labelset, and one leaf per label within each labelset. Menu IDs follow the pattern `NUCLIA_LABELSET_<type>_<key>_<label>`. |
-| `getCurrentTabContent(tabId)` | `(number) → Promise<string>` | Uses `chrome.scripting.executeScript` to inject an expression that returns `document.documentElement.outerHTML`. |
-| `getLabels(settings)` | `(Settings) → Observable<Array>` | Calls `sdk.db.getKnowledgeBox(…).pipe(switchMap(kb => kb.getLabels()))`, then sorts by key, filters to labelsets of kind `RESOURCES` (or unspecified kind), and filters out empty labelsets. |
-| `uploadPage(settings, url, html, labels)` | `(Settings, string, string, Label[]) → void` | Calls `replaceImages` to inline images, then `createResource` to upload the page as `text/html`. On success shows a notification; on error opens the options page. |
-| `createResource(settings, title, fileData, labels, mime)` | `(Settings, string, Blob, Label[], string) → Observable` | Gets the KB, creates a resource with `title` and label classifications, then uploads `fileData` as a file attachment. |
-| `replaceImages(html, pageUrl)` | `(string, string) → Observable<string>` | Finds all `<img src="…">` tags, fetches each image URL (filtering to HTTP/HTTPS absolute URLs), converts them to base64 data URIs via `FileReader`, and substitutes them back into the HTML string. Errors per-image are silently swallowed. |
-| `openOptionsPage()` | `() → void` | Opens `options/options.html?error=true` in a new tab. |
-| `showNotification(title, message, error?)` | `(string, string, boolean) → void` | Creates a basic Chrome notification with `icon128.png` (or `error.png` if `error=true`). |
+| Function                                                  | Signature                                                | Description                                                                                                                                                                                                                                  |
+| --------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createMenu()`                                            | `() → void`                                              | Removes all existing context menus and recreates them. If settings are fully configured it also fetches labelsets and creates label submenus.                                                                                                |
+| `createSubmenus(labelsets, type)`                         | `(Array, MenuType) → void`                               | Adds a nested "Upload with label…" parent menu entry, then one sub-item per labelset, and one leaf per label within each labelset. Menu IDs follow the pattern `NUCLIA_LABELSET_<type>_<key>_<label>`.                                       |
+| `getCurrentTabContent(tabId)`                             | `(number) → Promise<string>`                             | Uses `chrome.scripting.executeScript` to inject an expression that returns `document.documentElement.outerHTML`.                                                                                                                             |
+| `getLabels(settings)`                                     | `(Settings) → Observable<Array>`                         | Calls `sdk.db.getKnowledgeBox(…).pipe(switchMap(kb => kb.getLabels()))`, then sorts by key, filters to labelsets of kind `RESOURCES` (or unspecified kind), and filters out empty labelsets.                                                 |
+| `uploadPage(settings, url, html, labels)`                 | `(Settings, string, string, Label[]) → void`             | Calls `replaceImages` to inline images, then `createResource` to upload the page as `text/html`. On success shows a notification; on error opens the options page.                                                                           |
+| `createResource(settings, title, fileData, labels, mime)` | `(Settings, string, Blob, Label[], string) → Observable` | Gets the KB, creates a resource with `title` and label classifications, then uploads `fileData` as a file attachment.                                                                                                                        |
+| `replaceImages(html, pageUrl)`                            | `(string, string) → Observable<string>`                  | Finds all `<img src="…">` tags, fetches each image URL (filtering to HTTP/HTTPS absolute URLs), converts them to base64 data URIs via `FileReader`, and substitutes them back into the HTML string. Errors per-image are silently swallowed. |
+| `openOptionsPage()`                                       | `() → void`                                              | Opens `options/options.html?error=true` in a new tab.                                                                                                                                                                                        |
+| `showNotification(title, message, error?)`                | `(string, string, boolean) → void`                       | Creates a basic Chrome notification with `icon128.png` (or `error.png` if `error=true`).                                                                                                                                                     |
 
 **Constants:**
 
-| Constant | Value / Purpose |
-|---|---|
-| `MENU_LABELSET_PREFIX` | `"NUCLIA_LABELSET"` — prefix for labelset menu item IDs |
-| `TITLE_REGEX` | Extracts `<title>` content from HTML |
-| `IMG_REGEX` | Matches all `<img src="…">` URLs (global, case-insensitive) |
-| `MENU_TYPES` | Array with one entry `{ name: 'PAGE', options: { contexts: ['page'], documentUrlPatterns: ['https://*/*', 'http://*/*'] } }` — easily extended for additional contexts |
+| Constant               | Value / Purpose                                                                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MENU_LABELSET_PREFIX` | `"NUCLIA_LABELSET"` — prefix for labelset menu item IDs                                                                                                                |
+| `TITLE_REGEX`          | Extracts `<title>` content from HTML                                                                                                                                   |
+| `IMG_REGEX`            | Matches all `<img src="…">` URLs (global, case-insensitive)                                                                                                            |
+| `MENU_TYPES`           | Array with one entry `{ name: 'PAGE', options: { contexts: ['page'], documentUrlPatterns: ['https://*/*', 'http://*/*'] } }` — easily extended for additional contexts |
 
 ---
 
@@ -147,16 +149,16 @@ Entry point for the extension's background logic. Registered as `"service_worker
 
 Runs in the context of `options.html`. All DOM interactions happen after `DOMContentLoaded`.
 
-| Function | Signature | Description |
-|---|---|---|
-| `init()` | `() → void` | Entry point. Reads `access_token` from URL params (OAuth callback), saves it, then calls `fetchData()`. |
-| `fetchData()` | `() → void` | RxJS chain: validates token → fetches accounts → fetches KBs per account (filtered to `SOWNER`/`SCONTRIBUTOR` roles) → determines if saved settings point to a valid KB → calls `initUI()`. |
-| `initUI()` | `() → void` | Shows exactly one panel: `#error` (if `?error` query param), `#welcome` (logged in + valid KB + just came from OAuth), `#logged` (logged in, needs config), or `#auth` (not logged in). |
-| `setAccountOptions()` | `() → void` | Populates the `#account` `<select>` with fetched accounts and wires a `change` handler to refresh the KB dropdown. |
-| `setKbOptions(account)` | `(string) → void` | Populates the `#kb` `<select>` with KBs for the given account. Disables the select if no account is chosen. |
-| `saveForm()` | `() → void` | Reads `#account` and `#kb` values, derives the KB zone, saves `{ NUCLIA_ACCOUNT, NUCLIA_KB, ZONE }` to `chrome.storage.local`, briefly shows "Settings saved" text, and sends `{ action: 'UPDATE_MENU' }` to the service worker. |
-| `login()` | `() → void` | Redirects to `getLoginUrl()`. |
-| `close()` | `() → void` | Closes the current tab via `chrome.tabs.getCurrent` + `chrome.tabs.remove`. |
+| Function                | Signature         | Description                                                                                                                                                                                                                      |
+| ----------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `init()`                | `() → void`       | Entry point. Reads `access_token` from URL params (OAuth callback), saves it, then calls `fetchData()`.                                                                                                                          |
+| `fetchData()`           | `() → void`       | RxJS chain: validates token → fetches accounts → fetches KBs per account (filtered to `SOWNER`/`SCONTRIBUTOR` roles) → determines if saved settings point to a valid KB → calls `initUI()`.                                      |
+| `initUI()`              | `() → void`       | Shows exactly one panel: `#error` (if `?error` query param), `#welcome` (logged in + valid KB + just came from OAuth), `#logged` (logged in, needs config), or `#auth` (not logged in).                                          |
+| `setAccountOptions()`   | `() → void`       | Populates the `#account` `<select>` with fetched accounts and wires a `change` handler to refresh the KB dropdown.                                                                                                               |
+| `setKbOptions(account)` | `(string) → void` | Populates the `#kb` `<select>` with KBs for the given account. Disables the select if no account is chosen.                                                                                                                      |
+| `saveForm()`            | `() → void`       | Reads `#account` and `#kb` values, derives the KB zone, saves `{ NUCLIA_ACCOUNT, NUCLIA_KB, ZONE }` to `chrome.storage.local`, briefly shows "Settings saved" text, and sends `{ action: 'UPDATE_MENU' }` to the service worker. |
+| `login()`               | `() → void`       | Redirects to `getLoginUrl()`.                                                                                                                                                                                                    |
+| `close()`               | `() → void`       | Closes the current tab via `chrome.tabs.getCurrent` + `chrome.tabs.remove`.                                                                                                                                                      |
 
 **Persistent state object (module-level `data`):**
 
@@ -176,14 +178,15 @@ Runs in the context of `options.html`. All DOM interactions happen after `DOMCon
 
 Four mutually exclusive panels, each toggled by removing the `hidden` CSS class:
 
-| Element ID | Shown when |
-|---|---|
-| `#error` | `?error` query param is present (upload failed from context menu) |
-| `#auth` | User is not logged in |
-| `#welcome` | User just completed OAuth and KB is already configured |
-| `#logged` | User is logged in but needs to configure/confirm KB |
+| Element ID | Shown when                                                        |
+| ---------- | ----------------------------------------------------------------- |
+| `#error`   | `?error` query param is present (upload failed from context menu) |
+| `#auth`    | User is not logged in                                             |
+| `#welcome` | User just completed OAuth and KB is already configured            |
+| `#logged`  | User is logged in but needs to configure/confirm KB               |
 
 Script loading order (critical — each script depends on the previous):
+
 1. `../api.js`
 2. `../vendor/rxjs.umd.min.js`
 3. `../vendor/nuclia-sdk.umd.min.js`
@@ -193,27 +196,27 @@ Script loading order (critical — each script depends on the previous):
 
 ## Chrome Extension Manifest Summary
 
-| Field | Value |
-|---|---|
-| Name | Agentic RAG tools |
-| Version | 0.0.6 |
-| Manifest version | 3 |
-| Background | Service worker: `background.js` |
-| Options UI | `options/options.html` (opens in tab) |
-| Permissions | `storage`, `contextMenus`, `notifications`, `activeTab`, `scripting` |
-| Host permissions | `*://*/*` (all HTTP/HTTPS sites) |
+| Field                    | Value                                                                                                           |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Name                     | Agentic RAG tools                                                                                               |
+| Version                  | 0.0.6                                                                                                           |
+| Manifest version         | 3                                                                                                               |
+| Background               | Service worker: `background.js`                                                                                 |
+| Options UI               | `options/options.html` (opens in tab)                                                                           |
+| Permissions              | `storage`, `contextMenus`, `notifications`, `activeTab`, `scripting`                                            |
+| Host permissions         | `*://*/*` (all HTTP/HTTPS sites)                                                                                |
 | Web-accessible resources | `options/options.html` accessible from `localhost:4200`, `stashify.cloud`, `nuclia.cloud`, `rag.progress.cloud` |
 
 ---
 
 ## Settings Stored in `chrome.storage.local`
 
-| Key | Type | Description |
-|---|---|---|
-| `NUCLIA_ACCOUNT` | string | The user's selected Nuclia account ID |
-| `NUCLIA_KB` | string | The selected Knowledge Box ID |
-| `NUCLIA_TOKEN` | string | OAuth access token (no refresh; single-use) |
-| `ZONE` | string | The zone of the selected KB (e.g., `europe-1`) |
+| Key              | Type   | Description                                    |
+| ---------------- | ------ | ---------------------------------------------- |
+| `NUCLIA_ACCOUNT` | string | The user's selected Nuclia account ID          |
+| `NUCLIA_KB`      | string | The selected Knowledge Box ID                  |
+| `NUCLIA_TOKEN`   | string | OAuth access token (no refresh; single-use)    |
+| `ZONE`           | string | The zone of the selected KB (e.g., `europe-1`) |
 
 ---
 
@@ -242,6 +245,7 @@ User right-clicks → contextMenus.onClicked
 This library is **not imported as a module** by any other app or lib in the monorepo. It is consumed only as a built artifact at `dist/libs/chrome-ext/`.
 
 To extend the extension:
+
 - **Add a new context type** (e.g., right-click on selected text): add an entry to `MENU_TYPES` in `background.js` with a different `name` and `contexts` value.
 - **Support token refresh**: update `getSDK()` in `api.js` to pass a `refresh_token` and hook into the SDK's auth refresh lifecycle.
 - **Change the target backend**: update `API_URL` and `DASHBOARD_URL` in `api.js`.
@@ -251,14 +255,16 @@ To extend the extension:
 
 ## Testing Approach
 
-The Jest configuration (`jest.config.ts`) uses `ts-jest` targeting `*.spec.ts` / `*.test.ts` files. **No test files currently exist** in this library.
+The Vitest configuration (`vitest.config.mts`) is a plain placeholder with `passWithNoTests` targeting `*.spec.ts` / `*.test.ts` files. **No test files currently exist** in this library.
 
 The source files are plain `.js` (not TypeScript), so any tests would need to:
-- Mock `chrome.*` APIs (use a library like `jest-chrome` or manual mocks).
+
+- Mock `chrome.*` APIs manually with `vi.fn()`.
 - Mock `NucliaSDK` and `rxjs` globals (loaded as UMD globals at runtime, not ES imports).
 - Test helper functions in `api.js` and `background.js` exported or extracted for testing.
 
 To run (once tests exist):
+
 ```bash
 nx test chrome-ext
 ```

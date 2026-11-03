@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IResource, LabelSets } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, firstValueFrom, of, take } from 'rxjs';
+import type { Mock } from 'vitest';
 import { SDKService } from '../api';
 import { LabelsService } from '../label';
 import { UploadService } from '../upload';
@@ -13,8 +14,8 @@ import { ResourceNavigationService } from './resource-navigation.service';
 describe('ResourceListService optional columns', () => {
   let labelSets: BehaviorSubject<LabelSets | null>;
   let resources: BehaviorSubject<{ type: string; resources: Record<string, IResource> }>;
-  let catalog: jest.Mock;
-  let storage: { getItem: jest.Mock; setItem: jest.Mock };
+  let catalog: Mock;
+  let storage: { getItem: Mock; setItem: Mock };
 
   beforeEach(() => {
     labelSets = new BehaviorSubject<LabelSets | null>({});
@@ -22,10 +23,10 @@ describe('ResourceListService optional columns', () => {
       type: 'searchResults',
       resources: {},
     });
-    catalog = jest.fn(() => resources.pipe(take(1)));
+    catalog = vi.fn(() => resources.pipe(take(1)));
     storage = {
-      getItem: jest.fn(() => JSON.stringify({ columns: ['classification'] })),
-      setItem: jest.fn(),
+      getItem: vi.fn(() => JSON.stringify({ columns: ['classification'] })),
+      setItem: vi.fn(),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -45,7 +46,7 @@ describe('ResourceListService optional columns', () => {
     const service = TestBed.inject(ResourceListService);
     const availability: boolean[] = [];
     const subscription = service.hasLabels.subscribe((value) => availability.push(value));
-    const labelSet = { title: 'Topics', kind: [], labels: [] };
+    const labelSet = { title: 'Topics', color: 'blue', multiple: true, kind: [], labels: [] };
 
     labelSets.next({ topics: labelSet });
     labelSets.next({ topics: { ...labelSet, labels: [{ title: 'News' }] } });
@@ -64,15 +65,17 @@ describe('ResourceListService optional columns', () => {
     const subscription = service.hasLabels.subscribe((value) => availability.push(value));
 
     expect(availability).toEqual([]);
-    labelSets.next({ topics: { title: 'Topics', kind: [], labels: [{ title: 'News' }] } });
+    labelSets.next({
+      topics: { title: 'Topics', color: 'blue', multiple: true, kind: [], labels: [{ title: 'News' }] },
+    });
     expect(availability).toEqual([true]);
     subscription.unsubscribe();
   });
 
   it('is true when any label set has labels, even if others are empty', async () => {
     labelSets.next({
-      empty: { title: 'Empty', kind: [], labels: [] },
-      topics: { title: 'Topics', kind: [], labels: [{ title: 'News' }] },
+      empty: { title: 'Empty', color: 'red', multiple: false, kind: [], labels: [] },
+      topics: { title: 'Topics', color: 'blue', multiple: true, kind: [], labels: [{ title: 'News' }] },
     });
 
     expect(await firstValueFrom(TestBed.inject(ResourceListService).hasLabels)).toBe(true);
@@ -82,12 +85,16 @@ describe('ResourceListService optional columns', () => {
     const service = TestBed.inject(ResourceListService);
     const availability: boolean[] = [];
     const subscription = service.hasLabels.subscribe((value) => availability.push(value));
-    const withLabels = (title: string): LabelSets => ({ topics: { title: 'Topics', kind: [], labels: [{ title }] } });
+    const withLabels = (title: string): LabelSets => ({
+      topics: { title: 'Topics', color: 'blue', multiple: true, kind: [], labels: [{ title }] },
+    });
 
     labelSets.next(withLabels('News'));
     labelSets.next(withLabels('Sports'));
-    labelSets.next({ other: { title: 'Other', kind: [], labels: [{ title: 'Misc' }] } });
-    labelSets.next({ empty: { title: 'Empty', kind: [], labels: [] } });
+    labelSets.next({
+      other: { title: 'Other', color: 'green', multiple: true, kind: [], labels: [{ title: 'Misc' }] },
+    });
+    labelSets.next({ empty: { title: 'Empty', color: 'red', multiple: false, kind: [], labels: [] } });
     labelSets.next({});
 
     expect(availability).toEqual([false, true, false]);

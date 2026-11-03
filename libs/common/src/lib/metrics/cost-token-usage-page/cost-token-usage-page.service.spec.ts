@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MockProvider } from 'ng-mocks';
@@ -8,10 +9,10 @@ import { CostTokenUsagePageService } from './cost-token-usage-page.service';
 
 describe('CostTokenUsagePageService', () => {
   let service: CostTokenUsagePageService;
-  let queryActivityLogs: jest.Mock;
+  let queryActivityLogs: Mock;
 
   beforeEach(() => {
-    queryActivityLogs = jest.fn().mockReturnValue(of([]));
+    queryActivityLogs = vi.fn().mockReturnValue(of([]));
     const mockKb = {
       activityMonitor: {
         queryActivityLogs,
@@ -24,7 +25,7 @@ describe('CostTokenUsagePageService', () => {
         MockProvider(SDKService, {
           currentKb: of(mockKb as any),
           currentAccount: of({ id: 'acc-1' } as any),
-          nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+          nuclia: { db: { getUsage: vi.fn().mockReturnValue(of([])) } } as any,
         }),
         MockProvider(UserService),
         MockProvider(SisToastService),

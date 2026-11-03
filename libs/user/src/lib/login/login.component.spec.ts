@@ -12,6 +12,7 @@ import {
 } from '@flaps/core';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
+import type { Mock } from 'vitest';
 
 import { LoginComponent } from './login.component';
 
@@ -19,17 +20,17 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
-  let router: { navigate: jest.Mock };
-  let oAuthService: { getCameFrom: jest.Mock; loginUrl: jest.Mock };
+  let router: { navigate: Mock };
+  let oAuthService: { getCameFrom: Mock; loginUrl: Mock };
   let brandService: { signUpUrl: Observable<string> };
   let config: {
-    useRemoteLogin: jest.Mock;
-    getRecaptchaKey: jest.Mock;
-    getAPIOrigin: jest.Mock;
-    getSocialLogin: jest.Mock;
+    useRemoteLogin: Mock;
+    getRecaptchaKey: Mock;
+    getAPIOrigin: Mock;
+    getSocialLogin: Mock;
   };
-  let reCaptchaV3Service: { execute: jest.Mock };
-  let samlService: { checkDomain: jest.Mock; ssoUrl: jest.Mock };
+  let reCaptchaV3Service: { execute: Mock };
+  let samlService: { checkDomain: Mock; ssoUrl: Mock };
   const featuresService = { unstable: { progressComSignup: of(false) } };
 
   let routeData$: BehaviorSubject<{ loginData: OAuthLoginData }>;
@@ -75,27 +76,27 @@ describe('LoginComponent', () => {
 
   beforeEach(() => {
     router = {
-      navigate: jest.fn(),
+      navigate: vi.fn(),
     };
     oAuthService = {
-      getCameFrom: jest.fn(() => 'http://app.local'),
-      loginUrl: jest.fn(() => 'http://oauth.here/login'),
+      getCameFrom: vi.fn(() => 'http://app.local'),
+      loginUrl: vi.fn(() => 'http://oauth.here/login'),
     };
     brandService = {
       signUpUrl: of('http://oauth.here/sign-up'),
     };
     config = {
-      useRemoteLogin: jest.fn(() => false),
-      getRecaptchaKey: jest.fn(() => 'captcha-key'),
-      getAPIOrigin: jest.fn(() => 'http://api.local'),
-      getSocialLogin: jest.fn(() => false),
+      useRemoteLogin: vi.fn(() => false),
+      getRecaptchaKey: vi.fn(() => 'captcha-key'),
+      getAPIOrigin: vi.fn(() => 'http://api.local'),
+      getSocialLogin: vi.fn(() => false),
     };
     reCaptchaV3Service = {
-      execute: jest.fn(() => of('captcha-token')),
+      execute: vi.fn(() => of('captcha-token')),
     };
     samlService = {
-      checkDomain: jest.fn(() => of({ token: 'opaque-token' })),
-      ssoUrl: jest.fn((token: string, challenge?: string) => `https://sso.local/${token}?c=${challenge || ''}`),
+      checkDomain: vi.fn(() => of({ token: 'opaque-token' })),
+      ssoUrl: vi.fn((token: string, challenge?: string) => `https://sso.local/${token}?c=${challenge || ''}`),
     };
 
     routeData$ = new BehaviorSubject<{ loginData: OAuthLoginData }>({
@@ -166,8 +167,8 @@ describe('LoginComponent', () => {
   it('should trigger remoteLogin when remote login is enabled', async () => {
     // Stub the implementation: the real remoteLogin assigns `location.href`, which jsdom
     // doesn't implement and logs a noisy "not implemented: navigation" console.error.
-    const remoteLoginSpy = jest
-      .spyOn(LoginComponent.prototype as never, 'remoteLogin' as never)
+    const remoteLoginSpy = vi
+      .spyOn(LoginComponent.prototype as unknown as { remoteLogin: () => void }, 'remoteLogin')
       .mockImplementation(() => undefined);
     config.useRemoteLogin.mockReturnValue(true);
 
@@ -203,7 +204,7 @@ describe('LoginComponent', () => {
   it('should do nothing in login when form is invalid', async () => {
     await buildComponent();
 
-    const oauthLoginSpy = jest.spyOn(component, 'oAuthLogin');
+    const oauthLoginSpy = vi.spyOn(component, 'oAuthLogin');
     component.loginForm.setValue({ email: '', password: '' });
     component.login();
 
@@ -215,7 +216,7 @@ describe('LoginComponent', () => {
   it('should execute captcha and then OAuth login when recaptcha key exists', async () => {
     await buildComponent();
 
-    const oauthLoginSpy = jest.spyOn(component, 'oAuthLogin');
+    const oauthLoginSpy = vi.spyOn(component, 'oAuthLogin');
     component.loginForm.setValue({ email: 'bruce@wayne.corp', password: 'batman' });
     component.login();
 
@@ -228,7 +229,7 @@ describe('LoginComponent', () => {
     config.getRecaptchaKey.mockReturnValue('');
     await buildComponent();
 
-    const oauthLoginSpy = jest.spyOn(component, 'oAuthLogin');
+    const oauthLoginSpy = vi.spyOn(component, 'oAuthLogin');
     component.loginForm.setValue({ email: 'bruce@wayne.corp', password: 'batman' });
     component.login();
 
@@ -239,7 +240,7 @@ describe('LoginComponent', () => {
   it('should submit form in oAuthLogin when form is valid', async () => {
     await buildComponent();
 
-    const submit = jest.fn();
+    const submit = vi.fn();
     component.form = { nativeElement: { submit } } as any;
     component.loginForm.setValue({ email: 'bruce@wayne.corp', password: 'batman' });
 
@@ -251,7 +252,7 @@ describe('LoginComponent', () => {
   it('should not submit form in oAuthLogin when form is invalid', async () => {
     await buildComponent();
 
-    const submit = jest.fn();
+    const submit = vi.fn();
     component.form = { nativeElement: { submit } } as any;
     component.loginForm.setValue({ email: '', password: '' });
 
