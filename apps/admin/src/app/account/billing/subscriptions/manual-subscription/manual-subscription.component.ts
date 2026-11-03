@@ -17,6 +17,7 @@ import { shareReplay } from 'rxjs';
 export class ManualSubscriptionComponent {
   usage = this.billing.getManualAccountUsage().pipe(shareReplay(1));
   budget?: Partial<AccountBudget>;
+  isInternalAccount = this.billing.isInternalAccount;
 
   constructor(
     private billing: BillingService,
