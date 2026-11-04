@@ -99,3 +99,4 @@ local_server/logs/**
 local_server/nginx.conf
 
 storybook-static
+.vitest
