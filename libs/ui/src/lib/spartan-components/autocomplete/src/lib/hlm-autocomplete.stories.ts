@@ -1,5 +1,5 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { HlmLabelImports } from '../../../label/src/index';
+import { HlmField, HlmFieldLabel } from '../../../field/src/index';
 import { HlmAutocompleteImports } from '../index';
 import { HlmAutocomplete } from './hlm-autocomplete';
 
@@ -16,7 +16,7 @@ const meta: Meta<AutocompleteStoryArgs> = {
   title: 'Spartan/Autocomplete',
   component: HlmAutocomplete,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmAutocompleteImports, ...HlmLabelImports] })],
+  decorators: [moduleMetadata({ imports: [...HlmAutocompleteImports, HlmField, HlmFieldLabel] })],
   parameters: {
     docs: {
       description: {
@@ -25,7 +25,7 @@ Import <code>HlmAutocompleteImports</code> from <code>@nuclia/ui-spartan/autocom
 Inside the content, use <code>hlmAutocompleteList</code> (with an <code>aria-label</code>) holding <code>hlm-autocomplete-item</code> elements with a <code>value</code>, plus optional <code>hlm-autocomplete-empty</code>, <code>hlmAutocompleteGroup</code>/<code>hlmAutocompleteLabel</code>, <code>hlmAutocompleteSeparator</code> and <code>hlm-autocomplete-status</code>.
 
 Items are filtered by what the user types. Use <code>[(value)]</code> and <code>[(search)]</code> (or forms) to read the selected value and the typed text; for server-side suggestions use <code>hlm-autocomplete-search</code> instead.
-Associate the input with a <code>label</code> through <code>inputId</code>.`,
+Wrap the label and input in <code>hlmField</code> for standard field spacing, and associate <code>hlmFieldLabel</code> with the input through <code>inputId</code>.`,
       },
     },
   },
@@ -67,13 +67,15 @@ Associate the input with a <code>label</code> through <code>inputId</code>.`,
     props: args,
     template: `
       <hlm-autocomplete class="w-80" [disabled]="disabled" [autoHighlight]="autoHighlight">
-        <label hlmLabel for="country-search">Country</label>
-        <hlm-autocomplete-input
-          inputId="country-search"
-          [placeholder]="placeholder"
-          [showSearch]="showSearch"
-          [showClear]="showClear"
-          [forceInvalid]="forceInvalid" />
+        <div hlmField>
+          <label hlmFieldLabel for="country-search">Country</label>
+          <hlm-autocomplete-input
+            inputId="country-search"
+            [placeholder]="placeholder"
+            [showSearch]="showSearch"
+            [showClear]="showClear"
+            [forceInvalid]="forceInvalid" />
+        </div>
         <hlm-autocomplete-content *hlmAutocompletePortal>
           <hlm-autocomplete-list aria-label="Countries">
             <hlm-autocomplete-empty>No matching countries.</hlm-autocomplete-empty>
@@ -131,8 +133,10 @@ export const EmptyState: Story = {
   render: () => ({
     template: `
       <hlm-autocomplete class="w-80">
-        <label hlmLabel for="city-search">City</label>
-        <hlm-autocomplete-input inputId="city-search" placeholder="Search cities" />
+        <div hlmField>
+          <label hlmFieldLabel for="city-search">City</label>
+          <hlm-autocomplete-input inputId="city-search" placeholder="Search cities" />
+        </div>
         <hlm-autocomplete-content *hlmAutocompletePortal>
           <hlm-autocomplete-list aria-label="Cities">
             <hlm-autocomplete-empty>No matching cities.</hlm-autocomplete-empty>
@@ -152,8 +156,10 @@ export const Groups: Story = {
   render: () => ({
     template: `
       <hlm-autocomplete class="w-80">
-        <label hlmLabel for="tag-search">Tag</label>
-        <hlm-autocomplete-input inputId="tag-search" placeholder="Search tags" />
+        <div hlmField>
+          <label hlmFieldLabel for="tag-search">Tag</label>
+          <hlm-autocomplete-input inputId="tag-search" placeholder="Search tags" />
+        </div>
         <hlm-autocomplete-content *hlmAutocompletePortal>
           <hlm-autocomplete-list aria-label="Tags">
             <hlm-autocomplete-empty>No matching tags.</hlm-autocomplete-empty>
