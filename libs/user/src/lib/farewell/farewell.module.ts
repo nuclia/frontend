@@ -5,7 +5,6 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 
 import { UserContainerComponent } from '../user-container';
 import { FarewellComponent } from './farewell.component';
-import { FeedbackComponent } from './feedback.component';
 
 @NgModule({
   imports: [
@@ -17,7 +16,6 @@ import { FeedbackComponent } from './feedback.component';
     PaTextFieldModule,
     PaTogglesModule,
     FarewellComponent,
-    FeedbackComponent,
   ],
   exports: [],
 })

@@ -10,7 +10,7 @@ import {
   rootGuard,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
-import { FarewellComponent, FeedbackComponent, RedirectComponent, SetupUserComponent } from '@nuclia/user';
+import { FarewellComponent, RedirectComponent, SetupUserComponent } from '@nuclia/user';
 import { fallbackRedirectGuard } from './fallback-redirect.guard';
 
 const routes: Routes = [
@@ -29,11 +29,6 @@ const routes: Routes = [
         component: RedirectComponent,
       },
     ],
-  },
-  {
-    path: 'feedback',
-    component: FeedbackComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'farewell',

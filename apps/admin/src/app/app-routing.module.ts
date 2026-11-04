@@ -19,6 +19,7 @@ import {
   AppLoginComponent,
   CallbackComponent,
   FarewellComponent,
+  FeedbackComponent,
   RedirectComponent,
   SetPasswordComponent,
   TemporaryContextBoxSignupComponent,
@@ -68,6 +69,11 @@ const routes: Routes = [
   {
     path: 'farewell',
     component: FarewellComponent,
+  },
+  {
+    path: 'feedback',
+    component: FeedbackComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'setup_account',
