@@ -301,6 +301,12 @@ export class Resource extends ReadableResource implements IResource {
     return defer(() => this.nuclia.rest.put<void>(`${this.path}/${type}/${field}`, data)).pipe(retry(retry429Config()));
   }
 
+  patchField(type: FIELD_TYPE, field: string, data: { extract_strategy?: string }): Observable<void> {
+    return defer(() => this.nuclia.rest.patch<void>(`${this.path}/${type}/${field}`, data)).pipe(
+      retry(retry429Config()),
+    );
+  }
+
   /** Appends messages to a conversation field */
   appendMessages(field: string, messages: Message[]): Observable<void> {
     return this.nuclia.rest.put<void>(`${this.path}/${FIELD_TYPE.conversation}/${field}/messages`, messages);

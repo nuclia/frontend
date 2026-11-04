@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support endpoint to delete multiple resources
+- Support endpoint to patch `extract_strategy` on resource fields
 
 # 1.33.0 (2026-10-05)
 

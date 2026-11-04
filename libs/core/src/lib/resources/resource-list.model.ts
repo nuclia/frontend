@@ -48,6 +48,7 @@ export type MenuAction =
   | 'memory'
   | 'delete'
   | 'reprocess'
+  | 'reprocess-strategy'
   | 'summarize'
   | 'hide'
   | 'unhide';

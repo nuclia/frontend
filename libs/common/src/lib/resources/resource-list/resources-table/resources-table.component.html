@@ -363,6 +363,9 @@
                     <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
                       {{ 'resource.reprocess' | translate }}
                     </pa-option>
+                    <pa-option (selectOption)="triggerAction(row.resource, 'reprocess-strategy')">
+                      {{ 'resource.reprocess-modal.title' | translate }}
+                    </pa-option>
                     @if (hiddenResourcesEnabled | async) {
                       <pa-option (selectOption)="triggerAction(row.resource, row.resource.hidden ? 'unhide' : 'hide')">
                         {{ (row.resource.hidden ? 'resource.unhide' : 'resource.hide') | translate }}
