@@ -19,12 +19,12 @@ import {
   AppLoginComponent,
   CallbackComponent,
   FarewellComponent,
-  FeedbackComponent,
   RedirectComponent,
   SetPasswordComponent,
   TemporaryContextBoxSignupComponent,
   TestingAppSignupComponent,
 } from '@nuclia/user';
+import { FeedbackComponent } from './account/billing/feedback/feedback.component';
 import { captureEntryContextGuard } from './capture-entry-context.guard';
 import { fallbackRedirectGuard } from './fallback-redirect.guard';
 

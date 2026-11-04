@@ -4,8 +4,8 @@ import { BillingService, CancellationFeedback, NavigationService, SDKService } f
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
+import { UserContainerComponent } from '@nuclia/user';
 import { map, switchMap, take } from 'rxjs';
-import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'app-feedback',
