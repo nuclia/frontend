@@ -35,9 +35,9 @@ import { switchMap, take } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReprocessModalComponent {
-  sdk = inject(SDKService);
-  modal = inject(ModalRef<{ resourceId: string }>);
-  toaster = inject(SisToastService);
+  private sdk = inject(SDKService);
+  private modal = inject(ModalRef<{ resourceId: string }>);
+  private toaster = inject(SisToastService);
 
   form = new FormGroup({
     extractStrategy: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
