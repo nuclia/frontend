@@ -25,19 +25,21 @@
       </pa-table-row>
     </pa-table>
   </div>
-  <div class="budget">
-    <div>
-      <h2>{{ 'billing.budget' | translate }}</h2>
-      <div
-        class="body-m"
-        [innerHTML]="'billing.budget_description' | translate"></div>
+  @if (!(isInternalAccount | async)) {
+    <div class="budget">
+      <div>
+        <h2>{{ 'billing.budget' | translate }}</h2>
+        <div
+          class="body-m"
+          [innerHTML]="'billing.budget_description' | translate"></div>
+      </div>
+      <app-budget (budgetChange)="budget = $event"></app-budget>
+      <pa-button
+        kind="primary"
+        [disabled]="!budget"
+        (click)="modifyBudget()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
     </div>
-    <app-budget (budgetChange)="budget = $event"></app-budget>
-    <pa-button
-      kind="primary"
-      [disabled]="!budget"
-      (click)="modifyBudget()">
-      {{ 'generic.save' | translate }}
-    </pa-button>
-  </div>
+  }
 </div>

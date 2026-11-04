@@ -73,6 +73,10 @@ export class BillingService {
     this.features.unstable.contextBoxNoTrial,
   ]).pipe(map(([activation, noTrial]) => activation && noTrial));
 
+  isInternalAccount: Observable<boolean> = combineLatest([this.subscriptionProvider, this.sdk.currentAccount]).pipe(
+    map(([provider, account]) => provider === 'CLOUD_ZERO' && account.type === 'v3growth'),
+  );
+
   constructor(private sdk: SDKService) {}
 
   getCustomer(): Observable<StripeCustomer | null> {
