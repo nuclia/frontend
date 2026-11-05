@@ -15575,14 +15575,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^16.4.0":
-  version: 16.5.0
-  resolution: "globals@npm:16.5.0"
-  checksum: 10/f9e8a2a13f50222c127030a619e283e7bbfe32966316bdde0715af1d15a7e40cb9c24ff52cad59671f97762ed8b515353c2f8674f560c63d9385f19ee26735a6
-  languageName: node
-  linkType: hard
-
-"globals@npm:^17.0.0":
+"globals@npm:^17.0.0, globals@npm:^17.13.0":
   version: 17.13.0
   resolution: "globals@npm:17.13.0"
   checksum: 10/f723714cfb07bcf3163d44661d63b2a6076d93fd2f3724622b22084c62bcbbdb3ea3c601ec39635f1430d5cdf60bbf6fd7e458f12b5381ed422ed355c699537b
@@ -19793,7 +19786,7 @@ __metadata:
     eslint-plugin-svelte: "npm:^2.30.0"
     exitzero: "npm:^1.0.1"
     fuse.js: "npm:^3.6.1"
-    globals: "npm:^16.4.0"
+    globals: "npm:^17.13.0"
     husky: "npm:^9.1.7"
     isomorphic-unfetch: "npm:^4.0.2"
     jiti: "npm:2.4.2"
