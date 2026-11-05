@@ -41,13 +41,7 @@ import {
   WorkflowsListComponent,
 } from '@flaps/common';
 import { authGuard, redirectToSignUp } from '@flaps/core';
-import {
-  AppLoginComponent,
-  CallbackComponent,
-  FarewellComponent,
-  FeedbackComponent,
-  RedirectComponent,
-} from '@nuclia/user';
+import { AppLoginComponent, CallbackComponent, FarewellComponent, RedirectComponent } from '@nuclia/user';
 
 const routes: Routes = [
   {
@@ -199,11 +193,6 @@ const routes: Routes = [
         canActivate: [selectKbGuard],
       },
     ],
-  },
-  {
-    path: 'feedback',
-    component: FeedbackComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'farewell',

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BillingService, CancellationFeedback, NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SisToastService, SpinnerComponent } from '@nuclia/sistema';
+import { UserContainerComponent } from '@nuclia/user';
 import { map, switchMap, take } from 'rxjs';
-import { UserContainerComponent } from '../user-container/user-container.component';
 
 @Component({
   selector: 'app-feedback',
@@ -32,6 +32,7 @@ export class FeedbackComponent {
     private billingService: BillingService,
     private route: ActivatedRoute,
     private navigation: NavigationService,
+    private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -54,9 +55,7 @@ export class FeedbackComponent {
       )
       .subscribe({
         next: (account) => {
-          this.navigation.navigateExternal(`${this.navigation.getBillingUrl(account.slug)}/my-subscription`, {
-            withFromApp: true,
-          });
+          this.router.navigate([`${this.navigation.getBillingUrl(account.slug)}/my-subscription`]);
           this.toaster.success('billing.subscription-ended');
         },
         error: () => {

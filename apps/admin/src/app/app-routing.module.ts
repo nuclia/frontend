@@ -24,6 +24,7 @@ import {
   TemporaryContextBoxSignupComponent,
   TestingAppSignupComponent,
 } from '@nuclia/user';
+import { FeedbackComponent } from './account/billing/feedback/feedback.component';
 import { captureEntryContextGuard } from './capture-entry-context.guard';
 import { fallbackRedirectGuard } from './fallback-redirect.guard';
 
@@ -68,6 +69,11 @@ const routes: Routes = [
   {
     path: 'farewell',
     component: FarewellComponent,
+  },
+  {
+    path: 'feedback',
+    component: FeedbackComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'setup_account',
