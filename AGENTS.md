@@ -98,7 +98,7 @@ first-party projects; only the external `libs/pastanaga-angular` still uses it.
   empty project and has no `passWithNoTests` option. A new Angular project needs a `<app>:build:unit-test` build
   configuration (`polyfills: []`, `styles: []`, `assets: []`), an official `test` target and a `vitest-base.config.mts`
   (coverage dir only), plus a first real spec; never list it in the root `vitest.config.ts` or the `@nx/vitest` `include`.
-- Details and examples: `.github/skills/testing-patterns/SKILL.md`.
+- Details and conventions: `.github/skills/conventions/SKILL.md` (Tests).
 
 ---
 
@@ -111,7 +111,7 @@ first-party projects; only the external `libs/pastanaga-angular` still uses it.
   `OnPush` is still required everywhere, but CD is now purely
   signal/`markForCheck()`/`ApplicationRef.tick()`-driven — never assume a native event listener,
   `setTimeout`, or unpatched async callback will trigger a re-render on its own.
-- **Selector prefixes:** declared in each lib's `project.json` (`nsi-`, `nus-`, `nsy-`, `stf-`, `nma-`).
+- **Selector prefixes:** existing components keep the prefix declared in their lib's `project.json` (`nsi-`, `nus-`, `nsy-`, `stf-`, `nma-`); new components follow the `conventions` skill (Naming).
 - **Components:** standalone by default (no `standalone` flag); first-party components are never declared in an NgModule — the few `*.module.ts` files are import/route wrappers. Templates import `TranslatePipe` (apps provide `provideTranslateService()` in `main.ts`).
 - **State files:** `*.state.ts` = Angular signal store. Older services use RxJS `BehaviorSubject`.
 - **Testing:** every first-party test setup is zoneless (Vitest 5, `@angular/build:unit-test`).
@@ -119,14 +119,6 @@ first-party projects; only the external `libs/pastanaga-angular` still uses it.
   `async`/`await` for async `beforeEach`/`compileComponents()`, and `vi.useFakeTimers()` /
   `vi.advanceTimersByTime()` / `await vi.runAllTimersAsync()` for tests that need to control timers.
   `libs/pastanaga-angular` is external and untouched: it keeps Jest, `zone.js` and `setup-env/zone`.
-
-### Code comments
-
-- **Write as few comments as possible.** Only comment code that genuinely needs clarification —
-  a non-obvious workaround, a security/business-rule constraint, or a "why" that isn't clear from
-  the code itself. Never restate what the code already says.
-- Don't comment routine or self-explanatory code (getters, straightforward conditionals, obvious
-  navigation/assignment). If a reviewer wouldn't ask "why is this here?", skip the comment.
 
 ### SCSS / Design tokens
 
@@ -156,11 +148,10 @@ first-party projects; only the external `libs/pastanaga-angular` still uses it.
 
 Every app and lib has its own `AGENTS.md` with project-specific routing, components, services, and gotchas. Read the relevant file before working in any sub-project. This root file documents only what is shared across the entire workspace.
 
-Projects may also have a `KNOWLEDGE.md` for deeper write-ups of non-obvious patterns, workarounds, and architectural decisions discovered during development sessions. If it exists, it will be linked from the project's `AGENTS.md`.
-
 ### AI workflow configuration
 
-See `.github/copilot-instructions.md` for the full AI workflow: communication rules, anti-cycling protocol, task sizing, session knowledge capture, skill routing, and agent delegation.
+- `.github/copilot-instructions.md`: communication and workflow rules.
+- Angular code: use the `ng-developer` agent. Our rules live in the `conventions` skill.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
