@@ -158,7 +158,7 @@
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-svelte": "^2.30.0",
     "exitzero": "^1.0.1",
-    "globals": "^16.4.0",
+    "globals": "^17.13.0",
     "husky": "^9.1.7",
     "jiti": "2.4.2",
     "jsdom": "^26.1.0",
