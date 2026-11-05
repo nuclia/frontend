@@ -98,7 +98,7 @@
     "@angular/language-service": "22.2.3",
     "@babel/core": "^7.29.6",
     "@eslint/js": "^9.35.0",
-    "@nx/angular": "23.3.0",
+    "@nx/angular": "24.0.2",
     "@nx/eslint": "23.3.0",
     "@nx/eslint-plugin": "23.3.0",
     "@nx/js": "23.3.0",
