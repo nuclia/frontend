@@ -1,4 +1,5 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { HlmFieldLegend, HlmFieldSet } from '../../../field/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmRadioGroupImports } from '../index';
 import { HlmRadioGroup } from './hlm-radio-group';
@@ -13,7 +14,7 @@ const meta: Meta<RadioGroupStoryArgs> = {
   title: 'Spartan/Radio Group',
   component: HlmRadioGroup,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmRadioGroupImports, ...HlmLabelImports] })],
+  decorators: [moduleMetadata({ imports: [...HlmRadioGroupImports, ...HlmLabelImports, HlmFieldSet, HlmFieldLegend] })],
   parameters: {
     docs: {
       description: {
@@ -21,7 +22,7 @@ const meta: Meta<RadioGroupStoryArgs> = {
 Import <code>HlmRadioGroupImports</code> from <code>@nuclia/ui-spartan/radio-group</code>. Put an <code>hlmRadioGroup</code> container around several <code>hlm-radio</code> items, each with a unique <code>value</code> and an <code>hlm-radio-indicator</code> child.
 
 The group exposes <code>name</code>, <code>value</code>, <code>disabled</code> and <code>required</code>, and emits <code>valueChange</code>; it works with Angular forms. <code>hlm-radio</code> accepts <code>inputId</code>, <code>disabled</code> and emits <code>change</code>.
-Link each radio to an <code>hlmLabel</code> through <code>inputId</code> and <code>for</code>, and give the group an <code>aria-label</code> or wrap it in a <code>fieldset</code> with a <code>legend</code>.`,
+Link each radio to an <code>hlmLabel</code> through <code>inputId</code> and <code>for</code>, and give the group an <code>aria-label</code> or wrap it in a <code>fieldset</code> with a <code>legend</code>. Use <code>hlmFieldSet</code> and <code>hlmFieldLegend</code> from <code>@nuclia/ui-spartan/field</code> for consistent label-to-options spacing.`,
       },
     },
   },
@@ -44,8 +45,8 @@ Link each radio to an <code>hlmLabel</code> through <code>inputId</code> and <co
   render: ({ value, disabled, required }) => ({
     props: { value, disabled, required },
     template: `
-      <fieldset class="grid gap-3">
-        <legend class="text-sm font-medium">Billing cycle</legend>
+      <fieldset hlmFieldSet>
+        <legend hlmFieldLegend variant="label">Billing cycle</legend>
         <div hlmRadioGroup aria-label="Billing cycle" [value]="value" [disabled]="disabled" [required]="required">
           <div class="flex items-center gap-2">
             <hlm-radio inputId="billing-monthly" value="monthly"><hlm-radio-indicator /></hlm-radio>
@@ -77,8 +78,8 @@ export const DisabledOption: Story = {
   parameters: { controls: { disable: true } },
   render: () => ({
     template: `
-      <fieldset class="grid gap-3">
-        <legend class="text-sm font-medium">Delivery method</legend>
+      <fieldset hlmFieldSet>
+        <legend hlmFieldLegend variant="label">Delivery method</legend>
         <div hlmRadioGroup aria-label="Delivery method" value="standard">
           <div class="flex items-center gap-2">
             <hlm-radio inputId="delivery-standard" value="standard"><hlm-radio-indicator /></hlm-radio>
@@ -102,8 +103,8 @@ export const WithDescriptions: Story = {
   parameters: { controls: { disable: true } },
   render: () => ({
     template: `
-      <fieldset class="grid gap-3">
-        <legend class="text-sm font-medium">Notification frequency</legend>
+      <fieldset hlmFieldSet>
+        <legend hlmFieldLegend variant="label">Notification frequency</legend>
         <div hlmRadioGroup aria-label="Notification frequency" value="digest">
           <div class="flex items-start gap-2">
             <hlm-radio inputId="notify-instant" value="instant" aria-describedby="notify-instant-hint">
