@@ -6,14 +6,6 @@ const meta: Meta = {
   decorators: [moduleMetadata({ imports: [...HlmTypographyImports] })],
   parameters: {
     controls: { disable: true },
-    docs: {
-      description: {
-        component: `Defines a consistent visual hierarchy for headings, body text, lists, quotes, and code. Use it to make content readable and establish clear differences between primary information and supporting text.
-Import <code>HlmTypographyImports</code> from <code>@nuclia/ui-spartan/typography</code> and apply one attribute directive to a native element: <code>hlmH1</code>, <code>hlmH2</code>, <code>hlmH3</code>, <code>hlmH4</code> (headings), <code>hlmLead</code>, <code>hlmLarge</code>, <code>hlmP</code>, <code>hlmSmall</code>, <code>hlmMuted</code> (text), <code>hlmBlockquote</code>, <code>hlmUl</code> and <code>hlmCode</code>.
-
-The directives only add styling and have no inputs, so choose the native element for its meaning: keep a single <code>&lt;h1&gt;</code> per page, do not skip heading levels, and use <code>&lt;blockquote&gt;</code>, <code>&lt;ul&gt;</code> and <code>&lt;code&gt;</code> for their semantic purpose. Extra Tailwind classes can be added to adjust spacing.`,
-      },
-    },
   },
   render: () => ({
     template: `
