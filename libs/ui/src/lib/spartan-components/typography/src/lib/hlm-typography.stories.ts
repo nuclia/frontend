@@ -2,8 +2,7 @@ import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmTypographyImports } from '../index';
 
 const meta: Meta = {
-  title: 'Spartan/Typography',
-  tags: ['autodocs'],
+  title: 'Foundations/Typography',
   decorators: [moduleMetadata({ imports: [...HlmTypographyImports] })],
   parameters: {
     controls: { disable: true },
@@ -105,6 +104,55 @@ export const InlineCode: Story = {
       <p hlmP class="max-w-2xl">
         Call <code hlmCode>kb.catalog('')</code> to list all the resources of a knowledge box.
       </p>
+    `,
+  }),
+};
+
+export const Link: Story = {
+  render: () => ({
+    template: `
+      <p hlmP>
+        Use a
+        <a
+          href="#supporting-heading"
+          class="font-medium text-link underline underline-offset-4 hover:text-link-hover focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+          supporting heading
+        </a>
+        to introduce related guidance.
+      </p>
+      <h4 hlmH4 id="supporting-heading" class="mt-4">Keep guidance close by</h4>
+    `,
+  }),
+};
+
+export const Table: Story = {
+  render: () => ({
+    template: `
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="mb-4 text-left text-sm text-muted-foreground">Typography roles at a glance</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="border border-border px-4 py-2 text-left font-semibold">Role</th>
+              <th scope="col" class="border border-border px-4 py-2 text-left font-semibold">Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="even:bg-muted">
+              <td class="border border-border px-4 py-2">Heading</td>
+              <td class="border border-border px-4 py-2">Establish the content hierarchy</td>
+            </tr>
+            <tr class="even:bg-muted">
+              <td class="border border-border px-4 py-2">Paragraph</td>
+              <td class="border border-border px-4 py-2">Explain the main content</td>
+            </tr>
+            <tr class="even:bg-muted">
+              <td class="border border-border px-4 py-2">Muted</td>
+              <td class="border border-border px-4 py-2">Provide secondary context</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     `,
   }),
 };
