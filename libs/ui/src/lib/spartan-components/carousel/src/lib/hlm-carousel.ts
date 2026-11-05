@@ -65,7 +65,7 @@ export class HlmCarousel {
   public readonly slideCount = this._slideCount.asReadonly();
 
   constructor() {
-    classes(() => 'relative');
+    classes(() => 'relative block');
   }
 
   protected onEmblaEvent(event: EmblaEventType) {
