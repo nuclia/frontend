@@ -1,10 +1,15 @@
-import { Meta } from '@storybook/addon-docs/blocks';
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TypographyStories from '../src/lib/spartan-components/typography/src/lib/hlm-typography.stories';
 
-<Meta title="Foundations/Typography" />
+<Meta
+  of={TypographyStories}
+  name="Docs"
+/>
 
 # Typography
 
-Font families, weights, and text styles using the active light or dark theme.
+Font families, weights, and text styles using the active light or dark theme. The examples below render the Angular
+typography directives directly, so the design reference and implementation stay together.
 
 ## Font families
 
@@ -20,9 +25,9 @@ Font families, weights, and text styles using the active light or dark theme.
     <code className="text-sm text-muted-foreground">font-family: var(--font-display)</code>
   </div>
   <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Code - Source Code Pro</p>
-    <p style={{ fontFamily: "'Source Code Pro', monospace" }}>{"const typography = 'Source Code Pro';"}</p>
-    <code className="text-sm text-muted-foreground">font-family: 'Source Code Pro', monospace</code>
+    <p className="text-sm text-muted-foreground">Code - Roboto Mono</p>
+    <p className="font-mono">{"const typography = 'Roboto Mono';"}</p>
+    <code className="text-sm text-muted-foreground">font-mono · --font-mono</code>
   </div>
 </div>
 
@@ -51,177 +56,53 @@ Font families, weights, and text styles using the active light or dark theme.
   ))}
 </div>
 
-## Headings
+## Angular usage
 
-<div className="sb-unstyled grid gap-8 rounded-lg border border-border bg-background p-6 font-sans text-foreground">
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">H1 - Page title</p>
-    <h1
-      className="scroll-m-20 text-balance text-4xl font-extrabold tracking-tight"
-      style={{ fontFamily: 'var(--font-display)' }}>
-      {'Designing useful knowledge tools'}
-    </h1>
-    <code className="text-sm text-muted-foreground">
-      scroll-m-20 text-balance text-4xl font-extrabold tracking-tight
-    </code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">H2 - Major section</p>
-    <h2
-      className="scroll-m-20 border-b border-border pb-2 text-3xl font-semibold tracking-tight"
-      style={{ fontFamily: 'var(--font-display)' }}>
-      {'Start with a meaningful structure'}
-    </h2>
-    <code className="text-sm text-muted-foreground">
-      scroll-m-20 border-b border-border pb-2 text-3xl font-semibold tracking-tight
-    </code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">H3 - Subsection</p>
-    <h3
-      className="scroll-m-20 text-2xl font-semibold tracking-tight"
-      style={{ fontFamily: 'var(--font-display)' }}>
-      {'Write for the next action'}
-    </h3>
-    <code className="text-sm text-muted-foreground">scroll-m-20 text-2xl font-semibold tracking-tight</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">H4 - Supporting heading</p>
-    <h4
-      id="supporting-heading"
-      className="scroll-m-20 text-xl font-semibold tracking-tight"
-      style={{ fontFamily: 'var(--font-display)' }}>
-      {'Keep guidance close by'}
-    </h4>
-    <code className="text-sm text-muted-foreground">scroll-m-20 text-xl font-semibold tracking-tight</code>
-  </div>
-</div>
-
-## Body and supporting text
-
-<div className="sb-unstyled grid gap-8 rounded-lg border border-border bg-background p-6 font-sans text-foreground">
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Paragraph - Body copy</p>
-    <div>
-      <p className="text-base leading-6 [&:not(:first-child)]:mt-2">
-        {'Body text uses the text family for comfortable reading across paragraphs and interface content.'}
-      </p>
-      <p className="text-base leading-6 [&:not(:first-child)]:mt-2">
-        {'Keep related ideas together and leave enough space between paragraphs to make longer content easy to scan.'}
-      </p>
-    </div>
-    <code className="text-sm text-muted-foreground">text-base leading-6 [&amp;:not(:first-child)]:mt-2</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Lead - Page introduction</p>
-    <p className="text-xl text-muted-foreground">
-      {'Clear language helps teams find and use the information they need.'}
-    </p>
-    <code className="text-sm text-muted-foreground">text-xl text-muted-foreground</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Large - Emphasised statement</p>
-    <p className="text-lg font-semibold">Make each next step easy to understand.</p>
-    <code className="text-sm text-muted-foreground">text-lg font-semibold</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Small - Caption or note</p>
-    <small className="text-sm font-medium leading-none">Changes are saved automatically.</small>
-    <code className="text-sm text-muted-foreground">text-sm font-medium leading-none</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Muted - Secondary information</p>
-    <p className="text-sm text-muted-foreground">Updated for the current release.</p>
-    <code className="text-sm text-muted-foreground">text-sm text-muted-foreground</code>
-  </div>
-</div>
-
-## Rich content
-
-<div className="sb-unstyled grid gap-8 rounded-lg border border-border bg-background p-6 font-sans text-foreground">
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Quote - Quoted passage</p>
-    <blockquote className="my-6 border-l-2 border-border pl-6 italic">
-      {'Good interfaces make complex work feel manageable.'}
-    </blockquote>
-    <code className="text-sm text-muted-foreground">my-6 border-l-2 border-border pl-6 italic</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">List - Related items</p>
-    <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
-      <li>Use descriptive titles</li>
-      <li>Keep related content together</li>
-      <li>Make the next action clear</li>
-    </ul>
-    <code className="text-sm text-muted-foreground">my-6 ml-6 list-disc [&amp;&gt;li]:mt-2</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Inline code - Identifier in a sentence</p>
-    <p className="text-base leading-6">
-      {'Use '}
-      <code className="rounded bg-muted px-1 py-0.5 font-mono text-sm font-semibold">font-sans</code>
-      {' for body copy.'}
-    </p>
-    <code className="text-sm text-muted-foreground">rounded bg-muted px-1 py-0.5 font-mono text-sm font-semibold</code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Link - Inline navigation</p>
-    <p className="text-base leading-6">
-      {'Use a '}
-      <a
-        href="#supporting-heading"
-        className="font-medium text-link underline underline-offset-4 hover:text-link-hover focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
-        {'supporting heading'}
-      </a>
-      {' to introduce related guidance.'}
-    </p>
-    <code className="text-sm text-muted-foreground">
-      font-medium text-link underline underline-offset-4 hover:text-link-hover focus-visible:rounded-sm
-      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring
-    </code>
-  </div>
-  <div className="grid gap-2">
-    <p className="text-sm text-muted-foreground">Table - Structured comparison</p>
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <caption className="mb-4 text-left text-sm text-muted-foreground">{'Typography roles at a glance'}</caption>
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              className="border border-border px-4 py-2 text-left font-semibold">
-              Role
-            </th>
-            <th
-              scope="col"
-              className="border border-border px-4 py-2 text-left font-semibold">
-              Use
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="even:bg-muted">
-            <td className="border border-border px-4 py-2">Heading</td>
-            <td className="border border-border px-4 py-2">Establish the content hierarchy</td>
-          </tr>
-          <tr className="even:bg-muted">
-            <td className="border border-border px-4 py-2">Paragraph</td>
-            <td className="border border-border px-4 py-2">Explain the main content</td>
-          </tr>
-          <tr className="even:bg-muted">
-            <td className="border border-border px-4 py-2">Muted</td>
-            <td className="border border-border px-4 py-2">Provide secondary context</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <code className="text-sm text-muted-foreground">Table: w-full text-sm · Wrapper: overflow-x-auto</code>
-    <code className="text-sm text-muted-foreground">
-      Headers: border border-border px-4 py-2 text-left font-semibold
-    </code>
-    <code className="text-sm text-muted-foreground">Cells: border border-border px-4 py-2 · Rows: even:bg-muted</code>
-  </div>
-</div>
+Import `HlmTypographyImports` from `@nuclia/ui-spartan/typography` and apply the directives to native HTML elements.
+Use **Show code** on each example for the implementation.
 
 Headings use `--font-display`; body text uses `--font-sans`; inline code uses `--font-mono`.
 Colors and borders follow the active theme.
+
+## Headings
+
+Use `hlmH1` for the page title, `hlmH2` for major sections, `hlmH3` for subsections, and `hlmH4` for supporting headings.
+Keep a single `<h1>` per page and do not skip heading levels.
+
+<Canvas of={TypographyStories.Headings} />
+
+## Body and supporting text
+
+Use `hlmP` for body copy, `hlmLead` for page introductions, `hlmLarge` for emphasised statements,
+`hlmSmall` for captions, and `hlmMuted` for secondary information.
+
+<Canvas of={TypographyStories.BodyText} />
+
+## Rich content
+
+Choose native elements for their meaning. Use `hlmBlockquote` for quoted passages, `hlmUl` for related items,
+and `hlmCode` for inline identifiers.
+
+### Quote
+
+<Canvas of={TypographyStories.Quote} />
+
+### List
+
+<Canvas of={TypographyStories.List} />
+
+### Inline code
+
+<Canvas of={TypographyStories.InlineCode} />
+
+### Link
+
+Links use the semantic link tokens with explicit hover and keyboard-focus states.
+
+<Canvas of={TypographyStories.Link} />
+
+### Table
+
+Use semantic table markup for structured comparisons and an overflow wrapper for smaller screens.
+
+<Canvas of={TypographyStories.Table} />
