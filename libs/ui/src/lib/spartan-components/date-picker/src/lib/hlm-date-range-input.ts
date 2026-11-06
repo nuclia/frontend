@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCalendar, lucideX } from '@ng-icons/lucide';
+import { matCalendarTodayRound, matCloseRound } from '@ng-icons/material-icons/round';
 import {
   BrnDateInput,
   type BrnDatePickerTriggerBase,
@@ -13,7 +13,7 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
 @Component({
   selector: 'hlm-date-range-input',
   imports: [HlmInputGroupImports, NgIcon],
-  providers: [provideIcons({ lucideCalendar, lucideX }), provideBrnDatePickerTrigger(HlmDateRangeInput)],
+  providers: [provideIcons({ matCalendarTodayRound, matCloseRound }), provideBrnDatePickerTrigger(HlmDateRangeInput)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [HlmInputGroup],
   template: `
@@ -45,7 +45,7 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
           [attr.aria-label]="clearAriaLabel()"
           (click)="_clear()"
           [disabled]="_disabled()">
-          <ng-icon name="lucideX" />
+          <ng-icon name="matCloseRound" />
         </button>
       }
       <button
@@ -54,7 +54,7 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
         [attr.aria-label]="calendarAriaLabel()"
         (click)="_popover().open()"
         [disabled]="_disabled()">
-        <ng-icon name="lucideCalendar" />
+        <ng-icon name="matCalendarTodayRound" />
       </button>
     </hlm-input-group-addon>
   `,

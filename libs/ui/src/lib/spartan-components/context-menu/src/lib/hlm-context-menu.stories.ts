@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCopy, lucidePencil, lucideTrash2 } from '@ng-icons/lucide';
+import { matContentCopyRound, matEditRound, matDeleteOutlineRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmDropdownMenuImports } from '../../../dropdown-menu/src/index';
 import { HlmContextMenuImports } from '../index';
@@ -19,7 +19,7 @@ const meta: Meta<ContextMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [NgIcon, ...HlmContextMenuImports, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ lucideCopy, lucidePencil, lucideTrash2 })],
+      providers: [provideIcons({ matContentCopyRound, matEditRound, matDeleteOutlineRound })],
     }),
   ],
   parameters: {
@@ -97,16 +97,16 @@ export const WithIconsAndShortcuts: Story = {
         <div hlmDropdownMenu aria-label="Document actions">
           <div hlmDropdownMenuLabel>Document</div>
           <button type="button" hlmDropdownMenuItem>
-            <ng-icon name="lucidePencil" />
+            <ng-icon name="matEditRound" />
             Rename <span hlmDropdownMenuShortcut>F2</span>
           </button>
           <button type="button" hlmDropdownMenuItem>
-            <ng-icon name="lucideCopy" />
+            <ng-icon name="matContentCopyRound" />
             Duplicate <span hlmDropdownMenuShortcut>⌘D</span>
           </button>
           <div hlmDropdownMenuSeparator></div>
           <button type="button" hlmDropdownMenuItem variant="destructive">
-            <ng-icon name="lucideTrash2" />
+            <ng-icon name="matDeleteOutlineRound" />
             Move to trash <span hlmDropdownMenuShortcut>⌫</span>
           </button>
         </div>

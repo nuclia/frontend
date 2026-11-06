@@ -1,7 +1,13 @@
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCircleCheck, lucideInfo, lucideLoader2, lucideOctagonX, lucideTriangleAlert } from '@ng-icons/lucide';
+import {
+  matCheckCircleRound,
+  matInfoRound,
+  matDataUsageRound,
+  matDangerousRound,
+  matWarningRound,
+} from '@ng-icons/material-icons/round';
 import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
@@ -10,7 +16,9 @@ import type { ClassValue } from 'clsx';
 @Component({
   selector: 'hlm-toaster',
   imports: [BrnSonnerImports, HlmButtonImports, NgIcon],
-  providers: [provideIcons({ lucideCircleCheck, lucideInfo, lucideTriangleAlert, lucideOctagonX, lucideLoader2 })],
+  providers: [
+    provideIcons({ matCheckCircleRound, matInfoRound, matWarningRound, matDangerousRound, matDataUsageRound }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <brn-sonner-toaster
@@ -29,27 +37,27 @@ import type { ClassValue } from 'clsx';
       [style]="userStyle()">
       <ng-template #loadingIcon>
         <ng-icon
-          name="lucideLoader2"
+          name="matDataUsageRound"
           class="overflow-visible! text-base [&>svg]:motion-safe:animate-spin" />
       </ng-template>
       <ng-template #successIcon>
         <ng-icon
-          name="lucideCircleCheck"
+          name="matCheckCircleRound"
           class="overflow-visible! text-base" />
       </ng-template>
       <ng-template #errorIcon>
         <ng-icon
-          name="lucideOctagonX"
+          name="matDangerousRound"
           class="overflow-visible! text-base" />
       </ng-template>
       <ng-template #infoIcon>
         <ng-icon
-          name="lucideInfo"
+          name="matInfoRound"
           class="overflow-visible! text-base" />
       </ng-template>
       <ng-template #warningIcon>
         <ng-icon
-          name="lucideTriangleAlert"
+          name="matWarningRound"
           class="overflow-visible! text-base" />
       </ng-template>
       <button

@@ -2,7 +2,7 @@ import { CdkStepHeader, StepState } from '@angular/cdk/stepper';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCheck, lucideCircleAlert, lucidePencil } from '@ng-icons/lucide';
+import { matCheckRound, matErrorRound, matEditRound } from '@ng-icons/material-icons/round';
 import { ButtonVariants, buttonVariants } from '@nuclia/ui-spartan/button';
 import { SpartanStepLabel } from './spartan-step-label';
 import { SpartanStepperLabelPosition } from './spartan-stepper';
@@ -13,7 +13,7 @@ export type SpartanStepperIndicatorMode = 'number' | 'state' | 'completion' | 'i
 @Component({
   selector: 'spartan-step-header',
   imports: [NgTemplateOutlet, NgIcon],
-  providers: [provideIcons({ lucideCheck, lucideCircleAlert, lucidePencil })],
+  providers: [provideIcons({ matCheckRound, matErrorRound, matEditRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class:
@@ -114,7 +114,7 @@ export class SpartanStepHeader extends CdkStepHeader {
     }
 
     if (state === 'error') {
-      return 'lucideCircleAlert';
+      return 'matErrorRound';
     }
 
     if (mode === 'state' || mode === 'completion') {
@@ -122,11 +122,11 @@ export class SpartanStepHeader extends CdkStepHeader {
         return null;
       }
 
-      return 'lucideCheck';
+      return 'matCheckRound';
 
       // TODO: to be discussed: should we follow the same ui as material stepper and show a pencil icon for edit state?
-      // if (state === 'done') return 'lucideCheck';
-      // if (state === 'edit') return 'lucidePencil';
+      // if (state === 'done') return 'matCheckRound';
+      // if (state === 'edit') return 'matEditRound';
     }
 
     return this.icon();

@@ -1,7 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown, lucideX } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound, matCloseRound } from '@ng-icons/material-icons/round';
 import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from '@spartan-ng/brain/combobox';
 import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { classes } from '@nuclia/ui-spartan/utils';
@@ -9,7 +9,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 @Component({
   selector: 'hlm-combobox-input',
   imports: [HlmInputGroupImports, NgIcon, BrnComboboxImports, BrnComboboxPopoverTrigger],
-  providers: [provideIcons({ lucideChevronDown, lucideX })],
+  providers: [provideIcons({ matKeyboardArrowDownRound, matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnComboboxAnchor, HlmInputGroup],
   template: `
@@ -35,7 +35,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
           size="icon-xs"
           variant="ghost"
           class="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent">
-          <ng-icon name="lucideChevronDown" />
+          <ng-icon name="matKeyboardArrowDownRound" />
         </button>
       }
 
@@ -48,7 +48,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
           [attr.aria-label]="clearAriaLabel()"
           size="icon-xs"
           variant="ghost">
-          <ng-icon name="lucideX" />
+          <ng-icon name="matCloseRound" />
         </button>
       }
     </hlm-input-group-addon>

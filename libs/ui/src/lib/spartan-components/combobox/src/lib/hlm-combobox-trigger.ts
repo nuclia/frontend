@@ -1,7 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import { BrnComboboxAnchor, BrnComboboxPopoverTrigger, BrnComboboxTrigger } from '@spartan-ng/brain/combobox';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { ButtonVariants, HlmButton } from '@nuclia/ui-spartan/button';
@@ -18,7 +18,7 @@ import type { ClassValue } from 'clsx';
     BrnComboboxPopoverTrigger,
     BrnFieldControlDescribedBy,
   ],
-  providers: [provideIcons({ lucideChevronDown })],
+  providers: [provideIcons({ matKeyboardArrowDownRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -34,7 +34,7 @@ import type { ClassValue } from 'clsx';
       [forceInvalid]="forceInvalid()">
       <ng-content />
       <ng-icon
-        name="lucideChevronDown"
+        name="matKeyboardArrowDownRound"
         class="text-muted-foreground text-[length:--spacing(4)]" />
     </button>
   `,

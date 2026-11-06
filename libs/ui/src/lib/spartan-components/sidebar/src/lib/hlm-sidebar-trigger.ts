@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucidePanelLeft } from '@ng-icons/lucide';
+import { matViewSidebarRound } from '@ng-icons/material-icons/round';
 import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 import { HlmSidebarService } from './hlm-sidebar.service';
 
@@ -8,7 +8,7 @@ import { HlmSidebarService } from './hlm-sidebar.service';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'button[hlmSidebarTrigger]',
   imports: [NgIcon],
-  providers: [provideIcons({ lucidePanelLeft }), provideBrnButtonConfig({ variant: 'ghost', size: 'icon-sm' })],
+  providers: [provideIcons({ matViewSidebarRound }), provideBrnButtonConfig({ variant: 'ghost', size: 'icon-sm' })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: HlmButton, inputs: ['variant', 'size'] }],
   host: {
@@ -17,7 +17,7 @@ import { HlmSidebarService } from './hlm-sidebar.service';
     '(click)': '_onClick()',
   },
   template: `
-    <ng-icon name="lucidePanelLeft" />
+    <ng-icon name="matViewSidebarRound" />
     <span class="sr-only">{{ srOnlyText() }}</span>
   `,
 })

@@ -1,7 +1,7 @@
 import type { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { BrnSelectTrigger } from '@spartan-ng/brain/select';
 import { hlm } from '@nuclia/ui-spartan/utils';
@@ -10,7 +10,7 @@ import type { ClassValue } from 'clsx';
 @Component({
   selector: 'hlm-select-trigger',
   imports: [NgIcon, BrnSelectTrigger, BrnFieldControlDescribedBy],
-  providers: [provideIcons({ lucideChevronDown })],
+  providers: [provideIcons({ matKeyboardArrowDownRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -24,7 +24,7 @@ import type { ClassValue } from 'clsx';
       data-slot="select-trigger">
       <ng-content />
       <ng-icon
-        name="lucideChevronDown"
+        name="matKeyboardArrowDownRound"
         class="text-muted-foreground text-[length:--spacing(4)] ms-auto" />
     </button>
   `,

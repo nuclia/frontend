@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCopy, lucideSearch } from '@ng-icons/lucide';
+import { matContentCopyRound, matSearchRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmInputGroupImports } from '../index';
 import { HlmLabelImports } from '../../../label/src/index';
@@ -21,7 +21,7 @@ const meta: Meta<InputGroupStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmInputGroupImports, ...HlmLabelImports, NgIcon],
-      providers: [provideIcons({ lucideCopy, lucideSearch })],
+      providers: [provideIcons({ matContentCopyRound, matSearchRound })],
     }),
   ],
   parameters: {
@@ -120,7 +120,7 @@ export const WithIcon: Story = {
         <div hlmInputGroup>
           <input hlmInputGroupInput id="input-group-search" type="search" placeholder="Title or keyword" />
           <div hlmInputGroupAddon>
-            <ng-icon name="lucideSearch" />
+            <ng-icon name="matSearchRound" />
           </div>
           <div hlmInputGroupAddon align="inline-end">
             <span hlmInputGroupText>12 results</span>
@@ -147,7 +147,7 @@ export const WithAction: Story = {
             value="https://app.example.com/share/8f3a2c" />
           <div hlmInputGroupAddon align="inline-end">
             <button hlmInputGroupButton size="icon-xs" type="button" aria-label="Copy share link">
-              <ng-icon name="lucideCopy" />
+              <ng-icon name="matContentCopyRound" />
             </button>
           </div>
         </div>

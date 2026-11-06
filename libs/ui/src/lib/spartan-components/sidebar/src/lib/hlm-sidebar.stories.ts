@@ -1,6 +1,6 @@
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideFolderKanban, lucideHouse, lucidePlus, lucideUsers } from '@ng-icons/lucide';
+import { matViewKanbanRound, matHomeRound, matAddRound, matGroupRound } from '@ng-icons/material-icons/round';
 import { HlmSidebarImports } from '../index';
 import { HlmSidebar } from './hlm-sidebar';
 
@@ -17,7 +17,7 @@ const meta: Meta<SidebarStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     applicationConfig({
-      providers: [provideIcons({ lucideFolderKanban, lucideHouse, lucidePlus, lucideUsers })],
+      providers: [provideIcons({ matViewKanbanRound, matHomeRound, matAddRound, matGroupRound })],
     }),
     moduleMetadata({ imports: [...HlmSidebarImports, NgIcon] }),
   ],
@@ -79,7 +79,7 @@ Open and collapsed state is shared through <code>HlmSidebarService</code> (persi
         >
           <div hlmSidebarHeader>
             <h2 class="flex items-center gap-2 px-2 font-semibold">
-              <ng-icon name="lucideHouse" />
+              <ng-icon name="matHomeRound" />
               <span class="group-data-[collapsible=icon]:hidden">Northstar</span>
             </h2>
           </div>
@@ -90,19 +90,19 @@ Open and collapsed state is shared through <code>HlmSidebarService</code> (persi
                 <ul hlmSidebarMenu>
                   <li hlmSidebarMenuItem>
                     <button type="button" hlmSidebarMenuButton isActive tooltip="Overview">
-                      <ng-icon name="lucideHouse" />
+                      <ng-icon name="matHomeRound" />
                       <span>Overview</span>
                     </button>
                   </li>
                   <li hlmSidebarMenuItem>
                     <button type="button" hlmSidebarMenuButton tooltip="Projects">
-                      <ng-icon name="lucideFolderKanban" />
+                      <ng-icon name="matViewKanbanRound" />
                       <span>Projects</span>
                     </button>
                   </li>
                   <li hlmSidebarMenuItem>
                     <button type="button" hlmSidebarMenuButton tooltip="Team">
-                      <ng-icon name="lucideUsers" />
+                      <ng-icon name="matGroupRound" />
                       <span>Team</span>
                     </button>
                   </li>
@@ -182,13 +182,13 @@ export const WithBadgesAndSubMenu: Story = {
             <section hlmSidebarGroup>
               <div hlmSidebarGroupLabel>Projects</div>
               <button type="button" hlmSidebarGroupAction aria-label="Add project">
-                <ng-icon name="lucidePlus" />
+                <ng-icon name="matAddRound" />
               </button>
               <div hlmSidebarGroupContent>
                 <ul hlmSidebarMenu>
                   <li hlmSidebarMenuItem>
                     <button type="button" hlmSidebarMenuButton isActive>
-                      <ng-icon name="lucideFolderKanban" />
+                      <ng-icon name="matViewKanbanRound" />
                       <span>Atlas redesign</span>
                     </button>
                     <span hlmSidebarMenuBadge>12</span>
@@ -203,7 +203,7 @@ export const WithBadgesAndSubMenu: Story = {
                   </li>
                   <li hlmSidebarMenuItem>
                     <button type="button" hlmSidebarMenuButton>
-                      <ng-icon name="lucideUsers" />
+                      <ng-icon name="matGroupRound" />
                       <span>Customer interviews</span>
                     </button>
                     <span hlmSidebarMenuBadge>3</span>

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideLoader2 } from '@ng-icons/lucide';
+import { matDataUsageRound } from '@ng-icons/material-icons/round';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-spinner',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideLoader2 })],
+  providers: [provideIcons({ matDataUsageRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-slot': 'spinner',
@@ -22,7 +22,7 @@ export class HlmSpinner {
    * The name of the icon to be used as the spinner.
    * Use provideIcons({ ... }) to register custom icons.
    */
-  public readonly icon = input<string>('lucideLoader2');
+  public readonly icon = input<string>('matDataUsageRound');
 
   /** Aria label for the spinner for accessibility. */
   public readonly ariaLabel = input<string>('Loading', { alias: 'aria-label' });

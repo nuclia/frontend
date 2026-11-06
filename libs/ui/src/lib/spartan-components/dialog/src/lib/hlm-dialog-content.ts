@@ -3,7 +3,7 @@ import type { ComponentType } from '@angular/cdk/portal';
 import { NgComponentOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideX } from '@ng-icons/lucide';
+import { matCloseRound } from '@ng-icons/material-icons/round';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmButton } from '@nuclia/ui-spartan/button';
 
@@ -20,7 +20,7 @@ type HlmDialogContentContext = {
 @Component({
   selector: 'hlm-dialog-content',
   imports: [NgComponentOutlet, HlmButton, HlmDialogClose, NgIcon],
-  providers: [provideIcons({ lucideX })],
+  providers: [provideIcons({ matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-slot': 'dialog-content',
@@ -41,7 +41,7 @@ type HlmDialogContentContext = {
         class="absolute end-2 top-2"
         hlmDialogClose>
         <span class="sr-only">{{ closeLabel() }}</span>
-        <ng-icon name="lucideX" />
+        <ng-icon name="matCloseRound" />
       </button>
     }
   `,

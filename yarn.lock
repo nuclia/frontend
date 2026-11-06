@@ -5455,12 +5455,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ng-icons/lucide@npm:^32.2.0":
+"@ng-icons/material-icons@npm:^32.2.0":
   version: 32.5.0
-  resolution: "@ng-icons/lucide@npm:32.5.0"
+  resolution: "@ng-icons/material-icons@npm:32.5.0"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/67904ba8350150132be3af7df6e8b23e20acc6cab1f54ce41a05d8dde11e473d5249b14c0208b97bb7991e6ad99329182a012260b4242b97d3658ed3c8e0679f
+  checksum: 10/b70c0d64cd8c647f5a8a8811376e46cc88357216d6d6a05a36639ab226ec1850626669015e7c45dbea8abc0b1ed3932d38363df53e95ee9347bab7cb3237dff8
   languageName: node
   linkType: hard
 
@@ -19708,7 +19708,7 @@ __metadata:
     "@babel/core": "npm:^7.29.6"
     "@eslint/js": "npm:^9.35.0"
     "@ng-icons/core": "npm:^32.2.0"
-    "@ng-icons/lucide": "npm:^32.2.0"
+    "@ng-icons/material-icons": "npm:^32.2.0"
     "@ng-web-apis/common": "npm:^2.1.0"
     "@ngx-translate/core": "npm:18"
     "@ngx-translate/http-loader": "npm:^18.0.0"

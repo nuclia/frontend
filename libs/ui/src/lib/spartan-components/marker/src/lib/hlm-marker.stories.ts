@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCircleCheck, lucideGitBranch } from '@ng-icons/lucide';
+import { matCheckCircleRound, matAccountTreeRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmMarkerImports } from '../index';
 import { HlmMarker } from './hlm-marker';
@@ -16,7 +16,7 @@ const meta: Meta<MarkerStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmMarkerImports, NgIcon],
-      providers: [provideIcons({ lucideCircleCheck, lucideGitBranch })],
+      providers: [provideIcons({ matCheckCircleRound, matAccountTreeRound })],
     }),
   ],
   parameters: {
@@ -50,7 +50,7 @@ Because the icon is <code>aria-hidden</code>, the text must carry the whole mean
     template: `
       <div hlmMarker [variant]="variant" class="max-w-xl">
         <span hlmMarkerIcon>
-          <ng-icon name="lucideGitBranch" />
+          <ng-icon name="matAccountTreeRound" />
         </span>
         <span hlmMarkerContent>{{ text }}</span>
       </div>
@@ -85,7 +85,7 @@ export const StatusUpdate: Story = {
     template: `
       <div hlmMarker class="max-w-xl">
         <span hlmMarkerIcon>
-          <ng-icon name="lucideCircleCheck" />
+          <ng-icon name="matCheckCircleRound" />
         </span>
         <span hlmMarkerContent>Indexing finished: 24 documents are now searchable</span>
       </div>

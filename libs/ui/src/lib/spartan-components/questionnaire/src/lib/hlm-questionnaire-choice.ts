@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCheck } from '@ng-icons/lucide';
+import { matCheckRound } from '@ng-icons/material-icons/round';
 import {
   BrnQuestionnaireChoice,
   BrnQuestionnaireChoiceInput,
@@ -14,7 +14,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
   selector: 'label[hlmQuestionnaireChoice]',
   exportAs: 'hlmQuestionnaireChoice',
   imports: [BrnQuestionnaireChoiceInput, BrnQuestionnaireChoiceLabel, BrnQuestionnaireChoiceShortcut, NgIcon],
-  viewProviders: [provideIcons({ lucideCheck })],
+  viewProviders: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
     {
@@ -42,7 +42,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
       }
       @if (_choice.checked() && _choice.type() === 'checkbox') {
         <ng-icon
-          name="lucideCheck"
+          name="matCheckRound"
           data-slot="questionnaire-choice-indicator-check"
           class="text-[length:--spacing(3.5)]" />
       }

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCheck } from '@ng-icons/lucide';
+import { matCheckRound } from '@ng-icons/material-icons/round';
 import { BrnSelectItem } from '@spartan-ng/brain/select';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-select-item',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideCheck })],
+  providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: BrnSelectItem, inputs: ['id', 'disabled', 'value'] }],
   host: { 'data-slot': 'select-item' },
@@ -15,7 +15,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
     <ng-content />
     @if (_active()) {
       <ng-icon
-        name="lucideCheck"
+        name="matCheckRound"
         class="absolute end-2 flex items-center justify-center text-[length:--spacing(4)]"
         aria-hidden="true" />
     }

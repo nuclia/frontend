@@ -1,7 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideSearch, lucideX } from '@ng-icons/lucide';
+import { matSearchRound, matCloseRound } from '@ng-icons/material-icons/round';
 import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } from '@spartan-ng/brain/autocomplete';
 import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { classes } from '@nuclia/ui-spartan/utils';
@@ -9,7 +9,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 @Component({
   selector: 'hlm-autocomplete-input',
   imports: [HlmInputGroupImports, NgIcon, BrnAutocompleteClear, BrnAutocompleteInput],
-  providers: [provideIcons({ lucideSearch, lucideX })],
+  providers: [provideIcons({ matSearchRound, matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnAutocompleteAnchor, HlmInputGroup],
   template: `
@@ -26,7 +26,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
     @if (showSearch()) {
       <hlm-input-group-addon>
         <ng-icon
-          name="lucideSearch"
+          name="matSearchRound"
           [class.opacity-50]="autocompleteInput.disabled()" />
       </hlm-input-group-addon>
     }
@@ -40,7 +40,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
           [disabled]="autocompleteInput.disabled()"
           size="icon-xs"
           variant="ghost">
-          <ng-icon name="lucideX" />
+          <ng-icon name="matCloseRound" />
         </button>
       </hlm-input-group-addon>
     }

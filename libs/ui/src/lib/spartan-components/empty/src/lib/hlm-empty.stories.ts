@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideFileSearch, lucideFolderOpen } from '@ng-icons/lucide';
+import { matFindInPageRound, matFolderOpenRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmEmptyImports } from '../index';
@@ -19,7 +19,7 @@ const meta: Meta<EmptyStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmEmptyImports, HlmButton, NgIcon],
-      providers: [provideIcons({ lucideFolderOpen, lucideFileSearch })],
+      providers: [provideIcons({ matFolderOpenRound, matFindInPageRound })],
     }),
   ],
   parameters: {
@@ -65,7 +65,7 @@ Each part also exists as an element selector (<code>hlm-empty</code>, <code>hlm-
       <section hlmEmpty class="mx-auto max-w-md">
         <header hlmEmptyHeader>
           <div hlmEmptyMedia [variant]="mediaVariant" aria-hidden="true">
-            <ng-icon name="lucideFolderOpen" />
+            <ng-icon name="matFolderOpenRound" />
           </div>
           <h2 hlmEmptyTitle>{{ title }}</h2>
           <p hlmEmptyDescription>{{ description }}</p>
@@ -101,7 +101,7 @@ export const NoSearchResults: Story = {
       <section hlmEmpty class="mx-auto max-w-md">
         <header hlmEmptyHeader>
           <div hlmEmptyMedia [variant]="mediaVariant" aria-hidden="true">
-            <ng-icon name="lucideFileSearch" />
+            <ng-icon name="matFindInPageRound" />
           </div>
           <h2 hlmEmptyTitle>{{ title }}</h2>
           <p hlmEmptyDescription>{{ description }}</p>
