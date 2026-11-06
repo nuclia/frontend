@@ -1,4 +1,5 @@
 export * from './embeddings-model-form';
+export * from './eula-modal/eula-modal.component';
 export * from './kb-creation-steps';
 export * from './setting-up/setting-up.component';
 export * from './step1/step1.component';

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EulaModalComponent } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
-import { EulaModalComponent } from 'libs/common/src/lib/onboarding/eula-modal/eula-modal.component';
 import { forkJoin, switchMap } from 'rxjs';
 
 @Component({
@@ -20,7 +20,7 @@ export class EulaComponent {
       .getAccounts()
       .pipe(switchMap((accounts) => forkJoin(accounts.map((account) => this.sdk.nuclia.db.getAccount(account.slug)))))
       .subscribe((accounts) => {
-        const account = accounts.find((account) => !account?.eula_accepted && account?.can_manage_account);
+        const account = accounts.find((account) => !account.eula_accepted && account.can_manage_account);
         if (account) {
           this.modalService
             .openModal(EulaModalComponent, { data: { accountSlug: account.slug }, dismissable: false })
