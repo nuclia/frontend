@@ -33,7 +33,7 @@ describe('AppLayoutComponent', () => {
         MockProvider(ManagerStore, {
           canUseManager: of(true),
           canManageZones: of(true),
-          canSeeUsers: of(true),
+          canSeeGlobalUsers: of(true),
           canSendEmails: of(true),
         }),
       ],

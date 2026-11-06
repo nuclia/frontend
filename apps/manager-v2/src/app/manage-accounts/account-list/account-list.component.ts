@@ -31,7 +31,7 @@ import { AccountService } from '../account.service';
 export class AccountListComponent {
   private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);
   private store = inject(ManagerStore);
-  canDelete = this.store.canDelete;
+  canDelete = this.store.canDeleteAccount;
   canCreateAccount = this.store.canCreateAccount;
   filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   accounts$: Observable<AccountSummary[]> = combineLatest([this._allAccounts, this.filter$]).pipe(

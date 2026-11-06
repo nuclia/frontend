@@ -236,7 +236,7 @@ export interface SignUpInfo {
   workflow?: WorkflowType;
 }
 
-export type UserType = 'ROOT' | 'DEALER' | 'MANAGER' | 'SALES' | 'READONLY' | 'USER';
+export type UserType = 'ROOT' | 'DEALER' | 'MANAGER' | 'SALES' | 'READONLY' | 'USER' | 'ADMIN';
 export type Language = 'CA' | 'ES' | 'EN';
 
 export interface NUAClientPayload {
