@@ -5,12 +5,12 @@
     <div class="buttons">
       <pa-button
         kind="primary"
-        (click)="setPassword()">
+        (click)="setAccessMethod(true)">
         {{ 'invite.set-password' | translate }}
       </pa-button>
       <pa-button
         aspect="basic"
-        (click)="useSSO()">
+        (click)="setAccessMethod(false)">
         {{ 'invite.use-sso' | translate }}
       </pa-button>
     </div>

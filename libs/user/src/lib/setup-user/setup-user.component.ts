@@ -19,24 +19,29 @@ export class SetupUserComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly sdk = inject(SDKService);
 
-  private cameFrom = '';
+  private params: { [key: string]: string } = {};
 
   constructor() {
     const app = this.route.snapshot.queryParams['app'];
+
     if (this.magicService.cameFrom) {
-      this.cameFrom = this.magicService.cameFrom;
+      // The user came from an invitation email
+      this.params = { came_from: this.magicService.cameFrom };
     } else if (['platform', 'rag'].includes(app)) {
-      this.cameFrom = this.sdk.getOriginForApp(app);
+      this.params = {
+        require_eula: 'true',
+        redirect_after_eula: app,
+      };
     }
   }
 
-  setPassword() {
+  setAccessMethod(setPassword: boolean) {
+    const params = this.params;
+    if (setPassword) {
+      params['initial_setpassword'] = 'true';
+    }
     this.navigationService.navigateExternal(`${this.navigationService.getAdminOrigin()}/user/set-password`, {
-      queryParams: { came_from: this.cameFrom },
+      queryParams: params,
     });
-  }
-
-  useSSO() {
-    location.href = this.cameFrom;
   }
 }

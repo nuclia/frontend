@@ -84,7 +84,7 @@ export class CallbackComponent implements OnInit {
             ) {
               window.location.href = successCameFrom;
             } else {
-              this.router.navigate(['/']);
+              this.navigateAfterLogin(res.state?.['redirect_after_eula']);
             }
           } else {
             this.toaster.error('login.error.device_mismatch');
@@ -201,11 +201,12 @@ export class CallbackComponent implements OnInit {
 
   private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
-    const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
+    const decodedState = state ? this.ssoService.decodeState(state) : undefined;
+    const came_from = decodedState?.['came_from'];
     if (came_from && came_from !== window.location.origin && isCameFromLegit(came_from, this.config.getAPIOrigin())) {
       window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
-      this.router.navigate(['/']);
+      this.navigateAfterLogin(decodedState?.['redirect_after_eula']);
     }
   }
 
@@ -227,6 +228,14 @@ export class CallbackComponent implements OnInit {
       this.document.location.href = url.toString();
     } else {
       this.sdk.nuclia.auth.redirectToOAuth({ message });
+    }
+  }
+
+  private navigateAfterLogin(redirect_after_eula?: string) {
+    if (redirect_after_eula) {
+      this.router.navigate(['/eula'], { queryParams: { redirect_after_eula } });
+    } else {
+      this.router.navigate(['/']);
     }
   }
 }

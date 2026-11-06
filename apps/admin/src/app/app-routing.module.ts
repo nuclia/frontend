@@ -20,13 +20,14 @@ import {
   CallbackComponent,
   FarewellComponent,
   RedirectComponent,
-  SetPasswordComponent,
+  SetAccessMethodComponent,
   TemporaryContextBoxSignupComponent,
   TestingAppSignupComponent,
 } from '@nuclia/user';
 import { FeedbackComponent } from './account/billing/feedback/feedback.component';
 import { captureEntryContextGuard } from './capture-entry-context.guard';
 import { fallbackRedirectGuard } from './fallback-redirect.guard';
+import { EulaComponent } from './account/eula/eula.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,10 @@ const routes: Routes = [
       {
         path: 'redirect',
         component: RedirectComponent,
+      },
+      {
+        path: 'eula',
+        component: EulaComponent,
       },
       {
         // No `/manage` segment here — unlike dashboard, `admin` only has account pages.
@@ -88,7 +93,7 @@ const routes: Routes = [
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
   { path: 'user/test-signup', component: TestingAppSignupComponent },
   { path: 'user/contextbox-signup', component: TemporaryContextBoxSignupComponent },
-  { path: 'user/set-password', component: SetPasswordComponent },
+  { path: 'user/set-password', component: SetAccessMethodComponent },
   {
     path: 'user/login',
     redirectTo: '',
