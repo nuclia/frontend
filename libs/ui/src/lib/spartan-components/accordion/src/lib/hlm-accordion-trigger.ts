@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown, lucideChevronUp } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound, matKeyboardArrowUpRound } from '@ng-icons/material-icons/round';
 import { BrnAccordionImports } from '@spartan-ng/brain/accordion';
 import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
@@ -8,7 +8,7 @@ import type { ClassValue } from 'clsx';
 @Component({
   selector: 'hlm-accordion-trigger',
   imports: [BrnAccordionImports, NgIcon],
-  providers: [provideIcons({ lucideChevronDown, lucideChevronUp })],
+  providers: [provideIcons({ matKeyboardArrowDownRound, matKeyboardArrowUpRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h3
@@ -20,11 +20,11 @@ import type { ClassValue } from 'clsx';
         [class]="_computedTriggerClass()">
         <ng-content />
         <ng-icon
-          name="lucideChevronDown"
+          name="matKeyboardArrowDownRound"
           data-slot="accordion-trigger-icon"
           class="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
         <ng-icon
-          name="lucideChevronUp"
+          name="matKeyboardArrowUpRound"
           data-slot="accordion-trigger-icon"
           class="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:inline group-aria-[expanded=false]/accordion-trigger:hidden" />
       </button>

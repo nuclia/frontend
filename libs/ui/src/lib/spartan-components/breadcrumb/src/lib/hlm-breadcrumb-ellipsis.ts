@@ -1,19 +1,19 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideEllipsis } from '@ng-icons/lucide';
+import { matMoreHorizRound } from '@ng-icons/material-icons/round';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-breadcrumb-ellipsis',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideEllipsis })],
+  providers: [provideIcons({ matMoreHorizRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-slot': 'breadcrumb-ellipsis',
     role: 'presentation',
   },
   template: `
-    <ng-icon name="lucideEllipsis" />
+    <ng-icon name="matMoreHorizRound" />
     <span class="sr-only">{{ srOnlyText() }}</span>
   `,
 })

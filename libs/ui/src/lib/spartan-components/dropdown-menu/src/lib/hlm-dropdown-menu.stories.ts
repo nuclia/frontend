@@ -1,5 +1,11 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCopy, lucideLogOut, lucidePencil, lucideTrash2, lucideUser } from '@ng-icons/lucide';
+import {
+  matContentCopyRound,
+  matLogoutRound,
+  matEditRound,
+  matDeleteOutlineRound,
+  matPersonRound,
+} from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmDropdownMenuImports } from '../index';
@@ -19,7 +25,9 @@ const meta: Meta<DropdownMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ lucideCopy, lucideLogOut, lucidePencil, lucideTrash2, lucideUser })],
+      providers: [
+        provideIcons({ matContentCopyRound, matLogoutRound, matEditRound, matDeleteOutlineRound, matPersonRound }),
+      ],
     }),
   ],
   parameters: {
@@ -123,16 +131,16 @@ export const WithIcons: Story = {
       <ng-template #documentMenu>
         <div hlmDropdownMenu aria-label="Document actions" [sideOffset]="sideOffset">
           <button type="button" hlmDropdownMenuItem>
-            <ng-icon name="lucidePencil" />
+            <ng-icon name="matEditRound" />
             Rename
           </button>
           <button type="button" hlmDropdownMenuItem>
-            <ng-icon name="lucideCopy" />
+            <ng-icon name="matContentCopyRound" />
             Duplicate
           </button>
           <div hlmDropdownMenuSeparator></div>
           <button type="button" hlmDropdownMenuItem variant="destructive">
-            <ng-icon name="lucideTrash2" />
+            <ng-icon name="matDeleteOutlineRound" />
             Delete
           </button>
         </div>
@@ -226,7 +234,7 @@ export const WithSubmenu: Story = {
       <ng-template #accountMenu>
         <div hlmDropdownMenu aria-label="Account actions" [sideOffset]="sideOffset">
           <button type="button" hlmDropdownMenuItem>
-            <ng-icon name="lucideUser" />
+            <ng-icon name="matPersonRound" />
             Profile
           </button>
           <button type="button" hlmDropdownMenuItem [hlmDropdownMenuSubTrigger]="shareMenu">
@@ -235,7 +243,7 @@ export const WithSubmenu: Story = {
           </button>
           <div hlmDropdownMenuSeparator></div>
           <button type="button" hlmDropdownMenuItem>
-            <ng-icon name="lucideLogOut" />
+            <ng-icon name="matLogoutRound" />
             Sign out
           </button>
         </div>

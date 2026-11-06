@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCircleAlert, lucideCircleCheck } from '@ng-icons/lucide';
+import { matErrorRound, matCheckCircleRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmAlertImports } from '../index';
@@ -18,7 +18,7 @@ const meta: Meta<AlertStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmAlertImports, HlmButton, NgIcon],
-      providers: [provideIcons({ lucideCircleAlert, lucideCircleCheck })],
+      providers: [provideIcons({ matErrorRound, matCheckCircleRound })],
     }),
   ],
   parameters: {
@@ -82,7 +82,7 @@ export const WithIcon: Story = {
     props: args,
     template: `
       <hlm-alert [variant]="variant" class="max-w-lg">
-        <ng-icon name="lucideCircleCheck" />
+        <ng-icon name="matCheckCircleRound" />
         <h2 hlmAlertTitle>{{ title }}</h2>
         <div hlmAlertDescription>{{ description }}</div>
       </hlm-alert>
@@ -100,7 +100,7 @@ export const DestructiveWithIcon: Story = {
     props: args,
     template: `
       <hlm-alert [variant]="variant" class="max-w-lg">
-        <ng-icon name="lucideCircleAlert" />
+        <ng-icon name="matErrorRound" />
         <h2 hlmAlertTitle>{{ title }}</h2>
         <div hlmAlertDescription>{{ description }}</div>
       </hlm-alert>

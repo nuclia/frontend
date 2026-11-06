@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronUp } from '@ng-icons/lucide';
+import { matKeyboardArrowUpRound } from '@ng-icons/material-icons/round';
 import { BrnSelectScrollUp } from '@spartan-ng/brain/select';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-select-scroll-up',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideChevronUp })],
+  providers: [provideIcons({ matKeyboardArrowUpRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnSelectScrollUp],
   template: `
-    <ng-icon name="lucideChevronUp" />
+    <ng-icon name="matKeyboardArrowUpRound" />
   `,
 })
 export class HlmSelectScrollUp {

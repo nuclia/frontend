@@ -1,6 +1,6 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideFileText, lucideX } from '@ng-icons/lucide';
+import { matDescriptionRound, matCloseRound } from '@ng-icons/material-icons/round';
 import { HlmAttachmentImports } from '../index';
 import { HlmAttachment, type AttachmentState } from './hlm-attachment';
 
@@ -19,7 +19,7 @@ const meta: Meta<AttachmentStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmAttachmentImports, NgIcon],
-      providers: [provideIcons({ lucideFileText, lucideX })],
+      providers: [provideIcons({ matDescriptionRound, matCloseRound })],
     }),
   ],
   parameters: {
@@ -73,7 +73,7 @@ Icon-only triggers and actions need an <code>aria-label</code>.`,
         [state]="state"
         [size]="size"
         [orientation]="orientation">
-        <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="lucideFileText" /></span>
+        <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="matDescriptionRound" /></span>
         <div hlmAttachmentContent>
           <div hlmAttachmentTitle>{{ title }}</div>
           <div hlmAttachmentDescription>{{ description }}</div>
@@ -81,7 +81,7 @@ Icon-only triggers and actions need an <code>aria-label</code>.`,
         <button hlmAttachmentTrigger type="button" [attr.aria-label]="'Open ' + title"></button>
         <div hlmAttachmentActions>
           <button hlmAttachmentAction type="button" [attr.aria-label]="'Remove ' + title">
-            <ng-icon name="lucideX" />
+            <ng-icon name="matCloseRound" />
           </button>
         </div>
       </div>
@@ -131,21 +131,21 @@ export const Group: Story = {
     template: `
       <div hlmAttachmentGroup class="max-w-md">
         <div hlmAttachment>
-          <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="lucideFileText" /></span>
+          <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="matDescriptionRound" /></span>
           <div hlmAttachmentContent>
             <div hlmAttachmentTitle>Quarterly report.pdf</div>
             <div hlmAttachmentDescription>2.4 MB</div>
           </div>
         </div>
         <div hlmAttachment state="uploading">
-          <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="lucideFileText" /></span>
+          <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="matDescriptionRound" /></span>
           <div hlmAttachmentContent>
             <div hlmAttachmentTitle>Meeting notes.docx</div>
             <div hlmAttachmentDescription>Uploading…</div>
           </div>
         </div>
         <div hlmAttachment state="error">
-          <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="lucideFileText" /></span>
+          <span hlmAttachmentMedia aria-hidden="true"><ng-icon name="matDescriptionRound" /></span>
           <div hlmAttachmentContent>
             <div hlmAttachmentTitle>Archive.zip</div>
             <div hlmAttachmentDescription>Unsupported format</div>

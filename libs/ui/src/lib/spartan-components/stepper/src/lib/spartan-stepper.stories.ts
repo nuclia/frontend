@@ -1,5 +1,5 @@
 import { provideIcons } from '@ng-icons/core';
-import { lucideMail, lucideUsers, lucideSend } from '@ng-icons/lucide';
+import { matMailRound, matGroupRound, matSendRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { SpartanStepperImports } from '../index';
@@ -21,7 +21,7 @@ const meta: Meta<StepperStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...SpartanStepperImports, HlmButton],
-      providers: [provideIcons({ lucideMail, lucideUsers, lucideSend })],
+      providers: [provideIcons({ matMailRound, matGroupRound, matSendRound })],
     }),
   ],
   parameters: {
@@ -89,18 +89,18 @@ Always provide <code>stepperAriaLabel</code> for assistive technology.`,
                 [indicatorMode]="indicatorMode"
                 [animationsEnabled]="animationsEnabled"
             >
-                <spartan-step label="Recipients" icon="lucideUsers" [completed]="true">
+                <spartan-step label="Recipients" icon="matGroupRound" [completed]="true">
                     <p class="mb-4 text-sm">Choose who should receive the message.</p>
                     <button hlmBtn type="button" spartanStepperNext>Next</button>
                 </spartan-step>
-                <spartan-step label="Message" icon="lucideMail" [completed]="true">
+                <spartan-step label="Message" icon="matMailRound" [completed]="true">
                     <p class="mb-4 text-sm">Write the message content.</p>
                     <div class="flex gap-2">
                         <button hlmBtn variant="outline" type="button" spartanStepperPrevious>Back</button>
                         <button hlmBtn type="button" spartanStepperNext>Next</button>
                     </div>
                 </spartan-step>
-                <spartan-step label="Review" icon="lucideSend">
+                <spartan-step label="Review" icon="matSendRound">
                     <p class="mb-4 text-sm">Review everything before sending.</p>
                     <button hlmBtn variant="outline" type="button" spartanStepperPrevious>Back</button>
                 </spartan-step>

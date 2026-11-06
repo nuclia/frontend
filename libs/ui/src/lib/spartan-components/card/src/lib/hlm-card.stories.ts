@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideEllipsis } from '@ng-icons/lucide';
+import { matMoreHorizRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButtonImports } from '../../../button/src/index';
 import { HlmCardImports } from '../index';
@@ -18,7 +18,7 @@ const meta: Meta<CardStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmCardImports, ...HlmButtonImports, NgIcon],
-      providers: [provideIcons({ lucideEllipsis })],
+      providers: [provideIcons({ matMoreHorizRound })],
     }),
   ],
   parameters: {
@@ -89,7 +89,7 @@ export const WithAction: Story = {
           <h2 hlmCardTitle>{{ title }}</h2>
           <p hlmCardDescription>{{ description }}</p>
           <button hlmCardAction hlmBtn variant="ghost" size="icon-sm" type="button" aria-label="More workspace activity options">
-            <ng-icon name="lucideEllipsis" />
+            <ng-icon name="matMoreHorizRound" />
           </button>
         </header>
         <div hlmCardContent><p>12 resources were added this week.</p></div>

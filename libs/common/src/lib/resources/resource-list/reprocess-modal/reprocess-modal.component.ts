@@ -100,7 +100,7 @@ export class ReprocessModalComponent {
 
   submit() {
     const value = this.form.getRawValue();
-    let field = this.fields().find((f) => f.field_id === value.field);
+    const field = this.fields().find((f) => f.field_id === value.field);
     if (field) {
       this.loading.set(true);
       this.resource()

@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronRight, lucideFileText, lucideMusic } from '@ng-icons/lucide';
+import { matChevronRightRound, matDescriptionRound, matMusicNoteRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmItemImports } from '../index';
@@ -19,7 +19,7 @@ const meta: Meta<ItemStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmItemImports, HlmButton, NgIcon],
-      providers: [provideIcons({ lucideChevronRight, lucideFileText, lucideMusic })],
+      providers: [provideIcons({ matChevronRightRound, matDescriptionRound, matMusicNoteRound })],
     }),
   ],
   parameters: {
@@ -65,7 +65,7 @@ Use an <code>a[hlmItem]</code> element to make the whole row a link (it gets a h
     template: `
       <div hlmItem [variant]="variant" [size]="size" class="max-w-xl">
         <div hlmItemMedia variant="icon">
-          <ng-icon name="lucideFileText" />
+          <ng-icon name="matDescriptionRound" />
         </div>
         <div hlmItemContent>
           <div hlmItemTitle>{{ title }}</div>
@@ -108,14 +108,14 @@ export const AsLink: Story = {
     template: `
       <a hlmItem variant="outline" href="#interview" class="max-w-xl">
         <div hlmItemMedia variant="icon">
-          <ng-icon name="lucideMusic" />
+          <ng-icon name="matMusicNoteRound" />
         </div>
         <div hlmItemContent>
           <div hlmItemTitle>Interview recording</div>
           <p hlmItemDescription>Added yesterday · Audio · 42 minutes</p>
         </div>
         <div hlmItemActions>
-          <ng-icon name="lucideChevronRight" />
+          <ng-icon name="matChevronRightRound" />
         </div>
       </a>
     `,
@@ -155,7 +155,7 @@ export const Group: Story = {
       <div hlmItemGroup class="max-w-xl">
         <div hlmItem variant="default">
           <div hlmItemMedia variant="icon">
-            <ng-icon name="lucideFileText" />
+            <ng-icon name="matDescriptionRound" />
           </div>
           <div hlmItemContent>
             <div hlmItemTitle>Research summary</div>
@@ -168,7 +168,7 @@ export const Group: Story = {
         <div hlmItemSeparator></div>
         <div hlmItem variant="default">
           <div hlmItemMedia variant="icon">
-            <ng-icon name="lucideMusic" />
+            <ng-icon name="matMusicNoteRound" />
           </div>
           <div hlmItemContent>
             <div hlmItemTitle>Interview recording</div>

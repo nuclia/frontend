@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronLeft, lucideChevronRight } from '@ng-icons/lucide';
+import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-icons/round';
 import { type BrnPaginatedTabHeaderItem, BrnTabsPaginatedList, BrnTabsTrigger } from '@spartan-ng/brain/tabs';
 import { buttonVariants } from '@nuclia/ui-spartan/button';
 import { classes, hlm } from '@nuclia/ui-spartan/utils';
@@ -21,7 +21,7 @@ import { listVariants } from './hlm-tabs-list';
 @Component({
   selector: 'hlm-paginated-tabs-list',
   imports: [CdkObserveContent, NgIcon],
-  providers: [provideIcons({ lucideChevronRight, lucideChevronLeft })],
+  providers: [provideIcons({ matChevronRightRound, matChevronLeftRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-slot': 'tabs-paginated-list',
@@ -38,7 +38,7 @@ import { listVariants } from './hlm-tabs-list';
       (click)="_handlePaginatorClick('before')"
       (mousedown)="_handlePaginatorPress('before', $event)"
       (touchend)="_stopInterval()">
-      <ng-icon name="lucideChevronLeft" />
+      <ng-icon name="matChevronLeftRound" />
     </button>
 
     <div
@@ -69,7 +69,7 @@ import { listVariants } from './hlm-tabs-list';
       (click)="_handlePaginatorClick('after')"
       (mousedown)="_handlePaginatorPress('after', $event)"
       (touchend)="_stopInterval()">
-      <ng-icon name="lucideChevronRight" />
+      <ng-icon name="matChevronRightRound" />
     </button>
   `,
 })

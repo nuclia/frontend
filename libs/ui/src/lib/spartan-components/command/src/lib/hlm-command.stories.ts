@@ -1,5 +1,10 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCalendar, lucideFileText, lucideSettings, lucideUsers } from '@ng-icons/lucide';
+import {
+  matCalendarTodayRound,
+  matDescriptionRound,
+  matSettingsRound,
+  matGroupRound,
+} from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmCommandImports } from '../index';
@@ -18,7 +23,7 @@ const meta: Meta<CommandStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmCommandImports],
-      providers: [provideIcons({ lucideCalendar, lucideFileText, lucideSettings, lucideUsers })],
+      providers: [provideIcons({ matCalendarTodayRound, matDescriptionRound, matSettingsRound, matGroupRound })],
     }),
   ],
   parameters: {
@@ -94,12 +99,12 @@ export const WithIconsAndShortcuts: Story = {
           <div hlmCommandGroup>
             <div hlmCommandGroupLabel>Suggestions</div>
             <button type="button" hlmCommandItem value="calendar">
-              <ng-icon name="lucideCalendar" />
+              <ng-icon name="matCalendarTodayRound" />
               Open calendar
               <span hlmCommandShortcut>⌘K</span>
             </button>
             <button type="button" hlmCommandItem value="documents">
-              <ng-icon name="lucideFileText" />
+              <ng-icon name="matDescriptionRound" />
               Browse documents
               <span hlmCommandShortcut>⌘D</span>
             </button>
@@ -108,16 +113,16 @@ export const WithIconsAndShortcuts: Story = {
           <div hlmCommandGroup>
             <div hlmCommandGroupLabel>Workspace</div>
             <button type="button" hlmCommandItem value="members">
-              <ng-icon name="lucideUsers" />
+              <ng-icon name="matGroupRound" />
               Manage members
             </button>
             <button type="button" hlmCommandItem value="settings">
-              <ng-icon name="lucideSettings" />
+              <ng-icon name="matSettingsRound" />
               Workspace settings
               <span hlmCommandShortcut>⌘,</span>
             </button>
             <button type="button" hlmCommandItem value="billing" [disabled]="true">
-              <ng-icon name="lucideFileText" />
+              <ng-icon name="matDescriptionRound" />
               Billing (unavailable)
             </button>
           </div>
@@ -174,11 +179,11 @@ export const InDialog: Story = {
             <div hlmCommandGroup>
               <div hlmCommandGroupLabel>Suggestions</div>
               <button type="button" hlmCommandItem value="calendar" (selected)="dialogState = 'closed'">
-                <ng-icon name="lucideCalendar" />
+                <ng-icon name="matCalendarTodayRound" />
                 Calendar
               </button>
               <button type="button" hlmCommandItem value="settings" (selected)="dialogState = 'closed'">
-                <ng-icon name="lucideSettings" />
+                <ng-icon name="matSettingsRound" />
                 Settings
               </button>
             </div>

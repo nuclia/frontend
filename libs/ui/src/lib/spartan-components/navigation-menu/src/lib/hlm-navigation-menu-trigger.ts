@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import { BrnNavigationMenuTrigger } from '@spartan-ng/brain/navigation-menu';
 import { classes } from '@nuclia/ui-spartan/utils';
 
@@ -8,14 +8,14 @@ import { classes } from '@nuclia/ui-spartan/utils';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'button[hlmNavigationMenuTrigger]',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideChevronDown })],
+  providers: [provideIcons({ matKeyboardArrowDownRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: BrnNavigationMenuTrigger, inputs: ['align'] }],
   host: { 'data-slot': 'navigation-menu-trigger' },
   template: `
     <ng-content />
     <ng-icon
-      name="lucideChevronDown"
+      name="matKeyboardArrowDownRound"
       class="relative top-px ml-1 size-3 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180" />
   `,
 })
