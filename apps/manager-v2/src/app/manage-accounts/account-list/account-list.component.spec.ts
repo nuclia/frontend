@@ -29,7 +29,7 @@ describe('AccountListComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(ManagerStore, {
-          canDelete: of(true),
+          canDeleteAccount: of(true),
           canCreateAccount: of(true),
         }),
       ],

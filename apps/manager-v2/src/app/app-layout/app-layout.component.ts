@@ -34,7 +34,7 @@ export class AppLayoutComponent {
   private store = inject(ManagerStore);
   canUseManager = this.store.canUseManager;
   canManageZones = this.store.canManageZones;
-  canSeeUsers = this.store.canSeeUsers;
+  canSeeUsers = this.store.canSeeGlobalUsers;
   canSendEmails = this.store.canSendEmails;
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();

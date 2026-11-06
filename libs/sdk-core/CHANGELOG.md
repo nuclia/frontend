@@ -1,7 +1,8 @@
-# 1.33.1 (unreleased)
+# 1.34.0 (unreleased)
 
 ### Improvements
 
+- Recognize ADMIN as an account management role
 - Support endpoint to delete multiple resources
 - Support endpoint to patch `extract_strategy` on resource fields
 
