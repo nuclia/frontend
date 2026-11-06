@@ -1,2 +1,2 @@
 export * from './setup-user.component';
-export * from './set-password.component';
+export * from './set-access-method.component';

@@ -64,13 +64,9 @@ export class DashboardLayoutComponent {
   );
 
   constructor() {
-    // EULA gating is skipped in `admin` — forcing PDP Studio users through it is unresolved.
-    if (this.navigationService.inAdminApp) {
-      return;
-    }
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.can_manage_account && !account.eula_accepted) {
-        this.modalService.openModal(EulaModalComponent, { dismissable: false });
+        this.modalService.openModal(EulaModalComponent, { data: { accountSlug: account.slug }, dismissable: false });
       }
     });
   }
