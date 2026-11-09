@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmResizableGroup],hlm-resizable-group',
+  exportAs: 'hlmResizableGroup',
   hostDirectives: [
     {
       directive: BrnResizableGroup,

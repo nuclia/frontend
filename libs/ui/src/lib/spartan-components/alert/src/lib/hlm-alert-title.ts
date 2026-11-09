@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAlertTitle]',
+  exportAs: 'hlmAlertTitle',
   host: {
     'data-slot': 'alert-title',
   },

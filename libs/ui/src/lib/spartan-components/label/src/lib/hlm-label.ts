@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmLabel]',
+  exportAs: 'hlmLabel',
   hostDirectives: [{ directive: BrnLabel, inputs: ['id', 'for'] }],
   host: { 'data-slot': 'label' },
 })

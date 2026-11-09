@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmSwitchThumb],hlm-switch-thumb',
+  exportAs: 'hlmSwitchThumb',
   hostDirectives: [BrnSwitchThumb],
   host: { 'data-slot': 'switch-thumb' },
 })

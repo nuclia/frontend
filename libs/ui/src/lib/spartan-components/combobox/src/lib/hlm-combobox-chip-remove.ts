@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmComboboxChipRemove]',
+  exportAs: 'hlmComboboxChipRemove',
   hostDirectives: [BrnComboboxChipRemove],
   host: { 'data-slot': 'combobox-chip-remove' },
 })

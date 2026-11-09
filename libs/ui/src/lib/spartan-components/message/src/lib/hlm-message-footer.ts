@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMessageFooter],hlm-message-footer',
+  exportAs: 'hlmMessageFooter',
   host: { 'data-slot': 'message-footer' },
 })
 export class HlmMessageFooter {

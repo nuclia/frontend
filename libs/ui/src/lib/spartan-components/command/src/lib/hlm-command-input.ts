@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matSearchRound } from '@ng-icons/material-icons/round';
-import { BrnCommandInput } from '@spartan-ng/brain/command';
 import { HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnCommandInput } from '@spartan-ng/brain/command';
 
 @Component({
   selector: 'hlm-command-input',
+  exportAs: 'hlmCommandInput',
   imports: [HlmInputGroupImports, NgIcon, BrnCommandInput],
   providers: [provideIcons({ matSearchRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

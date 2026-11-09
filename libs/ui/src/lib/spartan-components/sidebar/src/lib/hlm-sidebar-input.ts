@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'input[hlmSidebarInput]',
+  exportAs: 'hlmSidebarInput',
   hostDirectives: [HlmInput],
   host: {
     'data-slot': 'sidebar-input',

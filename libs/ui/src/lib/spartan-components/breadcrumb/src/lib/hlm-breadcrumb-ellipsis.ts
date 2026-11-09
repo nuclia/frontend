@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-breadcrumb-ellipsis',
+  exportAs: 'hlmBreadcrumbEllipsis',
   imports: [NgIcon],
   providers: [provideIcons({ matMoreHorizRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAlertDialogDescription]',
+  exportAs: 'hlmAlertDialogDescription',
   hostDirectives: [BrnAlertDialogDescription],
   host: { 'data-slot': 'alert-dialog-description' },
 })

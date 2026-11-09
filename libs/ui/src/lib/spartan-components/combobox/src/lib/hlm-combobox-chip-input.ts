@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'input[hlmComboboxChipInput]',
+  exportAs: 'hlmComboboxChipInput',
   hostDirectives: [{ directive: BrnComboboxChipInput, inputs: ['id', 'aria-invalid'] }],
   host: { 'data-slot': 'combobox-chip-input' },
 })

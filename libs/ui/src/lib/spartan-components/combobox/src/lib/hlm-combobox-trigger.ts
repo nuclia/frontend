@@ -2,14 +2,15 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
-import { BrnComboboxAnchor, BrnComboboxPopoverTrigger, BrnComboboxTrigger } from '@spartan-ng/brain/combobox';
-import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { ButtonVariants, HlmButton } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
+import { BrnComboboxAnchor, BrnComboboxPopoverTrigger, BrnComboboxTrigger } from '@spartan-ng/brain/combobox';
+import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import type { ClassValue } from 'clsx';
 
 @Component({
   selector: 'hlm-combobox-trigger',
+  exportAs: 'hlmComboboxTrigger',
   imports: [
     NgIcon,
     HlmButton,

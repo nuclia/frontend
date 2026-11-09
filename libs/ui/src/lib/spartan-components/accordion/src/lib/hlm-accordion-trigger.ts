@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound, matKeyboardArrowUpRound } from '@ng-icons/material-icons/round';
-import { BrnAccordionImports } from '@spartan-ng/brain/accordion';
 import { hlm } from '@nuclia/ui-spartan/utils';
+import { BrnAccordionImports } from '@spartan-ng/brain/accordion';
 import type { ClassValue } from 'clsx';
 
 @Component({
   selector: 'hlm-accordion-trigger',
+  exportAs: 'hlmAccordionTrigger',
   imports: [BrnAccordionImports, NgIcon],
   providers: [provideIcons({ matKeyboardArrowDownRound, matKeyboardArrowUpRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

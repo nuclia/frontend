@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmSidebarMenuAction]',
+  exportAs: 'hlmSidebarMenuAction',
   host: {
     'data-slot': 'sidebar-menu-action',
     'data-sidebar': 'menu-action',

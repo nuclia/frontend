@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmTabs],hlm-tabs',
+  exportAs: 'hlmTabs',
   hostDirectives: [
     {
       directive: BrnTabs,

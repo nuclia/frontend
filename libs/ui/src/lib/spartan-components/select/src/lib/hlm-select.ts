@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmSelect],hlm-select',
+  exportAs: 'hlmSelect',
   providers: [
     provideBrnPopoverConfig({
       align: 'start',

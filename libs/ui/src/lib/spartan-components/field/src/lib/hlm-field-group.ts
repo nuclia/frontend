@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmFieldGroup],hlm-field-group',
+  exportAs: 'hlmFieldGroup',
   host: { 'data-slot': 'field-group' },
 })
 export class HlmFieldGroup {

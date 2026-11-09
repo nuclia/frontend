@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteLabel]',
+  exportAs: 'hlmAutocompleteLabel',
   hostDirectives: [{ directive: BrnAutocompleteLabel, inputs: ['id'] }],
   host: { 'data-slot': 'autocomplete-label' },
 })

@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-pagination-ellipsis',
+  exportAs: 'hlmPaginationEllipsis',
   imports: [NgIcon],
   providers: [provideIcons({ matMoreHorizRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

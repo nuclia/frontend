@@ -2,12 +2,13 @@ import type { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCloseRound } from '@ng-icons/material-icons/round';
-import { BrnComboboxChip } from '@spartan-ng/brain/combobox';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnComboboxChip } from '@spartan-ng/brain/combobox';
 import { HlmComboboxChipRemove } from './hlm-combobox-chip-remove';
 
 @Component({
   selector: 'hlm-combobox-chip',
+  exportAs: 'hlmComboboxChip',
   imports: [NgIcon, HlmComboboxChipRemove],
   providers: [provideIcons({ matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

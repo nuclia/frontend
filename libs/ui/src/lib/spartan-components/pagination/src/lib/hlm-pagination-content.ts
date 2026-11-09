@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'ul[hlmPaginationContent]',
+  exportAs: 'hlmPaginationContent',
   host: { 'data-slot': 'pagination-content' },
 })
 export class HlmPaginationContent {

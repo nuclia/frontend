@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAlertDialogFooter],hlm-alert-dialog-footer',
+  exportAs: 'hlmAlertDialogFooter',
   host: { 'data-slot': 'alert-dialog-footer' },
 })
 export class HlmAlertDialogFooter {

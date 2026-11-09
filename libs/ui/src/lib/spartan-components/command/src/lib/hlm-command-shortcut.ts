@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCommandShortcut],hlm-command-shortcut',
+  exportAs: 'hlmCommandShortcut',
   host: {
     'data-slot': 'command-shortcut',
   },

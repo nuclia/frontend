@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmDrawerTitle]',
+  exportAs: 'hlmDrawerTitle',
   hostDirectives: [BrnDrawerTitle],
   host: { 'data-slot': 'drawer-title' },
 })

@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmComboboxEmpty],hlm-combobox-empty',
+  exportAs: 'hlmComboboxEmpty',
   hostDirectives: [BrnComboboxEmpty],
   host: { 'data-slot': 'combobox-empty' },
 })

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-icons/round';
-import { BrnAutocompleteItem } from '@spartan-ng/brain/autocomplete';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnAutocompleteItem } from '@spartan-ng/brain/autocomplete';
 
 @Component({
   selector: 'hlm-autocomplete-item',
+  exportAs: 'hlmAutocompleteItem',
   imports: [NgIcon],
   providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

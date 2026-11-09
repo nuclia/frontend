@@ -3,13 +3,14 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAttachmentTitle],hlm-attachment-title',
+  exportAs: 'hlmAttachmentTitle',
   host: { 'data-slot': 'attachment-title' },
 })
 export class HlmAttachmentTitle {
   constructor() {
     classes(
       () =>
-        'truncate text-sm font-medium group-data-[state=error]/attachment:text-destructive group-data-[state=processing]/attachment:shimmer group-data-[state=uploading]/attachment:shimmer block max-w-full min-w-0',
+        'truncate text-sm font-medium group-data-[state=processing]/attachment:shimmer group-data-[state=uploading]/attachment:shimmer block max-w-full min-w-0',
     );
   }
 }

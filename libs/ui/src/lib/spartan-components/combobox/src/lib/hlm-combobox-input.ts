@@ -1,13 +1,14 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matKeyboardArrowDownRound, matCloseRound } from '@ng-icons/material-icons/round';
-import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from '@spartan-ng/brain/combobox';
+import { matCloseRound, matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from '@spartan-ng/brain/combobox';
 
 @Component({
   selector: 'hlm-combobox-input',
+  exportAs: 'hlmComboboxInput',
   imports: [HlmInputGroupImports, NgIcon, BrnComboboxImports, BrnComboboxPopoverTrigger],
   providers: [provideIcons({ matKeyboardArrowDownRound, matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

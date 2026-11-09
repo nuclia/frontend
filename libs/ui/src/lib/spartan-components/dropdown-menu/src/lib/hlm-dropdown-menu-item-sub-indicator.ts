@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-dropdown-menu-item-sub-indicator',
+  exportAs: 'hlmDropdownMenuItemSubIndicator',
   imports: [NgIcon],
   providers: [provideIcons({ matChevronRightRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

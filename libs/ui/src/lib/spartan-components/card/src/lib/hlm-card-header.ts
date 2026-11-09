@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCardHeader],hlm-card-header',
+  exportAs: 'hlmCardHeader',
   host: { 'data-slot': 'card-header' },
 })
 export class HlmCardHeader {

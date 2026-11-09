@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-dropdown-menu-checkbox-indicator',
+  exportAs: 'hlmDropdownMenuCheckboxIndicator',
   imports: [NgIcon],
   providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

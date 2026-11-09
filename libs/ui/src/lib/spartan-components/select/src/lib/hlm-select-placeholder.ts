@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmSelectPlaceholder],hlm-select-placeholder',
+  exportAs: 'hlmSelectPlaceholder',
   hostDirectives: [BrnSelectPlaceholder],
   host: { 'data-slot': 'select-placeholder' },
 })

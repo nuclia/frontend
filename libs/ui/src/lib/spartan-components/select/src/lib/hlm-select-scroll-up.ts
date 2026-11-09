@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowUpRound } from '@ng-icons/material-icons/round';
-import { BrnSelectScrollUp } from '@spartan-ng/brain/select';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnSelectScrollUp } from '@spartan-ng/brain/select';
 
 @Component({
   selector: 'hlm-select-scroll-up',
+  exportAs: 'hlmSelectScrollUp',
   imports: [NgIcon],
   providers: [provideIcons({ matKeyboardArrowUpRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -14,10 +14,10 @@ import {
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-icons/round';
+import { hlm } from '@nuclia/ui-spartan/utils';
 import { BrnCheckbox } from '@spartan-ng/brain/checkbox';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
-import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 export const HLM_CHECKBOX_VALUE_ACCESSOR = {
@@ -28,6 +28,7 @@ export const HLM_CHECKBOX_VALUE_ACCESSOR = {
 
 @Component({
   selector: 'hlm-checkbox',
+  exportAs: 'hlmCheckbox',
   imports: [BrnCheckbox, NgIcon],
   providers: [HLM_CHECKBOX_VALUE_ACCESSOR],
   viewProviders: [provideIcons({ matCheckRound })],

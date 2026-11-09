@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'main[hlmSidebarInset]',
+  exportAs: 'hlmSidebarInset',
   host: { 'data-slot': 'sidebar-inset' },
 })
 export class HlmSidebarInset {

@@ -1,9 +1,10 @@
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
 import { BrnAccordionItem } from '@spartan-ng/brain/accordion';
+import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAccordionItem],hlm-accordion-item',
+  exportAs: 'hlmAccordionItem',
   hostDirectives: [
     {
       directive: BrnAccordionItem,

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAlertDialogMedia],hlm-alert-dialog-media',
+  exportAs: 'hlmAlertDialogMedia',
   host: { 'data-slot': 'alert-dialog-media' },
 })
 export class HlmAlertDialogMedia {

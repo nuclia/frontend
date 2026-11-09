@@ -6,6 +6,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmPaginationLink]',
+  exportAs: 'hlmPaginationLink',
   hostDirectives: [
     {
       directive: RouterLink,

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMarkerIcon],hlm-marker-icon',
+  exportAs: 'hlmMarkerIcon',
   host: {
     'data-slot': 'marker-icon',
     'aria-hidden': 'true',
