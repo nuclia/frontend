@@ -1,4 +1,4 @@
-@let canManage = canManageModels | async;
+@let canManage = canManageModels();
 <div class="px-6">
   <div class="mb-4 flex items-center justify-between">
     <h3 class="text-xl font-semibold">Account models</h3>
@@ -11,7 +11,7 @@
     }
   </div>
 
-  @for (zone of models | async; track zone.zone.id) {
+  @for (zone of models(); track zone.zone.id) {
     <div class="mb-8">
       <div class="mb-2 font-semibold">{{ zone.zone.title }}</div>
       <div hlmTableContainer>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, filter, forkJoin, map, Observable, take, tap } from 'rxjs';
 import { Zone, ZoneAccountEntry, ZoneAddPayload, ZonePatchPayload, ZoneSummary } from './zone.models';
@@ -10,10 +10,11 @@ const ZONE_ENDPOINT = '/manage/@zone';
   providedIn: 'root',
 })
 export class ZoneService {
+  private sdk = inject(SDKService);
   private _zones = new BehaviorSubject<ZoneSummary[]>([]);
   zones = this._zones.asObservable();
 
-  constructor(private sdk: SDKService) {
+  constructor() {
     this.loadZones().subscribe();
   }
 

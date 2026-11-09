@@ -5,7 +5,7 @@
       class="w-80"
       placeholder="Filter"
       aria-label="Filter"
-      [value]="(filter$ | async) ?? ''"
+      [value]="filter()"
       (input)="onFilterInput($event)" />
     <a
       hlmBtn
@@ -33,7 +33,7 @@
         </tr>
       </thead>
       <tbody hlmTBody>
-        @for (zone of zones$ | async | slice: 0 : lastIndex; track zone.slug) {
+        @for (zone of zones(); track zone.slug) {
           <tr
             hlmTr
             class="cursor-pointer"

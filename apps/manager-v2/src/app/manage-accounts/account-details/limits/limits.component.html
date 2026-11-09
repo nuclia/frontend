@@ -4,7 +4,7 @@
       type="button"
       hlmBtn
       variant="outline"
-      [disabled]="isSaving || !(canEdit | async)"
+      [disabled]="isSaving() || !canEdit()"
       (click)="resetAllToDefault()">
       Reset all to default
     </button>
@@ -12,7 +12,7 @@
       type="button"
       hlmBtn
       variant="destructive"
-      [disabled]="isSaving || !(canEdit | async)"
+      [disabled]="isSaving() || !canEdit()"
       (click)="removeLimits()">
       Remove limits
     </button>
@@ -95,7 +95,7 @@
     }
 
     <nma-form-footer
-      [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving"
+      [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving()"
       (footerCancel)="cancel()"></nma-form-footer>
   </form>
 </div>

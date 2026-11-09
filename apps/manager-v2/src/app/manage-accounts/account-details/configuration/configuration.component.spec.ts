@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UiToastService } from '@nuclia/ui/toast';
 import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
@@ -7,28 +8,25 @@ import { of } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountService } from '../../account.service';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
-import { ExtendedAccount } from '../../global-account.models';
 import { GlobalAccountService } from '../../global-account.service';
 import { ACCOUNT_DETAILS, DEFAULT_LIMITS } from '../../test-utils';
-import { AccountDetailsStore } from '../account-details.store';
 import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 import { ConfigurationComponent } from './configuration.component';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
   let fixture: ComponentFixture<ConfigurationComponent>;
+  const canEdit = signal(true);
 
   beforeEach(async () => {
+    canEdit.set(true);
     await TestBed.configureTestingModule({
       imports: [ConfigurationComponent, MockComponent(FormFooterComponent), MockComponent(BlockedFeaturesComponent)],
       providers: [
-        MockProvider(AccountDetailsStore, {
-          getAccount: vi.fn(() => of({} as ExtendedAccount)),
-        }),
         MockProvider(ManagerStore, {
-          canFullyEditAccount: of(true),
-          canEdit: of(true),
-          accountDetails: of(ACCOUNT_DETAILS),
+          canFullyEditAccount: signal(true),
+          canEdit,
+          accountDetails: signal(ACCOUNT_DETAILS),
         }),
         MockProvider(AccountService, {
           getDefaultLimits: vi.fn(() => of(DEFAULT_LIMITS)),
@@ -59,5 +57,18 @@ describe('ConfigurationComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should enable and disable editable controls when edit permission changes', () => {
+    const { type, workflow, trialExpirationDate } = component.configForm.controls;
+    expect([type, workflow, trialExpirationDate].every((control) => control.enabled)).toBe(true);
+
+    canEdit.set(false);
+    fixture.detectChanges();
+    expect([type, workflow, trialExpirationDate].every((control) => control.disabled)).toBe(true);
+
+    canEdit.set(true);
+    fixture.detectChanges();
+    expect([type, workflow, trialExpirationDate].every((control) => control.enabled)).toBe(true);
   });
 });

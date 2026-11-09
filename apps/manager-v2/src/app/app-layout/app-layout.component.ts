@@ -39,10 +39,10 @@ export class AppLayoutComponent {
       .join(''),
   );
 
-  protected readonly canUseManager = toSignal(this.store.canUseManager);
-  protected readonly canManageZones = toSignal(this.store.canManageZones);
-  protected readonly canSeeUsers = toSignal(this.store.canSeeGlobalUsers);
-  protected readonly canSendEmails = toSignal(this.store.canSendEmails);
+  protected readonly canUseManager = this.store.canUseManager;
+  protected readonly canManageZones = this.store.canManageZones;
+  protected readonly canSeeUsers = this.store.canSeeGlobalUsers;
+  protected readonly canSendEmails = this.store.canSendEmails;
   protected readonly assetsPath = this.backendConfig.getAssetsPath();
   protected readonly brandName = this.backendConfig.getBrandName();
 

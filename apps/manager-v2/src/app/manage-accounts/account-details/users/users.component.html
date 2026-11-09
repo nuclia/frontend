@@ -1,7 +1,7 @@
 <div class="px-6">
   <h3 class="mb-4 text-xl font-semibold">Account users</h3>
 
-  @if (canEdit | async) {
+  @if (canEdit()) {
     @let members = potentialMembers$ | async;
     <hlm-autocomplete-search
       class="mb-6 max-w-lg"
@@ -53,7 +53,7 @@
         </tr>
       </thead>
       <tbody hlmTBody>
-        @for (user of users | async; track user.id) {
+        @for (user of users(); track user.id) {
           <tr
             hlmTr
             class="cursor-pointer"
@@ -77,7 +77,7 @@
             <td
               hlmTd
               (click)="$event.stopPropagation()">
-              @if ((canEdit | async) && (!user.isManager || (hasSeveralManagers | async) === true)) {
+              @if (canEdit() && (!user.isManager || hasSeveralManagers())) {
                 <button
                   type="button"
                   hlmBtn

@@ -1,4 +1,4 @@
-@if (account | async; as account) {
+@if (account(); as account) {
   <div class="flex h-[calc(100vh-4rem)]">
     <aside class="bg-muted w-80 shrink-0 overflow-auto py-4">
       <div class="px-4">
@@ -25,13 +25,13 @@
         </div>
         <div>
           State:
-          <strong>{{ currentState | async }}</strong>
+          <strong>{{ currentState() }}</strong>
         </div>
         <div>
           Type:
           <strong>{{ account.type }}</strong>
         </div>
-        @if (!!(isTrial | async)) {
+        @if (isTrial()) {
           @if (account.trialExpirationDate; as trialExpirationDate) {
             <div>
               Trial expiration date:
@@ -77,7 +77,7 @@
           [routerLinkActive]="navLinkActive">
           Configuration
         </a>
-        @if (((projectList | async) || []).length > 0) {
+        @if ((projectList() || []).length > 0) {
           <a
             [class]="navLink"
             routerLink="projects"
@@ -85,11 +85,11 @@
             Projects
           </a>
         }
-        @for (project of projectList | async; track project.project_id) {
+        @for (project of projectList(); track project.project_id) {
           <a
             [class]="navLinkChild"
             [routerLink]="
-              (canAccessProjects | async) ? 'zone/' + project.zone.id + '/project/' + project.project_id : undefined
+              canAccessProjects() ? 'zone/' + project.zone.id + '/project/' + project.project_id : undefined
             "
             [routerLinkActive]="navLinkActive">
             <ng-icon
@@ -107,10 +107,10 @@
           [routerLinkActive]="navLinkActive">
           Knowledge Boxes
         </a>
-        @for (kb of knowledgeBoxList | async; track kb.id) {
+        @for (kb of knowledgeBoxList(); track kb.id) {
           <a
             [class]="navLinkChild"
-            [routerLink]="(canAccessKBs | async) ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
+            [routerLink]="canAccessKBs() ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
             [routerLinkActive]="navLinkActive">
             <ng-icon
               name="matInventory2Round"
@@ -127,10 +127,10 @@
           [routerLinkActive]="navLinkActive">
           Agents
         </a>
-        @for (agent of agentList | async; track agent.id) {
+        @for (agent of agentList(); track agent.id) {
           <a
             [class]="navLinkChild"
-            [routerLink]="(canAccessKBs | async) ? 'zone/' + agent.zone.id + '/kb/' + agent.id : undefined"
+            [routerLink]="canAccessKBs() ? 'zone/' + agent.zone.id + '/kb/' + agent.id : undefined"
             [routerLinkActive]="navLinkActive">
             <ng-icon
               name="matSmartToyRound"
@@ -153,7 +153,7 @@
           [routerLinkActive]="navLinkActive">
           Token consumption
         </a>
-        @if (canSeeUsers | async) {
+        @if (canSeeUsers()) {
           <a
             [class]="navLink"
             routerLink="users"

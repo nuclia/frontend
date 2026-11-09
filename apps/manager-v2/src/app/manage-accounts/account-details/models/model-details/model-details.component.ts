@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { combineLatest, filter, forkJoin, map, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { ManagerStore } from '../../../../manager.store';
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
@@ -12,39 +13,36 @@ import { CustomModel } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 
 @Component({
-  imports: [AsyncPipe, KeyValuePipe, ReactiveFormsModule, HlmButtonImports, HlmCheckboxImports, HlmFieldImports],
+  imports: [KeyValuePipe, ReactiveFormsModule, HlmButtonImports, HlmCheckboxImports, HlmFieldImports],
   templateUrl: './model-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModelDetailsComponent implements OnDestroy, OnInit {
-  private unsubscribeAll = new Subject<void>();
+export class ModelDetailsComponent {
+  private store = inject(ManagerStore);
+  private sdk = inject(SDKService);
+  private route = inject(ActivatedRoute);
+  private toast = inject(UiToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   kbForm = new FormGroup<{ [key: string]: FormControl<boolean> }>({});
-  isSaving = false;
+  isSaving = signal(false);
   backupModel?: CustomModel;
   zone?: string;
-  modelNames = this.store.kbList.pipe(
-    map((kbs) => kbs.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.title }), {} as { [id: string]: string })),
-    shareReplay(1),
+  modelNames = computed(() =>
+    this.store.kbList().reduce((acc, curr) => ({ ...acc, [curr.id]: curr.title }), {} as { [id: string]: string }),
   );
+  private accountDetails$ = toObservable(this.store.accountDetails);
+  private kbList$ = toObservable(this.store.kbList);
 
-  constructor(
-    private store: ManagerStore,
-    private sdk: SDKService,
-    private route: ActivatedRoute,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
+  constructor() {
     combineLatest([
-      this.store.accountDetails.pipe(filter((accountDetails) => !!accountDetails)),
+      this.accountDetails$.pipe(filter((accountDetails) => !!accountDetails)),
       this.route.params.pipe(map((params) => params['modelId'])),
       this.route.params.pipe(map((params) => params['zoneSlug'])),
-      this.store.kbList,
+      this.kbList$,
     ])
       .pipe(
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
         tap(([, , zoneSlug, kbList]) => {
           this.zone = zoneSlug;
           this.kbForm = new FormGroup(
@@ -68,11 +66,6 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
       });
   }
 
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
-  }
-
   initForm(model: CustomModel) {
     this.backupModel = model;
     this.kbForm.reset();
@@ -84,8 +77,7 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
   }
 
   save() {
-    this.isSaving = true;
-    this.cdr.markForCheck();
+    this.isSaving.set(true);
     const accountId = this.store.getAccountId() || '';
     const zone = this.zone || '';
     const modelId = this.backupModel?.model_id || '';
@@ -105,13 +97,11 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
       .subscribe({
         next: (model) => {
           this.initForm(model);
-          this.isSaving = false;
-          this.cdr.markForCheck();
+          this.isSaving.set(false);
         },
         error: () => {
           this.toast.error('Modifying the model failed');
-          this.isSaving = false;
-          this.cdr.markForCheck();
+          this.isSaving.set(false);
         },
       });
   }

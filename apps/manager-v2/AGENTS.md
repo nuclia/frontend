@@ -8,7 +8,7 @@
 - **Users** — global platform user CRUD.
 - **Zones** — NucliaDB deployment zones (cloud regions, subdomain config).
 
-Role-based access is enforced via `ManagerStore` permission observables derived from `UserService.userType`.  
+Role-based access is enforced via `ManagerStore` permission signals derived from `UserService.userType`.  
 **Angular version:** 22 · **Zoneless** (`provideZonelessChangeDetection()`, `bootstrapApplication` in `main.ts`) · **Component prefix:** `nma` · **Change detection:** `OnPush`
 
 **UI:** Spartan (`@nuclia/ui-spartan/*`, Tailwind). Shared pieces live in `libs/ui` with the `ui-` / `Ui` prefix: `UiToastService` (`@nuclia/ui/toast`; `<hlm-toaster />` is rendered once in `MainComponent`), `UiConfirmService` (`@nuclia/ui/confirm-dialog`, `confirm(data): Observable<boolean>`) and `<ui-infinite-scroll>` (`@nuclia/ui/infinite-scroll`).
@@ -26,13 +26,13 @@ apps/manager-v2/src/
     ├── app.component.ts            # Thin config-ready shell: shows Loading… until AppInitService resolves, then renders MainComponent
     ├── main.component.ts           # Bootstraps translations/remote-login and hosts the router-outlet + `<hlm-toaster />`; no header/nav (that's AppLayoutComponent)
     ├── user-callback/              # `provideUserCallback()`: Spartan overrides for `@nuclia/user` `CallbackComponent` (`UserNotifier` → `UiToastService` with translation, `CALLBACK_MESSAGE_VIEW` → Spartan message screen); wired in the `user/callback` route `providers`
-    ├── manager.store.ts            # Global reactive store (BehaviorSubjects + permissions)
+    ├── manager.store.ts            # Global signal store (state + permissions)
     ├── app-layout/                 # Shell: header nav, avatar, permission-gated router-outlet
     ├── manage-accounts/            # lazy routes (`manage-accounts.routes.ts`): AccountService, account CRUD components
     │   ├── account.service.ts      # High-level orchestrator (global + regional + store)
     │   ├── global-account.service.ts   # REST: /manage/@account(s) (global API) + per-account budget endpoints
     │   ├── regional-account.service.ts # Zone-aware REST (KBs, models, per-zone Nuclia instances)
-    │   └── account-details/            # ManagerStore-backed sub-detail components (account-details.store.ts exists but is unused in app code, only referenced by spec mocks)
+    │   └── account-details/            # ManagerStore-backed sub-detail components
     ├── manage-users/               # lazy routes (`manage-users.routes.ts`): UserService, user CRUD
     ├── manage-emails/              # standalone email wizard (ROOT only) — code exists but is NOT routed or linked in the nav (see Routing Architecture); Spartan/Tailwind UI, 3-step linear `spartan-stepper`
     │   ├── manage-emails.component # spine: stepper + 3 `spartan-step`; provides the 3 wizard services; on `wizard.completed$` jumps to step 1 (in `afterNextRender`, the stepper ignores steps still bound as non-editable) and shows the success toast
@@ -88,16 +88,12 @@ AppLayoutComponent (canActivate: authGuard)
 
 ### `ManagerStore` (`src/app/manager.store.ts`)
 
-BehaviorSubject-based reactive store (`providedIn: 'root'`). Central source for:
+Signal-based store (`providedIn: 'root'`): state is exposed as read-only signals (read with `store.x()`; components needing an rxjs pipeline wrap one in a field with `toObservable`). Central source for:
 
 - `accountDetails`, `kbList`, `kbDetails`, `blockedFeatures`, `accountUsers`, `accountModels`, `currentState` — currently loaded account data
-- `canEdit`, `canDelete`, `canFullyEditAccount`, `canSeeUsers`, `canCreateUser`, `canCreateAccount`, `canManageZones`, `canSendEmails`, `canManageModels`, `canAccessKBs`, `canUseManager` — permission observables derived from `UserService.userType`
+- `canEdit`, `canDelete`, `canFullyEditAccount`, `canSeeUsers`, `canCreateUser`, `canCreateAccount`, `canManageZones`, `canSendEmails`, `canManageModels`, `canAccessKBs`, `canUseManager` — permission signals derived from `UserService.userType`
 
-**All UI permission checks use `ManagerStore` observables — never access `UserService.userType` directly from components.**
-
-### `AccountDetailsStore` (`manage-accounts/account-details/account-details.store.ts`)
-
-A second `ExtendedAccount`/KB/zones store exists but is **not wired into any component or service** — only test spec files still `MockProvider` it. Treat `ManagerStore` as the single source of truth for account-detail state; don't add new dependents on `AccountDetailsStore` without checking it's still intentional.
+**All UI permission checks use `ManagerStore` signals — never access `UserService.userType` directly from components.**
 
 ### `ZoneService` (`manage-zones/zone.service.ts`)
 

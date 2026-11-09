@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreVertRound } from '@ng-icons/material-icons/round';
@@ -8,19 +8,19 @@ import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
-import { filter, map, switchMap, take } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountService } from '../../account.service';
 import { RegionalAccountService } from '../../regional-account.service';
 
 @Component({
-  imports: [AsyncPipe, NgIcon, RouterLink, HlmButtonImports, HlmDropdownMenuImports, HlmTableImports],
+  imports: [NgIcon, RouterLink, HlmButtonImports, HlmDropdownMenuImports, HlmTableImports],
   templateUrl: './models.component.html',
   providers: [provideIcons({ matMoreVertRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModelsComponent {
-  models = this.store.accountModels.pipe(map((models) => models.filter((zone) => zone.models.length > 0)));
+  models = computed(() => this.store.accountModels().filter((zone) => zone.models.length > 0));
   canManageModels = this.store.canManageModels;
 
   constructor(
@@ -31,7 +31,7 @@ export class ModelsComponent {
     private router: Router,
     private route: ActivatedRoute,
   ) {
-    this.store.accountDetails
+    toObservable(this.store.accountDetails)
       .pipe(
         filter((details) => !!details),
         take(1),

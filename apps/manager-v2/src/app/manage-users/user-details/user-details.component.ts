@@ -1,14 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  computed,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -21,7 +12,7 @@ import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { HlmSelectImports } from '@nuclia/ui-spartan/select';
-import { filter, map, Subject, switchMap } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { User } from '../user.models';
 import { UserService } from '../user.service';
@@ -32,7 +23,6 @@ import { SDKService } from '@flaps/core';
   templateUrl: './user-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     FormsModule,
     HlmAccordionImports,
     HlmButtonImports,
@@ -45,15 +35,16 @@ import { SDKService } from '@flaps/core';
   ],
   providers: [provideIcons({ matArrowBackRound, matCheckRound, matContentCopyRound })],
 })
-export class UserDetailsComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class UserDetailsComponent {
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private toaster = inject(UiToastService);
+  private userService = inject(UserService);
+  private toast = inject(UiToastService);
   private store = inject(ManagerStore);
   private sdk = inject(SDKService);
   canEdit = this.store.canEdit;
   readonly userTypes = USER_TYPES;
-  userEmail = '';
+  userEmail = signal('');
   userId = '';
   userForm = new FormGroup({
     email: new FormControl('', { nonNullable: true }),
@@ -65,20 +56,13 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     type: new FormControl<UserType>('USER', { nonNullable: true }),
   });
   isEdit = this.router.url.endsWith('edit');
-  isSaving = false;
+  isSaving = signal(false);
 
   app = signal<'platform' | 'rag'>('platform');
   passwordPage = computed(() => this.sdk.getOriginForApp('auth') + '/setup/user?app=' + this.app());
   copied = signal(false);
 
-  constructor(
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
+  constructor() {
     if (!this.isEdit) {
       this.userForm.disable();
     }
@@ -87,17 +71,17 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         filter((params) => !!params['userId']),
         map((params) => params['userId'] as string),
         switchMap((userId) => this.userService.getUser(userId)),
+        takeUntilDestroyed(),
       )
       .subscribe({
         next: (user) => {
-          this.userEmail = user.email;
+          this.userEmail.set(user.email);
           this.userId = user.id;
           this.userForm.patchValue({
             ...user,
             providers: user.providers.join(', '),
             last_login: user.last_login || '',
           });
-          this.cdr.markForCheck();
         },
         error: (error) => {
           const message =
@@ -105,11 +89,6 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
           this.toast.error(message);
         },
       });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   goBack() {
@@ -125,8 +104,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.isSaving = true;
-    this.cdr.detectChanges();
+    this.isSaving.set(true);
     const data = this.userForm.getRawValue();
     const payload: Partial<User> = {
       email: data.email,
@@ -137,14 +115,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     }
     this.userService.modifyUser(this.userId, payload).subscribe({
       next: (user) => {
-        this.isSaving = false;
-        this.cdr.detectChanges();
+        this.isSaving.set(false);
         this.router.navigate([`/users/${user.id}`]);
       },
       error: (error) => {
-        this.isSaving = false;
-        this.cdr.detectChanges();
-        this.toaster.error(JSON.stringify(error));
+        this.isSaving.set(false);
+        this.toast.error(JSON.stringify(error));
       },
     });
   }

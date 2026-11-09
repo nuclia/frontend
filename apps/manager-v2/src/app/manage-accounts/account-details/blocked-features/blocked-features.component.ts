@@ -1,11 +1,9 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeature } from '@nuclia/core';
 import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountService } from '../../account.service';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
@@ -26,54 +24,44 @@ type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
     FeatureNamePipe,
   ],
 })
-export class BlockedFeaturesComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class BlockedFeaturesComponent {
+  private store = inject(ManagerStore);
+  private accountService = inject(AccountService);
+
   private blockedFeaturesBackup?: BlockedFeature[];
 
   blockedFeatures: FormGroup<BlockedFeaturesForm>;
-  isSaving = false;
+  isSaving = signal(false);
 
-  constructor(
-    private store: ManagerStore,
-    private accountService: AccountService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     const features = Object.values(BlockedFeature).reduce((controls, feature) => {
       controls[feature] = new FormControl<boolean>(false, { nonNullable: true });
       return controls;
     }, {} as BlockedFeaturesForm);
     this.blockedFeatures = new FormGroup(features);
-  }
 
-  ngOnInit(): void {
-    this.store.blockedFeatures.pipe(takeUntil(this.unsubscribeAll)).subscribe((blockedFeatures) => {
-      this.blockedFeaturesBackup = [...blockedFeatures];
-      Object.entries(this.blockedFeatures.controls).forEach(([feature, control]) => {
-        control.patchValue(blockedFeatures.includes(<BlockedFeature>feature));
+    effect(() => {
+      const blockedFeatures = this.store.blockedFeatures();
+      untracked(() => {
+        this.blockedFeaturesBackup = [...blockedFeatures];
+        Object.entries(this.blockedFeatures.controls).forEach(([feature, control]) => {
+          control.patchValue(blockedFeatures.includes(<BlockedFeature>feature));
+        });
       });
     });
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   save() {
     const accountId = this.store.getAccountId();
     if (this.blockedFeatures.valid && accountId) {
-      this.isSaving = true;
+      this.isSaving.set(true);
 
       this.accountService.updateBlockedFeatures(accountId, this.blockedFeatures.getRawValue()).subscribe({
         next: () => {
-          this.isSaving = false;
+          this.isSaving.set(false);
           this.blockedFeatures.markAsPristine();
-          this.cdr.markForCheck();
         },
-        error: () => {
-          this.isSaving = false;
-          this.cdr.markForCheck();
-        },
+        error: () => this.isSaving.set(false),
       });
     }
   }

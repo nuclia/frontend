@@ -1,5 +1,4 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { ManagerStore } from '../../manager.store';
 
@@ -14,5 +13,5 @@ export class FormFooterComponent {
   readonly secondary = input(false, { transform: booleanAttribute });
   readonly footerCancel = output<void>();
 
-  protected readonly canEdit = toSignal(inject(ManagerStore).canEdit, { initialValue: false });
+  protected readonly canEdit = inject(ManagerStore).canEdit;
 }

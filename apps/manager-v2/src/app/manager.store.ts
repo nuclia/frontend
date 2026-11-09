@@ -1,9 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { AccountBlockingState, BlockedFeature, type UserType } from '@nuclia/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { UserService } from '@flaps/core';
+import { AccountBlockingState, BlockedFeature, UserType } from '@nuclia/core';
 import { AccountDetails, AccountUser, KbDetails, KbSummary, ProjectDetails } from './manage-accounts/account-ui.models';
 import { ZoneModels } from './manage-accounts/regional-account.models';
-import { UserService } from '@flaps/core';
 
 const BLOCKING_STATE_LABEL = {
   [AccountBlockingState.UNBLOCKED]: 'Active',
@@ -14,58 +14,72 @@ const BLOCKING_STATE_LABEL = {
 @Injectable({ providedIn: 'root' })
 export class ManagerStore {
   private userService = inject(UserService);
-  readonly canUseManager = this.userService.userType.pipe(map((t) => !!t && t !== 'USER'));
-  readonly canDelete = this.userService.userType.pipe(map((t) => t == 'ROOT'));
-  readonly canDeleteAccount = this.hasAnyRole('ROOT', 'ADMIN');
-  readonly canEdit = this.userService.userType.pipe(map((t) => !!t && t !== 'USER' && t !== 'READONLY'));
-  readonly canManageZones = this.userService.userType.pipe(map((t) => t == 'ROOT'));
-  readonly canSendEmails = this.userService.userType.pipe(map((t) => t === 'ROOT'));
-  readonly canSeeGlobalUsers = this.hasAnyRole('ROOT', 'READONLY', 'MANAGER');
-  readonly canSeeUsers = this.hasAnyRole('ROOT', 'READONLY', 'MANAGER', 'ADMIN');
-  readonly canManageModels = this.hasAnyRole('ROOT', 'MANAGER', 'ADMIN');
-  readonly canCreateAccount = this.hasAnyRole('ROOT', 'MANAGER');
-  readonly canCreateUser = this.hasAnyRole('ROOT', 'MANAGER');
-  readonly canFullyEditAccount = this.hasAnyRole('ROOT', 'MANAGER', 'ADMIN');
-  readonly canAccessKBs = this.hasAnyRole('ROOT', 'MANAGER', 'READONLY', 'ADMIN');
-  readonly canAccessProjects = this.hasAnyRole('ROOT', 'MANAGER', 'READONLY', 'ADMIN');
+  private userType = toSignal(this.userService.userType);
 
-  private _accountDetails: BehaviorSubject<AccountDetails | null> = new BehaviorSubject<AccountDetails | null>(null);
-  private _kbList: BehaviorSubject<KbSummary[]> = new BehaviorSubject<KbSummary[]>([]);
-  private _kbDetails: BehaviorSubject<KbDetails | null> = new BehaviorSubject<KbDetails | null>(null);
-  private _blockedFeatures: BehaviorSubject<BlockedFeature[]> = new BehaviorSubject<BlockedFeature[]>([]);
-  private _currentState: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  private _accountUsers: BehaviorSubject<AccountUser[]> = new BehaviorSubject<AccountUser[]>([]);
-  private _accountModels: BehaviorSubject<ZoneModels[]> = new BehaviorSubject<ZoneModels[]>([]);
-  private _projectList: BehaviorSubject<ProjectDetails[]> = new BehaviorSubject<ProjectDetails[]>([]);
-  private _projectDetails: BehaviorSubject<ProjectDetails | null> = new BehaviorSubject<ProjectDetails | null>(null);
+  private allowedFor = (...types: UserType[]) =>
+    computed(() => {
+      const type = this.userType();
+      return !!type && types.includes(type);
+    });
 
-  accountDetails: Observable<AccountDetails | null> = this._accountDetails.asObservable();
-  kbList: Observable<KbSummary[]> = this._kbList.asObservable();
-  kbDetails: Observable<KbDetails | null> = this._kbDetails.asObservable();
-  blockedFeatures: Observable<BlockedFeature[]> = this._blockedFeatures.asObservable();
-  currentState: Observable<string> = this._currentState.asObservable();
-  accountUsers: Observable<AccountUser[]> = this._accountUsers.asObservable();
-  accountModels: Observable<ZoneModels[]> = this._accountModels.asObservable();
-  projectList: Observable<ProjectDetails[]> = this._projectList.asObservable();
-  projectDetails: Observable<ProjectDetails | null> = this._projectDetails.asObservable();
+  readonly canUseManager = computed(() => {
+    const type = this.userType();
+    return !!type && type !== 'USER';
+  });
+  readonly canEdit = computed(() => {
+    const type = this.userType();
+    return !!type && type !== 'USER' && type !== 'READONLY';
+  });
+  readonly canDelete = this.allowedFor('ROOT');
+  readonly canDeleteAccount = this.allowedFor('ROOT', 'ADMIN');
+  readonly canManageZones = this.allowedFor('ROOT');
+  readonly canSendEmails = this.allowedFor('ROOT');
+  readonly canSeeGlobalUsers = this.allowedFor('ROOT', 'READONLY', 'MANAGER');
+  readonly canSeeUsers = this.allowedFor('ROOT', 'READONLY', 'MANAGER', 'ADMIN');
+  readonly canManageModels = this.allowedFor('ROOT', 'MANAGER', 'ADMIN');
+  readonly canCreateAccount = this.allowedFor('ROOT', 'MANAGER');
+  readonly canCreateUser = this.allowedFor('ROOT', 'MANAGER');
+  readonly canFullyEditAccount = this.allowedFor('ROOT', 'MANAGER', 'ADMIN');
+  readonly canAccessKBs = this.allowedFor('ROOT', 'MANAGER', 'READONLY', 'ADMIN');
+  readonly canAccessProjects = this.allowedFor('ROOT', 'MANAGER', 'READONLY', 'ADMIN');
+
+  private _accountDetails = signal<AccountDetails | null>(null);
+  private _kbList = signal<KbSummary[]>([]);
+  private _kbDetails = signal<KbDetails | null>(null);
+  private _blockedFeatures = signal<BlockedFeature[]>([]);
+  private _currentState = signal('');
+  private _accountUsers = signal<AccountUser[]>([]);
+  private _accountModels = signal<ZoneModels[]>([]);
+  private _projectList = signal<ProjectDetails[]>([]);
+  private _projectDetails = signal<ProjectDetails | null>(null);
+
+  readonly accountDetails = this._accountDetails.asReadonly();
+  readonly kbList = this._kbList.asReadonly();
+  readonly kbDetails = this._kbDetails.asReadonly();
+  readonly blockedFeatures = this._blockedFeatures.asReadonly();
+  readonly currentState = this._currentState.asReadonly();
+  readonly accountUsers = this._accountUsers.asReadonly();
+  readonly accountModels = this._accountModels.asReadonly();
+  readonly projectList = this._projectList.asReadonly();
+  readonly projectDetails = this._projectDetails.asReadonly();
 
   setAccountDetails(details: AccountDetails | null) {
-    this._accountDetails.next(details);
+    this._accountDetails.set(details);
     if (details?.blockingState) {
-      this._currentState.next(BLOCKING_STATE_LABEL[details.blockingState]);
+      this._currentState.set(BLOCKING_STATE_LABEL[details.blockingState]);
     }
   }
   setKbList(list: KbSummary[]) {
-    this._kbList.next(list);
+    this._kbList.set(list);
   }
   setKbDetails(details: KbDetails | null) {
-    this._kbDetails.next(details);
+    this._kbDetails.set(details);
   }
   setBlockedFeatures(features: BlockedFeature[]) {
-    this._blockedFeatures.next(features);
+    this._blockedFeatures.set(features);
   }
   setAccountUsers(users: AccountUser[]) {
-    this._accountUsers.next(
+    this._accountUsers.set(
       users.toSorted((a, b) => {
         if (a.isManager && !b.isManager) {
           return -1;
@@ -78,20 +92,16 @@ export class ManagerStore {
     );
   }
   setAccountModels(models: ZoneModels[]) {
-    this._accountModels.next(models);
+    this._accountModels.set(models);
   }
   setProjectList(projects: ProjectDetails[]) {
-    this._projectList.next(projects);
+    this._projectList.set(projects);
   }
   setProjectDetails(project: ProjectDetails) {
-    this._projectDetails.next(project);
+    this._projectDetails.set(project);
   }
 
   getAccountId(): string | undefined {
-    return this._accountDetails.value?.id;
-  }
-
-  private hasAnyRole(...roles: UserType[]): Observable<boolean> {
-    return this.userService.userType.pipe(map((userType) => !!userType && roles.includes(userType)));
+    return this._accountDetails()?.id;
   }
 }

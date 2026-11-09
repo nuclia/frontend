@@ -7,7 +7,7 @@ import {
   SubscriptionProvider,
 } from '@flaps/core';
 import { AccountLimitsPatchPayload, AccountTypes, NucliaTokensMetric } from '@nuclia/core';
-import { forkJoin, map, Observable, of, shareReplay, switchMap, take, tap, throwError } from 'rxjs';
+import { defer, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap, throwError } from 'rxjs';
 import { ManagerStore } from '../manager.store';
 import {
   AccountConfigurationPayload,
@@ -107,11 +107,10 @@ export class AccountService {
    * Load KB details
    */
   loadKb(kbSummary: KbSummary): Observable<KbDetails> {
-    return this.store.accountDetails.pipe(
-      take(1),
-      switchMap((accountDetails) =>
-        accountDetails ? of(accountDetails) : this.loadAccountDetails(kbSummary.accountId),
-      ),
+    return defer(() => {
+      const accountDetails = this.store.accountDetails();
+      return accountDetails ? of(accountDetails) : this.loadAccountDetails(kbSummary.accountId);
+    }).pipe(
       switchMap((accountDetails) => this.regionalService.getKbDetails(kbSummary, accountDetails)),
       map((kbDetails) => {
         this.store.setKbDetails(kbDetails);

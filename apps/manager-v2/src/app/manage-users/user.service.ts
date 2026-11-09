@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Observable, of } from 'rxjs';
 import { AuthenticatedUser, User, UserFilters, UserSearch, UserSummary } from './user.models';
@@ -13,7 +13,7 @@ export const SEARCH_USERS_ACCOUNT_ENDPOINT = '/manage/@search_users_account';
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private sdk: SDKService) {}
+  private sdk = inject(SDKService);
 
   getUsers(accountRole?: AccountRoles, filters: UserFilters = {}): Observable<UserSummary[]> {
     const params = new URLSearchParams();

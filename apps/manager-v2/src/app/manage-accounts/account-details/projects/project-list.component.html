@@ -11,12 +11,12 @@
         </tr>
       </thead>
       <tbody hlmTBody>
-        @for (project of projectList | async; track project.project_id) {
+        @for (project of projectList(); track project.project_id) {
           <tr
             hlmTr
-            [class.cursor-pointer]="canAccessProjects | async"
+            [class.cursor-pointer]="canAccessProjects()"
             [routerLink]="
-              (canAccessProjects | async) ? '../zone/' + project.zone.id + '/project/' + project.project_id : undefined
+              canAccessProjects() ? '../zone/' + project.zone.id + '/project/' + project.project_id : undefined
             ">
             <td
               hlmTd

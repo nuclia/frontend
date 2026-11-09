@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
@@ -24,10 +25,10 @@ describe('AppLayoutComponent', () => {
         MockProvider(UserService, { userInfo: of(undefined) }),
         MockProvider(BackendConfigurationService),
         MockProvider(ManagerStore, {
-          canUseManager: of(true),
-          canManageZones: of(true),
-          canSeeGlobalUsers: of(true),
-          canSendEmails: of(true),
+          canUseManager: signal(true),
+          canManageZones: signal(true),
+          canSeeGlobalUsers: signal(true),
+          canSendEmails: signal(true),
         }),
       ],
     }).compileComponents();
