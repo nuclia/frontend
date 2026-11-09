@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideInfo } from '@ng-icons/lucide';
+import { matInfoRound } from '@ng-icons/material-icons/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmLabelImports } from '@nuclia/ui-spartan/label';
 import { HlmToggleGroupImports } from '@nuclia/ui-spartan/toggle-group';
@@ -14,7 +14,7 @@ import { USER_SEGMENTS, UserSegment } from '../user-segments';
   templateUrl: './recipient-filters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [HlmButtonImports, HlmLabelImports, HlmToggleGroupImports, HlmTooltipImports, NgIcon],
-  providers: [provideIcons({ lucideInfo })],
+  providers: [provideIcons({ matInfoRound })],
   host: { class: 'block' },
 })
 export class RecipientFiltersComponent {

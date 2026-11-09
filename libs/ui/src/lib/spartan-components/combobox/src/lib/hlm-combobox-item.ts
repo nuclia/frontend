@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCheck } from '@ng-icons/lucide';
+import { matCheckRound } from '@ng-icons/material-icons/round';
 import { BrnComboboxItem } from '@spartan-ng/brain/combobox';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-combobox-item',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideCheck })],
+  providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: BrnComboboxItem, inputs: ['id', 'disabled', 'value'] }],
   host: { 'data-slot': 'combobox-item' },
@@ -15,7 +15,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
     <ng-content />
     @if (_active()) {
       <ng-icon
-        name="lucideCheck"
+        name="matCheckRound"
         class="pointer-events-none absolute end-2 flex items-center justify-center text-[length:--spacing(4)]"
         aria-hidden="true" />
     }

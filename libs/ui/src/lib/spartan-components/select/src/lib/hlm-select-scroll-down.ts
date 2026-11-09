@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import { BrnSelectScrollDown } from '@spartan-ng/brain/select';
 import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-select-scroll-down',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideChevronDown })],
+  providers: [provideIcons({ matKeyboardArrowDownRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnSelectScrollDown],
   template: `
-    <ng-icon name="lucideChevronDown" />
+    <ng-icon name="matKeyboardArrowDownRound" />
   `,
 })
 export class HlmSelectScrollDown {

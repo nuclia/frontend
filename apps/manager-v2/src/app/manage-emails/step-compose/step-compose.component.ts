@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideInfo } from '@ng-icons/lucide';
+import { matInfoRound } from '@ng-icons/material-icons/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmLabelImports } from '@nuclia/ui-spartan/label';
@@ -28,7 +28,7 @@ import { SENDER_NAME_MAX_LENGTH } from './sender-name.utils';
     PersonalizationHelpComponent,
     SpartanStepperImports,
   ],
-  providers: [provideIcons({ lucideInfo })],
+  providers: [provideIcons({ matInfoRound })],
 })
 export class StepComposeComponent {
   protected compose = inject(ComposeService);

@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideMinus, lucidePlus, lucideSearch } from '@ng-icons/lucide';
+import { matRemoveRound, matAddRound, matSearchRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButtonImports } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
@@ -19,7 +19,7 @@ const meta: Meta<ButtonGroupStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmButtonGroupImports, ...HlmButtonImports, ...HlmInputImports, NgIcon],
-      providers: [provideIcons({ lucideMinus, lucidePlus, lucideSearch })],
+      providers: [provideIcons({ matRemoveRound, matAddRound, matSearchRound })],
     }),
   ],
   parameters: {
@@ -115,8 +115,8 @@ export const WithGroupText: Story = {
     template: `
       <div hlmButtonGroup aria-label="Zoom controls">
         <span hlmButtonGroupText>Zoom</span>
-        <button hlmBtn variant="outline" type="button" aria-label="Zoom out"><ng-icon name="lucideMinus" /></button>
-        <button hlmBtn variant="outline" type="button" aria-label="Zoom in"><ng-icon name="lucidePlus" /></button>
+        <button hlmBtn variant="outline" type="button" aria-label="Zoom out"><ng-icon name="matRemoveRound" /></button>
+        <button hlmBtn variant="outline" type="button" aria-label="Zoom in"><ng-icon name="matAddRound" /></button>
       </div>
     `,
   }),
@@ -130,7 +130,7 @@ export const WithInput: Story = {
     template: `
       <div hlmButtonGroup class="w-80" aria-label="Search">
         <input hlmInput type="search" placeholder="Search resources" aria-label="Search resources" />
-        <button hlmBtn variant="outline" type="button" aria-label="Search"><ng-icon name="lucideSearch" /></button>
+        <button hlmBtn variant="outline" type="button" aria-label="Search"><ng-icon name="matSearchRound" /></button>
       </div>
     `,
   }),

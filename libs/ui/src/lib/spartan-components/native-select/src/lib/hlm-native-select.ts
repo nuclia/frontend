@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import { BrnFieldControl, provideBrnLabelable } from '@spartan-ng/brain/field';
 import { type ChangeFn, type TouchFn } from '@spartan-ng/brain/forms';
 import { classes, hlm } from '@nuclia/ui-spartan/utils';
@@ -29,7 +29,7 @@ export const HLM_NATIVE_SELECT_VALUE_ACCESSOR = {
   imports: [NgIcon],
   providers: [
     HLM_NATIVE_SELECT_VALUE_ACCESSOR,
-    provideIcons({ lucideChevronDown }),
+    provideIcons({ matKeyboardArrowDownRound }),
     provideBrnLabelable(HlmNativeSelect),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +57,7 @@ export const HLM_NATIVE_SELECT_VALUE_ACCESSOR = {
     </select>
 
     <ng-icon
-      name="lucideChevronDown"
+      name="matKeyboardArrowDownRound"
       [class]="_computedSelectIconClass()"
       aria-hidden="true"
       data-slot="native-select-icon" />

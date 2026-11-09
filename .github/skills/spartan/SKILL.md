@@ -79,7 +79,8 @@ Read the rule file before doing the related work:
 - **`rules/composition.md`** - items belong inside their group; dialogs/sheets need a title;
   full Card composition; tabs triggers inside `hlm-tabs-list`; avatar always has a fallback;
   use `Alert`/`Empty`/`Skeleton`/`Badge`/`Separator`/`Spinner` instead of custom markup.
-- **`rules/icons.md`** - icons are `<ng-icon name="lucide...">`; register with `provideIcons`;
+- **`rules/icons.md`** - use rounded Material Icons (`@ng-icons/material-icons/round`,
+  `<ng-icon name="mat...Round">`); register with `provideIcons`;
   no manual sizing classes inside components - use the `size` input.
 - **`rules/brain-vs-helm.md`** - the two-layer model (one headless library, Brain, plus the styled
   Helm layer); when to reach for Brain directly vs Helm, and how composition works via directives.
@@ -107,7 +108,7 @@ Read the rule file before doing the related work:
   hlmBtn
   size="icon"
   variant="ghost">
-  <ng-icon name="lucideTrash" />
+  <ng-icon name="matDeleteRound" />
 </button>
 
 <!-- Loading state: compose a spinner, there is no isLoading input -->

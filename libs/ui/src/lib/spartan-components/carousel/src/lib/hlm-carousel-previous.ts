@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft } from '@ng-icons/lucide';
+import { matArrowBackRound } from '@ng-icons/material-icons/round';
 import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
 import { HlmCarousel } from './hlm-carousel';
@@ -8,7 +8,7 @@ import { HlmCarousel } from './hlm-carousel';
 @Component({
   selector: 'button[hlm-carousel-previous], button[hlmCarouselPrevious]',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideArrowLeft }), provideBrnButtonConfig({ variant: 'outline', size: 'icon-sm' })],
+  providers: [provideIcons({ matArrowBackRound }), provideBrnButtonConfig({ variant: 'outline', size: 'icon-sm' })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: HlmButton, inputs: ['variant', 'size'] }],
   host: {
@@ -18,7 +18,7 @@ import { HlmCarousel } from './hlm-carousel';
   },
   template: `
     <ng-icon
-      name="lucideArrowLeft"
+      name="matArrowBackRound"
       class="rtl:rotate-180" />
     <span class="sr-only">Previous slide</span>
   `,

@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronsUpDown } from '@ng-icons/lucide';
+import { matUnfoldMoreRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmCollapsibleImports } from '../index';
@@ -19,7 +19,7 @@ const meta: Meta<CollapsibleStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmCollapsibleImports],
-      providers: [provideIcons({ lucideChevronsUpDown })],
+      providers: [provideIcons({ matUnfoldMoreRound })],
     }),
   ],
   parameters: {
@@ -107,7 +107,7 @@ export const WithIconTrigger: Story = {
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-sm font-semibold">{{ title }}</h2>
           <button type="button" hlmBtn variant="ghost" size="icon-sm" hlmCollapsibleTrigger aria-label="Toggle starred repositories">
-            <ng-icon name="lucideChevronsUpDown" />
+            <ng-icon name="matUnfoldMoreRound" />
           </button>
         </div>
         <div class="rounded-md border px-4 py-2 font-mono text-sm">nuclia/nucliadb</div>

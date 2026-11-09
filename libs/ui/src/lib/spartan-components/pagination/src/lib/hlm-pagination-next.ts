@@ -2,7 +2,7 @@ import type { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import type { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronRight } from '@ng-icons/lucide';
+import { matChevronRightRound } from '@ng-icons/material-icons/round';
 import type { ButtonVariants } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
@@ -11,7 +11,7 @@ import { HlmPaginationLink } from './hlm-pagination-link';
 @Component({
   selector: 'hlm-pagination-next',
   imports: [HlmPaginationLink, NgIcon],
-  providers: [provideIcons({ lucideChevronRight })],
+  providers: [provideIcons({ matChevronRightRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a
@@ -24,7 +24,7 @@ import { HlmPaginationLink } from './hlm-pagination-link';
       [attr.aria-label]="ariaLabel()">
       <span [class]="_labelClass()">{{ text() }}</span>
       <ng-icon
-        name="lucideChevronRight"
+        name="matChevronRightRound"
         class="rtl:rotate-180" />
     </a>
   `,

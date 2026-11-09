@@ -1,7 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
 import {
   type BrnDatePickerTriggerBase,
   injectBrnDatePicker,
@@ -16,7 +16,7 @@ import { ClassValue } from 'clsx';
 @Component({
   selector: 'hlm-date-picker-trigger',
   imports: [HlmButtonImports, HlmPopoverTrigger, NgIcon, BrnFieldControlDescribedBy],
-  providers: [provideIcons({ lucideChevronDown }), provideBrnDatePickerTrigger(HlmDatePickerTrigger)],
+  providers: [provideIcons({ matKeyboardArrowDownRound }), provideBrnDatePickerTrigger(HlmDatePickerTrigger)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-slot': 'date-picker-trigger' },
   template: `
@@ -45,7 +45,7 @@ import { ClassValue } from 'clsx';
       </span>
 
       @if (showTrigger()) {
-        <ng-icon name="lucideChevronDown" />
+        <ng-icon name="matKeyboardArrowDownRound" />
       }
     </button>
   `,

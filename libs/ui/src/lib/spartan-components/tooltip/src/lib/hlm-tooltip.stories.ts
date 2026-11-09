@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideInfo } from '@ng-icons/lucide';
+import { matInfoRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmTooltipImports } from '../index';
@@ -22,7 +22,7 @@ const meta: Meta<TooltipStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmTooltipImports, HlmButton, NgIcon],
-      providers: [provideIcons({ lucideInfo })],
+      providers: [provideIcons({ matInfoRound })],
     }),
   ],
   parameters: {
@@ -124,7 +124,7 @@ export const InfoIcon: Story = {
           aria-label="More information"
           position="right"
           hlmTooltip="A user can belong to several segments if they are linked to several accounts. Use account owners to reduce overlaps.">
-          <ng-icon name="lucideInfo" />
+          <ng-icon name="matInfoRound" />
         </button>
       </div>
     `,

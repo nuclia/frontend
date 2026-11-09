@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowDown } from '@ng-icons/lucide';
+import { matArrowDownwardRound } from '@ng-icons/material-icons/round';
 import { BrnMessageScrollerButton } from '@spartan-ng/brain/message-scroller';
 import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 
@@ -8,7 +8,10 @@ import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
   // eslint-disable-next-line @angular-eslint/component-selector -- attribute selector on native button
   selector: 'button[hlmMessageScrollerButton]',
   imports: [NgIcon],
-  providers: [provideIcons({ lucideArrowDown }), provideBrnButtonConfig({ variant: 'secondary', size: 'icon-sm' })],
+  providers: [
+    provideIcons({ matArrowDownwardRound }),
+    provideBrnButtonConfig({ variant: 'secondary', size: 'icon-sm' }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
     { directive: HlmButton, inputs: ['variant', 'size'] },
@@ -21,7 +24,7 @@ import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
     'data-slot': 'message-scroller-button',
   },
   template: `
-    <ng-icon name="lucideArrowDown" />
+    <ng-icon name="matArrowDownwardRound" />
     <span class="sr-only">{{ _brn.resolvedAriaLabel() }}</span>
   `,
 })

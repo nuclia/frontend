@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideX } from '@ng-icons/lucide';
+import { matCloseRound } from '@ng-icons/material-icons/round';
 import { injectExposedSideProvider, injectExposesStateProvider } from '@spartan-ng/brain/core';
 import { HlmButton } from '@nuclia/ui-spartan/button';
 
@@ -21,7 +21,7 @@ import { HlmSheetClose } from './hlm-sheet-close';
 @Component({
   selector: 'hlm-sheet-content',
   imports: [HlmButton, HlmSheetClose, NgIcon],
-  providers: [provideIcons({ lucideX })],
+  providers: [provideIcons({ matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-slot': 'sheet-content',
@@ -39,7 +39,7 @@ import { HlmSheetClose } from './hlm-sheet-close';
         class="absolute end-3 top-3"
         hlmSheetClose>
         <span class="sr-only">Close</span>
-        <ng-icon name="lucideX" />
+        <ng-icon name="matCloseRound" />
       </button>
     }
   `,

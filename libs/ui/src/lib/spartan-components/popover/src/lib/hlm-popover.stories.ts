@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideInfo } from '@ng-icons/lucide';
+import { matInfoRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
@@ -21,7 +21,7 @@ const meta: Meta<PopoverStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmInputImports, ...HlmLabelImports, ...HlmPopoverImports],
-      providers: [provideIcons({ lucideInfo })],
+      providers: [provideIcons({ matInfoRound })],
     }),
   ],
   parameters: {
@@ -105,7 +105,7 @@ export const CompactContent: Story = {
     template: `
       <hlm-popover>
         <button type="button" hlmBtn variant="ghost" size="icon" hlmPopoverTrigger aria-label="More information">
-          <ng-icon name="lucideInfo" />
+          <ng-icon name="matInfoRound" />
         </button>
         <div hlmPopoverContent class="w-56" *hlmPopoverPortal="let context">
           <div hlmPopoverHeader>

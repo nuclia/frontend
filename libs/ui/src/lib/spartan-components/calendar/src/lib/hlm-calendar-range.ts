@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronLeft, lucideChevronRight } from '@ng-icons/lucide';
+import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-icons/round';
 import { BrnCalendarImports, BrnCalendarRange, injectBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { injectDateAdapter } from '@spartan-ng/brain/date-time';
 import { buttonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
@@ -11,7 +11,7 @@ import { classes, hlm } from '@nuclia/ui-spartan/utils';
 @Component({
   selector: 'hlm-calendar-range',
   imports: [BrnCalendarImports, NgIcon, HlmSelectImports, NgTemplateOutlet, HlmButtonImports],
-  viewProviders: [provideIcons({ lucideChevronLeft, lucideChevronRight })],
+  viewProviders: [provideIcons({ matChevronLeftRound, matChevronRightRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
     {
@@ -83,7 +83,7 @@ import { classes, hlm } from '@nuclia/ui-spartan/utils';
           hlmBtn
           class="order-first size-(--cell-size) p-0 select-none aria-disabled:opacity-50">
           <ng-icon
-            name="lucideChevronLeft"
+            name="matChevronLeftRound"
             class="rtl:rotate-180" />
         </button>
 
@@ -123,7 +123,7 @@ import { classes, hlm } from '@nuclia/ui-spartan/utils';
           variant="ghost"
           class="order-last size-(--cell-size) p-0 select-none aria-disabled:opacity-50">
           <ng-icon
-            name="lucideChevronRight"
+            name="matChevronRightRound"
             class="rtl:rotate-180" />
         </button>
       </div>
