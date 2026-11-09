@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCombobox],hlm-combobox',
+  exportAs: 'hlmCombobox',
   providers: [
     provideBrnPopoverConfig({
       align: 'start',

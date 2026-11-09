@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'fieldset[hlmFieldSet]',
+  exportAs: 'hlmFieldSet',
   host: { 'data-slot': 'field-set' },
 })
 export class HlmFieldSet {

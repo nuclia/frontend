@@ -3,6 +3,7 @@ import { HlmButton } from '@nuclia/ui-spartan/button';
 
 @Directive({
   selector: 'button[hlmAlertDialogAction]',
+  exportAs: 'hlmAlertDialogAction',
   hostDirectives: [{ directive: HlmButton, inputs: ['variant', 'size'] }],
   host: { 'data-slot': 'alert-dialog-action', '[type]': 'type()' },
 })

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmSidebarGroupAction]',
+  exportAs: 'hlmSidebarGroupAction',
   host: {
     'data-slot': 'sidebar-group-action',
     'data-sidebar': 'group-action',

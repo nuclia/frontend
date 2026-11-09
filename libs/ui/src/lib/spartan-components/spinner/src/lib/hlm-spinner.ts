@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-spinner',
+  exportAs: 'hlmSpinner',
   imports: [NgIcon],
   providers: [provideIcons({ matDataUsageRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

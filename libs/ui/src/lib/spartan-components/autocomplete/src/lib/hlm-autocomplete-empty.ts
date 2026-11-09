@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteEmpty],hlm-autocomplete-empty',
+  exportAs: 'hlmAutocompleteEmpty',
   hostDirectives: [BrnAutocompleteEmpty],
   host: { 'data-slot': 'autocomplete-empty' },
 })

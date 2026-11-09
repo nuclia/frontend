@@ -4,6 +4,7 @@ import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 
 @Directive({
   selector: 'button[hlmAlertDialogCancel]',
+  exportAs: 'hlmAlertDialogCancel',
   providers: [provideBrnButtonConfig({ variant: 'outline' })],
   hostDirectives: [BrnDialogClose, { directive: HlmButton, inputs: ['variant', 'size'] }],
   host: { 'data-slot': 'alert-dialog-cancel', '[type]': 'type()' },

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmEmptyTitle]',
+  exportAs: 'hlmEmptyTitle',
   host: { 'data-slot': 'empty-title' },
 })
 export class HlmEmptyTitle {

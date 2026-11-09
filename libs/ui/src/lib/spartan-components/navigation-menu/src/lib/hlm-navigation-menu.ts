@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'nav[hlmNavigationMenu]',
+  exportAs: 'hlmNavigationMenu',
   hostDirectives: [
     {
       directive: BrnNavigationMenu,

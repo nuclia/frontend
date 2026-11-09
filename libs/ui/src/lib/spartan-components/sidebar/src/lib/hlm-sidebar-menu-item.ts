@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'li[hlmSidebarMenuItem]',
+  exportAs: 'hlmSidebarMenuItem',
   host: {
     'data-slot': 'sidebar-menu-item',
     'data-sidebar': 'menu-item',

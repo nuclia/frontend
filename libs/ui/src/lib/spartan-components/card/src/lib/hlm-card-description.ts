@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCardDescription]',
+  exportAs: 'hlmCardDescription',
   host: { 'data-slot': 'card-description' },
 })
 export class HlmCardDescription {

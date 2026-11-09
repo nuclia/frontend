@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAvatarGroupCount],hlm-avatar-group-count',
+  exportAs: 'hlmAvatarGroupCount',
   host: {
     'data-slot': 'avatar-group-count',
   },

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmPopoverDescription]',
+  exportAs: 'hlmPopoverDescription',
   host: { 'data-slot': 'popover-description' },
 })
 export class HlmPopoverDescription {

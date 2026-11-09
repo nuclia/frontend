@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAvatarBadge],hlm-avatar-badge',
+  exportAs: 'hlmAvatarBadge',
   host: {
     'data-slot': 'avatar-badge',
   },

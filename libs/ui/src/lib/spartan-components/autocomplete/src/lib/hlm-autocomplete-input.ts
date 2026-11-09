@@ -1,13 +1,14 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matSearchRound, matCloseRound } from '@ng-icons/material-icons/round';
-import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } from '@spartan-ng/brain/autocomplete';
+import { matCloseRound, matSearchRound } from '@ng-icons/material-icons/round';
 import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } from '@spartan-ng/brain/autocomplete';
 
 @Component({
   selector: 'hlm-autocomplete-input',
+  exportAs: 'hlmAutocompleteInput',
   imports: [HlmInputGroupImports, NgIcon, BrnAutocompleteClear, BrnAutocompleteInput],
   providers: [provideIcons({ matSearchRound, matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

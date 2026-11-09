@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmDrawerFooter],hlm-drawer-footer',
+  exportAs: 'hlmDrawerFooter',
   host: { 'data-slot': 'drawer-footer' },
 })
 export class HlmDrawerFooter {

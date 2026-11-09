@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'textarea[hlmInputGroupTextarea]',
+  exportAs: 'hlmInputGroupTextarea',
   hostDirectives: [HlmTextarea],
   host: { 'data-slot': 'input-group-control' },
 })

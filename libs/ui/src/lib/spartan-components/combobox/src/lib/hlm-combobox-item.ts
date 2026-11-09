@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-icons/round';
-import { BrnComboboxItem } from '@spartan-ng/brain/combobox';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnComboboxItem } from '@spartan-ng/brain/combobox';
 
 @Component({
   selector: 'hlm-combobox-item',
+  exportAs: 'hlmComboboxItem',
   imports: [NgIcon],
   providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmSheetDescription]',
+  exportAs: 'hlmSheetDescription',
   hostDirectives: [BrnSheetDescription],
   host: { 'data-slot': 'sheet-description' },
 })

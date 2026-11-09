@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmComboboxLabel]',
+  exportAs: 'hlmComboboxLabel',
   hostDirectives: [{ directive: BrnComboboxLabel, inputs: ['id'] }],
   host: { 'data-slot': 'combobox-label' },
 })

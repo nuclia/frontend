@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'option[hlmNativeSelectOption]',
+  exportAs: 'hlmNativeSelectOption',
   host: { 'data-slot': 'native-select-option' },
 })
 export class HlmNativeSelectOption {

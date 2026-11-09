@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmDialogHeader],hlm-dialog-header',
+  exportAs: 'hlmDialogHeader',
   host: { 'data-slot': 'dialog-header' },
 })
 export class HlmDialogHeader {

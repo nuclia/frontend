@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteSearch],hlm-autocomplete-search',
+  exportAs: 'hlmAutocompleteSearch',
   providers: [
     provideBrnPopoverConfig({
       align: 'start',

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmFieldTitle],hlm-field-title',
+  exportAs: 'hlmFieldTitle',
   host: { 'data-slot': 'field-label' },
 })
 export class HlmFieldTitle {

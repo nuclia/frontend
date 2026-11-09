@@ -3,18 +3,19 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matCheckCircleRound,
-  matInfoRound,
-  matDataUsageRound,
   matDangerousRound,
+  matDataUsageRound,
+  matInfoRound,
   matWarningRound,
 } from '@ng-icons/material-icons/round';
-import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
+import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
 import type { ClassValue } from 'clsx';
 
 @Component({
   selector: 'hlm-toaster',
+  exportAs: 'hlmToaster',
   imports: [BrnSonnerImports, HlmButtonImports, NgIcon],
   providers: [
     provideIcons({ matCheckCircleRound, matInfoRound, matWarningRound, matDangerousRound, matDataUsageRound }),

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-icons/round';
-import { BrnSelectItem } from '@spartan-ng/brain/select';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnSelectItem } from '@spartan-ng/brain/select';
 
 @Component({
   selector: 'hlm-select-item',
+  exportAs: 'hlmSelectItem',
   imports: [NgIcon],
   providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

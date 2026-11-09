@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmButtonGroupText],hlm-button-group-text',
+  exportAs: 'hlmButtonGroupText',
   host: {
     'data-slot': 'button-group-text',
   },

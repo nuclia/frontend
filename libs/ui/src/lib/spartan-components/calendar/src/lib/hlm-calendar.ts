@@ -2,14 +2,15 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-icons/round';
-import { BrnCalendar, BrnCalendarImports, injectBrnCalendarI18n } from '@spartan-ng/brain/calendar';
-import { injectDateAdapter } from '@spartan-ng/brain/date-time';
 import { buttonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmSelectImports } from '@nuclia/ui-spartan/select';
 import { classes, hlm } from '@nuclia/ui-spartan/utils';
+import { BrnCalendar, BrnCalendarImports, injectBrnCalendarI18n } from '@spartan-ng/brain/calendar';
+import { injectDateAdapter } from '@spartan-ng/brain/date-time';
 
 @Component({
   selector: 'hlm-calendar',
+  exportAs: 'hlmCalendar',
   imports: [BrnCalendarImports, NgIcon, HlmSelectImports, NgTemplateOutlet, HlmButtonImports],
   viewProviders: [provideIcons({ matChevronLeftRound, matChevronRightRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

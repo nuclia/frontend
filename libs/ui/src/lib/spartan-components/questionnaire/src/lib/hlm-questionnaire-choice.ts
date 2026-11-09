@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-icons/round';
+import { classes } from '@nuclia/ui-spartan/utils';
 import {
   BrnQuestionnaireChoice,
   BrnQuestionnaireChoiceInput,
   BrnQuestionnaireChoiceLabel,
   BrnQuestionnaireChoiceShortcut,
 } from '@spartan-ng/brain/questionnaire';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector -- attribute selector on native label

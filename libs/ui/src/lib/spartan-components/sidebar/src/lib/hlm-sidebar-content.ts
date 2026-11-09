@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmSidebarContent],hlm-sidebar-content',
+  exportAs: 'hlmSidebarContent',
   host: {
     'data-slot': 'sidebar-content',
     'data-sidebar': 'content',

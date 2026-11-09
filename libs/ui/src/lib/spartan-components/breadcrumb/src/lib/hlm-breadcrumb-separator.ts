@@ -6,6 +6,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[hlmBreadcrumbSeparator]',
+  exportAs: 'hlmBreadcrumbSeparator',
   imports: [NgIcon],
   providers: [provideIcons({ matChevronRightRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

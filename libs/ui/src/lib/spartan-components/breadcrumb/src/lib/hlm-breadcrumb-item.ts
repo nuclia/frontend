@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmBreadcrumbItem]',
+  exportAs: 'hlmBreadcrumbItem',
   host: {
     'data-slot': 'breadcrumb-item',
   },

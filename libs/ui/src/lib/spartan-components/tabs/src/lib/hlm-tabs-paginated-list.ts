@@ -11,15 +11,16 @@ import {
 import { toObservable } from '@angular/core/rxjs-interop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-icons/round';
-import { type BrnPaginatedTabHeaderItem, BrnTabsPaginatedList, BrnTabsTrigger } from '@spartan-ng/brain/tabs';
 import { buttonVariants } from '@nuclia/ui-spartan/button';
 import { classes, hlm } from '@nuclia/ui-spartan/utils';
+import { type BrnPaginatedTabHeaderItem, BrnTabsPaginatedList, BrnTabsTrigger } from '@spartan-ng/brain/tabs';
 import type { ClassValue } from 'clsx';
 import type { Observable } from 'rxjs';
 import { listVariants } from './hlm-tabs-list';
 
 @Component({
   selector: 'hlm-paginated-tabs-list',
+  exportAs: 'hlmTabsPaginatedList',
   imports: [CdkObserveContent, NgIcon],
   providers: [provideIcons({ matChevronRightRound, matChevronLeftRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -102,7 +103,7 @@ export class HlmTabsPaginatedList extends BrnTabsPaginatedList {
     ),
   );
 
-  protected _itemSelected(event: KeyboardEvent) {
-    event.preventDefault();
+  protected _itemSelected(_event: KeyboardEvent) {
+    /* noop - the native button activation selects the focused tab */
   }
 }

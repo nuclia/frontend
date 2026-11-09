@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmComboboxChips],hlm-combobox-chips',
+  exportAs: 'hlmComboboxChips',
   hostDirectives: [BrnComboboxAnchor, BrnComboboxPopoverTrigger],
   host: {
     'data-slot': 'combobox-chips',

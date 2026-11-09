@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCalendarTodayRound, matCloseRound } from '@ng-icons/material-icons/round';
+import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import {
   BrnDateInput,
   type BrnDatePickerTriggerBase,
   provideBrnDatePickerTrigger,
 } from '@spartan-ng/brain/date-picker';
 import { BrnFieldControl } from '@spartan-ng/brain/field';
-import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
 
 @Component({
   selector: 'hlm-date-range-input',
+  exportAs: 'hlmDateRangeInput',
   imports: [HlmInputGroupImports, NgIcon],
   providers: [provideIcons({ matCalendarTodayRound, matCloseRound }), provideBrnDatePickerTrigger(HlmDateRangeInput)],
   changeDetection: ChangeDetectionStrategy.OnPush,

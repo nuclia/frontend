@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmInputOtpGroup],hlm-input-otp-group',
+  exportAs: 'hlmInputOtpGroup',
   host: { 'data-slot': 'input-otp-group' },
 })
 export class HlmInputOtpGroup {

@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-slider, brn-slider [hlm]',
+  exportAs: 'hlmSlider',
   imports: [BrnSliderImports],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [

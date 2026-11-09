@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmDialogTitle]',
+  exportAs: 'hlmDialogTitle',
   hostDirectives: [BrnDialogTitle],
   host: { 'data-slot': 'dialog-title' },
 })

@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCommandList],hlm-command-list',
+  exportAs: 'hlmCommandList',
   hostDirectives: [
     {
       directive: BrnCommandList,

@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteContent],hlm-autocomplete-content',
+  exportAs: 'hlmAutocompleteContent',
   hostDirectives: [BrnAutocompleteContent],
 })
 export class HlmAutocompleteContent {

@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAttachmentContent],hlm-attachment-content',
+  exportAs: 'hlmAttachmentContent',
   host: { 'data-slot': 'attachment-content' },
 })
 export class HlmAttachmentContent {

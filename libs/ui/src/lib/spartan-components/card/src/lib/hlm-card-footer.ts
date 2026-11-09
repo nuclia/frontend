@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCardFooter],hlm-card-footer',
+  exportAs: 'hlmCardFooter',
   host: { 'data-slot': 'card-footer' },
 })
 export class HlmCardFooter {

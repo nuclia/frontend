@@ -7,9 +7,11 @@ import type { ButtonVariants } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 import { HlmPaginationLink } from './hlm-pagination-link';
+import { injectHlmPaginationConfig } from './hlm-pagination.token';
 
 @Component({
   selector: 'hlm-pagination-previous',
+  exportAs: 'hlmPaginationPrevious',
   imports: [HlmPaginationLink, NgIcon],
   providers: [provideIcons({ matChevronLeftRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +32,8 @@ import { HlmPaginationLink } from './hlm-pagination-link';
   `,
 })
 export class HlmPaginationPrevious {
+  private readonly _config = injectHlmPaginationConfig();
+
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
   /** The link to navigate to the previous page. */
   public readonly link = input<RouterLink['routerLink']>();
@@ -39,9 +43,9 @@ export class HlmPaginationPrevious {
   public readonly queryParamsHandling = input<RouterLink['queryParamsHandling']>();
 
   /** The aria-label for the previous page link. */
-  public readonly ariaLabel = input<string>('Go to previous page', { alias: 'aria-label' });
+  public readonly ariaLabel = input<string>(this._config.previousAriaLabel, { alias: 'aria-label' });
   /** The text to display for the previous page link. */
-  public readonly text = input<string>('Previous');
+  public readonly text = input<string>(this._config.previousLabel);
   /** Whether the button should only display the icon. */
   public readonly iconOnly = input<boolean, BooleanInput>(false, {
     transform: booleanAttribute,

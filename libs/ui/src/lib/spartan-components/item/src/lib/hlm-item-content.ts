@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmItemContent],hlm-item-content',
+  exportAs: 'hlmItemContent',
   host: { 'data-slot': 'item-content' },
 })
 export class HlmItemContent {

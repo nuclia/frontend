@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
-import { BrnNavigationMenuTrigger } from '@spartan-ng/brain/navigation-menu';
 import { classes } from '@nuclia/ui-spartan/utils';
+import { BrnNavigationMenuTrigger } from '@spartan-ng/brain/navigation-menu';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'button[hlmNavigationMenuTrigger]',
+  exportAs: 'hlmNavigationMenuTrigger',
   imports: [NgIcon],
   providers: [provideIcons({ matKeyboardArrowDownRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

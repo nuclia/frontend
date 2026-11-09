@@ -4,8 +4,8 @@ import { NgComponentOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCloseRound } from '@ng-icons/material-icons/round';
-import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmButton } from '@nuclia/ui-spartan/button';
+import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 
 import { classes } from '@nuclia/ui-spartan/utils';
 import { HlmDialogClose } from './hlm-dialog-close';
@@ -19,6 +19,7 @@ type HlmDialogContentContext = {
 
 @Component({
   selector: 'hlm-dialog-content',
+  exportAs: 'hlmDialogContent',
   imports: [NgComponentOutlet, HlmButton, HlmDialogClose, NgIcon],
   providers: [provideIcons({ matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,

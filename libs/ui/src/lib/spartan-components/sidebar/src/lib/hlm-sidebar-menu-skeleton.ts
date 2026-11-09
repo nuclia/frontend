@@ -5,6 +5,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-sidebar-menu-skeleton,div[hlmSidebarMenuSkeleton]',
+  exportAs: 'hlmSidebarMenuSkeleton',
   imports: [HlmSkeletonImports],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

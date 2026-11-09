@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMenubar],hlm-menubar',
+  exportAs: 'hlmMenubar',
   hostDirectives: [CdkMenuBar],
   host: {
     'data-slot': 'menubar',

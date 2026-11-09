@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmBreadcrumbLink]',
+  exportAs: 'hlmBreadcrumbLink',
   hostDirectives: [
     {
       directive: RouterLink,

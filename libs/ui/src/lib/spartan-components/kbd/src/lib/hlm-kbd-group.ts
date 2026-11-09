@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'kbd[hlmKbdGroup]',
+  exportAs: 'hlmKbdGroup',
   host: {
     'data-slot': 'kbd-group',
   },

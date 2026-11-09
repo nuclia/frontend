@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matArrowDownwardRound } from '@ng-icons/material-icons/round';
-import { BrnMessageScrollerButton } from '@spartan-ng/brain/message-scroller';
 import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
+import { BrnMessageScrollerButton } from '@spartan-ng/brain/message-scroller';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector -- attribute selector on native button
   selector: 'button[hlmMessageScrollerButton]',
+  exportAs: 'hlmMessageScrollerButton',
   imports: [NgIcon],
   providers: [
     provideIcons({ matArrowDownwardRound }),

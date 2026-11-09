@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMessageScrollerItem],hlm-message-scroller-item',
+  exportAs: 'hlmMessageScrollerItem',
   hostDirectives: [
     {
       directive: BrnMessageScrollerItem,

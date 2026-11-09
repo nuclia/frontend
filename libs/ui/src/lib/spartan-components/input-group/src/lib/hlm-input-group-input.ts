@@ -4,6 +4,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'input[hlmInputGroupInput]',
+  exportAs: 'hlmInputGroupInput',
   hostDirectives: [HlmInput],
   host: { 'data-slot': 'input-group-control' },
 })

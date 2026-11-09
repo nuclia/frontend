@@ -3,6 +3,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmSheetFooter],hlm-sheet-footer',
+  exportAs: 'hlmSheetFooter',
   host: { 'data-slot': 'sheet-footer' },
 })
 export class HlmSheetFooter {
