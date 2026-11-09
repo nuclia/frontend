@@ -1,9 +1,8 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { SisToastService } from '@nuclia/sistema';
-import { SvgIconRegistryService } from 'angular-svg-icon';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { UserService } from '../user.service';
 import { UserDetailsComponent } from './user-details.component';
@@ -18,21 +17,13 @@ describe('UserDetailsComponent', () => {
       imports: [UserDetailsComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(UserService),
-        MockProvider(SisToastService),
+        MockProvider(UiToastService),
         MockProvider(SDKService, {
           getOriginForApp: () => '',
         }),
         MockProvider(ManagerStore, {
-          canEdit: of(true),
+          canEdit: signal(true),
         }),
-        {
-          provide: SvgIconRegistryService,
-          useValue: {
-            loadSvg: () => {
-              /* empty */
-            },
-          },
-        },
       ],
     }).compileComponents();
 

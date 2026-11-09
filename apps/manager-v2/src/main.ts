@@ -4,10 +4,11 @@ import { registerLocaleData } from '@angular/common';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { STFConfigModule } from '@flaps/core';
-import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { provideTranslateService, TranslatePipe } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { provideHlmDatePickerConfig } from '@nuclia/ui-spartan/date-picker';
+import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
+import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
 import { environment } from './environments/environment';
@@ -21,17 +22,17 @@ registerLocaleData(localeCa);
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(
-      BrowserModule,
-      STFConfigModule.forRoot(environment),
-      AngularSvgIconModule.forRoot(),
-      PaAvatarModule,
-      PaDropdownModule,
-      PaPopupModule,
-    ),
+    importProvidersFrom(BrowserModule, STFConfigModule.forRoot(environment)),
     TranslatePipe,
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideZonelessChangeDetection(),
+    provideNativeDateAdapter(),
+    provideBrnCalendarI18n(),
+    provideHlmDatePickerConfig<Date>({
+      autoCloseOnSelect: true,
+      formatDate: (date) => date.toLocaleDateString('en', { dateStyle: 'long' }),
+      formatInputDate: (date) => date.toLocaleDateString('en', { dateStyle: 'long' }),
+    }),
     provideTranslateService({
       loader: provideTranslateHttpLoader({
         resources: [

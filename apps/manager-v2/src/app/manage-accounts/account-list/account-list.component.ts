@@ -1,15 +1,15 @@
-import { AsyncPipe, SlicePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  PaButtonModule,
-  PaDateTimeModule,
-  PaScrollModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
+import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
+import { filter, Observable, switchMap, tap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { AccountSummary } from '../account-ui.models';
 import { AccountService } from '../account.service';
@@ -17,68 +17,65 @@ import { AccountService } from '../account.service';
 @Component({
   templateUrl: './account-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    PaTextFieldModule,
-    PaButtonModule,
-    RouterLink,
-    PaScrollModule,
-    PaTableModule,
-    PaDateTimeModule,
-    AsyncPipe,
-    SlicePipe,
-  ],
+  imports: [DatePipe, HlmButtonImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, UiInfiniteScrollImports],
+  providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class AccountListComponent {
-  private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);
+  private accountService = inject(AccountService);
+  private confirmService = inject(UiConfirmService);
+  private toast = inject(UiToastService);
   private store = inject(ManagerStore);
+
+  private allAccounts = signal<AccountSummary[]>([]);
+  private lastIndex = signal(100);
+
   canDelete = this.store.canDeleteAccount;
   canCreateAccount = this.store.canCreateAccount;
-  filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  accounts$: Observable<AccountSummary[]> = combineLatest([this._allAccounts, this.filter$]).pipe(
-    map(([accounts, filter]) =>
-      filter
-        ? accounts.filter(
-            (account) =>
-              account.id.includes(filter) ||
-              account.title.includes(filter) ||
-              account.slug.includes(filter) ||
-              account.email.includes(filter) ||
-              account.type.includes(filter) ||
-              account.workflow.includes(filter),
-          )
-        : accounts,
-    ),
-    map((accounts) => accounts.sort((a, b) => `${a.type}-${a.title}`.localeCompare(`${b.type}-${b.title}`))),
-  );
+  filter = signal('');
+  accounts = computed(() => {
+    const filterValue = this.filter();
+    const accounts = filterValue
+      ? this.allAccounts().filter(
+          (account) =>
+            account.id.includes(filterValue) ||
+            account.title.includes(filterValue) ||
+            account.slug.includes(filterValue) ||
+            account.email.includes(filterValue) ||
+            account.type.includes(filterValue) ||
+            account.workflow.includes(filterValue),
+        )
+      : this.allAccounts();
+    return accounts
+      .toSorted((a, b) => `${a.type}-${a.title}`.localeCompare(`${b.type}-${b.title}`))
+      .slice(0, this.lastIndex());
+  });
 
-  lastIndex = 100;
-
-  constructor(
-    private accountService: AccountService,
-    private modalService: SisModalService,
-    private toast: SisToastService,
-  ) {
+  constructor() {
     this.loadAccounts().subscribe();
   }
 
+  onFilterInput(event: Event) {
+    this.filter.set((event.target as HTMLInputElement).value);
+  }
+
   onReachAnchor() {
-    if (this.lastIndex < this._allAccounts.getValue().length) {
-      this.lastIndex = this.lastIndex + 100;
+    if (this.lastIndex() < this.allAccounts().length) {
+      this.lastIndex.update((index) => index + 100);
     }
   }
 
   deleteAccount(event: MouseEvent, account: AccountSummary) {
     event.preventDefault();
     event.stopPropagation();
-    this.modalService
-      .openConfirm({
+    this.confirmService
+      .confirm({
         title: `Are you sure you want to delete "${account.slug}"?`,
         description: `You’re about to delete "${account.title}" (${account.slug})?`,
         isDestructive: true,
         cancelLabel: 'Cancel',
         confirmLabel: 'Delete',
       })
-      .onClose.pipe(
+      .pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.accountService.deleteAccount(account.id)),
         switchMap(() => this.loadAccounts()),
@@ -89,6 +86,6 @@ export class AccountListComponent {
   }
 
   private loadAccounts(): Observable<AccountSummary[]> {
-    return this.accountService.getAccounts().pipe(tap((accounts) => this._allAccounts.next(accounts)));
+    return this.accountService.getAccounts().pipe(tap((accounts) => this.allAccounts.set(accounts)));
   }
 }

@@ -1,61 +1,76 @@
-<div class="wide-table-container">
-  <div class="table-actions">
-    <div class="filter-container">
-      <pa-input
-        [value]="filter$ | async"
-        (valueChange)="filter$.next($event)">
-        Filter
-      </pa-input>
-    </div>
-    @if (canCreateUser | async) {
-      <pa-button
-        routerLink="./add"
-        kind="primary"
-        icon="plus"
-        iconAndText>
+<div class="my-4 px-4">
+  <div class="flex items-center gap-8 py-4">
+    <input
+      hlmInput
+      class="w-80"
+      placeholder="Filter"
+      aria-label="Filter"
+      [value]="filter()"
+      (input)="onFilterInput($event)" />
+    @if (canCreateUser()) {
+      <a
+        hlmBtn
+        routerLink="./add">
+        <ng-icon
+          name="matAddRound"
+          data-icon="inline-start" />
         Add user
-      </pa-button>
+      </a>
     }
   </div>
 
-  <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="repeat(4, 1fr) 96px">
-      <pa-table-header noBackground>
-        <pa-table-cell header>Id</pa-table-cell>
-        <pa-table-cell header>Name</pa-table-cell>
-        <pa-table-cell header>Email</pa-table-cell>
-        <pa-table-cell header>Last login</pa-table-cell>
-        <pa-table-cell-menu header></pa-table-cell-menu>
-      </pa-table-header>
-      @for (user of users$ | async | slice: 0 : lastIndex; track user) {
-        <pa-table-row
-          [routerLink]="user.id"
-          clickable>
-          <pa-table-cell>
-            <small>{{ user.id }}</small>
-          </pa-table-cell>
-          <pa-table-cell>{{ user.name }}</pa-table-cell>
-          <pa-table-cell>{{ user.email }}</pa-table-cell>
-          <pa-table-cell>
-            <pa-datetime
-              [datetime]="user.last_login"
-              format="numerical"
-              dateOnly></pa-datetime>
-          </pa-table-cell>
-          <pa-table-cell-menu>
-            @if (canDelete | async) {
-              <pa-button
-                icon="trash"
-                aspect="basic"
-                size="small"
-                kind="destructive"
-                (click)="deleteUser($event, user)">
-                Delete account
-              </pa-button>
-            }
-          </pa-table-cell-menu>
-        </pa-table-row>
-      }
-    </pa-table>
-  </pa-infinite-scroll>
+  <div hlmTableContainer>
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Id</th>
+          <th hlmTh>Name</th>
+          <th hlmTh>Email</th>
+          <th hlmTh>Last login</th>
+          <th
+            hlmTh
+            class="w-24"></th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (user of users(); track user) {
+          <tr
+            hlmTr
+            class="cursor-pointer"
+            [routerLink]="user.id">
+            <td hlmTd>
+              <span class="text-xs">{{ user.id }}</span>
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              {{ user.name }}
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              {{ user.email }}
+            </td>
+            <td hlmTd>{{ (user.last_login | date: 'M/d/y') || '–' }}</td>
+            <td
+              hlmTd
+              class="text-end">
+              @if (canDelete()) {
+                <button
+                  hlmBtn
+                  type="button"
+                  variant="destructive"
+                  size="icon-sm"
+                  aria-label="Delete user"
+                  (click)="deleteUser($event, user)">
+                  <ng-icon name="matDeleteRound" />
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <ui-infinite-scroll (reachAnchor)="onReachAnchor()" />
 </div>

@@ -1,0 +1,121 @@
+<hlm-autocomplete-search
+  class="mb-6 max-w-lg"
+  [disabled]="!vm.canEdit()"
+  [search]="vm.memberSearch()"
+  (searchChange)="vm.onMemberSearch($event)"
+  (valueChange)="vm.onMemberSelected($event)">
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      for="kb-add-member">
+      Search member to add
+    </label>
+    <hlm-autocomplete-input
+      inputId="kb-add-member"
+      placeholder="Name or email" />
+  </div>
+  <hlm-autocomplete-content *hlmAutocompletePortal>
+    <div
+      hlmAutocompleteList
+      aria-label="Members">
+      @for (member of vm.potentialMembers(); track member.id) {
+        <hlm-autocomplete-item [value]="member.id">
+          <ng-icon name="matPersonAddRound" />
+          <ui-option-with-description
+            [label]="member.name + ' – ' + member.email"
+            [description]="member.id" />
+        </hlm-autocomplete-item>
+      }
+    </div>
+  </hlm-autocomplete-content>
+</hlm-autocomplete-search>
+
+<div hlmTableContainer>
+  <table hlmTable>
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th hlmTh>Id</th>
+        <th hlmTh>Name</th>
+        <th hlmTh>Email</th>
+        <th hlmTh>Role</th>
+        <th
+          hlmTh
+          class="w-12"></th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+      @for (row of rows(); track row.user.id) {
+        <tr hlmTr>
+          <td
+            hlmTd
+            class="text-xs">
+            {{ row.user.id }}
+          </td>
+          <td hlmTd>{{ row.user.name }}</td>
+          <td hlmTd>{{ row.user.email }}</td>
+          <td
+            hlmTd
+            class="capitalize">
+            {{ row.role }}
+          </td>
+          <td hlmTd>
+            @if (row.role !== 'owner' || kb().owners.length > 1) {
+              <button
+                type="button"
+                hlmBtn
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Menu"
+                [disabled]="!vm.canEdit()"
+                [hlmDropdownMenuTrigger]="userMenu"
+                [hlmDropdownMenuTriggerData]="{ row }">
+                <ng-icon name="matMoreVertRound" />
+              </button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<ng-template
+  #userMenu
+  let-row="row">
+  <div
+    hlmDropdownMenu
+    aria-label="User actions">
+    @if (row.role !== 'owner') {
+      <button
+        type="button"
+        hlmDropdownMenuItem
+        (triggered)="vm.updateUserRole(row.user, 'SOWNER')">
+        Set as Owner
+      </button>
+    }
+    @if (row.role !== 'contributor') {
+      <button
+        type="button"
+        hlmDropdownMenuItem
+        (triggered)="vm.updateUserRole(row.user, 'SCONTRIBUTOR')">
+        Set as Contributor
+      </button>
+    }
+    @if (row.role !== 'member') {
+      <button
+        type="button"
+        hlmDropdownMenuItem
+        (triggered)="vm.updateUserRole(row.user, 'SMEMBER')">
+        Set as Member
+      </button>
+    }
+    <div hlmDropdownMenuSeparator></div>
+    <button
+      type="button"
+      hlmDropdownMenuItem
+      variant="destructive"
+      (triggered)="vm.removeUser(row.user)">
+      Remove
+    </button>
+  </div>
+</ng-template>

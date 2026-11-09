@@ -1,58 +1,85 @@
-<div class="header">
-  <h3>Account models</h3>
-  @if (canManageModels | async) {
-    <pa-button
-      kind="primary"
-      [routerLink]="'./add'">
-      Add model
-    </pa-button>
+@let canManage = canManageModels();
+<div class="px-6">
+  <div class="mb-4 flex items-center justify-between">
+    <h3 class="text-xl font-semibold">Account models</h3>
+    @if (canManage) {
+      <a
+        hlmBtn
+        routerLink="./add">
+        Add model
+      </a>
+    }
+  </div>
+
+  @for (zone of models(); track zone.zone.id) {
+    <div class="mb-8">
+      <div class="mb-2 font-semibold">{{ zone.zone.title }}</div>
+      <div hlmTableContainer>
+        <table hlmTable>
+          <thead hlmTHead>
+            <tr hlmTr>
+              <th hlmTh>Name</th>
+              <th hlmTh>Model</th>
+              <th hlmTh>Types</th>
+              <th
+                hlmTh
+                class="w-12"></th>
+            </tr>
+          </thead>
+          <tbody hlmTBody>
+            @for (model of zone.models; track model.model_id) {
+              <tr
+                hlmTr
+                [class.cursor-pointer]="canManage"
+                [routerLink]="canManage ? '../models/' + zone.zone.slug + '/model/' + model.model_id : undefined">
+                <td hlmTd>{{ model.title }}</td>
+                <td hlmTd>{{ model.location }}</td>
+                <td hlmTd>{{ model.model_types?.join(', ') }}</td>
+                <td
+                  hlmTd
+                  (click)="$event.stopPropagation()">
+                  @if (canManage) {
+                    <button
+                      type="button"
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="Menu"
+                      [hlmDropdownMenuTrigger]="modelMenu"
+                      [hlmDropdownMenuTriggerData]="{ model, zone: zone.zone.slug }">
+                      <ng-icon name="matMoreVertRound" />
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 </div>
 
-@for (zone of models | async; track zone.zone.id) {
-  <div class="zone">
-    <div class="title-s">{{ zone.zone.title }}</div>
-    <pa-table
-      border
-      columns="repeat(3, 1fr) 70px">
-      <pa-table-header>
-        <pa-table-cell header>Name</pa-table-cell>
-        <pa-table-cell header>Model</pa-table-cell>
-        <pa-table-cell header>Types</pa-table-cell>
-        <pa-table-cell-menu header></pa-table-cell-menu>
-      </pa-table-header>
-      @for (model of zone.models; track model.model_id) {
-        <pa-table-row
-          clickable
-          [routerLink]="
-            (canManageModels | async) ? '../models/' + zone.zone.slug + '/model/' + model.model_id : undefined
-          ">
-          <pa-table-cell>{{ model.title }}</pa-table-cell>
-          <pa-table-cell>{{ model.location }}</pa-table-cell>
-          <pa-table-cell>{{ model.model_types?.join(', ') }}</pa-table-cell>
-          <pa-table-cell-menu>
-            @if (canManageModels | async) {
-              <pa-button
-                icon="more-vertical"
-                aspect="basic"
-                size="small"
-                [paPopup]="menu">
-                Menu
-              </pa-button>
-              <pa-dropdown #menu>
-                <pa-option (selectOption)="goToDetails($event, model, zone.zone.slug)">
-                  Assign to Knowledge Boxes
-                </pa-option>
-                <pa-option
-                  destructive
-                  (selectOption)="delete($event, model, zone.zone.slug)">
-                  Delete
-                </pa-option>
-              </pa-dropdown>
-            }
-          </pa-table-cell-menu>
-        </pa-table-row>
-      }
-    </pa-table>
+<ng-template
+  #modelMenu
+  let-model="model"
+  let-zone="zone">
+  <div
+    hlmDropdownMenu
+    aria-label="Model actions">
+    <button
+      type="button"
+      hlmDropdownMenuItem
+      (triggered)="goToDetails(model, zone)">
+      Assign to Knowledge Boxes
+    </button>
+    <div hlmDropdownMenuSeparator></div>
+    <button
+      type="button"
+      hlmDropdownMenuItem
+      variant="destructive"
+      (triggered)="delete(model, zone)">
+      Delete
+    </button>
   </div>
-}
+</ng-template>

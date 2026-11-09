@@ -1,13 +1,19 @@
 import type { Mock } from 'vitest';
-import { DOCUMENT } from '@angular/core';
+import { Component, DOCUMENT, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router, RouterModule } from '@angular/router';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
-import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { isCameFromLegit } from '../login-error.util';
+import { UserNotifier } from '../user-notifier';
+import { CALLBACK_MESSAGE_VIEW } from './callback-message';
 import { CallbackComponent } from './callback.component';
+
+@Component({ selector: 'lib-fake-message-view', template: '<p class="fake-view">{{ message() }}</p>' })
+class FakeMessageViewComponent {
+  readonly message = input.required<string>();
+}
 
 describe('CallbackComponent', () => {
   let component: CallbackComponent;
@@ -48,7 +54,8 @@ describe('CallbackComponent', () => {
         { provide: SsoService, useValue: ssoService },
         { provide: BackendConfigurationService, useValue: config },
         { provide: SDKService, useValue: sdk },
-        { provide: SisToastService, useValue: toaster },
+        { provide: UserNotifier, useValue: toaster },
+        { provide: CALLBACK_MESSAGE_VIEW, useValue: FakeMessageViewComponent },
         { provide: TranslateService, useValue: translate },
         { provide: DOCUMENT, useValue: documentMock },
       ],
@@ -374,6 +381,17 @@ describe('CallbackComponent', () => {
     component.ssoLogin();
 
     expect(component.message()).toBe('login.error.user_not_registered');
+  });
+
+  it('should render the message with the provided message view', async () => {
+    snapshotQueryParams = { code: 'code-1', state: 'state-1' };
+    ssoService.login.mockReturnValue(throwError(() => ({ status: 412 })));
+    await createComponent();
+
+    component.ssoLogin();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.fake-view').textContent).toBe('login.error.no_personal_email');
   });
 
   it('should do nothing in ssoLogin when code or state are missing', async () => {

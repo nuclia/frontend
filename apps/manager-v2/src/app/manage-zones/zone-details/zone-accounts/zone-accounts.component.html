@@ -1,0 +1,46 @@
+<section class="mt-6 flex max-w-lg flex-col gap-4">
+  <h3 class="text-xl font-semibold">Account whitelist</h3>
+
+  @if (grantedAccounts().length > 0) {
+    <span class="text-sm">Accounts explicitly granted access to this zone:</span>
+    <ul class="flex flex-col">
+      @for (entry of grantedAccounts(); track entry.account_id) {
+        <li class="flex items-center justify-between gap-4 border-b py-1 text-sm">
+          <span>{{ entry.account_id }}</span>
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Revoke access"
+            (click)="revokeAccount(entry.account_id)">
+            <ng-icon name="matDeleteRound" />
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="text-muted-foreground text-sm">No accounts granted access.</p>
+  }
+
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      for="zone-account-id">
+      Account ID
+    </label>
+    <input
+      hlmInput
+      id="zone-account-id"
+      [(ngModel)]="newAccountId" />
+  </div>
+  <div>
+    <button
+      hlmBtn
+      type="button"
+      [disabled]="!newAccountId().trim() || isGranting()"
+      (click)="grantAccount()">
+      Grant access
+    </button>
+  </div>
+</section>

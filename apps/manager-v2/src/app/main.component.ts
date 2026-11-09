@@ -1,57 +1,31 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { TranslateService as PaTranslateService, TranslationEntries } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { HlmToasterImports } from '@nuclia/ui-spartan/sonner';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
 @Component({
   selector: 'nma-main',
   templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HlmToasterImports],
 })
-export class MainComponent implements OnInit, OnDestroy {
-  @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
-  version?: string;
+export class MainComponent {
+  private config = inject(BackendConfigurationService);
+  private ngxTranslate = inject(TranslateService);
+  private sdk = inject(SDKService);
 
-  private unsubscribeAll: Subject<void> = new Subject<void>();
+  version = this.config.getVersion() || undefined;
 
-  constructor(
-    private paTranslate: PaTranslateService,
-    private config: BackendConfigurationService,
-    private ngxTranslate: TranslateService,
-    private sdk: SDKService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     const userLocale = localStorage.getItem(userLocaleKey);
     this.initTranslate(userLocale);
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
-  }
-
-  ngOnInit(): void {
-    if (this.config.getVersion()) {
-      this.version = this.config.getVersion();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   private initTranslate(userLocale?: string | null) {
@@ -66,9 +40,8 @@ export class MainComponent implements OnInit, OnDestroy {
       this.ngxTranslate.use('en');
     }
 
-    this.ngxTranslate.onLangChange.pipe(takeUntil(this.unsubscribeAll)).subscribe((event) => {
+    this.ngxTranslate.onLangChange.pipe(takeUntilDestroyed()).subscribe((event) => {
       localStorage.setItem(userLocaleKey, event.lang);
-      this.paTranslate.initTranslationsAndUse(event.lang, event.translations as any as TranslationEntries);
     });
   }
 

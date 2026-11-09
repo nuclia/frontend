@@ -1,106 +1,164 @@
-<div class="pa-main-container">
-  <div class="pa-main-side-panel">
-    <div class="panel-header">
-      <pa-button
-        icon="arrow-left"
-        aspect="basic"
-        (click)="goBack()">
-        Back
-      </pa-button>
-      <div class="title-l">
-        {{ zoneTitle }}
-      </div>
+<div class="flex h-[calc(100vh-4rem)] overflow-auto">
+  <aside class="w-80 shrink-0 px-6 py-4">
+    <button
+      hlmBtn
+      type="button"
+      variant="ghost"
+      (click)="vm.goBack()">
+      <ng-icon name="matArrowBackRound" />
+      Back
+    </button>
+    <div class="mt-4 text-lg font-semibold break-all">
+      {{ vm.zoneTitle() }}
     </div>
-  </div>
-  <div class="pa-main-container-wide">
-    <h3>{{ addZone ? 'Add zone' : 'Zone details' }}</h3>
+  </aside>
+  <div class="max-w-2xl flex-1 px-6 py-4">
+    <h3 class="mb-4 text-xl font-semibold">{{ vm.addZone() ? 'Add zone' : 'Zone details' }}</h3>
     <form
-      [formGroup]="zoneForm"
-      (submit)="save()">
-      @if (!addZone) {
-        <pa-input
-          readonly
-          formControlName="id">
-          Id
-        </pa-input>
+      class="flex flex-col gap-4"
+      [formGroup]="vm.zoneForm"
+      (submit)="vm.save()">
+      @if (!vm.addZone()) {
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="zone-id">
+            Id
+          </label>
+          <input
+            hlmInput
+            id="zone-id"
+            class="read-only:bg-muted read-only:text-muted-foreground"
+            readonly
+            formControlName="id" />
+        </div>
       }
-      <pa-input formControlName="slug">Slug</pa-input>
-      <pa-input formControlName="title">Title</pa-input>
-      <pa-select
-        formControlName="cloud_provider"
-        label="Cloud provider">
-        <pa-option value="GCP">GCP</pa-option>
-        <pa-option value="AWS">AWS</pa-option>
-      </pa-select>
-      <pa-input formControlName="origin">Origin (optional — overrides zone URL)</pa-input>
-      @if (!addZone) {
-        <pa-input
-          readonly
-          formControlName="creator">
-          Creator
-        </pa-input>
-        <pa-input
-          readonly
-          formControlName="created">
-          Created
-        </pa-input>
-        <pa-input
-          readonly
-          formControlName="modified">
-          Modified
-        </pa-input>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="zone-slug">
+          Slug
+        </label>
+        <input
+          hlmInput
+          id="zone-slug"
+          formControlName="slug" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="zone-title">
+          Title
+        </label>
+        <input
+          hlmInput
+          id="zone-title"
+          formControlName="title" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="zone-cloud-provider">
+          Cloud provider
+        </label>
+        <hlm-select formControlName="cloud_provider">
+          <hlm-select-trigger
+            buttonId="zone-cloud-provider"
+            class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            <hlm-select-item value="GCP">GCP</hlm-select-item>
+            <hlm-select-item value="AWS">AWS</hlm-select-item>
+          </hlm-select-content>
+        </hlm-select>
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="zone-origin">
+          Origin (optional — overrides zone URL)
+        </label>
+        <input
+          hlmInput
+          id="zone-origin"
+          formControlName="origin" />
+      </div>
+      @if (!vm.addZone()) {
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="zone-creator">
+            Creator
+          </label>
+          <input
+            hlmInput
+            id="zone-creator"
+            class="read-only:bg-muted read-only:text-muted-foreground"
+            readonly
+            formControlName="creator" />
+        </div>
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="zone-created">
+            Created
+          </label>
+          <input
+            hlmInput
+            id="zone-created"
+            class="read-only:bg-muted read-only:text-muted-foreground"
+            readonly
+            formControlName="created" />
+        </div>
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="zone-modified">
+            Modified
+          </label>
+          <input
+            hlmInput
+            id="zone-modified"
+            class="read-only:bg-muted read-only:text-muted-foreground"
+            readonly
+            formControlName="modified" />
+        </div>
       }
-      <pa-checkbox formControlName="private">Private</pa-checkbox>
+      <div
+        hlmField
+        orientation="horizontal">
+        <hlm-checkbox
+          inputId="zone-private"
+          formControlName="private" />
+        <label
+          hlmFieldLabel
+          for="zone-private">
+          Private
+        </label>
+      </div>
 
-      <footer>
-        <pa-button
+      <footer class="flex gap-4 py-6">
+        <button
+          hlmBtn
           type="submit"
-          kind="primary"
-          [disabled]="zoneForm.pristine || zoneForm.invalid || isSaving">
+          [disabled]="vm.zoneForm.pristine || vm.zoneForm.invalid || vm.isSaving()">
           Save
-        </pa-button>
-        @if (!addZone) {
-          <pa-button
-            aspect="basic"
-            (click)="reset()">
+        </button>
+        @if (!vm.addZone()) {
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            (click)="vm.reset()">
             Cancel
-          </pa-button>
+          </button>
         }
       </footer>
     </form>
 
-    @if (!addZone) {
-      <section class="form-section">
-        <h3>Account whitelist</h3>
-
-        @if (grantedAccounts.length > 0) {
-          <span>Accounts explicitly granted access to this zone:</span>
-        }
-
-        <ul>
-          @for (entry of grantedAccounts; track entry.account_id) {
-            <li>
-              <span>{{ entry.account_id }}</span>
-              <pa-button
-                icon="trash"
-                aspect="basic"
-                size="small"
-                (click)="revokeAccount(entry.account_id)"></pa-button>
-            </li>
-          }
-        </ul>
-        @if (grantedAccounts.length === 0) {
-          <p class="body-s">No accounts granted access.</p>
-        }
-
-        <pa-input [(value)]="newAccountId">Account ID</pa-input>
-        <pa-button
-          kind="primary"
-          [disabled]="!newAccountId.trim() || isGranting"
-          (click)="grantAccount()">
-          Grant access
-        </pa-button>
-      </section>
+    @if (!vm.addZone()) {
+      <app-zone-accounts [zoneId]="vm.zoneId()" />
     }
   </div>
 </div>

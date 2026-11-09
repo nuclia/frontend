@@ -1,54 +1,99 @@
-@if (project | async; as project) {
-  <h3>
-    {{ project.name }}
-  </h3>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="save()">
-    <div class="input-with-copy">
-      <pa-input
-        readonly
-        [value]="project.project_id">
-        Id
-      </pa-input>
-      <div>
-        <pa-button
-          size="small"
-          aspect="basic"
-          [icon]="copied ? 'check' : 'copy'"
-          (click)="copy()">
-          Copy
-        </pa-button>
+@if (project(); as project) {
+  <div class="px-6">
+    <h3 class="mb-4 text-xl font-semibold">{{ project.name }}</h3>
+    <form
+      class="flex max-w-lg flex-col gap-4"
+      [formGroup]="form"
+      (ngSubmit)="save()">
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="project-id">
+          Id
+        </label>
+        <div class="flex items-center gap-2">
+          <input
+            id="project-id"
+            hlmInput
+            class="read-only:bg-muted read-only:text-muted-foreground"
+            readonly
+            [value]="project.project_id" />
+          <button
+            type="button"
+            hlmBtn
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Copy"
+            (click)="copy()">
+            <ng-icon [name]="copied() ? 'matCheckRound' : 'matContentCopyRound'" />
+          </button>
+        </div>
       </div>
-    </div>
-    <pa-input
-      [value]="project.zone.title"
-      readonly>
-      Zone
-    </pa-input>
-    <pa-input
-      [value]="project.created_datetime"
-      readonly>
-      Created
-    </pa-input>
-    <pa-input
-      [value]="project.updated_datetime"
-      readonly>
-      Updated
-    </pa-input>
-    <pa-input
-      formControlName="name"
-      [readonly]="!(canEdit | async)">
-      Name
-    </pa-input>
-    <pa-textarea
-      formControlName="description"
-      rows="4"
-      [readonly]="!(canEdit | async)">
-      Description
-    </pa-textarea>
-    <nma-form-footer
-      [disabled]="form.pristine || form.invalid || isSaving"
-      (footerCancel)="reset()"></nma-form-footer>
-  </form>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="project-zone">
+          Zone
+        </label>
+        <input
+          id="project-zone"
+          hlmInput
+          class="read-only:bg-muted read-only:text-muted-foreground"
+          readonly
+          [value]="project.zone.title" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="project-created">
+          Created
+        </label>
+        <input
+          id="project-created"
+          hlmInput
+          class="read-only:bg-muted read-only:text-muted-foreground"
+          readonly
+          [value]="project.created_datetime" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="project-updated">
+          Updated
+        </label>
+        <input
+          id="project-updated"
+          hlmInput
+          class="read-only:bg-muted read-only:text-muted-foreground"
+          readonly
+          [value]="project.updated_datetime" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="project-name">
+          Name
+        </label>
+        <input
+          id="project-name"
+          hlmInput
+          formControlName="name" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="project-description">
+          Description
+        </label>
+        <textarea
+          id="project-description"
+          hlmTextarea
+          rows="4"
+          formControlName="description"></textarea>
+      </div>
+      <nma-form-footer
+        [disabled]="form.pristine || form.invalid || isSaving()"
+        (footerCancel)="reset()"></nma-form-footer>
+    </form>
+  </div>
 }

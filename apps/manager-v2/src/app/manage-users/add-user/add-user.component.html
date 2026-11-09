@@ -1,41 +1,67 @@
-<div class="pa-main-container">
-  <div class="pa-main-container-wide">
-    <h3>New user</h3>
-    <form
-      [formGroup]="form"
-      (submit)="save()">
-      <pa-input
-        formControlName="name"
-        required>
+<div class="mx-auto h-[calc(100vh-4rem)] max-w-4xl overflow-auto px-6 py-4">
+  <h3 class="mb-4 text-xl font-semibold">New user</h3>
+  <form
+    class="flex max-w-lg flex-col gap-4"
+    [formGroup]="form"
+    (submit)="save()">
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="user-name">
         Name
-      </pa-input>
-      <pa-input
-        formControlName="email"
-        required>
+      </label>
+      <input
+        hlmInput
+        id="user-name"
+        required
+        formControlName="name" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="user-email">
         Email
-      </pa-input>
-      <pa-select
-        formControlName="type"
-        required>
-        <pa-option value="USER">USER</pa-option>
-        <pa-option value="ROOT">ROOT</pa-option>
-        <pa-option value="MANAGER">MANAGER</pa-option>
-        <pa-option value="SALES">SALES</pa-option>
-        <pa-option value="READONLY">READONLY</pa-option>
-      </pa-select>
-      <footer>
-        <pa-button
-          type="submit"
-          kind="primary"
-          [disabled]="form.pristine || form.invalid || isSaving">
-          Save
-        </pa-button>
-        <pa-button
-          kind="destructive"
-          (click)="cancel()">
-          Cancel
-        </pa-button>
-      </footer>
-    </form>
-  </div>
+      </label>
+      <input
+        hlmInput
+        id="user-email"
+        type="email"
+        required
+        formControlName="email" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="user-type">
+        Type
+      </label>
+      <hlm-select formControlName="type">
+        <hlm-select-trigger
+          buttonId="user-type"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (type of userTypes; track type) {
+            <hlm-select-item [value]="type">{{ type }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+    <footer class="flex gap-4 py-6">
+      <button
+        hlmBtn
+        type="submit"
+        [disabled]="form.pristine || form.invalid || isSaving">
+        Save
+      </button>
+      <button
+        hlmBtn
+        type="button"
+        variant="destructive"
+        (click)="cancel()">
+        Cancel
+      </button>
+    </footer>
+  </form>
 </div>

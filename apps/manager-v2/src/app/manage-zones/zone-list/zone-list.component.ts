@@ -1,59 +1,63 @@
-import { AsyncPipe, SlicePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { PaButtonModule, PaScrollModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { UiToastService } from '@nuclia/ui/toast';
+import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
+import { filter, switchMap } from 'rxjs';
 import { ZoneSummary } from '../zone.models';
 import { ZoneService } from '../zone.service';
 
 @Component({
   templateUrl: './zone-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaTextFieldModule, PaButtonModule, RouterLink, PaScrollModule, PaTableModule, AsyncPipe, SlicePipe],
+  imports: [HlmButtonImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, UiInfiniteScrollImports],
+  providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class ZoneListComponent {
-  private _allZones: Observable<ZoneSummary[]> = this.zoneService.zones;
+  private zoneService = inject(ZoneService);
+  private confirmService = inject(UiConfirmService);
+  private toast = inject(UiToastService);
 
-  filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  zones$: Observable<ZoneSummary[]> = combineLatest([this._allZones, this.filter$]).pipe(
-    map(([zones, filter]) =>
-      filter ? zones.filter((zone) => zone.title.includes(filter) || zone.slug.includes(filter)) : zones,
-    ),
-    map((zones) => zones.sort((a, b) => a.title.localeCompare(b.title))),
-    tap(() => this.cdr.markForCheck()),
-  );
+  private allZones = toSignal(this.zoneService.zones, { initialValue: [] });
+  private lastIndex = signal(100);
 
-  lastIndex = 100;
+  filter = signal('');
+  zones = computed(() => {
+    const filterValue = this.filter();
+    const zones = filterValue
+      ? this.allZones().filter((zone) => zone.title.includes(filterValue) || zone.slug.includes(filterValue))
+      : this.allZones();
+    return zones.toSorted((a, b) => a.title.localeCompare(b.title)).slice(0, this.lastIndex());
+  });
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private zoneService: ZoneService,
-    private modalService: SisModalService,
-    private toast: SisToastService,
-  ) {}
+  onFilterInput(event: Event) {
+    this.filter.set((event.target as HTMLInputElement).value);
+  }
 
   onReachAnchor() {
-    this._allZones.pipe(take(1)).subscribe((zones) => {
-      if (this.lastIndex < zones.length) {
-        this.lastIndex = this.lastIndex + 100;
-        this.cdr.markForCheck();
-      }
-    });
+    if (this.lastIndex() < this.allZones().length) {
+      this.lastIndex.update((index) => index + 100);
+    }
   }
 
   deleteZone(event: MouseEvent, zone: ZoneSummary) {
     event.preventDefault();
     event.stopPropagation();
-    this.modalService
-      .openConfirm({
+    this.confirmService
+      .confirm({
         title: `Are you sure you want to delete "${zone.slug}"?`,
         description: `You’re about to delete ${zone.slug}`,
         isDestructive: true,
         confirmLabel: 'Delete',
         cancelLabel: 'Cancel',
       })
-      .onClose.pipe(
+      .pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.zoneService.deleteZone(zone.id)),
         switchMap(() => this.zoneService.loadZones()),

@@ -1,30 +1,24 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { SubscriptionDeleteComponent } from './subscription-delete/subscription-delete.component';
+import { SubscriptionFieldsComponent } from './subscription-fields/subscription-fields.component';
 import { SubscriptionsService } from './subscriptions.service';
 
 @Component({
   selector: 'nma-subscriptions',
   templateUrl: './subscriptions.component.html',
-  styleUrl: './subscriptions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SubscriptionsService],
   imports: [
-    FormsModule,
     ReactiveFormsModule,
-    PaTextFieldModule,
-    PaDropdownModule,
-    InfoCardComponent,
-    NgTemplateOutlet,
-    PaButtonModule,
-    AsyncPipe,
+    HlmAlertImports,
+    HlmButtonImports,
+    SubscriptionDeleteComponent,
+    SubscriptionFieldsComponent,
   ],
 })
 export class SubscriptionsComponent {
-  protected service = inject(SubscriptionsService);
-
-  showCloudZeroDeleteConfirm = signal(false);
-  showManualDeleteConfirm = signal(false);
+  protected vm = inject(SubscriptionsService);
 }

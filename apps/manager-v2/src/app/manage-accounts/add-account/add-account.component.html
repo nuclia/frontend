@@ -1,44 +1,93 @@
-<div class="pa-main-container">
-  <div class="pa-main-container-wide">
-    <h3>New account</h3>
-    <form
-      [formGroup]="form"
-      (submit)="save()">
-      <pa-input
-        formControlName="email"
-        required>
+<div class="mx-auto h-[calc(100vh-4rem)] max-w-4xl overflow-auto px-6 py-4">
+  <h3 class="mb-4 text-xl font-semibold">New account</h3>
+  <form
+    class="flex max-w-lg flex-col gap-4"
+    [formGroup]="form"
+    (submit)="save()">
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="account-email">
         Email
-      </pa-input>
-      <pa-input
-        formControlName="slug"
-        required>
+      </label>
+      <input
+        hlmInput
+        id="account-email"
+        type="email"
+        required
+        formControlName="email" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="account-slug">
         Slug
-      </pa-input>
-      <pa-input
-        formControlName="title"
-        required>
+      </label>
+      <input
+        hlmInput
+        id="account-slug"
+        required
+        formControlName="slug" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="account-title">
         Title
-      </pa-input>
-      <pa-input formControlName="description">Description</pa-input>
-      <pa-select
+      </label>
+      <input
+        hlmInput
+        id="account-title"
+        required
+        formControlName="title" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="account-description">
+        Description
+      </label>
+      <input
+        hlmInput
+        id="account-description"
+        formControlName="description" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="account-campaign">
+        Campaign
+      </label>
+      <hlm-select
         formControlName="campaign_id"
-        label="Campaign"
-        [options]="campaignOptions"
-        required></pa-select>
+        [itemToString]="campaignLabel">
+        <hlm-select-trigger
+          buttonId="account-campaign"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (campaign of campaigns; track campaign.id) {
+            <hlm-select-item [value]="campaign.id">{{ campaign.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
 
-      <footer>
-        <pa-button
-          type="submit"
-          kind="primary"
-          [disabled]="form.pristine || form.invalid || isSaving">
-          Save
-        </pa-button>
-        <pa-button
-          kind="destructive"
-          (click)="cancel()">
-          Cancel
-        </pa-button>
-      </footer>
-    </form>
-  </div>
+    <footer class="flex gap-4 py-6">
+      <button
+        hlmBtn
+        type="submit"
+        [disabled]="form.pristine || form.invalid || isSaving">
+        Save
+      </button>
+      <button
+        hlmBtn
+        type="button"
+        variant="destructive"
+        (click)="cancel()">
+        Cancel
+      </button>
+    </footer>
+  </form>
 </div>

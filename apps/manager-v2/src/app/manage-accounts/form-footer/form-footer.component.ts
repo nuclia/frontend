@@ -1,29 +1,17 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  Output,
-} from '@angular/core';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { ManagerStore } from '../../manager.store';
 
 @Component({
   selector: 'nma-form-footer',
   templateUrl: './form-footer.component.html',
-  styleUrls: ['./form-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, AsyncPipe],
+  imports: [HlmButtonImports],
 })
 export class FormFooterComponent {
-  @Input({ transform: booleanAttribute }) disabled = false;
-  @Input({ transform: booleanAttribute }) secondary = false;
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly secondary = input(false, { transform: booleanAttribute });
+  readonly footerCancel = output<void>();
 
-  @Output() footerCancel: EventEmitter<void> = new EventEmitter<void>();
-
-  private store = inject(ManagerStore);
-  canEdit = this.store.canEdit;
+  protected readonly canEdit = inject(ManagerStore).canEdit;
 }

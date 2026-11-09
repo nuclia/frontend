@@ -1,17 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import {
-  PaButtonModule,
-  PaDropdownModule,
-  PaIconModule,
-  PaPopupModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { SisToastService } from '@nuclia/sistema';
-import { debounceTime, filter, map, Subject, switchMap } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matMoreVertRound, matPersonAddRound, matVerifiedUserRound } from '@ng-icons/material-icons/round';
+import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmAutocompleteImports } from '@nuclia/ui-spartan/autocomplete';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
+import { debounceTime, filter, map, Subject, switchMap, tap } from 'rxjs';
 import { UserSearch } from '../../../manage-users/user.models';
 import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
@@ -20,43 +20,48 @@ import { AccountService } from '../../account.service';
 
 @Component({
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PaTextFieldModule,
-    PaPopupModule,
-    PaDropdownModule,
-    PaTableModule,
     RouterLink,
-    PaIconModule,
-    PaButtonModule,
+    NgIcon,
+    HlmAutocompleteImports,
+    HlmButtonImports,
+    HlmDropdownMenuImports,
+    HlmFieldImports,
+    HlmTableImports,
+    UiOptionWithDescriptionImports,
     AsyncPipe,
   ],
+  providers: [provideIcons({ matMoreVertRound, matPersonAddRound, matVerifiedUserRound })],
 })
-export class UsersComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class UsersComponent {
+  private cdr = inject(ChangeDetectorRef);
+  private store = inject(ManagerStore);
+  private accountService = inject(AccountService);
+  private userService = inject(UserService);
+  private toast = inject(UiToastService);
   private accountId?: string;
+  private potentialMembers: UserSearch[] = [];
 
   canEdit = this.store.canEdit;
   users = this.store.accountUsers;
-  hasSeveralManagers = this.users.pipe(map((users) => users.filter((user) => user.isManager).length > 1));
+  hasSeveralManagers = computed(() => this.users().filter((user) => user.isManager).length > 1);
+  private accountDetails$ = toObservable(this.store.accountDetails);
 
+  memberSearch = '';
   searchMemberTerm$ = new Subject<string>();
   potentialMembers$ = this.searchMemberTerm$.pipe(
     filter((term) => term.length > 2 || term.length === 0),
     debounceTime(300),
     switchMap((term) => this.userService.searchUser(term)),
+    tap((members) => {
+      this.potentialMembers = members;
+      this.cdr.markForCheck();
+    }),
   );
 
-  constructor(
-    private store: ManagerStore,
-    private accountService: AccountService,
-    private userService: UserService,
-    private toast: SisToastService,
-  ) {}
-
-  ngOnInit() {
-    this.store.accountDetails
+  constructor() {
+    this.accountDetails$
       .pipe(
         filter((details) => !!details),
         map((details) => details as AccountDetails),
@@ -64,14 +69,23 @@ export class UsersComponent implements OnInit, OnDestroy {
           this.accountId = details.id;
           return this.accountService.loadAccountUsers(details.id);
         }),
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
       )
       .subscribe();
   }
 
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+  onMemberSearch(term: string) {
+    this.memberSearch = term;
+    this.searchMemberTerm$.next(term);
+  }
+
+  onMemberSelected(memberId: string | null | undefined) {
+    const member = this.potentialMembers.find((candidate) => candidate.id === memberId);
+    if (member) {
+      this.addMember(member);
+      this.memberSearch = '';
+      this.searchMemberTerm$.next('');
+    }
   }
 
   addMember(member: UserSearch) {
@@ -82,10 +96,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeUser(event: MouseEvent | KeyboardEvent, user: AccountUser) {
-    event.preventDefault();
-    event.stopPropagation();
-
+  removeUser(user: AccountUser) {
     if (this.accountId) {
       this.accountService.removeAccountUser(this.accountId, user.id).subscribe({
         error: () => this.toast.error('Removing user failed'),
@@ -93,9 +104,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
   }
 
-  addToManagers(event: MouseEvent | KeyboardEvent, user: AccountUser) {
-    event.preventDefault();
-    event.stopPropagation();
+  addToManagers(user: AccountUser) {
     if (this.accountId) {
       this.accountService.updateAccountUserType(this.accountId, user.id, 'manager').subscribe({
         error: () => this.toast.error('Updating user permission failed'),
@@ -103,9 +112,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeFromManagers(event: MouseEvent | KeyboardEvent, user: AccountUser) {
-    event.preventDefault();
-    event.stopPropagation();
+  removeFromManagers(user: AccountUser) {
     if (this.accountId) {
       this.accountService.updateAccountUserType(this.accountId, user.id, 'member').subscribe({
         error: () => this.toast.error('Updating user permission failed'),

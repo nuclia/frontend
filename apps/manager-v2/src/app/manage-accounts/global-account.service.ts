@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { AccountBlockingState, AccountLimitsPatchPayload, AccountTypes } from '@nuclia/core';
 import { Observable } from 'rxjs';
@@ -28,7 +28,7 @@ const ACCOUNT_ENDPOINT = '/manage/@account';
   providedIn: 'root',
 })
 export class GlobalAccountService {
-  constructor(private sdk: SDKService) {}
+  private sdk = inject(SDKService);
 
   getAccounts(): Observable<AccountSummary[]> {
     return this.sdk.nuclia.rest.get<AccountSummary[]>(ACCOUNTS_ENDPOINT);

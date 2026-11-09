@@ -1,12 +1,11 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ContainersComponent } from './containers.component';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { MockProvider } from 'ng-mocks';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
+import { ContainersComponent } from './containers.component';
 
 describe('ContainersComponent', () => {
   let component: ContainersComponent;
@@ -14,12 +13,11 @@ describe('ContainersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaTableModule)],
-      declarations: [ContainersComponent],
+      imports: [ContainersComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(ManagerStore, {
-          accountDetails: of({} as AccountDetails),
-          kbList: of([]),
+          accountDetails: signal({} as AccountDetails),
+          kbList: signal([]),
         }),
         MockProvider(AccountService),
         {

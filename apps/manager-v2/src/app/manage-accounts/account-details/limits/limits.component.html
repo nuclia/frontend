@@ -1,66 +1,43 @@
-<div class="limit-form">
-  <div class="reset-actions">
-    <pa-button
-      aspect="basic"
-      kind="primary"
-      [disabled]="isSaving || !(canEdit | async)"
-      (click)="resetAllToDefault()">
+<div class="px-6">
+  <div class="mb-4 flex gap-2">
+    <button
+      type="button"
+      hlmBtn
+      variant="outline"
+      [disabled]="vm.isSaving() || !vm.canEdit()"
+      (click)="vm.resetAllToDefault()">
       Reset all to default
-    </pa-button>
-    <pa-button
-      aspect="basic"
-      kind="destructive"
-      [disabled]="isSaving || !(canEdit | async)"
-      (click)="removeLimits()">
+    </button>
+    <button
+      type="button"
+      hlmBtn
+      variant="destructive"
+      [disabled]="vm.isSaving() || !vm.canEdit()"
+      (click)="vm.removeLimits()">
       Remove limits
-    </pa-button>
+    </button>
   </div>
 
   <form
-    [formGroup]="limitsForm"
-    (ngSubmit)="save()">
-    @for (group of limitsForm.controls | keyvalue; track group) {
+    class="flex max-w-2xl flex-col gap-4"
+    [formGroup]="vm.limitsForm"
+    (ngSubmit)="vm.save()">
+    @for (group of vm.limitsForm.controls | keyvalue; track group.key) {
       @if ((group.value.controls | keyvalue).length > 0) {
-        <section [formGroupName]="group.key">
-          <h3 style="text-transform: capitalize">{{ group.key }} limits</h3>
-          @for (limit of group.value.controls | keyvalue; track limit) {
-            <div [formGroupName]="limit.key">
-              <label
-                class="title-xxs"
-                [for]="'limit-group-' + limit.key">
-                {{ limit.key }}
-              </label>
-              <div class="radio-limit-container">
-                <pa-radio-group
-                  [id]="'limit-group-' + limit.key"
-                  [formControlName]="limit.key + '-radio'">
-                  <pa-radio value="unlimited">Unlimited</pa-radio>
-                  <pa-radio value="limit">Limit</pa-radio>
-                </pa-radio-group>
-                @if (getRadioValue(group.key, limit.key) === 'limit') {
-                  <div class="limit-container">
-                    <pa-input
-                      type="number"
-                      externalLabel
-                      formControlName="limit"></pa-input>
-                    <pa-button
-                      icon="reload"
-                      paTooltip="Reset to default"
-                      aspect="basic"
-                      (click)="reset(group.key, limit.key)">
-                      Reset to default
-                    </pa-button>
-                  </div>
-                }
-              </div>
-            </div>
+        <section class="mb-6 flex flex-col gap-4">
+          <h3 class="mb-4 text-xl font-semibold capitalize">{{ group.key }} limits</h3>
+          @for (limit of group.value.controls | keyvalue; track limit.key) {
+            <app-limit-row
+              [limitKey]="limit.key"
+              [group]="limit.value"
+              (resetToDefault)="vm.reset(group.key, limit.key)" />
           }
         </section>
       }
     }
 
     <nma-form-footer
-      [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving"
-      (footerCancel)="cancel()"></nma-form-footer>
+      [disabled]="vm.limitsForm.pristine || vm.limitsForm.invalid || vm.isSaving()"
+      (footerCancel)="vm.cancel()"></nma-form-footer>
   </form>
 </div>
