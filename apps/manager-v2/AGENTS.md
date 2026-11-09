@@ -34,8 +34,8 @@ apps/manager-v2/src/
     │   ├── regional-account.service.ts # Zone-aware REST (KBs, models, per-zone Nuclia instances)
     │   └── account-details/            # ManagerStore-backed sub-detail components
     ├── manage-users/               # lazy routes (`manage-users.routes.ts`): UserService, user CRUD
-    ├── manage-emails/              # standalone email wizard (ROOT only) — code exists but is NOT routed or linked in the nav (see Routing Architecture); Spartan/Tailwind UI, 3-step linear `spartan-stepper`
-    │   ├── manage-emails.component # spine: stepper + 3 `spartan-step`; provides the 3 wizard services; on `wizard.completed$` jumps to step 1 (in `afterNextRender`, the stepper ignores steps still bound as non-editable) and shows the success toast
+    ├── manage-emails/              # standalone email wizard (ROOT only) — code exists but is NOT routed or linked in the nav (see Routing Architecture); Spartan/Tailwind UI, 3-step linear `ui-stepper`
+    │   ├── manage-emails.component # spine: stepper + 3 `ui-step`; provides the 3 wizard services; on `wizard.completed$` jumps to step 1 (in `afterNextRender`, the stepper ignores steps still bound as non-editable) and shows the success toast
     │   ├── email.service / email.models / email-wizard.service / can-send-emails.guard   # feature-wide: API, wire types, send orchestration (scoped via the spine's `providers`), ROOT guard
     │   ├── step-recipients/        # step 1: `step-recipients`, `recipient-filters/`, `recipient-list/`, `recipients.service` (scoped), `recipients-loader.service`, `user-segments` (segment rules → `account_types` / `excluded_account_types` / `include_accounts` of `GET /manage/@users`; one request per segment, merged; subscription conditions applied client-side by joining users' `accounts` with `GET /billing/subscriptions`, see `GlobalAccountService.getSubscriptions`)
     │   ├── step-compose/           # step 2: `step-compose`, `personalization-help/`, `compose.service` (scoped), `email-body.utils`, `sender-name.utils` (mirrors the backend `sender_name` rules)

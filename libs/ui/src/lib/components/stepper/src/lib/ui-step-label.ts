@@ -2,6 +2,6 @@ import { CdkStepLabel } from '@angular/cdk/stepper';
 import { Directive } from '@angular/core';
 
 @Directive({
-  selector: '[spartanStepLabel]',
+  selector: '[uiStepLabel]',
 })
-export class SpartanStepLabel extends CdkStepLabel {}
+export class UiStepLabel extends CdkStepLabel {}
