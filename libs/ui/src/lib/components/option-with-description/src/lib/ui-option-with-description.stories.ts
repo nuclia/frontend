@@ -8,7 +8,7 @@ interface OptionWithDescriptionStoryArgs {
 }
 
 const meta: Meta<OptionWithDescriptionStoryArgs> = {
-  title: 'UI/Option with description',
+  title: 'PDP-UI/Option with description',
   component: UiOptionWithDescription,
   tags: ['autodocs'],
   decorators: [moduleMetadata({ imports: [...UiOptionWithDescriptionImports] })],
