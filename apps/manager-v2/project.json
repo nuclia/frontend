@@ -256,6 +256,9 @@
         "local-dev": {
           "buildTarget": "manager-v2:build:local-dev"
         }
+      },
+      "readyWhen": {
+        "signal": true
       }
     },
     "extract-i18n": {
@@ -263,10 +266,6 @@
       "options": {
         "buildTarget": "manager-v2:build"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@angular/build:unit-test",

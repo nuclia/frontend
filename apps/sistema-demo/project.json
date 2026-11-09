@@ -129,6 +129,9 @@
         "development": {
           "buildTarget": "sistema-demo:build:development"
         }
+      },
+      "readyWhen": {
+        "signal": true
       }
     },
     "extract-i18n": {
@@ -154,9 +157,6 @@
           "watch": true
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     }
   }
 }

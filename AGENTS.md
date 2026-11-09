@@ -79,7 +79,7 @@ nx run ui:storybook
 
 All run with `nx test <name>`. Test files are co-located alongside source as `*.spec.ts`. Jest is gone from all
 first-party projects; only the external `libs/pastanaga-angular` still uses it.
-`libs/common` and `libs/core` have **no `lint` target** — linting runs as part of the app build.
+`@nx/eslint/plugin` infers `lint` targets for the configured projects, including `libs/common` and `libs/core`.
 
 - **Run all:** `yarn test` (`nx run-many --all --target=test`). The root `vitest.config.ts` only aggregates the
   plain-Vitest projects; it can't run the Angular suites, so don't call `vitest` directly for those.

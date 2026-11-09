@@ -33,12 +33,6 @@
     "@schematics/angular:service": {
       "type": "service"
     },
-    "@nx/angular:scam": {
-      "type": "component"
-    },
-    "@nx/angular:scam-directive": {
-      "type": "directive"
-    },
     "@nx/angular:guard": {
       "typeSeparator": "."
     },
@@ -94,10 +88,6 @@
         }
       }
     },
-    "@nx/eslint:lint": {
-      "inputs": ["default", "^default", "{workspaceRoot}/.eslintrc", "{workspaceRoot}/tools/eslint-rules/**/*"],
-      "cache": true
-    },
     "build-storybook": {
       "cache": true
     }
@@ -116,7 +106,7 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/vitest*.config.[jt]s",
       "!{projectRoot}/vitest*.config.mts",
-      "!{projectRoot}/.eslintrc",
+      "!{projectRoot}/eslint.config.*",
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
       "!{projectRoot}/.storybook/**/*"
@@ -124,6 +114,14 @@
   },
   "parallel": 1,
   "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        }
+      }
+    },
     {
       "plugin": "@nx/vite/plugin",
       "options": {
@@ -135,12 +133,6 @@
         "typecheckTargetName": "typecheck",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
-      }
-    },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "eslint:lint"
       }
     },
     {
@@ -161,8 +153,35 @@
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      },
+      "include": [
+        "apps/admin/**/*",
+        "apps/auth/**/*",
+        "apps/dashboard/**/*",
+        "apps/manager-v2/**/*",
+        "apps/rao/**/*",
+        "apps/search-widget-demo/**/*",
+        "apps/sistema-demo/**/*",
+        "libs/common/**/*",
+        "libs/core/**/*",
+        "libs/sdk-core/**/*",
+        "libs/search-widget/**/*",
+        "libs/sistema/**/*",
+        "libs/sync/**/*",
+        "libs/ui/**/*",
+        "libs/ui/src/lib/spartan-components/**/*",
+        "libs/user/**/*"
+      ]
     }
   ],
   "analytics": false,
-  "neverConnectToCloud": true
+  "neverConnectToCloud": true,
+  "affected": {
+    "legacy": true
+  }
 }

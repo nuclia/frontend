@@ -4,9 +4,6 @@
   "sourceRoot": "libs/search-widget/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "check": {
       "executor": "nx:run-commands",
       "options": {
