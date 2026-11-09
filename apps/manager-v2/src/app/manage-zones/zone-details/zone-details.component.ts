@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidSlug } from '@flaps/common';
@@ -12,7 +13,7 @@ import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmSelectImports } from '@nuclia/ui-spartan/select';
-import { filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { filter, map, of, switchMap, tap } from 'rxjs';
 import { UserService } from '../../manage-users/user.service';
 import { ZoneTokenDialogComponent } from '../zone-token-dialog/zone-token-dialog.component';
 import { Zone, ZoneAccountEntry } from '../zone.models';
@@ -33,8 +34,14 @@ import { ZoneService } from '../zone.service';
   ],
   providers: [provideIcons({ matArrowBackRound, matDeleteRound })],
 })
-export class ZoneDetailsComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class ZoneDetailsComponent {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private zoneService = inject(ZoneService);
+  private userService = inject(UserService);
+  private toast = inject(UiToastService);
+  private location = inject(Location);
+  private dialogService = inject(HlmDialogService);
   private zoneBackup?: Zone;
 
   zoneForm = new FormGroup({
@@ -48,26 +55,15 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     created: new FormControl('', { nonNullable: true }),
     modified: new FormControl('', { nonNullable: true }),
   });
-  addZone = false;
-  zoneTitle = '';
-  isSaving = false;
+  addZone = signal(false);
+  zoneTitle = signal('');
+  isSaving = signal(false);
   zoneId = '';
-  grantedAccounts: ZoneAccountEntry[] = [];
+  grantedAccounts = signal<ZoneAccountEntry[]>([]);
   newAccountId = '';
-  isGranting = false;
+  isGranting = signal(false);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private zoneService: ZoneService,
-    private userService: UserService,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-    private location: Location,
-    private dialogService: HlmDialogService,
-  ) {}
-
-  ngOnInit() {
+  constructor() {
     this.route.params
       .pipe(
         filter((params) => !!params['zoneId']),
@@ -79,28 +75,24 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
           this.zoneId = zoneId;
           return this.zoneService.getZone(zoneId);
         }),
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
       )
       .subscribe((zone) => {
         if (zone) {
-          this.zoneTitle = zone.title;
+          this.zoneTitle.set(zone.title);
           this.zoneBackup = { ...zone };
           this.zoneForm.patchValue(zone);
           this.loadGrantedAccounts();
         } else {
-          this.addZone = true;
+          this.addZone.set(true);
         }
-        this.cdr.markForCheck();
       });
   }
 
   loadGrantedAccounts() {
     if (!this.zoneId) return;
     this.zoneService.getZoneAccounts(this.zoneId).subscribe({
-      next: (accounts) => {
-        this.grantedAccounts = accounts;
-        this.cdr.markForCheck();
-      },
+      next: (accounts) => this.grantedAccounts.set(accounts),
       error: () => this.toast.error('Failed to load granted accounts'),
     });
   }
@@ -108,17 +100,16 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
   grantAccount() {
     const accountId = this.newAccountId.trim();
     if (!accountId || !this.zoneId) return;
-    this.isGranting = true;
+    this.isGranting.set(true);
     this.zoneService.grantZoneToAccount(this.zoneId, accountId).subscribe({
       next: () => {
         this.newAccountId = '';
-        this.isGranting = false;
+        this.isGranting.set(false);
         this.loadGrantedAccounts();
       },
       error: () => {
-        this.isGranting = false;
+        this.isGranting.set(false);
         this.toast.error('Failed to grant account access');
-        this.cdr.markForCheck();
       },
     });
   }
@@ -132,8 +123,8 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.isSaving = true;
-    if (this.addZone) {
+    this.isSaving.set(true);
+    if (this.addZone()) {
       const { slug, title, cloud_provider, private: isPrivate, origin } = this.zoneForm.getRawValue();
       this.userService
         .getAuthenticatedUser()
@@ -156,9 +147,8 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
             this.goToZones();
           },
           error: () => {
-            this.isSaving = false;
+            this.isSaving.set(false);
             this.toast.error('Add zone failed');
-            this.cdr.markForCheck();
           },
         });
     } else {
@@ -168,16 +158,14 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
         .pipe(switchMap(() => this.zoneService.getZone(id)))
         .subscribe({
           next: (zone) => {
-            this.isSaving = false;
-            this.zoneTitle = zone.title;
+            this.isSaving.set(false);
+            this.zoneTitle.set(zone.title);
             this.zoneBackup = { ...zone };
             this.zoneForm.markAsPristine();
-            this.cdr.markForCheck();
           },
           error: () => {
-            this.isSaving = false;
+            this.isSaving.set(false);
             this.toast.error('Update zone failed');
-            this.cdr.markForCheck();
           },
         });
     }
@@ -188,11 +176,6 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
       this.zoneForm.patchValue(this.zoneBackup);
       this.zoneForm.markAsPristine();
     }
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   goToZones() {

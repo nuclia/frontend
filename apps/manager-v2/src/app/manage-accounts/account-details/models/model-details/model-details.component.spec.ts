@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
@@ -17,8 +18,8 @@ describe('ModelDetailsComponent', () => {
       imports: [ModelDetailsComponent],
       providers: [
         MockProvider(ManagerStore, {
-          accountDetails: of(ACCOUNT_DETAILS),
-          kbList: of([
+          accountDetails: signal(ACCOUNT_DETAILS),
+          kbList: signal([
             { id: 'kb1', title: 'First KB', zone: { slug: 'europe-1' } },
             { id: 'kb2', title: 'Other zone KB', zone: { slug: 'aws-us' } },
           ] as unknown as KbSummary[]),

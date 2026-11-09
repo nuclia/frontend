@@ -14,11 +14,11 @@
         </tr>
       </thead>
       <tbody hlmTBody>
-        @for (container of containerList | async; track container.id) {
+        @for (container of containerList(); track container.id) {
           <tr
             hlmTr
-            [class.cursor-pointer]="canAccessKBs | async"
-            [routerLink]="(canAccessKBs | async) ? '../zone/' + container.zone.id + '/kb/' + container.id : undefined">
+            [class.cursor-pointer]="canAccessKBs()"
+            [routerLink]="canAccessKBs() ? '../zone/' + container.zone.id + '/kb/' + container.id : undefined">
             <td hlmTd>
               <div class="flex items-center gap-2">
                 @if (container.private) {

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SDKService } from '@flaps/core';
@@ -21,7 +22,7 @@ describe('AddModelComponent', () => {
       imports: [AddModelComponent, RouterModule.forRoot([]), MockComponent(UserKeysComponent)],
       providers: [
         MockProvider(ManagerStore, {
-          accountDetails: of(ACCOUNT_DETAILS),
+          accountDetails: signal(ACCOUNT_DETAILS),
           getAccountId: vi.fn(() => ACCOUNT_DETAILS.id),
         }),
         MockProvider(RegionalAccountService),

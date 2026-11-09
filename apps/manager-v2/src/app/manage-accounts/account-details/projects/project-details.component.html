@@ -1,4 +1,4 @@
-@if (project | async; as project) {
+@if (project(); as project) {
   <div class="px-6">
     <h3 class="mb-4 text-xl font-semibold">{{ project.name }}</h3>
     <form
@@ -25,7 +25,7 @@
             size="icon-sm"
             aria-label="Copy"
             (click)="copy()">
-            <ng-icon [name]="copied ? 'matCheckRound' : 'matContentCopyRound'" />
+            <ng-icon [name]="copied() ? 'matCheckRound' : 'matContentCopyRound'" />
           </button>
         </div>
       </div>
@@ -92,7 +92,7 @@
           formControlName="description"></textarea>
       </div>
       <nma-form-footer
-        [disabled]="form.pristine || form.invalid || isSaving"
+        [disabled]="form.pristine || form.invalid || isSaving()"
         (footerCancel)="reset()"></nma-form-footer>
     </form>
   </div>

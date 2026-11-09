@@ -1,8 +1,8 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormFooterComponent } from './form-footer.component';
 import { MockProvider } from 'ng-mocks';
 import { ManagerStore } from '../../manager.store';
-import { of } from 'rxjs';
 
 describe('FormFooterComponent', () => {
   let component: FormFooterComponent;
@@ -13,7 +13,7 @@ describe('FormFooterComponent', () => {
       imports: [FormFooterComponent],
       providers: [
         MockProvider(ManagerStore, {
-          canEdit: of(true),
+          canEdit: signal(true),
         }),
       ],
     }).compileComponents();

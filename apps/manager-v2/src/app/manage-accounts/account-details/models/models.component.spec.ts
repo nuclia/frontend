@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
@@ -25,9 +26,9 @@ describe('ModelsComponent', () => {
       imports: [ModelsComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(ManagerStore, {
-          accountDetails: of(ACCOUNT_DETAILS),
-          accountModels: of(zoneModels),
-          canManageModels: of(canManageModels),
+          accountDetails: signal(ACCOUNT_DETAILS),
+          accountModels: signal(zoneModels),
+          canManageModels: signal(canManageModels),
         }),
         MockProvider(AccountService, { loadAccountModels: vi.fn(() => of([] as ZoneModels[])) }),
         MockProvider(RegionalAccountService),

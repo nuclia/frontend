@@ -1,5 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -19,7 +28,7 @@ import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmSwitchImports } from '@nuclia/ui-spartan/switch';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
-import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, tap } from 'rxjs';
 import { UserSearch } from '../../../manage-users/user.models';
 import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
@@ -47,21 +56,26 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
   ],
   providers: [provideIcons({ matCheckRound, matContentCopyRound, matMoreVertRound, matPersonAddRound })],
 })
-export class KbDetailsComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
-  private manager = inject(ManagerStore);
+export class KbDetailsComponent {
+  private route = inject(ActivatedRoute);
+  private accountService = inject(AccountService);
+  private userService = inject(UserService);
+  private store = inject(ManagerStore);
+  private toast = inject(UiToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   canEdit = this.store.canEdit;
   canSeeUsers = this.store.canSeeUsers;
+  private accountDetails$ = toObservable(this.store.accountDetails);
   kbForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true }),
     prewarm_enabled: new FormControl<boolean>(false, { nonNullable: true }),
   });
-  kb$ = this.store.kbDetails;
-  isSaving = false;
-  copied = false;
+  kb = this.store.kbDetails;
+  isSaving = signal(false);
+  copied = signal(false);
 
   memberSearch = '';
   searchMemberTerm$ = new Subject<string>();
@@ -81,28 +95,21 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   private backupKb?: KbDetails;
 
-  constructor(
-    private route: ActivatedRoute,
-    private accountService: AccountService,
-    private userService: UserService,
-    private store: ManagerStore,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
-    this.canEdit.pipe(takeUntil(this.unsubscribeAll)).subscribe((canEdit) => {
-      const editableControls = [
-        this.kbForm.controls.slug,
-        this.kbForm.controls.title,
-        this.kbForm.controls.prewarm_enabled,
-      ];
-      editableControls.forEach((control) => (canEdit ? control.enable() : control.disable()));
-      this.cdr.markForCheck();
+  constructor() {
+    effect(() => {
+      const canEdit = this.canEdit();
+      untracked(() => {
+        const editableControls = [
+          this.kbForm.controls.slug,
+          this.kbForm.controls.title,
+          this.kbForm.controls.prewarm_enabled,
+        ];
+        editableControls.forEach((control) => (canEdit ? control.enable() : control.disable()));
+      });
     });
 
     combineLatest([
-      this.store.accountDetails.pipe(
+      this.accountDetails$.pipe(
         filter((accountDetails) => !!accountDetails),
         map((accountDetails) => accountDetails as AccountDetails),
       ),
@@ -112,7 +119,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       ),
     ])
       .pipe(
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
         switchMap(([account, { kbId, zoneId }]) =>
           this.accountService.loadKb({
             accountId: account.id,
@@ -133,24 +140,17 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
-  }
-
   save() {
-    this.isSaving = true;
+    this.isSaving.set(true);
     if (this.backupKb) {
       this.accountService.updateKb(this.backupKb, this.kbForm.getRawValue()).subscribe({
         next: (updatedKb) => {
           this.backupKb = updatedKb;
-          this.isSaving = false;
+          this.isSaving.set(false);
           this.kbForm.markAsPristine();
-          this.cdr.markForCheck();
         },
         error: () => {
-          this.isSaving = false;
-          this.cdr.markForCheck();
+          this.isSaving.set(false);
           this.toast.error('Updating knowledge box failed');
         },
       });
@@ -165,7 +165,6 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
         prewarm_enabled: this.backupKb.prewarm_enabled ?? false,
       });
       this.kbForm.markAsPristine();
-      this.cdr.markForCheck();
     }
   }
 
@@ -233,26 +232,18 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
         ? `Account: ${this.backupKb.accountId}\nZone: ${this.backupKb.zone.slug}\nKB: ${this.backupKb.id}`
         : this.backupKb.id;
       navigator.clipboard.writeText(text);
-      this.copied = true;
-      this.cdr.markForCheck();
-      setTimeout(() => {
-        this.copied = false;
-        this.cdr.markForCheck();
-      }, 1000);
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 1000);
     }
   }
 
   togglePublish() {
-    this.kb$
-      .pipe(
-        filter((details) => !!details),
-        take(1),
-        switchMap((kbDetails) =>
-          this.accountService
-            .publishKb(kbDetails, !kbDetails.published)
-            .pipe(tap(() => this.manager.setKbDetails({ ...kbDetails, published: !kbDetails.published }))),
-        ),
-      )
-      .subscribe();
+    const kbDetails = this.kb();
+    if (kbDetails) {
+      this.accountService
+        .publishKb(kbDetails, !kbDetails.published)
+        .pipe(tap(() => this.store.setKbDetails({ ...kbDetails, published: !kbDetails.published })))
+        .subscribe();
+    }
   }
 }

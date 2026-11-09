@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, FeaturesService } from '@flaps/core';
@@ -7,7 +8,6 @@ import { ManagerStore } from '../../manager.store';
 import { ZoneService } from '../../manage-zones/zone.service';
 import { AccountService } from '../account.service';
 import { AccountDetailsComponent } from './account-details.component';
-import { AccountDetailsStore } from './account-details.store';
 
 describe('AccountDetailsComponent', () => {
   let component: AccountDetailsComponent;
@@ -21,15 +21,18 @@ describe('AccountDetailsComponent', () => {
         MockProvider(ZoneService, {
           loadZones: vi.fn(() => of([])),
         }),
-        MockProvider(AccountDetailsStore),
         MockProvider(FeaturesService, {
           isTrial: of(false),
         }),
         MockProvider(BackendConfigurationService),
         MockProvider(ManagerStore, {
-          canSeeUsers: of(true),
-          canAccessKBs: of(true),
-          kbList: of([]),
+          canSeeUsers: signal(true),
+          canAccessKBs: signal(true),
+          kbList: signal([]),
+          accountDetails: signal(null),
+          projectList: signal([]),
+          canAccessProjects: signal(true),
+          currentState: signal(''),
         }),
       ],
     }).compileComponents();

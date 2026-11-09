@@ -9,16 +9,16 @@
       Back
     </button>
     <div class="mt-4 text-lg font-semibold break-all">
-      {{ zoneTitle }}
+      {{ zoneTitle() }}
     </div>
   </aside>
   <div class="max-w-2xl flex-1 px-6 py-4">
-    <h3 class="mb-4 text-xl font-semibold">{{ addZone ? 'Add zone' : 'Zone details' }}</h3>
+    <h3 class="mb-4 text-xl font-semibold">{{ addZone() ? 'Add zone' : 'Zone details' }}</h3>
     <form
       class="flex flex-col gap-4"
       [formGroup]="zoneForm"
       (submit)="save()">
-      @if (!addZone) {
+      @if (!addZone()) {
         <div hlmField>
           <label
             hlmFieldLabel
@@ -84,7 +84,7 @@
           id="zone-origin"
           formControlName="origin" />
       </div>
-      @if (!addZone) {
+      @if (!addZone()) {
         <div hlmField>
           <label
             hlmFieldLabel
@@ -142,10 +142,10 @@
         <button
           hlmBtn
           type="submit"
-          [disabled]="zoneForm.pristine || zoneForm.invalid || isSaving">
+          [disabled]="zoneForm.pristine || zoneForm.invalid || isSaving()">
           Save
         </button>
-        @if (!addZone) {
+        @if (!addZone()) {
           <button
             hlmBtn
             type="button"
@@ -157,14 +157,14 @@
       </footer>
     </form>
 
-    @if (!addZone) {
+    @if (!addZone()) {
       <section class="mt-6 flex max-w-lg flex-col gap-4">
         <h3 class="text-xl font-semibold">Account whitelist</h3>
 
-        @if (grantedAccounts.length > 0) {
+        @if (grantedAccounts().length > 0) {
           <span class="text-sm">Accounts explicitly granted access to this zone:</span>
           <ul class="flex flex-col">
-            @for (entry of grantedAccounts; track entry.account_id) {
+            @for (entry of grantedAccounts(); track entry.account_id) {
               <li class="flex items-center justify-between gap-4 border-b py-1 text-sm">
                 <span>{{ entry.account_id }}</span>
                 <button
@@ -198,7 +198,7 @@
           <button
             hlmBtn
             type="button"
-            [disabled]="!newAccountId.trim() || isGranting"
+            [disabled]="!newAccountId.trim() || isGranting()"
             (click)="grantAccount()">
             Grant access
           </button>

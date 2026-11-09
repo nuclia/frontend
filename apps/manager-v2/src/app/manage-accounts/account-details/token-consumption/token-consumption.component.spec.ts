@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NucliaTokensMetric } from '@nuclia/core';
 import { UiToastService } from '@nuclia/ui/toast';
@@ -19,8 +20,8 @@ describe('TokenConsumptionComponent', () => {
       imports: [TokenConsumptionComponent],
       providers: [
         MockProvider(ManagerStore, {
-          accountDetails: of(ACCOUNT_DETAILS),
-          kbList: of([]),
+          accountDetails: signal(ACCOUNT_DETAILS),
+          kbList: signal([]),
         }),
         MockProvider(AccountService, {
           loadTokenConsumption: vi.fn(() =>
@@ -44,6 +45,6 @@ describe('TokenConsumptionComponent', () => {
 
   it('should load the last 24h of token consumption on init', () => {
     expect(component.invalidForm).toBe(false);
-    expect(component.tokenConsumption.value?.value).toBe(42);
+    expect(component.tokenConsumption()?.value).toBe(42);
   });
 });

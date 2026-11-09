@@ -5,9 +5,9 @@
       class="w-80"
       placeholder="Filter"
       aria-label="Filter"
-      [value]="(filter$ | async) ?? ''"
+      [value]="filter()"
       (input)="onFilterInput($event)" />
-    @if (canCreateUser | async) {
+    @if (canCreateUser()) {
       <a
         hlmBtn
         routerLink="./add">
@@ -33,7 +33,7 @@
         </tr>
       </thead>
       <tbody hlmTBody>
-        @for (user of users$ | async | slice: 0 : lastIndex; track user) {
+        @for (user of users(); track user) {
           <tr
             hlmTr
             class="cursor-pointer"
@@ -55,7 +55,7 @@
             <td
               hlmTd
               class="text-end">
-              @if (canDelete | async) {
+              @if (canDelete()) {
                 <button
                   hlmBtn
                   type="button"

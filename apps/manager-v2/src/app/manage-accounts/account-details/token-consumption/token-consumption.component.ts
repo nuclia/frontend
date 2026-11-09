@@ -1,5 +1,6 @@
-import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matWarningRound } from '@ng-icons/material-icons/round';
@@ -12,7 +13,7 @@ import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { HlmTabsImports } from '@nuclia/ui-spartan/tabs';
 import { isBefore, isFuture, set, subDays } from 'date-fns';
-import { BehaviorSubject, filter, map, switchMap, take } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
@@ -20,7 +21,6 @@ import { AccountService } from '../../account.service';
 @Component({
   selector: 'nma-token-consumption',
   imports: [
-    AsyncPipe,
     DecimalPipe,
     FormsModule,
     NgIcon,
@@ -35,15 +35,15 @@ import { AccountService } from '../../account.service';
   templateUrl: './token-consumption.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TokenConsumptionComponent implements OnInit {
+export class TokenConsumptionComponent {
   private service = inject(AccountService);
   private store = inject(ManagerStore);
   private toaster = inject(UiToastService);
 
-  account = this.store.accountDetails;
+  private account$ = toObservable(this.store.accountDetails);
   kbList = this.store.kbList;
 
-  tokenConsumption = new BehaviorSubject<NucliaTokensMetric | null>(null);
+  tokenConsumption = signal<NucliaTokensMetric | null>(null);
   selectedTab = 'account';
   // digitsInfo format: {minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}
   digitsInfo = '1.0-0';
@@ -71,14 +71,12 @@ export class TokenConsumptionComponent implements OnInit {
       from: `${this.from}`,
       to: `${this.to}`,
     };
-  }
 
-  ngOnInit() {
     this.loadTokenConsumption();
   }
 
   loadTokenConsumption() {
-    this.account
+    this.account$
       .pipe(
         filter((account) => !!account),
         take(1),
@@ -86,10 +84,10 @@ export class TokenConsumptionComponent implements OnInit {
         switchMap((accountId) => this.service.loadTokenConsumption(accountId, this.from, this.to, this.kbId)),
       )
       .subscribe({
-        next: (nucliaTokens) => this.tokenConsumption.next(nucliaTokens),
+        next: (nucliaTokens) => this.tokenConsumption.set(nucliaTokens),
         error: (error) => {
           this.toaster.error(`An error occurred while loading token consumption: <strong>${error}</strong>`);
-          this.tokenConsumption.next(null);
+          this.tokenConsumption.set(null);
         },
       });
   }

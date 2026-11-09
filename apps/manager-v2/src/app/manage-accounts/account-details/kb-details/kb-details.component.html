@@ -1,4 +1,4 @@
-@if (kb$ | async; as kb) {
+@if (kb(); as kb) {
   <div class="px-6">
     <h3 class="mb-4 text-xl font-semibold">{{ kb.slug }}</h3>
     <form
@@ -25,7 +25,7 @@
             size="icon-sm"
             aria-label="Copy"
             [hlmDropdownMenuTrigger]="copyMenu">
-            <ng-icon [name]="copied ? 'matCheckRound' : 'matContentCopyRound'" />
+            <ng-icon [name]="copied() ? 'matCheckRound' : 'matContentCopyRound'" />
           </button>
         </div>
       </div>
@@ -103,15 +103,15 @@
         </label>
       </div>
       <nma-form-footer
-        [disabled]="kbForm.pristine || kbForm.invalid || isSaving"
+        [disabled]="kbForm.pristine || kbForm.invalid || isSaving()"
         (footerCancel)="reset()"></nma-form-footer>
     </form>
 
-    @if (canSeeUsers | async) {
+    @if (canSeeUsers()) {
       @let members = potentialMembers$ | async;
       <hlm-autocomplete-search
         class="mb-6 max-w-lg"
-        [disabled]="!(canEdit | async)"
+        [disabled]="!canEdit()"
         [search]="memberSearch"
         (searchChange)="onMemberSearch($event)"
         (valueChange)="onMemberSelected($event)">
@@ -177,7 +177,7 @@
                       variant="ghost"
                       size="icon-sm"
                       aria-label="Menu"
-                      [disabled]="!(canEdit | async)"
+                      [disabled]="!canEdit()"
                       [hlmDropdownMenuTrigger]="userMenu"
                       [hlmDropdownMenuTriggerData]="{ row }">
                       <ng-icon name="matMoreVertRound" />

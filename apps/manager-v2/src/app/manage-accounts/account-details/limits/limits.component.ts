@@ -1,5 +1,6 @@
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { KeyValuePipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypeDefaults } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -11,8 +12,7 @@ import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmLabelImports } from '@nuclia/ui-spartan/label';
 import { HlmRadioGroupImports } from '@nuclia/ui-spartan/radio-group';
 import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
-import { filter, map, Subject, switchMap, take, tap } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
@@ -31,33 +31,29 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
     HlmTooltipImports,
     NgIcon,
     FormFooterComponent,
-    AsyncPipe,
     KeyValuePipe,
   ],
   providers: [provideIcons({ matRefreshRound })],
 })
-export class LimitsComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class LimitsComponent {
+  private store = inject(ManagerStore);
+  private accountService = inject(AccountService);
+  private toast = inject(UiToastService);
+  private cdr = inject(ChangeDetectorRef);
   private backup?: AccountDetails;
   canEdit = this.store.canEdit;
+  private accountDetails$ = toObservable(this.store.accountDetails);
 
   limitsForm = new FormGroup({
     upload: new FormGroup({}),
     usage: new FormGroup({}),
   });
-  isSaving = false;
+  isSaving = signal(false);
 
   defaultLimits?: AccountTypeDefaults;
 
-  constructor(
-    private store: ManagerStore,
-    private accountService: AccountService,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
-    this.store.accountDetails
+  constructor() {
+    this.accountDetails$
       .pipe(
         filter((accountDetails) => !!accountDetails),
         map((accountDetails) => accountDetails as AccountDetails),
@@ -92,14 +88,9 @@ export class LimitsComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         }),
         switchMap((accountDetails) => this.accountService.getDefaultLimits(accountDetails.type)),
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
       )
       .subscribe((defaultLimits) => (this.defaultLimits = defaultLimits));
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   getRadioValue(groupKey: string, limitKey: string): 'limit' | 'unlimited' {
@@ -110,7 +101,7 @@ export class LimitsComponent implements OnInit, OnDestroy {
 
   save() {
     if (this.limitsForm.valid) {
-      this.isSaving = true;
+      this.isSaving.set(true);
       const rawValues = this.limitsForm.getRawValue();
       const payload: AccountLimitsPatchPayload = Object.entries(rawValues).reduce((data, [groupKey, limits]) => {
         data[groupKey as 'usage' | 'upload'] = Object.entries(limits).reduce(
@@ -182,18 +173,16 @@ export class LimitsComponent implements OnInit, OnDestroy {
   private updateLimits(limits: AccountLimitsPatchPayload) {
     const accountId = this.store.getAccountId();
     if (accountId) {
-      this.isSaving = true;
+      this.isSaving.set(true);
       this.accountService.updateAccountLimits(accountId, limits).subscribe({
         next: (updatedAccount) => {
-          this.isSaving = false;
+          this.isSaving.set(false);
           this.backup = { ...updatedAccount };
           this.updateForm(updatedAccount);
           this.limitsForm.markAsPristine();
-          this.cdr.markForCheck();
         },
         error: () => {
-          this.isSaving = false;
-          this.cdr.markForCheck();
+          this.isSaving.set(false);
           this.toast.error('Updating limits failed');
         },
       });
@@ -213,6 +202,5 @@ export class LimitsComponent implements OnInit, OnDestroy {
     }, {} as any);
     this.limitsForm.patchValue(newLimits);
     this.limitsForm.markAsPristine();
-    this.cdr.markForCheck();
   }
 }

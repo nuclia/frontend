@@ -1,5 +1,13 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -15,8 +23,8 @@ import { HlmRadioGroupImports } from '@nuclia/ui-spartan/radio-group';
 import { HlmSelectImports } from '@nuclia/ui-spartan/select';
 import { HlmSwitchImports } from '@nuclia/ui-spartan/switch';
 import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
-import { filter, forkJoin, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
-import { catchError, take, takeUntil } from 'rxjs/operators';
+import { filter, forkJoin, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
@@ -43,16 +51,20 @@ import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.c
     NgIcon,
     FormFooterComponent,
     BlockedFeaturesComponent,
-    AsyncPipe,
   ],
   providers: [provideIcons({ matRefreshRound })],
 })
-export class ConfigurationComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class ConfigurationComponent {
+  private store = inject(ManagerStore);
+  private accountService = inject(AccountService);
+  private globalAccountService = inject(GlobalAccountService);
+  private toast = inject(UiToastService);
+  private cdr = inject(ChangeDetectorRef);
   private accountBackup?: AccountDetails;
 
   canFullyEditAccount = this.store.canFullyEditAccount;
   canEdit = this.store.canEdit;
+  private accountDetails$ = toObservable(this.store.accountDetails);
   readonly zoneVisibilityOptions = ZONE_VISIBILITY_OPTIONS;
   readonly accountTypeOptions: { value: AccountTypes; label: string }[] = [
     { value: 'stash-trial', label: 'Trial' },
@@ -109,9 +121,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       progress_account: new FormControl<boolean>(false, { nonNullable: true }),
     }),
   });
-  free_tokens_per_billing_cycle = 0;
-  provider?: SubscriptionProvider;
-  isSaving = false;
+  free_tokens_per_billing_cycle = signal(0);
+  provider = signal<SubscriptionProvider | undefined>(undefined);
+  isSaving = signal(false);
 
   defaultLimits?: AccountTypeDefaults;
   isTrial = false;
@@ -123,26 +135,20 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: true }),
   });
 
-  constructor(
-    private store: ManagerStore,
-    private accountService: AccountService,
-    private globalAccountService: GlobalAccountService,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
-    this.canEdit.pipe(takeUntil(this.unsubscribeAll)).subscribe((canEdit) => {
-      const editableControls = [
-        this.configForm.controls.type,
-        this.configForm.controls.workflow,
-        this.configForm.controls.trialExpirationDate,
-      ];
-      editableControls.forEach((control) => (canEdit ? control.enable() : control.disable()));
-      this.cdr.markForCheck();
+  constructor() {
+    effect(() => {
+      const canEdit = this.canEdit();
+      untracked(() => {
+        const editableControls = [
+          this.configForm.controls.type,
+          this.configForm.controls.workflow,
+          this.configForm.controls.trialExpirationDate,
+        ];
+        editableControls.forEach((control) => (canEdit ? control.enable() : control.disable()));
+      });
     });
 
-    this.store.accountDetails
+    this.accountDetails$
       .pipe(
         filter((details) => !!details),
         map((accountDetails) => accountDetails as AccountDetails),
@@ -154,24 +160,20 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         switchMap((accountDetails) =>
           forkJoin([
             this.accountService.getDefaultLimits(accountDetails.type).pipe(
-              tap((defaultLimits) => {
-                this.defaultLimits = defaultLimits;
-                this.cdr.markForCheck();
-              }),
+              tap((defaultLimits) => (this.defaultLimits = defaultLimits)),
               take(1),
             ),
             this.accountService.getSubscription(accountDetails.id).pipe(
               catchError(() => of(null)),
               tap((sub) => {
                 if (sub) {
-                  this.provider = sub.provider;
-                  this.free_tokens_per_billing_cycle = sub.subscription.free_tokens_per_billing_cycle || 0;
-                  this.cdr.markForCheck();
+                  this.provider.set(sub.provider);
+                  this.free_tokens_per_billing_cycle.set(sub.subscription.free_tokens_per_billing_cycle || 0);
                 }
               }),
               take(1),
             ),
-            this.canFullyEditAccount.pipe(
+            of(this.canFullyEditAccount()).pipe(
               take(1),
               switchMap((canFullyEditAccount) => {
                 if (canFullyEditAccount) {
@@ -196,23 +198,18 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
             ),
           ]),
         ),
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
       )
       .subscribe();
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   save() {
     const accountBackup = this.accountBackup;
     if (this.configForm.valid && this.budgetForm.valid && accountBackup) {
-      this.isSaving = true;
+      this.isSaving.set(true);
       const controls = this.configForm.controls;
       const rawValue = this.configForm.getRawValue();
-      this.canFullyEditAccount
+      of(this.canFullyEditAccount())
         .pipe(
           take(1),
           switchMap((canFullyEditAccount) => {
@@ -261,16 +258,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: ([updatedAccount, budget]) => {
-            this.isSaving = false;
+            this.isSaving.set(false);
             this.accountBackup = { ...updatedAccount };
             this.budgetBackup = budget;
             this.configForm.markAsPristine();
             this.budgetForm.markAsPristine();
-            this.cdr.markForCheck();
           },
           error: () => {
-            this.isSaving = false;
-            this.cdr.markForCheck();
+            this.isSaving.set(false);
             this.toast.error('Updating account failed');
           },
         });
@@ -311,7 +306,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     if (this.accountBackup) {
       this.patchConfigForm(this.accountBackup);
       this.configForm.markAsPristine();
-      this.cdr.markForCheck();
     }
     this.resetBudget();
   }
@@ -328,7 +322,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
     this.configForm.controls.kbs.controls.maxKbs.patchValue(this.defaultLimits.max_kbs);
     this.configForm.controls.kbs.markAsDirty();
-    this.cdr.markForCheck();
   }
   resetMaxAragsToDefault() {
     if (!this.defaultLimits) {
@@ -336,7 +329,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
     this.configForm.controls.agents.controls.maxAgents.patchValue(this.defaultLimits.max_agents);
     this.configForm.controls.agents.markAsDirty();
-    this.cdr.markForCheck();
   }
   resetMaxAragsWithMemoryToDefault() {
     if (!this.defaultLimits) {
@@ -344,7 +336,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
     this.configForm.controls.memories.controls.maxMemories.patchValue(this.defaultLimits.max_memories);
     this.configForm.controls.memories.markAsDirty();
-    this.cdr.markForCheck();
   }
 
   private patchConfigForm(accountDetails: AccountDetails) {
@@ -379,13 +370,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   onFreeTokensInput(event: Event) {
-    this.free_tokens_per_billing_cycle = Number((event.target as HTMLInputElement).value);
+    this.free_tokens_per_billing_cycle.set(Number((event.target as HTMLInputElement).value));
   }
 
   updateFreeTokens() {
-    if (this.accountBackup?.id && this.provider) {
+    const provider = this.provider();
+    if (this.accountBackup?.id && provider) {
       this.accountService
-        .setFreeTokens(this.accountBackup.id, this.provider, this.free_tokens_per_billing_cycle)
+        .setFreeTokens(this.accountBackup.id, provider, this.free_tokens_per_billing_cycle())
         .pipe(map(() => true))
         .subscribe((success) => {
           if (success) {

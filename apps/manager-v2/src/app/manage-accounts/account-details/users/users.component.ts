@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreVertRound, matPersonAddRound, matVerifiedUserRound } from '@ng-icons/material-icons/round';
@@ -11,7 +12,6 @@ import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { debounceTime, filter, map, Subject, switchMap, tap } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { UserSearch } from '../../../manage-users/user.models';
 import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
@@ -34,15 +34,19 @@ import { AccountService } from '../../account.service';
   ],
   providers: [provideIcons({ matMoreVertRound, matPersonAddRound, matVerifiedUserRound })],
 })
-export class UsersComponent implements OnInit, OnDestroy {
+export class UsersComponent {
   private cdr = inject(ChangeDetectorRef);
-  private unsubscribeAll = new Subject<void>();
+  private store = inject(ManagerStore);
+  private accountService = inject(AccountService);
+  private userService = inject(UserService);
+  private toast = inject(UiToastService);
   private accountId?: string;
   private potentialMembers: UserSearch[] = [];
 
   canEdit = this.store.canEdit;
   users = this.store.accountUsers;
-  hasSeveralManagers = this.users.pipe(map((users) => users.filter((user) => user.isManager).length > 1));
+  hasSeveralManagers = computed(() => this.users().filter((user) => user.isManager).length > 1);
+  private accountDetails$ = toObservable(this.store.accountDetails);
 
   memberSearch = '';
   searchMemberTerm$ = new Subject<string>();
@@ -56,15 +60,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     }),
   );
 
-  constructor(
-    private store: ManagerStore,
-    private accountService: AccountService,
-    private userService: UserService,
-    private toast: UiToastService,
-  ) {}
-
-  ngOnInit() {
-    this.store.accountDetails
+  constructor() {
+    this.accountDetails$
       .pipe(
         filter((details) => !!details),
         map((details) => details as AccountDetails),
@@ -72,14 +69,9 @@ export class UsersComponent implements OnInit, OnDestroy {
           this.accountId = details.id;
           return this.accountService.loadAccountUsers(details.id);
         }),
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
       )
       .subscribe();
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   onMemberSearch(term: string) {

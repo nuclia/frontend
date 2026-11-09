@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { UiToastService } from '@nuclia/ui/toast';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { combineLatest, filter, forkJoin, map, of, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { ManagerStore } from '../../../../manager.store';
 import { AsyncPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
@@ -30,8 +30,14 @@ import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component
   templateUrl: './add-model.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddModelComponent implements OnInit, OnDestroy {
-  unsubscribeAll = new Subject<void>();
+export class AddModelComponent {
+  private store = inject(ManagerStore);
+  private regionalService = inject(RegionalAccountService);
+  private sdk = inject(SDKService);
+  private zoneService = inject(ZoneService);
+  private toast = inject(UiToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   modelForm = new FormGroup({
     description: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -45,6 +51,8 @@ export class AddModelComponent implements OnInit, OnDestroy {
     }),
     zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+
+  private accountDetails$ = toObservable(this.store.accountDetails);
 
   modelTypes = Object.values(ModelType);
   zones = toSignal(
@@ -66,8 +74,8 @@ export class AddModelComponent implements OnInit, OnDestroy {
   openaiCompat = this.schema.pipe(
     map((schema) => schema['generative_model']?.options?.find((model) => model.value === 'openai-compatible')),
   );
-  isSaving = false;
-  addModel = true;
+  isSaving = signal(false);
+  addModel = signal(true);
   modelId?: string;
   userKeysForm?: UserKeysForm;
 
@@ -87,25 +95,14 @@ export class AddModelComponent implements OnInit, OnDestroy {
     return this.modelForm.invalid || this.userKeysForm?.invalid;
   }
 
-  constructor(
-    private store: ManagerStore,
-    private regionalService: RegionalAccountService,
-    private sdk: SDKService,
-    private zoneService: ZoneService,
-    private toast: UiToastService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
+  constructor() {
     combineLatest([
-      this.store.accountDetails.pipe(filter((accountDetails) => !!accountDetails)),
+      this.accountDetails$.pipe(filter((accountDetails) => !!accountDetails)),
       this.route.params.pipe(map((params) => params['modelId'])),
       this.route.params.pipe(map((params) => params['zoneSlug'])),
     ])
       .pipe(
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(),
         filter(([, modelId]) => !!modelId),
         tap(([, modelId]) => (this.modelId = modelId)),
         switchMap(([account, modelId, zoneSlug]) =>
@@ -118,7 +115,7 @@ export class AddModelComponent implements OnInit, OnDestroy {
         ),
       )
       .subscribe(([model, models, schema, zoneSlug]) => {
-        this.addModel = false;
+        this.addModel.set(false);
         this.zoneControl.disable();
         const { model_types, openai_compat: rawOpenaiCompat, ...values } = model;
         let openai_compat = rawOpenaiCompat;
@@ -146,14 +143,8 @@ export class AddModelComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
-  }
-
   save() {
-    this.isSaving = true;
-    this.cdr.markForCheck();
+    this.isSaving.set(true);
     const { zone, model_types, ...formValues } = this.modelForm.getRawValue();
     const userKeys = this.userKeysForm?.getRawValue();
     const openai_compat = userKeys?.enabled ? userKeys.user_keys : null;
@@ -164,7 +155,7 @@ export class AddModelComponent implements OnInit, OnDestroy {
     };
     const accountId = this.store.getAccountId();
     if (accountId) {
-      const request = this.addModel
+      const request = this.addModel()
         ? this.regionalService.createModel(payload, accountId, zone)
         : this.regionalService.updateModel(payload, this.modelId || '', accountId, zone);
       request.subscribe({
@@ -172,9 +163,8 @@ export class AddModelComponent implements OnInit, OnDestroy {
           this.router.navigate([`/accounts/${accountId}/models`]);
         },
         error: () => {
-          this.toast.error(`${this.addModel ? 'Adding' : 'Updating'} model failed`);
-          this.isSaving = false;
-          this.cdr.markForCheck();
+          this.toast.error(`${this.addModel() ? 'Adding' : 'Updating'} model failed`);
+          this.isSaving.set(false);
         },
       });
     }

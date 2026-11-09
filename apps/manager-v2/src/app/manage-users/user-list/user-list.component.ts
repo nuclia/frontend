@@ -1,5 +1,5 @@
-import { AsyncPipe, DatePipe, SlicePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -10,7 +10,7 @@ import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { UserSummary } from '../user.models';
 import { UserService } from '../user.service';
@@ -18,55 +18,46 @@ import { UserService } from '../user.service';
 @Component({
   templateUrl: './user-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    HlmButtonImports,
-    UiInfiniteScrollImports,
-    HlmInputImports,
-    HlmTableImports,
-    NgIcon,
-    RouterLink,
-    AsyncPipe,
-    DatePipe,
-    SlicePipe,
-  ],
+  imports: [HlmButtonImports, UiInfiniteScrollImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, DatePipe],
   providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class UserListComponent {
-  private _allUsers: BehaviorSubject<UserSummary[]> = new BehaviorSubject<UserSummary[]>([]);
+  private sdk = inject(SDKService);
+  private userService = inject(UserService);
+  private confirmService = inject(UiConfirmService);
+  private toast = inject(UiToastService);
   private store = inject(ManagerStore);
+
+  private allUsers = signal<UserSummary[]>([]);
+  private lastIndex = signal(100);
+
   canDelete = this.store.canDelete;
   canCreateUser = this.store.canCreateUser;
-  filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  users$: Observable<UserSummary[]> = combineLatest([this._allUsers, this.filter$]).pipe(
-    map(([users, filter]) =>
-      filter
-        ? users.filter(
-            (user) =>
-              (user.name || user.email).includes(filter) || user.email.includes(filter) || user.id.includes(filter),
-          )
-        : users,
-    ),
-    map((accounts) => accounts.sort((a, b) => (a.name || '').localeCompare(b.name || ''))),
-  );
+  filter = signal('');
+  users = computed(() => {
+    const filterValue = this.filter();
+    const users = filterValue
+      ? this.allUsers().filter(
+          (user) =>
+            (user.name || user.email).includes(filterValue) ||
+            user.email.includes(filterValue) ||
+            user.id.includes(filterValue),
+        )
+      : this.allUsers();
+    return users.toSorted((a, b) => (a.name || '').localeCompare(b.name || '')).slice(0, this.lastIndex());
+  });
 
-  lastIndex = 100;
-
-  constructor(
-    private sdk: SDKService,
-    private userService: UserService,
-    private confirmService: UiConfirmService,
-    private toast: UiToastService,
-  ) {
+  constructor() {
     this.loadUsers();
   }
 
   onFilterInput(event: Event) {
-    this.filter$.next((event.target as HTMLInputElement).value);
+    this.filter.set((event.target as HTMLInputElement).value);
   }
 
   onReachAnchor() {
-    if (this.lastIndex < this._allUsers.getValue().length) {
-      this.lastIndex = this.lastIndex + 100;
+    if (this.lastIndex() < this.allUsers().length) {
+      this.lastIndex.update((index) => index + 100);
     }
   }
 
@@ -99,7 +90,7 @@ export class UserListComponent {
 
   private loadUsers() {
     this.userService.getUsers().subscribe({
-      next: (users) => this._allUsers.next(users),
+      next: (users) => this.allUsers.set(users),
       error: (error) => {
         // A bug on user deletion API makes us lose our token whenever deleting a user
         // To make it clear, we redirect to logout (otherwise we are in a quite confusing state)

@@ -16,7 +16,7 @@
           <label
             hlmFieldLabel
             [for]="'kb-' + kb.key">
-            {{ ((modelNames | async) || {})[kb.key] }}
+            {{ modelNames()[kb.key] }}
           </label>
         </div>
       }
@@ -25,7 +25,7 @@
       <button
         hlmBtn
         type="submit"
-        [disabled]="kbForm.pristine || isSaving">
+        [disabled]="kbForm.pristine || isSaving()">
         Save
       </button>
       <button

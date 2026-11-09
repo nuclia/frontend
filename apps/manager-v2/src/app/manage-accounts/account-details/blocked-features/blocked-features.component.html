@@ -21,6 +21,6 @@
 
   <nma-form-footer
     secondary
-    [disabled]="blockedFeatures.pristine || isSaving"
+    [disabled]="blockedFeatures.pristine || isSaving()"
     (footerCancel)="reset()"></nma-form-footer>
 </form>

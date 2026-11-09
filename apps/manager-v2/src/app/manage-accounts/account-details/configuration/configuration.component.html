@@ -15,7 +15,7 @@
         id="config-email"
         class="read-only:bg-muted read-only:text-muted-foreground"
         formControlName="email"
-        [readOnly]="!(canFullyEditAccount | async)" />
+        [readOnly]="!canFullyEditAccount()" />
     </div>
     <div hlmField>
       <label
@@ -28,7 +28,7 @@
         id="config-slug"
         class="read-only:bg-muted read-only:text-muted-foreground"
         formControlName="slug"
-        [readOnly]="!(canFullyEditAccount | async)" />
+        [readOnly]="!canFullyEditAccount()" />
     </div>
     <div hlmField>
       <label
@@ -123,7 +123,7 @@
       </hlm-date-picker>
     </div>
 
-    @if (canFullyEditAccount | async) {
+    @if (canFullyEditAccount()) {
       <div hlmField>
         <label
           hlmFieldLabel
@@ -136,15 +136,15 @@
             id="free-tokens"
             type="number"
             class="w-40"
-            [value]="free_tokens_per_billing_cycle"
+            [value]="free_tokens_per_billing_cycle()"
             (input)="onFreeTokensInput($event)" />
           <span
             hlmTooltip="Require a subscription provider"
-            [tooltipDisabled]="!!provider">
+            [tooltipDisabled]="!!provider()">
             <button
               hlmBtn
               type="button"
-              [disabled]="!provider"
+              [disabled]="!provider()"
               (click)="updateFreeTokens()">
               Update free tokens
             </button>
@@ -210,7 +210,7 @@
         </div>
       </fieldset>
     }
-    @if (canFullyEditAccount | async) {
+    @if (canFullyEditAccount()) {
       <fieldset
         hlmFieldSet
         formGroupName="agents">
@@ -453,7 +453,9 @@
       </div>
     }
     <nma-form-footer
-      [disabled]="(configForm.pristine && budgetForm.pristine) || configForm.invalid || budgetForm.invalid || isSaving"
+      [disabled]="
+        (configForm.pristine && budgetForm.pristine) || configForm.invalid || budgetForm.invalid || isSaving()
+      "
       (footerCancel)="reset()"></nma-form-footer>
   </form>
 

@@ -1,9 +1,11 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
 import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
+import { UserSummary } from '../user.models';
 import { UserService } from '../user.service';
 import { UserListComponent } from './user-list.component';
 import { ManagerStore } from '../../manager.store';
@@ -18,7 +20,12 @@ describe('UserListComponent', () => {
       imports: [RouterModule.forRoot([]), UserListComponent],
       providers: [
         MockProvider(UserService, {
-          getUsers: vi.fn(() => of([])),
+          getUsers: vi.fn(() =>
+            of([
+              { id: 'u2', name: 'Bob', email: 'bob@nuclia.com' },
+              { id: 'u1', name: 'Alice', email: 'alice@nuclia.com' },
+            ] as UserSummary[]),
+          ),
         }),
         MockProvider(SDKService, {
           nuclia: {
@@ -32,8 +39,8 @@ describe('UserListComponent', () => {
         MockProvider(UiConfirmService),
         MockProvider(UiToastService),
         MockProvider(ManagerStore, {
-          canDelete: of(true),
-          canCreateUser: of(true),
+          canDelete: signal(true),
+          canCreateUser: signal(true),
         }),
       ],
     }).compileComponents();
@@ -45,5 +52,11 @@ describe('UserListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should sort users by name and filter them by name, email or id', () => {
+    expect(component.users().map((user) => user.id)).toEqual(['u1', 'u2']);
+    component.filter.set('bob@');
+    expect(component.users().map((user) => user.id)).toEqual(['u2']);
   });
 });

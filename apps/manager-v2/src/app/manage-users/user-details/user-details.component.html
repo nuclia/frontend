@@ -9,7 +9,7 @@
       Back
     </button>
     <div class="mt-4 text-lg font-semibold break-all">
-      {{ userEmail }}
+      {{ userEmail() }}
     </div>
   </aside>
   <div class="max-w-2xl flex-1 px-6 py-4">
@@ -113,7 +113,7 @@
             hlmBtn
             type="button"
             variant="destructive"
-            [disabled]="!(canEdit | async)"
+            [disabled]="!canEdit()"
             (click)="edit()">
             Edit
           </button>
@@ -121,7 +121,7 @@
           <button
             hlmBtn
             type="submit"
-            [disabled]="userForm.pristine || userForm.invalid || isSaving">
+            [disabled]="userForm.pristine || userForm.invalid || isSaving()">
             Save
           </button>
           <button

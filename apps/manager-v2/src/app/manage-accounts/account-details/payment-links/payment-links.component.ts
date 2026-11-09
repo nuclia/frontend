@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypes } from '@nuclia/core';
 import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
@@ -9,8 +10,7 @@ import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmSelectImports } from '@nuclia/ui-spartan/select';
-import { forkJoin, map, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { forkJoin, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { PaymentCurrency, SearchPrice } from '../../global-account.models';
 import { GlobalAccountService } from '../../global-account.service';
@@ -30,8 +30,10 @@ import { GlobalAccountService } from '../../global-account.service';
     AsyncPipe,
   ],
 })
-export class PaymentLinksComponent implements OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class PaymentLinksComponent {
+  private store = inject(ManagerStore);
+  private globalService = inject(GlobalAccountService);
+  private toast = inject(UiToastService);
   private labels = new Map<string, string>();
 
   paymentLinkForm = new FormGroup({
@@ -43,10 +45,10 @@ export class PaymentLinksComponent implements OnDestroy {
     allowPromotionCode: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
-  isSaving = false;
+  isSaving = signal(false);
   accountTypes: AccountTypes[] = ['v3pro', 'v3enterprise', 'v3starter'];
   currencies: PaymentCurrency[] = ['usd', 'eur'];
-  paymentLink?: string;
+  paymentLink = signal<string | undefined>(undefined);
 
   licensedPrices = of(this.accountTypes).pipe(
     switchMap((accountTypes) =>
@@ -86,20 +88,10 @@ export class PaymentLinksComponent implements OnDestroy {
     return this.paymentLinkForm.controls.accountType.value as AccountTypes;
   }
 
-  constructor(
-    private store: ManagerStore,
-    private globalService: GlobalAccountService,
-    private toast: UiToastService,
-    private cdr: ChangeDetectorRef,
-  ) {
-    this.paymentLinkForm.controls.accountType.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+  constructor() {
+    this.paymentLinkForm.controls.accountType.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.paymentLinkForm.controls.licensedPrice.reset();
     });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   private registerPrices(prices: SearchPrice[]) {
@@ -107,8 +99,7 @@ export class PaymentLinksComponent implements OnDestroy {
   }
 
   create() {
-    this.isSaving = true;
-    this.cdr.markForCheck();
+    this.isSaving.set(true);
     const formValues = this.paymentLinkForm.getRawValue();
     this.globalService
       .createPaymentLink({
@@ -121,14 +112,12 @@ export class PaymentLinksComponent implements OnDestroy {
       })
       .subscribe({
         next: (result) => {
-          this.isSaving = false;
-          this.paymentLink = result.url;
-          this.cdr.markForCheck();
+          this.isSaving.set(false);
+          this.paymentLink.set(result.url);
         },
         error: (error) => {
-          this.isSaving = false;
+          this.isSaving.set(false);
           this.toast.error(error?.body?.detail || 'Creating the payment link');
-          this.cdr.markForCheck();
         },
       });
   }
