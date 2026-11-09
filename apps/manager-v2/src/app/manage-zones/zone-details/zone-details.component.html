@@ -4,21 +4,21 @@
       hlmBtn
       type="button"
       variant="ghost"
-      (click)="goBack()">
+      (click)="vm.goBack()">
       <ng-icon name="matArrowBackRound" />
       Back
     </button>
     <div class="mt-4 text-lg font-semibold break-all">
-      {{ zoneTitle() }}
+      {{ vm.zoneTitle() }}
     </div>
   </aside>
   <div class="max-w-2xl flex-1 px-6 py-4">
-    <h3 class="mb-4 text-xl font-semibold">{{ addZone() ? 'Add zone' : 'Zone details' }}</h3>
+    <h3 class="mb-4 text-xl font-semibold">{{ vm.addZone() ? 'Add zone' : 'Zone details' }}</h3>
     <form
       class="flex flex-col gap-4"
-      [formGroup]="zoneForm"
-      (submit)="save()">
-      @if (!addZone()) {
+      [formGroup]="vm.zoneForm"
+      (submit)="vm.save()">
+      @if (!vm.addZone()) {
         <div hlmField>
           <label
             hlmFieldLabel
@@ -84,7 +84,7 @@
           id="zone-origin"
           formControlName="origin" />
       </div>
-      @if (!addZone()) {
+      @if (!vm.addZone()) {
         <div hlmField>
           <label
             hlmFieldLabel
@@ -142,68 +142,23 @@
         <button
           hlmBtn
           type="submit"
-          [disabled]="zoneForm.pristine || zoneForm.invalid || isSaving()">
+          [disabled]="vm.zoneForm.pristine || vm.zoneForm.invalid || vm.isSaving()">
           Save
         </button>
-        @if (!addZone()) {
+        @if (!vm.addZone()) {
           <button
             hlmBtn
             type="button"
             variant="ghost"
-            (click)="reset()">
+            (click)="vm.reset()">
             Cancel
           </button>
         }
       </footer>
     </form>
 
-    @if (!addZone()) {
-      <section class="mt-6 flex max-w-lg flex-col gap-4">
-        <h3 class="text-xl font-semibold">Account whitelist</h3>
-
-        @if (grantedAccounts().length > 0) {
-          <span class="text-sm">Accounts explicitly granted access to this zone:</span>
-          <ul class="flex flex-col">
-            @for (entry of grantedAccounts(); track entry.account_id) {
-              <li class="flex items-center justify-between gap-4 border-b py-1 text-sm">
-                <span>{{ entry.account_id }}</span>
-                <button
-                  hlmBtn
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Revoke access"
-                  (click)="revokeAccount(entry.account_id)">
-                  <ng-icon name="matDeleteRound" />
-                </button>
-              </li>
-            }
-          </ul>
-        } @else {
-          <p class="text-muted-foreground text-sm">No accounts granted access.</p>
-        }
-
-        <div hlmField>
-          <label
-            hlmFieldLabel
-            for="zone-account-id">
-            Account ID
-          </label>
-          <input
-            hlmInput
-            id="zone-account-id"
-            [(ngModel)]="newAccountId" />
-        </div>
-        <div>
-          <button
-            hlmBtn
-            type="button"
-            [disabled]="!newAccountId.trim() || isGranting()"
-            (click)="grantAccount()">
-            Grant access
-          </button>
-        </div>
-      </section>
+    @if (!vm.addZone()) {
+      <app-zone-accounts [zoneId]="vm.zoneId()" />
     }
   </div>
 </div>

@@ -1,0 +1,60 @@
+<div
+  class="mb-4"
+  [formGroup]="form()">
+  <div
+    class="mb-2 text-sm font-medium"
+    [id]="'limit-label-' + limitKey()">
+    {{ limitKey() }}
+  </div>
+  <div class="flex items-start justify-between gap-4">
+    <div
+      hlmRadioGroup
+      [attr.aria-labelledby]="'limit-label-' + limitKey()"
+      [formControlName]="limitKey() + '-radio'">
+      <div class="flex items-center gap-2">
+        <hlm-radio
+          [inputId]="'limit-' + limitKey() + '-unlimited'"
+          value="unlimited">
+          <hlm-radio-indicator />
+        </hlm-radio>
+        <label
+          hlmLabel
+          [for]="'limit-' + limitKey() + '-unlimited'">
+          Unlimited
+        </label>
+      </div>
+      <div class="flex items-center gap-2">
+        <hlm-radio
+          [inputId]="'limit-' + limitKey() + '-limit'"
+          value="limit">
+          <hlm-radio-indicator />
+        </hlm-radio>
+        <label
+          hlmLabel
+          [for]="'limit-' + limitKey() + '-limit'">
+          Limit
+        </label>
+      </div>
+    </div>
+    @if (isLimited()) {
+      <div class="flex items-center gap-2">
+        <input
+          hlmInput
+          type="number"
+          class="w-48"
+          [attr.aria-labelledby]="'limit-label-' + limitKey()"
+          formControlName="limit" />
+        <button
+          hlmBtn
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Reset to default"
+          hlmTooltip="Reset to default"
+          (click)="resetToDefault.emit()">
+          <ng-icon name="matRefreshRound" />
+        </button>
+      </div>
+    }
+  </div>
+</div>

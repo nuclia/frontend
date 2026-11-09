@@ -1,0 +1,140 @@
+<div hlmTableContainer>
+  <table hlmTable>
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th
+          hlmTh
+          class="border-r"></th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Raw usage input
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Raw usage output
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Raw usage search
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Raw usage images
+        </th>
+        <th
+          hlmTh
+          class="border-r text-center whitespace-normal">
+          Raw usage storage
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Nuclia tokens from input
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Nuclia tokens from output
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Nuclia tokens from search
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Nuclia tokens from images
+        </th>
+        <th
+          hlmTh
+          class="border-r text-center whitespace-normal">
+          Nuclia tokens from storage
+        </th>
+        <th
+          hlmTh
+          class="text-center whitespace-normal">
+          Total Nuclia tokens
+        </th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+      @for (row of details(); track row.identifier) {
+        <tr hlmTr>
+          <td
+            hlmTd
+            class="border-r text-xs">
+            <div class="flex flex-col">
+              <strong>{{ row.identifier.type }} {{ row.identifier.source }} {{ row.identifier.model }}</strong>
+              <small>{{ row.identifier.version }}</small>
+            </div>
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.raw_usage.input | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.raw_usage.output | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.raw_usage.search | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.raw_usage.image | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="border-r text-center text-xs">
+            {{ row.raw_usage.storage | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.nuclia_tokens.input | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.nuclia_tokens.output | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.nuclia_tokens.search | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs">
+            {{ row.nuclia_tokens.image | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="border-r text-center text-xs">
+            {{ row.nuclia_tokens.storage | number: digitsInfo }}
+          </td>
+          <td
+            hlmTd
+            class="text-center text-xs font-semibold">
+            @let total = getTotalTokens(row.nuclia_tokens);
+            @if (total === null) {
+              –
+            } @else {
+              {{ total | number: digitsInfo }}
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

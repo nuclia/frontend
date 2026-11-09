@@ -1,12 +1,9 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { HlmFieldImports } from '@nuclia/ui-spartan/field';
-import { HlmInputImports } from '@nuclia/ui-spartan/input';
-import { HlmSelectImports } from '@nuclia/ui-spartan/select';
+import { SubscriptionDeleteComponent } from './subscription-delete/subscription-delete.component';
+import { SubscriptionFieldsComponent } from './subscription-fields/subscription-fields.component';
 import { SubscriptionsService } from './subscriptions.service';
 
 @Component({
@@ -15,20 +12,13 @@ import { SubscriptionsService } from './subscriptions.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SubscriptionsService],
   imports: [
-    FormsModule,
     ReactiveFormsModule,
     HlmAlertImports,
     HlmButtonImports,
-    HlmFieldImports,
-    HlmInputImports,
-    HlmSelectImports,
-    UiOptionWithDescriptionImports,
-    NgTemplateOutlet,
+    SubscriptionDeleteComponent,
+    SubscriptionFieldsComponent,
   ],
 })
 export class SubscriptionsComponent {
-  protected service = inject(SubscriptionsService);
-
-  showCloudZeroDeleteConfirm = signal(false);
-  showManualDeleteConfirm = signal(false);
+  protected vm = inject(SubscriptionsService);
 }

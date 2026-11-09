@@ -9,8 +9,8 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
-      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'nma', style: 'camelCase' }],
-      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'nma', style: 'kebab-case' }],
+      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: ['nma', 'app'], style: 'camelCase' }],
+      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: ['nma', 'app'], style: 'kebab-case' }],
       '@angular-eslint/prefer-standalone': 'off',
     },
   },

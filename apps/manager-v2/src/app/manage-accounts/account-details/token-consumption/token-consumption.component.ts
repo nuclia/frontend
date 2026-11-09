@@ -10,13 +10,14 @@ import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmDatePickerImports } from '@nuclia/ui-spartan/date-picker';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
-import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { HlmTabsImports } from '@nuclia/ui-spartan/tabs';
-import { isBefore, isFuture, set, subDays } from 'date-fns';
+import { isBefore, isFuture, subDays } from 'date-fns';
 import { filter, map, switchMap, take } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
+import { TokenConsumptionTableComponent } from './token-consumption-table/token-consumption-table.component';
+import { DIGITS_INFO, isInvalidHour, toIsoDate } from './token-consumption.utils';
 
 @Component({
   selector: 'nma-token-consumption',
@@ -28,8 +29,8 @@ import { AccountService } from '../../account.service';
     HlmButtonImports,
     HlmDatePickerImports,
     HlmInputImports,
-    HlmTableImports,
     HlmTabsImports,
+    TokenConsumptionTableComponent,
   ],
   providers: [provideIcons({ matWarningRound })],
   templateUrl: './token-consumption.component.html',
@@ -45,8 +46,7 @@ export class TokenConsumptionComponent {
 
   tokenConsumption = signal<NucliaTokensMetric | null>(null);
   selectedTab = 'account';
-  // digitsInfo format: {minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}
-  digitsInfo = '1.0-0';
+  digitsInfo = DIGITS_INFO;
 
   toDate?: Date;
   toTime: number;
@@ -99,36 +99,20 @@ export class TokenConsumptionComponent {
   }
 
   get from() {
-    if (this.invalidFromTime || !this.fromDate) {
-      return '';
-    }
-    return set(this.fromDate, {
-      hours: this.fromTime,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-    }).toISOString();
+    return toIsoDate(this.fromDate, this.fromTime);
   }
 
   get to() {
-    if (this.invalidToTime || !this.toDate) {
-      return '';
-    }
-    return set(this.toDate, {
-      hours: this.toTime,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-    }).toISOString();
+    return toIsoDate(this.toDate, this.toTime);
   }
   get fromInFuture() {
     return isFuture(this.from);
   }
   get invalidFromTime() {
-    return this.fromTime < 0 || this.fromTime > 24;
+    return isInvalidHour(this.fromTime);
   }
   get invalidToTime() {
-    return this.toTime < 0 || this.toTime > 24;
+    return isInvalidHour(this.toTime);
   }
   get isNotModified() {
     return this.backup.from === this.from && this.backup.to === this.to;

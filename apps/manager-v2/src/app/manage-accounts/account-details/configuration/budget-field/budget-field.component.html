@@ -1,0 +1,86 @@
+<fieldset hlmFieldSet>
+  <legend hlmFieldLegend>Budget</legend>
+  <div class="flex items-start justify-between gap-4">
+    <div
+      hlmRadioGroup
+      aria-label="Budget"
+      [formControl]="mode()">
+      <div class="flex items-center gap-2">
+        <hlm-radio
+          inputId="budget-unlimited"
+          value="unlimited">
+          <hlm-radio-indicator />
+        </hlm-radio>
+        <label
+          hlmLabel
+          for="budget-unlimited">
+          Unlimited
+        </label>
+      </div>
+      <div class="flex items-center gap-2">
+        <hlm-radio
+          inputId="budget-limit"
+          value="limit">
+          <hlm-radio-indicator />
+        </hlm-radio>
+        <label
+          hlmLabel
+          for="budget-limit">
+          Limit
+        </label>
+      </div>
+    </div>
+    @if (isLimited()) {
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-2">
+          <input
+            hlmInput
+            type="number"
+            class="w-40"
+            aria-label="Budget tokens"
+            placeholder="Tokens"
+            [formControl]="value()" />
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Reset"
+            hlmTooltip="Reset"
+            (click)="resetBudget.emit()">
+            <ng-icon name="matRefreshRound" />
+          </button>
+        </div>
+        <div
+          hlmRadioGroup
+          aria-label="Action on budget exhausted"
+          [formControl]="action()">
+          <div class="flex items-center gap-2">
+            <hlm-radio
+              inputId="budget-block"
+              value="BLOCK_ACCOUNT">
+              <hlm-radio-indicator />
+            </hlm-radio>
+            <label
+              hlmLabel
+              for="budget-block">
+              Block the account
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <hlm-radio
+              inputId="budget-warn"
+              value="WARN_ACCOUNT_OWNER">
+              <hlm-radio-indicator />
+            </hlm-radio>
+            <label
+              hlmLabel
+              for="budget-warn">
+              Send a warning email
+            </label>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</fieldset>

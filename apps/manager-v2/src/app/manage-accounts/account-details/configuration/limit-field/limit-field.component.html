@@ -1,0 +1,54 @@
+<fieldset hlmFieldSet>
+  <legend hlmFieldLegend>{{ label() }}</legend>
+  <div class="flex items-start justify-between gap-4">
+    <div
+      hlmRadioGroup
+      [attr.aria-label]="label()"
+      [formControl]="mode()">
+      <div class="flex items-center gap-2">
+        <hlm-radio
+          [inputId]="idPrefix() + '-unlimited'"
+          value="unlimited">
+          <hlm-radio-indicator />
+        </hlm-radio>
+        <label
+          hlmLabel
+          [for]="idPrefix() + '-unlimited'">
+          Unlimited
+        </label>
+      </div>
+      <div class="flex items-center gap-2">
+        <hlm-radio
+          [inputId]="idPrefix() + '-limit'"
+          value="limit">
+          <hlm-radio-indicator />
+        </hlm-radio>
+        <label
+          hlmLabel
+          [for]="idPrefix() + '-limit'">
+          Limit
+        </label>
+      </div>
+    </div>
+    @if (isLimited()) {
+      <div class="flex items-center gap-2">
+        <input
+          hlmInput
+          type="number"
+          class="w-40"
+          [attr.aria-label]="inputLabel()"
+          [formControl]="limit()" />
+        <button
+          hlmBtn
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Reset to default"
+          hlmTooltip="Reset to default"
+          (click)="resetToDefault.emit()">
+          <ng-icon name="matRefreshRound" />
+        </button>
+      </div>
+    }
+  </div>
+</fieldset>

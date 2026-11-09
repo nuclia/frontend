@@ -1,0 +1,26 @@
+@if (!showConfirm()) {
+  <button
+    type="button"
+    hlmBtn
+    variant="destructive"
+    (click)="showConfirm.set(true)">
+    Delete
+  </button>
+} @else {
+  <span class="text-sm">Are you sure? This action cannot be undone.</span>
+  <button
+    type="button"
+    hlmBtn
+    variant="destructive"
+    [disabled]="isDeleting()"
+    (click)="onConfirm()">
+    Confirm delete
+  </button>
+  <button
+    type="button"
+    hlmBtn
+    variant="outline"
+    (click)="showConfirm.set(false)">
+    Cancel
+  </button>
+}

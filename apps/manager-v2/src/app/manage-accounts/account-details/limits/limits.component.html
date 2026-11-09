@@ -4,98 +4,40 @@
       type="button"
       hlmBtn
       variant="outline"
-      [disabled]="isSaving() || !canEdit()"
-      (click)="resetAllToDefault()">
+      [disabled]="vm.isSaving() || !vm.canEdit()"
+      (click)="vm.resetAllToDefault()">
       Reset all to default
     </button>
     <button
       type="button"
       hlmBtn
       variant="destructive"
-      [disabled]="isSaving() || !canEdit()"
-      (click)="removeLimits()">
+      [disabled]="vm.isSaving() || !vm.canEdit()"
+      (click)="vm.removeLimits()">
       Remove limits
     </button>
   </div>
 
   <form
     class="flex max-w-2xl flex-col gap-4"
-    [formGroup]="limitsForm"
-    (ngSubmit)="save()">
-    @for (group of limitsForm.controls | keyvalue; track group.key) {
+    [formGroup]="vm.limitsForm"
+    (ngSubmit)="vm.save()">
+    @for (group of vm.limitsForm.controls | keyvalue; track group.key) {
       @if ((group.value.controls | keyvalue).length > 0) {
-        <section
-          class="mb-6 flex flex-col gap-4"
-          [formGroupName]="group.key">
+        <section class="mb-6 flex flex-col gap-4">
           <h3 class="mb-4 text-xl font-semibold capitalize">{{ group.key }} limits</h3>
           @for (limit of group.value.controls | keyvalue; track limit.key) {
-            <div
-              class="mb-4"
-              [formGroupName]="limit.key">
-              <div
-                class="mb-2 text-sm font-medium"
-                [id]="'limit-label-' + limit.key">
-                {{ limit.key }}
-              </div>
-              <div class="flex items-start justify-between gap-4">
-                <div
-                  hlmRadioGroup
-                  [attr.aria-labelledby]="'limit-label-' + limit.key"
-                  [formControlName]="limit.key + '-radio'">
-                  <div class="flex items-center gap-2">
-                    <hlm-radio
-                      [inputId]="'limit-' + limit.key + '-unlimited'"
-                      value="unlimited">
-                      <hlm-radio-indicator />
-                    </hlm-radio>
-                    <label
-                      hlmLabel
-                      [for]="'limit-' + limit.key + '-unlimited'">
-                      Unlimited
-                    </label>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <hlm-radio
-                      [inputId]="'limit-' + limit.key + '-limit'"
-                      value="limit">
-                      <hlm-radio-indicator />
-                    </hlm-radio>
-                    <label
-                      hlmLabel
-                      [for]="'limit-' + limit.key + '-limit'">
-                      Limit
-                    </label>
-                  </div>
-                </div>
-                @if (getRadioValue(group.key, limit.key) === 'limit') {
-                  <div class="flex items-center gap-2">
-                    <input
-                      hlmInput
-                      type="number"
-                      class="w-48"
-                      [attr.aria-labelledby]="'limit-label-' + limit.key"
-                      formControlName="limit" />
-                    <button
-                      hlmBtn
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label="Reset to default"
-                      hlmTooltip="Reset to default"
-                      (click)="reset(group.key, limit.key)">
-                      <ng-icon name="matRefreshRound" />
-                    </button>
-                  </div>
-                }
-              </div>
-            </div>
+            <app-limit-row
+              [limitKey]="limit.key"
+              [group]="limit.value"
+              (resetToDefault)="vm.reset(group.key, limit.key)" />
           }
         </section>
       }
     }
 
     <nma-form-footer
-      [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving()"
-      (footerCancel)="cancel()"></nma-form-footer>
+      [disabled]="vm.limitsForm.pristine || vm.limitsForm.invalid || vm.isSaving()"
+      (footerCancel)="vm.cancel()"></nma-form-footer>
   </form>
 </div>

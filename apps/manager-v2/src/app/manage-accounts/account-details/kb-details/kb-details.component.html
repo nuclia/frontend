@@ -1,10 +1,10 @@
-@if (kb(); as kb) {
+@if (vm.kb(); as kb) {
   <div class="px-6">
     <h3 class="mb-4 text-xl font-semibold">{{ kb.slug }}</h3>
     <form
       class="flex max-w-lg flex-col gap-4"
-      [formGroup]="kbForm"
-      (ngSubmit)="save()">
+      [formGroup]="vm.kbForm"
+      (ngSubmit)="vm.save()">
       <div hlmField>
         <label
           hlmFieldLabel
@@ -25,7 +25,7 @@
             size="icon-sm"
             aria-label="Copy"
             [hlmDropdownMenuTrigger]="copyMenu">
-            <ng-icon [name]="copied() ? 'matCheckRound' : 'matContentCopyRound'" />
+            <ng-icon [name]="vm.copied() ? 'matCheckRound' : 'matContentCopyRound'" />
           </button>
         </div>
       </div>
@@ -95,7 +95,7 @@
         <hlm-switch
           inputId="kb-published"
           [checked]="kb.published"
-          (checkedChange)="togglePublish()" />
+          (checkedChange)="vm.togglePublish()" />
         <label
           hlmFieldLabel
           for="kb-published">
@@ -103,92 +103,12 @@
         </label>
       </div>
       <nma-form-footer
-        [disabled]="kbForm.pristine || kbForm.invalid || isSaving()"
-        (footerCancel)="reset()"></nma-form-footer>
+        [disabled]="vm.kbForm.pristine || vm.kbForm.invalid || vm.isSaving()"
+        (footerCancel)="vm.reset()"></nma-form-footer>
     </form>
 
-    @if (canSeeUsers()) {
-      @let members = potentialMembers$ | async;
-      <hlm-autocomplete-search
-        class="mb-6 max-w-lg"
-        [disabled]="!canEdit()"
-        [search]="memberSearch"
-        (searchChange)="onMemberSearch($event)"
-        (valueChange)="onMemberSelected($event)">
-        <div hlmField>
-          <label
-            hlmFieldLabel
-            for="kb-add-member">
-            Search member to add
-          </label>
-          <hlm-autocomplete-input
-            inputId="kb-add-member"
-            placeholder="Name or email" />
-        </div>
-        <hlm-autocomplete-content *hlmAutocompletePortal>
-          <div
-            hlmAutocompleteList
-            aria-label="Members">
-            @for (member of members; track member.id) {
-              <hlm-autocomplete-item [value]="member.id">
-                <ng-icon name="matPersonAddRound" />
-                <ui-option-with-description
-                  [label]="member.name + ' – ' + member.email"
-                  [description]="member.id" />
-              </hlm-autocomplete-item>
-            }
-          </div>
-        </hlm-autocomplete-content>
-      </hlm-autocomplete-search>
-
-      <div hlmTableContainer>
-        <table hlmTable>
-          <thead hlmTHead>
-            <tr hlmTr>
-              <th hlmTh>Id</th>
-              <th hlmTh>Name</th>
-              <th hlmTh>Email</th>
-              <th hlmTh>Role</th>
-              <th
-                hlmTh
-                class="w-12"></th>
-            </tr>
-          </thead>
-          <tbody hlmTBody>
-            @for (row of userRows(kb); track row.user.id) {
-              <tr hlmTr>
-                <td
-                  hlmTd
-                  class="text-xs">
-                  {{ row.user.id }}
-                </td>
-                <td hlmTd>{{ row.user.name }}</td>
-                <td hlmTd>{{ row.user.email }}</td>
-                <td
-                  hlmTd
-                  class="capitalize">
-                  {{ row.role }}
-                </td>
-                <td hlmTd>
-                  @if (row.role !== 'owner' || kb.owners.length > 1) {
-                    <button
-                      type="button"
-                      hlmBtn
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label="Menu"
-                      [disabled]="!canEdit()"
-                      [hlmDropdownMenuTrigger]="userMenu"
-                      [hlmDropdownMenuTriggerData]="{ row }">
-                      <ng-icon name="matMoreVertRound" />
-                    </button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+    @if (vm.canSeeUsers()) {
+      <app-kb-members [kb]="kb" />
     }
   </div>
 }
@@ -202,55 +122,14 @@
     <button
       type="button"
       hlmDropdownMenuItem
-      (triggered)="copy(false)">
+      (triggered)="vm.copy(false)">
       KB Id
     </button>
     <button
       type="button"
       hlmDropdownMenuItem
-      (triggered)="copy(true)">
+      (triggered)="vm.copy(true)">
       Account + Zone + KB
-    </button>
-  </div>
-</ng-template>
-
-<ng-template
-  #userMenu
-  let-row="row">
-  <div
-    hlmDropdownMenu
-    aria-label="User actions">
-    @if (row.role !== 'owner') {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="setAsOwner(row.user)">
-        Set as Owner
-      </button>
-    }
-    @if (row.role !== 'contributor') {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="setAsContributor(row.user)">
-        Set as Contributor
-      </button>
-    }
-    @if (row.role !== 'member') {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="setAsMember(row.user)">
-        Set as Member
-      </button>
-    }
-    <div hlmDropdownMenuSeparator></div>
-    <button
-      type="button"
-      hlmDropdownMenuItem
-      variant="destructive"
-      (triggered)="removeUser(row.user)">
-      Remove
     </button>
   </div>
 </ng-template>
