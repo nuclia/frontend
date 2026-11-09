@@ -8098,43 +8098,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-docs@npm:10.6.2":
-  version: 10.6.2
-  resolution: "@storybook/addon-docs@npm:10.6.2"
+"@storybook/addon-docs@npm:10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/addon-docs@npm:10.6.5"
   dependencies:
     "@mdx-js/react": "npm:^3.0.0"
     "@storybook/icons": "npm:^2.0.2"
-    "@storybook/react-dom-shim": "npm:10.6.2"
+    "@storybook/react-dom-shim": "npm:10.6.5"
     react: "npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
     react-dom: "npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
     ts-dedent: "npm:^2.0.0"
     unplugin: "npm:^2.3.5"
   peerDependencies:
     "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    storybook: ^10.6.2
+    storybook: ^10.6.5
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10/f68b49141187b82d19c5709e5dac919251fe955ab3a9d49e3335d4344d217f8dd67078fedcb0aed57b539f8233ee7a5ec2f9a3c9d3c88d0ea55d74fa684d969a
+  checksum: 10/aa7b156e57ca28c6e6f2652dd58be4ea7da143443e39c566f0eabf75795b617a6dabb143cf2dc8d87927eb0d263812daba9299e4c8638f56b437d0848daf4d76
   languageName: node
   linkType: hard
 
-"@storybook/addon-themes@npm:10.6.3":
-  version: 10.6.3
-  resolution: "@storybook/addon-themes@npm:10.6.3"
+"@storybook/addon-themes@npm:10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/addon-themes@npm:10.6.5"
   dependencies:
     ts-dedent: "npm:^2.0.0"
   peerDependencies:
-    storybook: ^10.6.3
-  checksum: 10/f508bad96a42289deabd3ecc8d2a9d213f2779a9ff398429ee1ced339fcd63d0e22cc641044883f6bd805a0312b208ee8e54c1e10ae4e4315efa3f113e1dfafd
+    storybook: ^10.6.5
+  checksum: 10/2bec87a565b74bbb0f0627b29616ba604d0b9e2555b0c6b77e5e18e71988fb6cff25fc2ae5f4bceeea0183711290a4e1c6d9687b92d80fc042974721576b7110
   languageName: node
   linkType: hard
 
-"@storybook/angular@npm:10.6.3":
-  version: 10.6.3
-  resolution: "@storybook/angular@npm:10.6.3"
+"@storybook/angular@npm:10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/angular@npm:10.6.5"
   dependencies:
-    "@storybook/builder-webpack5": "npm:10.6.3"
+    "@storybook/builder-webpack5": "npm:10.6.5"
     "@storybook/global": "npm:^5.0.0"
     telejson: "npm:8.0.0"
     ts-dedent: "npm:^2.0.0"
@@ -8153,7 +8153,7 @@ __metadata:
     "@angular/platform-browser": ">=18.0.0 < 23.0.0"
     "@angular/platform-browser-dynamic": ">=18.0.0 < 23.0.0"
     rxjs: ^6.5.3 || ^7.4.0
-    storybook: ^10.6.3
+    storybook: ^10.6.5
     typescript: ^4.9.0 || ^5.0.0 || ^6.0.0
     zone.js: ">=0.14.0"
   peerDependenciesMeta:
@@ -8163,15 +8163,15 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/abebc4f0d31ef5aeaa9fa8b3af994c7c2508ad82eeeddc0e424889fab3f312186de043773e8c8eb27dbf081322f3ec48ac391b05c620486d9c22ce4b89e57163
+  checksum: 10/c4307a17eef4865d8e2a0c809eb3dc02cad78d41f1d42175c241a2f9f4f16c80049bf42c5814eb6e61c0efdb54533700b637300793ef49b2bc961a97359cd9f2
   languageName: node
   linkType: hard
 
-"@storybook/builder-webpack5@npm:10.6.3":
-  version: 10.6.3
-  resolution: "@storybook/builder-webpack5@npm:10.6.3"
+"@storybook/builder-webpack5@npm:10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/builder-webpack5@npm:10.6.5"
   dependencies:
-    "@storybook/core-webpack": "npm:10.6.3"
+    "@storybook/core-webpack": "npm:10.6.5"
     case-sensitive-paths-webpack-plugin: "npm:^2.4.0"
     cjs-module-lexer: "npm:^1.2.3"
     css-loader: "npm:^7.1.2"
@@ -8188,22 +8188,22 @@ __metadata:
     webpack-hot-middleware: "npm:^2.25.1"
     webpack-virtual-modules: "npm:^0.6.0"
   peerDependencies:
-    storybook: ^10.6.3
+    storybook: ^10.6.5
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/342f38cc65328a5e8913d415bc5dcb2979ab75447d0c75e07e62bbceddb4c6f58aa9a21981e1eae78706d791b2e6528fd369cc00e2dfebcc7d018257f731dda1
+  checksum: 10/eb8ac3a7319b59f58bf02583ba2f19e1b0b6d9bbf8134622ae42474b8d4e579bfc727b82a422be5a4ebb50b32670eb49158cc16a29588f65d1b539eb127eaf00
   languageName: node
   linkType: hard
 
-"@storybook/core-webpack@npm:10.6.3":
-  version: 10.6.3
-  resolution: "@storybook/core-webpack@npm:10.6.3"
+"@storybook/core-webpack@npm:10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/core-webpack@npm:10.6.5"
   dependencies:
     ts-dedent: "npm:^2.0.0"
   peerDependencies:
-    storybook: ^10.6.3
-  checksum: 10/5240e3392ce1ea37220bf65d757e4d951b0d0567677d512592f1f65912645e645c56db06f8bd2c81e40431bff21944f6acc34e5f9171363c72de54d772898292
+    storybook: ^10.6.5
+  checksum: 10/9d896d31769425b416774dc8e617ac10c6eb229d51c821274ceef4029ce80ae521f6aad5bde84008c8cbba752aec2f85cdf4704c54f09ce54ce3e3240a513f40
   languageName: node
   linkType: hard
 
@@ -8223,21 +8223,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react-dom-shim@npm:10.6.2":
-  version: 10.6.2
-  resolution: "@storybook/react-dom-shim@npm:10.6.2"
+"@storybook/react-dom-shim@npm:10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/react-dom-shim@npm:10.6.5"
   peerDependencies:
     "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     "@types/react-dom": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    storybook: ^10.6.2
+    storybook: ^10.6.5
   peerDependenciesMeta:
     "@types/react":
       optional: true
     "@types/react-dom":
       optional: true
-  checksum: 10/768690e1f06922486d0505016df194590d45b558e691c2424af729f4bee68dbd189c07ca92bc0c18f83a7efe95f4e6f12555605b1d84fb2b6cc0fdf46b3fff00
+  checksum: 10/8cc57d9abd662addb416358de884be4a722308c8fc6db1623bd9303ea783740d3910c2d4dac965b221f20d2a6c6f0fdb7bcb4ed17ea61b6c7a08176526e0121f
   languageName: node
   linkType: hard
 
@@ -8365,106 +8365,106 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-darwin-arm64@npm:1.16.2"
+"@swc/core-darwin-arm64@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-darwin-arm64@npm:1.16.21"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-darwin-x64@npm:1.16.2"
+"@swc/core-darwin-x64@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-darwin-x64@npm:1.16.21"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.16.2"
+"@swc/core-linux-arm-gnueabihf@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.16.21"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.16.2"
+"@swc/core-linux-arm64-gnu@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.16.21"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-arm64-musl@npm:1.16.2"
+"@swc/core-linux-arm64-musl@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-arm64-musl@npm:1.16.21"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-ppc64-gnu@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-ppc64-gnu@npm:1.16.2"
+"@swc/core-linux-ppc64-gnu@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-ppc64-gnu@npm:1.16.21"
   conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-s390x-gnu@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-s390x-gnu@npm:1.16.2"
+"@swc/core-linux-s390x-gnu@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-s390x-gnu@npm:1.16.21"
   conditions: os=linux & cpu=s390x
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-x64-gnu@npm:1.16.2"
+"@swc/core-linux-x64-gnu@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-x64-gnu@npm:1.16.21"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-linux-x64-musl@npm:1.16.2"
+"@swc/core-linux-x64-musl@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-linux-x64-musl@npm:1.16.21"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.16.2"
+"@swc/core-win32-arm64-msvc@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.16.21"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.16.2"
+"@swc/core-win32-ia32-msvc@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.16.21"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core-win32-x64-msvc@npm:1.16.2"
+"@swc/core-win32-x64-msvc@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core-win32-x64-msvc@npm:1.16.21"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:1.16.2":
-  version: 1.16.2
-  resolution: "@swc/core@npm:1.16.2"
+"@swc/core@npm:1.16.21":
+  version: 1.16.21
+  resolution: "@swc/core@npm:1.16.21"
   dependencies:
-    "@swc/core-darwin-arm64": "npm:1.16.2"
-    "@swc/core-darwin-x64": "npm:1.16.2"
-    "@swc/core-linux-arm-gnueabihf": "npm:1.16.2"
-    "@swc/core-linux-arm64-gnu": "npm:1.16.2"
-    "@swc/core-linux-arm64-musl": "npm:1.16.2"
-    "@swc/core-linux-ppc64-gnu": "npm:1.16.2"
-    "@swc/core-linux-s390x-gnu": "npm:1.16.2"
-    "@swc/core-linux-x64-gnu": "npm:1.16.2"
-    "@swc/core-linux-x64-musl": "npm:1.16.2"
-    "@swc/core-win32-arm64-msvc": "npm:1.16.2"
-    "@swc/core-win32-ia32-msvc": "npm:1.16.2"
-    "@swc/core-win32-x64-msvc": "npm:1.16.2"
+    "@swc/core-darwin-arm64": "npm:1.16.21"
+    "@swc/core-darwin-x64": "npm:1.16.21"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.16.21"
+    "@swc/core-linux-arm64-gnu": "npm:1.16.21"
+    "@swc/core-linux-arm64-musl": "npm:1.16.21"
+    "@swc/core-linux-ppc64-gnu": "npm:1.16.21"
+    "@swc/core-linux-s390x-gnu": "npm:1.16.21"
+    "@swc/core-linux-x64-gnu": "npm:1.16.21"
+    "@swc/core-linux-x64-musl": "npm:1.16.21"
+    "@swc/core-win32-arm64-msvc": "npm:1.16.21"
+    "@swc/core-win32-ia32-msvc": "npm:1.16.21"
+    "@swc/core-win32-x64-msvc": "npm:1.16.21"
     "@swc/counter": "npm:^0.1.3"
     "@swc/types": "npm:^0.1.28"
   peerDependencies:
@@ -8497,7 +8497,7 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: 10/c8a9b12e3fe071701d09735b1984a64332759f222f6697d199f9fcb338d588a9bc3dd255a7362dc6330836fbe06d13093225eb83f83395cc9399b23e08db99b0
+  checksum: 10/e25aae3fae4a191fd9c453253ba704aada0a34e8634da164630b9df671f9fed62c30705583da1d4c123e68c560317191a208678776c598f2c35ecf4e796c11e9
   languageName: node
   linkType: hard
 
@@ -11134,7 +11134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"angular-eslint@npm:^22.1.0":
+"angular-eslint@npm:22.6.0":
   version: 22.6.0
   resolution: "angular-eslint@npm:22.6.0"
   dependencies:
@@ -19885,15 +19885,15 @@ __metadata:
     "@sentry/angular": "npm:10.65.0"
     "@spartan-ng/brain": "npm:1.9.0"
     "@spartan-ng/cli": "npm:1.9.0"
-    "@storybook/addon-docs": "npm:10.6.2"
-    "@storybook/addon-themes": "npm:10.6.3"
-    "@storybook/angular": "npm:10.6.3"
+    "@storybook/addon-docs": "npm:10.6.5"
+    "@storybook/addon-themes": "npm:10.6.5"
+    "@storybook/angular": "npm:10.6.5"
     "@sveltejs/adapter-auto": "npm:^7.0.1"
     "@sveltejs/package": "npm:^2.0.0"
     "@sveltejs/vite-plugin-svelte": "npm:^7.3.0"
     "@swc-node/register": "npm:1.12.1"
     "@swc/cli": "npm:0.8.1"
-    "@swc/core": "npm:1.16.2"
+    "@swc/core": "npm:1.16.21"
     "@swc/helpers": "npm:0.5.23"
     "@tailwindcss/postcss": "npm:^4.3.3"
     "@tanstack/angular-charts": "npm:0.16.0"
@@ -19924,7 +19924,7 @@ __metadata:
     "@vitest/ui": "npm:5.0.5"
     ajv: "npm:^8.0.0"
     ajv-formats: "npm:^2.1.1"
-    angular-eslint: "npm:^22.1.0"
+    angular-eslint: "npm:22.6.0"
     angular-svg-icon: "npm:^19.1.0"
     child_process: "npm:^1.0.2"
     class-variance-authority: "npm:^0.7.0"
@@ -19988,7 +19988,7 @@ __metadata:
     rxjs: "npm:7.8.1"
     sass: "npm:1.105.0"
     spark-md5: "npm:^3.0.1"
-    storybook: "npm:10.6.3"
+    storybook: "npm:10.6.5"
     svelte: "npm:^5.55.7"
     svelte-check: "npm:^4.0.0"
     svelte-preprocess: "npm:6.0.5"
@@ -24307,9 +24307,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:10.6.3":
-  version: 10.6.3
-  resolution: "storybook@npm:10.6.3"
+"storybook@npm:10.6.5":
+  version: 10.6.5
+  resolution: "storybook@npm:10.6.5"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@storybook/icons": "npm:^2.0.2"
@@ -24341,7 +24341,7 @@ __metadata:
       optional: true
   bin:
     storybook: ./dist/bin/dispatcher.js
-  checksum: 10/c4d94cc759d4674e7f72a8c1265bc74ccc4ec773e48775840c61ee9bcd9e9306235a78ad9fd17502b6366de4dd0ff928872ae92815e8470c89cad0f7974d754a
+  checksum: 10/2e3b35d2bca646b0a765d9fb8ca8f21a63b9c7abd47d72d2c57f00a50cd7e97fc2b2769a32e5d1c145fd4f91c92421bdec4d9f4efef8ca2fbc60e65b3a453afd
   languageName: node
   linkType: hard
 
