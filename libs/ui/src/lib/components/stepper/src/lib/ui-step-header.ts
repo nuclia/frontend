@@ -4,14 +4,14 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound, matErrorRound, matEditRound } from '@ng-icons/material-icons/round';
 import { ButtonVariants, buttonVariants } from '@nuclia/ui-spartan/button';
-import { SpartanStepLabel } from './spartan-step-label';
-import { SpartanStepperLabelPosition } from './spartan-stepper';
-import { injectSpartanStepperConfig } from './stepper.token';
+import { UiStepLabel } from './ui-step-label';
+import { UiStepperLabelPosition } from './ui-stepper';
+import { injectUiStepperConfig } from './stepper.token';
 
-export type SpartanStepperIndicatorMode = 'number' | 'state' | 'completion' | 'icon';
+export type UiStepperIndicatorMode = 'number' | 'state' | 'completion' | 'icon';
 
 @Component({
-  selector: 'spartan-step-header',
+  selector: 'ui-step-header',
   imports: [NgTemplateOutlet, NgIcon],
   providers: [provideIcons({ matCheckRound, matErrorRound, matEditRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,11 +53,11 @@ export type SpartanStepperIndicatorMode = 'number' | 'state' | 'completion' | 'i
     </span>
   `,
 })
-export class SpartanStepHeader extends CdkStepHeader {
-  protected readonly _config = injectSpartanStepperConfig();
+export class UiStepHeader extends CdkStepHeader {
+  protected readonly _config = injectUiStepperConfig();
 
   public readonly state = input<StepState>('number');
-  public readonly label = input<SpartanStepLabel | string | null>(null);
+  public readonly label = input<UiStepLabel | string | null>(null);
   public readonly errorMessage = input('');
   public readonly index = input(0, { transform: numberAttribute });
   public readonly selected = input(false, { transform: booleanAttribute });
@@ -66,8 +66,8 @@ export class SpartanStepHeader extends CdkStepHeader {
   public readonly optional = input(false, { transform: booleanAttribute });
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly icon = input<string | null>(null);
-  public readonly indicatorMode = input<SpartanStepperIndicatorMode>(this._config.defaultIndicatorMode);
-  public readonly labelPosition = input<SpartanStepperLabelPosition>('end');
+  public readonly indicatorMode = input<UiStepperIndicatorMode>(this._config.defaultIndicatorMode);
+  public readonly labelPosition = input<UiStepperLabelPosition>('end');
 
   protected readonly _stringLabel = computed(() => {
     const label = this.label();
@@ -76,7 +76,7 @@ export class SpartanStepHeader extends CdkStepHeader {
 
   protected readonly _templateLabel = computed(() => {
     const label = this.label();
-    return label instanceof SpartanStepLabel ? label : null;
+    return label instanceof UiStepLabel ? label : null;
   });
 
   protected readonly _showOptionalLabel = computed(() => this.optional() && this.state() !== 'error');

@@ -4,8 +4,8 @@ import { Directive, TemplateRef, inject } from '@angular/core';
  * Content for a `hlm-step` that will be rendered lazily.
  */
 @Directive({
-  selector: 'ng-template[spartanStepContent]',
+  selector: 'ng-template[uiStepContent]',
 })
-export class SpartanStepContent<C> {
+export class UiStepContent<C> {
   public readonly template = inject<TemplateRef<C>>(TemplateRef);
 }

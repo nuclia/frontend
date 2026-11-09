@@ -2,8 +2,8 @@ import { provideIcons } from '@ng-icons/core';
 import { matMailRound, matGroupRound, matSendRound } from '@ng-icons/material-icons/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
-import { SpartanStepperImports } from '../index';
-import { SpartanStepper } from './spartan-stepper';
+import { UiStepperImports } from '../index';
+import { UiStepper } from './ui-stepper';
 
 interface StepperStoryArgs {
   linear: boolean;
@@ -15,12 +15,12 @@ interface StepperStoryArgs {
 }
 
 const meta: Meta<StepperStoryArgs> = {
-  title: 'Spartan/Stepper',
-  component: SpartanStepper,
+  title: 'UI/Stepper',
+  component: UiStepper,
   tags: ['autodocs'],
   decorators: [
     moduleMetadata({
-      imports: [...SpartanStepperImports, HlmButton],
+      imports: [...UiStepperImports, HlmButton],
       providers: [provideIcons({ matMailRound, matGroupRound, matSendRound })],
     }),
   ],
@@ -28,9 +28,9 @@ const meta: Meta<StepperStoryArgs> = {
     docs: {
       description: {
         component: `A multi-step wizard that guides users through a sequence of steps. This is a Spartan <em>block</em> built on the CDK stepper.
-Import <code>SpartanStepperImports</code> from <code>@nuclia/ui-spartan/stepper</code> and compose <code>spartan-stepper</code> with <code>spartan-step</code> children, each with a <code>label</code> and its content.
+Import <code>UiStepperImports</code> from <code>@nuclia/ui/stepper</code> and compose <code>ui-stepper</code> with <code>ui-step</code> children, each with a <code>label</code> and its content.
 
-Use <code>spartanStepperNext</code> and <code>spartanStepperPrevious</code> on buttons inside a step to navigate.
+Use <code>uiStepperNext</code> and <code>uiStepperPrevious</code> on buttons inside a step to navigate.
 Set <code>linear</code> to require each step to be <code>completed</code> before moving on; use <code>editable</code>, <code>optional</code>, and <code>hasError</code> on steps to reflect their state.
 <code>indicatorMode</code> can be <code>number</code>, <code>state</code> (check mark on reached steps), <code>completion</code> (check mark only on completed steps that were left), or <code>icon</code> (use the step's <code>icon</code> input with an icon registered through <code>provideIcons</code>).
 Always provide <code>stepperAriaLabel</code> for assistive technology.`,
@@ -79,7 +79,7 @@ Always provide <code>stepperAriaLabel</code> for assistive technology.`,
   render: (args) => ({
     props: args,
     template: `
-            <spartan-stepper
+            <ui-stepper
                 class="block w-full max-w-xl"
                 stepperAriaLabel="Example steps"
                 [linear]="linear"
@@ -89,22 +89,22 @@ Always provide <code>stepperAriaLabel</code> for assistive technology.`,
                 [indicatorMode]="indicatorMode"
                 [animationsEnabled]="animationsEnabled"
             >
-                <spartan-step label="Recipients" icon="matGroupRound" [completed]="true">
+                <ui-step label="Recipients" icon="matGroupRound" [completed]="true">
                     <p class="mb-4 text-sm">Choose who should receive the message.</p>
-                    <button hlmBtn type="button" spartanStepperNext>Next</button>
-                </spartan-step>
-                <spartan-step label="Message" icon="matMailRound" [completed]="true">
+                    <button hlmBtn type="button" uiStepperNext>Next</button>
+                </ui-step>
+                <ui-step label="Message" icon="matMailRound" [completed]="true">
                     <p class="mb-4 text-sm">Write the message content.</p>
                     <div class="flex gap-2">
-                        <button hlmBtn variant="outline" type="button" spartanStepperPrevious>Back</button>
-                        <button hlmBtn type="button" spartanStepperNext>Next</button>
+                        <button hlmBtn variant="outline" type="button" uiStepperPrevious>Back</button>
+                        <button hlmBtn type="button" uiStepperNext>Next</button>
                     </div>
-                </spartan-step>
-                <spartan-step label="Review" icon="matSendRound">
+                </ui-step>
+                <ui-step label="Review" icon="matSendRound">
                     <p class="mb-4 text-sm">Review everything before sending.</p>
-                    <button hlmBtn variant="outline" type="button" spartanStepperPrevious>Back</button>
-                </spartan-step>
-            </spartan-stepper>
+                    <button hlmBtn variant="outline" type="button" uiStepperPrevious>Back</button>
+                </ui-step>
+            </ui-stepper>
         `,
   }),
 };
@@ -123,21 +123,21 @@ export const Linear: Story = {
   },
   render: () => ({
     template: `
-            <spartan-stepper class="block w-full max-w-xl" stepperAriaLabel="Linear steps" linear>
-                <spartan-step label="Account" [completed]="accountDone">
+            <ui-stepper class="block w-full max-w-xl" stepperAriaLabel="Linear steps" linear>
+                <ui-step label="Account" [completed]="accountDone">
                     <p class="mb-4 text-sm">The next step stays locked until this step is completed.</p>
                     <div class="flex gap-2">
                         <button hlmBtn variant="outline" type="button" (click)="accountDone = !accountDone">
                             {{ accountDone ? 'Mark as incomplete' : 'Mark as complete' }}
                         </button>
-                        <button hlmBtn type="button" spartanStepperNext>Next</button>
+                        <button hlmBtn type="button" uiStepperNext>Next</button>
                     </div>
-                </spartan-step>
-                <spartan-step label="Profile" [completed]="false">
+                </ui-step>
+                <ui-step label="Profile" [completed]="false">
                     <p class="mb-4 text-sm">Fill in your profile.</p>
-                    <button hlmBtn variant="outline" type="button" spartanStepperPrevious>Back</button>
-                </spartan-step>
-            </spartan-stepper>
+                    <button hlmBtn variant="outline" type="button" uiStepperPrevious>Back</button>
+                </ui-step>
+            </ui-stepper>
         `,
     props: { accountDone: false },
   }),
@@ -181,17 +181,17 @@ export const OptionalAndError: Story = {
   },
   render: () => ({
     template: `
-            <spartan-stepper class="block w-full max-w-xl" stepperAriaLabel="Steps with states">
-                <spartan-step label="Details" [completed]="true">
+            <ui-stepper class="block w-full max-w-xl" stepperAriaLabel="Steps with states">
+                <ui-step label="Details" [completed]="true">
                     <p class="text-sm">Details are complete.</p>
-                </spartan-step>
-                <spartan-step label="Extras" [optional]="true">
+                </ui-step>
+                <ui-step label="Extras" [optional]="true">
                     <p class="text-sm">This step can be skipped.</p>
-                </spartan-step>
-                <spartan-step label="Payment" [hasError]="true" errorMessage="Card declined">
+                </ui-step>
+                <ui-step label="Payment" [hasError]="true" errorMessage="Card declined">
                     <p class="text-sm">Something went wrong with this step.</p>
-                </spartan-step>
-            </spartan-stepper>
+                </ui-step>
+            </ui-stepper>
         `,
   }),
 };

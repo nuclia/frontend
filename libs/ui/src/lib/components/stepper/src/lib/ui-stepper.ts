@@ -6,12 +6,12 @@ import { AbstractControl } from '@angular/forms';
 import { hlm } from '@nuclia/ui-spartan/utils';
 import { cva } from 'class-variance-authority';
 import { tap } from 'rxjs/operators';
-import { SpartanStep } from './spartan-step';
-import { SpartanStepHeader, SpartanStepperIndicatorMode } from './spartan-step-header';
-import { injectSpartanStepperConfig } from './stepper.token';
+import { UiStep } from './ui-step';
+import { UiStepHeader, UiStepperIndicatorMode } from './ui-step-header';
+import { injectUiStepperConfig } from './stepper.token';
 
-export type SpartanStepperLabelPosition = 'end' | 'bottom';
-export type SpartanStepperHeaderPosition = 'top' | 'bottom';
+export type UiStepperLabelPosition = 'end' | 'bottom';
+export type UiStepperHeaderPosition = 'top' | 'bottom';
 
 const stepTransition = cva('', {
   variants: {
@@ -29,9 +29,9 @@ const stepTransition = cva('', {
 });
 
 @Component({
-  selector: 'spartan-stepper',
-  imports: [CdkStepperModule, NgTemplateOutlet, SpartanStepHeader],
-  providers: [{ provide: CdkStepper, useExisting: SpartanStepper }],
+  selector: 'ui-stepper',
+  imports: [CdkStepperModule, NgTemplateOutlet, UiStepHeader],
+  providers: [{ provide: CdkStepper, useExisting: UiStepper }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @switch (orientation) {
@@ -92,7 +92,7 @@ const stepTransition = cva('', {
     <ng-template
       #stepHeaderTemplate
       let-step="step">
-      <spartan-step-header
+      <ui-step-header
         cdkStepHeader
         class="min-w-0"
         (click)="step.select()"
@@ -171,12 +171,12 @@ const stepTransition = cva('', {
     </ng-template>
   `,
 })
-export class SpartanStepper extends CdkStepper {
-  private readonly _config = injectSpartanStepperConfig();
+export class UiStepper extends CdkStepper {
+  private readonly _config = injectUiStepperConfig();
 
-  public readonly labelPosition = input<SpartanStepperLabelPosition>('end');
-  public readonly headerPosition = input<SpartanStepperHeaderPosition>('top');
-  public readonly indicatorMode = input<SpartanStepperIndicatorMode>('state');
+  public readonly labelPosition = input<UiStepperLabelPosition>('end');
+  public readonly headerPosition = input<UiStepperHeaderPosition>('top');
+  public readonly indicatorMode = input<UiStepperIndicatorMode>('state');
   public readonly stepperAriaLabel = input<string | null>('Progress');
   public readonly stepperAriaLabelledby = input<string | null>(null);
   public readonly animationsEnabled = input(this._config.animationEnabled, { transform: booleanAttribute });
@@ -212,7 +212,7 @@ export class SpartanStepper extends CdkStepper {
   }
 
   protected stepIcon(step: CdkStep): string | null {
-    return step instanceof SpartanStep ? step.icon() : null;
+    return step instanceof UiStep ? step.icon() : null;
   }
 
   protected _enterAnimationClass(): string {

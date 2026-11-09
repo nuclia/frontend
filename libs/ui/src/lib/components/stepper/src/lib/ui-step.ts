@@ -11,17 +11,17 @@ import {
   untracked,
   ViewContainerRef,
 } from '@angular/core';
-import { SpartanStepContent } from './spartan-step-content';
-import { SpartanStepLabel } from './spartan-step-label';
+import { UiStepContent } from './ui-step-content';
+import { UiStepLabel } from './ui-step-label';
 
 @Component({
-  selector: 'spartan-step',
-  exportAs: 'spartanStep',
+  selector: 'ui-step',
+  exportAs: 'uiStep',
   imports: [CdkPortalOutlet],
   providers: [
     {
       provide: CdkStep,
-      useExisting: SpartanStep,
+      useExisting: UiStep,
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,17 +35,17 @@ import { SpartanStepLabel } from './spartan-step-label';
     </ng-template>
   `,
 })
-export class SpartanStep extends CdkStep {
+export class UiStep extends CdkStep {
   private readonly _viewContainerRef = inject(ViewContainerRef);
   private readonly _destroyRef = inject(DestroyRef);
 
   public readonly icon = input<string | null>(null);
 
-  /** Content for step label given by `<ng-template SpartanStepLabel>`. */
-  public readonly stepLabelContent = contentChild(SpartanStepLabel);
+  /** Content for step label given by `<ng-template UiStepLabel>`. */
+  public readonly stepLabelContent = contentChild(UiStepLabel);
 
   /** Content that will be rendered lazily. */
-  private readonly _lazyContent = contentChild(SpartanStepContent);
+  private readonly _lazyContent = contentChild(UiStepContent);
 
   /** Currently-attached portal containing the lazy content. */
   public portal: TemplatePortal | null = null;

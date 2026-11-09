@@ -1,19 +1,19 @@
 import { InjectionToken, type ValueProvider, inject } from '@angular/core';
-import type { SpartanStepperIndicatorMode } from './spartan-step-header';
+import type { UiStepperIndicatorMode } from './ui-step-header';
 
-export interface SpartanStepperConfig {
+export interface UiStepperConfig {
   animationEnabled: boolean;
   animationDuration: number;
-  defaultIndicatorMode: SpartanStepperIndicatorMode;
+  defaultIndicatorMode: UiStepperIndicatorMode;
 }
 
-const defaultConfig: SpartanStepperConfig = {
+const defaultConfig: UiStepperConfig = {
   animationEnabled: true,
   animationDuration: 300,
   defaultIndicatorMode: 'state',
 };
 
-const SpartanStepperConfigToken = new InjectionToken<SpartanStepperConfig>('spartanStepperConfig');
+const UiStepperConfigToken = new InjectionToken<UiStepperConfig>('uiStepperConfig');
 
 function normalizeDuration(duration: number): number {
   if (!Number.isFinite(duration)) {
@@ -23,15 +23,15 @@ function normalizeDuration(duration: number): number {
   return Math.max(0, Math.round(duration));
 }
 
-export function provideSpartanStepperConfig(config: Partial<SpartanStepperConfig>): ValueProvider {
+export function provideUiStepperConfig(config: Partial<UiStepperConfig>): ValueProvider {
   const mergedConfig = { ...defaultConfig, ...config };
   return {
-    provide: SpartanStepperConfigToken,
+    provide: UiStepperConfigToken,
     useValue: { ...mergedConfig, animationDuration: normalizeDuration(mergedConfig.animationDuration) },
   };
 }
 
-export function injectSpartanStepperConfig(): SpartanStepperConfig {
-  const config = inject(SpartanStepperConfigToken, { optional: true }) ?? defaultConfig;
+export function injectUiStepperConfig(): UiStepperConfig {
+  const config = inject(UiStepperConfigToken, { optional: true }) ?? defaultConfig;
   return { ...config, animationDuration: normalizeDuration(config.animationDuration) };
 }

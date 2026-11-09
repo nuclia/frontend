@@ -1,7 +1,7 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, inject, Injector, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UiToastService } from '@nuclia/ui/toast';
-import { SpartanStepper, SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
+import { UiStepper, UiStepperImports } from '@nuclia/ui/stepper';
 import { StepComposeComponent } from './step-compose/step-compose.component';
 import { ComposeService } from './step-compose/compose.service';
 import { EmailWizardService } from './email-wizard.service';
@@ -13,13 +13,13 @@ import { StepReviewComponent } from './step-review/step-review.component';
   selector: 'nma-manage-emails',
   templateUrl: './manage-emails.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StepComposeComponent, StepRecipientsComponent, StepReviewComponent, SpartanStepperImports],
+  imports: [StepComposeComponent, StepRecipientsComponent, StepReviewComponent, UiStepperImports],
   providers: [RecipientsService, ComposeService, EmailWizardService],
 })
 export class ManageEmailsComponent {
   private toast = inject(UiToastService);
   private injector = inject(Injector);
-  private stepper = viewChild(SpartanStepper);
+  private stepper = viewChild(UiStepper);
 
   protected wizard = inject(EmailWizardService);
 

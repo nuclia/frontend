@@ -5,7 +5,7 @@ import { matInfoRound } from '@ng-icons/material-icons/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmLabelImports } from '@nuclia/ui-spartan/label';
-import { SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
+import { UiStepperImports } from '@nuclia/ui/stepper';
 import { HlmTextareaImports } from '@nuclia/ui-spartan/textarea';
 import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
 import { EmailWizardService } from '../email-wizard.service';
@@ -26,7 +26,7 @@ import { SENDER_NAME_MAX_LENGTH } from './sender-name.utils';
     HlmTooltipImports,
     NgIcon,
     PersonalizationHelpComponent,
-    SpartanStepperImports,
+    UiStepperImports,
   ],
   providers: [provideIcons({ matInfoRound })],
 })
