@@ -15,7 +15,7 @@ interface StepperStoryArgs {
 }
 
 const meta: Meta<StepperStoryArgs> = {
-  title: 'UI/Stepper',
+  title: 'PDP-UI/Stepper',
   component: UiStepper,
   tags: ['autodocs'],
   decorators: [

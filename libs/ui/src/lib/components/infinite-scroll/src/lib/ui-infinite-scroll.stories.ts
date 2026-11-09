@@ -8,7 +8,7 @@ interface InfiniteScrollStoryArgs {
 }
 
 const meta: Meta<InfiniteScrollStoryArgs> = {
-  title: 'UI/Infinite scroll',
+  title: 'PDP-UI/Infinite scroll',
   component: UiInfiniteScroll,
   tags: ['autodocs'],
   decorators: [moduleMetadata({ imports: [...UiInfiniteScrollImports] })],
