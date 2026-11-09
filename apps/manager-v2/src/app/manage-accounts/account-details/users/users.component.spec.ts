@@ -1,16 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import {
-  PaButtonModule,
-  PaDropdownModule,
-  PaIconModule,
-  PaPopupModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { SisToastService } from '@nuclia/sistema';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { UiToastService } from '@nuclia/ui/toast';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
@@ -25,17 +16,7 @@ describe('UsersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        UsersComponent,
-        RouterModule.forRoot([]),
-        MockModule(PaButtonModule),
-        MockModule(PaDropdownModule),
-        MockModule(PaIconModule),
-        MockModule(PaPopupModule),
-        MockModule(PaTableModule),
-        MockModule(PaTextFieldModule),
-        MockModule(ReactiveFormsModule),
-      ],
+      imports: [UsersComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(AccountDetailsStore, {
           accountDetails: of(null),
@@ -44,7 +25,7 @@ describe('UsersComponent', () => {
           loadAccountUsers: vi.fn(() => of([])),
         }),
         MockProvider(UserService),
-        MockProvider(SisToastService),
+        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canEdit: of(true),
           accountDetails: of(ACCOUNT_DETAILS),

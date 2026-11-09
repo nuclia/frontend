@@ -112,6 +112,10 @@ export class HlmToaster {
       classes: {
         ...options?.classes,
         toast: hlm('rounded-2xl!', options?.classes?.toast),
+        success: hlm('bg-success! text-success-foreground! border-success-border!', options?.classes?.success),
+        info: hlm('bg-info! text-info-foreground! border-info-border!', options?.classes?.info),
+        warning: hlm('bg-warning! text-warning-foreground! border-warning-border!', options?.classes?.warning),
+        error: hlm('bg-error! text-error-foreground! border-error-border!', options?.classes?.error),
       },
     };
   });

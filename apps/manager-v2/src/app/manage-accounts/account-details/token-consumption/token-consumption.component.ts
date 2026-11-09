@@ -1,15 +1,16 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import {
-  PaButtonModule,
-  PaDatePickerModule,
-  PaDropdownModule,
-  PaTableModule,
-  PaTabsModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matWarningRound } from '@ng-icons/material-icons/round';
 import { NucliaTokensMetric } from '@nuclia/core';
-import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmDatePickerImports } from '@nuclia/ui-spartan/date-picker';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
+import { HlmTabsImports } from '@nuclia/ui-spartan/tabs';
 import { isBefore, isFuture, set, subDays } from 'date-fns';
 import { BehaviorSubject, filter, map, switchMap, take } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -19,23 +20,25 @@ import { AccountService } from '../../account.service';
 @Component({
   selector: 'nma-token-consumption',
   imports: [
-    CommonModule,
-    PaTableModule,
-    PaDropdownModule,
-    PaDatePickerModule,
-    PaTextFieldModule,
-    InfoCardComponent,
-    PaButtonModule,
-    PaTabsModule,
+    AsyncPipe,
+    DecimalPipe,
+    FormsModule,
+    NgIcon,
+    HlmAlertImports,
+    HlmButtonImports,
+    HlmDatePickerImports,
+    HlmInputImports,
+    HlmTableImports,
+    HlmTabsImports,
   ],
+  providers: [provideIcons({ matWarningRound })],
   templateUrl: './token-consumption.component.html',
-  styleUrl: './token-consumption.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TokenConsumptionComponent implements OnInit {
   private service = inject(AccountService);
   private store = inject(ManagerStore);
-  private toaster = inject(SisToastService);
+  private toaster = inject(UiToastService);
 
   account = this.store.accountDetails;
   kbList = this.store.kbList;
@@ -45,9 +48,9 @@ export class TokenConsumptionComponent implements OnInit {
   // digitsInfo format: {minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}
   digitsInfo = '1.0-0';
 
-  toDate: string;
+  toDate?: Date;
   toTime: number;
-  fromDate: string;
+  fromDate?: Date;
   fromTime: number;
   kbId?: string;
 
@@ -57,11 +60,11 @@ export class TokenConsumptionComponent implements OnInit {
     const now = new Date();
 
     // Range initialised with last 24h
-    this.toDate = now.toISOString();
+    this.toDate = now;
     this.toTime = now.getHours();
 
     const from = subDays(now, 1);
-    this.fromDate = from.toISOString();
+    this.fromDate = from;
     this.fromTime = from.getHours();
 
     this.backup = {
@@ -98,10 +101,10 @@ export class TokenConsumptionComponent implements OnInit {
   }
 
   get from() {
-    if (this.invalidFromTime) {
+    if (this.invalidFromTime || !this.fromDate) {
       return '';
     }
-    return set(new Date(this.fromDate), {
+    return set(this.fromDate, {
       hours: this.fromTime,
       minutes: 0,
       seconds: 0,
@@ -110,10 +113,10 @@ export class TokenConsumptionComponent implements OnInit {
   }
 
   get to() {
-    if (this.invalidToTime) {
+    if (this.invalidToTime || !this.toDate) {
       return '';
     }
-    return set(new Date(this.toDate), {
+    return set(this.toDate, {
       hours: this.toTime,
       minutes: 0,
       seconds: 0,
@@ -136,6 +139,8 @@ export class TokenConsumptionComponent implements OnInit {
     return isBefore(this.to, this.from);
   }
   get invalidForm() {
-    return this.fromInFuture || this.invalidFromTime || this.invalidToTime || this.invalidRange;
+    return (
+      !this.from || !this.to || this.fromInFuture || this.invalidFromTime || this.invalidToTime || this.invalidRange
+    );
   }
 }

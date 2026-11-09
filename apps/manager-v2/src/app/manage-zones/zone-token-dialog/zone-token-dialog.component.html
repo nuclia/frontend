@@ -1,0 +1,22 @@
+<hlm-dialog-header>
+  <h2 hlmDialogTitle>Zone token</h2>
+  <p hlmDialogDescription>
+    <strong>Important!</strong>
+    Copy and save the token.
+  </p>
+</hlm-dialog-header>
+
+<div class="flex items-center gap-2">
+  <code class="bg-muted min-w-0 flex-1 truncate rounded-md px-3 py-2 text-sm select-none">
+    {{ context.token | slice: 1 : 30 }}…
+  </code>
+  @if (clipboardSupported) {
+    <button
+      hlmBtn
+      type="button"
+      data-cy="copy-token"
+      (click)="copy()">
+      {{ copied() ? 'Copied' : 'Copy' }}
+    </button>
+  }
+</div>

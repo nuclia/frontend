@@ -1,25 +1,29 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
+import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmSelectImports } from '@nuclia/ui-spartan/select';
 import { SubscriptionsService } from './subscriptions.service';
 
 @Component({
   selector: 'nma-subscriptions',
   templateUrl: './subscriptions.component.html',
-  styleUrl: './subscriptions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SubscriptionsService],
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    PaTextFieldModule,
-    PaDropdownModule,
-    InfoCardComponent,
+    HlmAlertImports,
+    HlmButtonImports,
+    HlmFieldImports,
+    HlmInputImports,
+    HlmSelectImports,
+    UiOptionWithDescriptionImports,
     NgTemplateOutlet,
-    PaButtonModule,
-    AsyncPipe,
   ],
 })
 export class SubscriptionsComponent {

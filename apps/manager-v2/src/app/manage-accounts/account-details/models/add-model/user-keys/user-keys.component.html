@@ -1,0 +1,135 @@
+@if (groups().length > 0) {
+  <div class="flex flex-col gap-4 border-t pt-4">
+    <div
+      hlmField
+      orientation="horizontal">
+      <hlm-switch
+        inputId="user-keys-enabled"
+        [formControl]="form.controls.enabled" />
+      <label
+        hlmFieldLabel
+        for="user-keys-enabled">
+        Use your own {{ providerName }} key
+      </label>
+    </div>
+
+    @if (enabled()) {
+      @for (group of groups(); track group.key) {
+        @if (group.title) {
+          <fieldset class="flex flex-col gap-4">
+            <legend class="mb-2 text-sm font-semibold">{{ group.title }}</legend>
+            @for (field of group.fields; track field.id) {
+              <ng-container *ngTemplateOutlet="fieldTemplate; context: { $implicit: field }" />
+            }
+          </fieldset>
+        } @else {
+          @for (field of group.fields; track field.id) {
+            <ng-container *ngTemplateOutlet="fieldTemplate; context: { $implicit: field }" />
+          }
+        }
+      }
+    }
+  </div>
+}
+
+<ng-template
+  #fieldTemplate
+  let-field>
+  @switch (field.kind) {
+    @case ('boolean') {
+      <div
+        hlmField
+        orientation="horizontal">
+        <hlm-switch
+          [inputId]="field.id"
+          [formControl]="field.control" />
+        <label
+          hlmFieldLabel
+          [for]="field.id">
+          {{ field.title }}
+        </label>
+        @if (field.description) {
+          <p hlmFieldDescription>{{ field.description }}</p>
+        }
+      </div>
+    }
+    @case ('enum') {
+      <div hlmField>
+        <span hlmFieldLabel>{{ field.title }}</span>
+        @if (field.description) {
+          <p hlmFieldDescription>{{ field.description }}</p>
+        }
+        <div
+          hlmRadioGroup
+          [attr.aria-label]="field.title"
+          [formControl]="field.control">
+          @for (option of field.values; track option.value) {
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                [inputId]="field.id + '-' + option.value"
+                [value]="option.value">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                [for]="field.id + '-' + option.value">
+                {{ option.label }}
+              </label>
+            </div>
+          }
+        </div>
+      </div>
+    }
+    @case ('textarea') {
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          [for]="field.id">
+          {{ field.title }}
+        </label>
+        <textarea
+          hlmTextarea
+          rows="3"
+          [id]="field.id"
+          [formControl]="field.control"></textarea>
+        @if (field.description) {
+          <p hlmFieldDescription>{{ field.description }}</p>
+        }
+      </div>
+    }
+    @case ('number') {
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          [for]="field.id">
+          {{ field.title }}
+        </label>
+        <input
+          hlmInput
+          type="number"
+          [id]="field.id"
+          [step]="field.step"
+          [formControl]="field.control" />
+        @if (field.description) {
+          <p hlmFieldDescription>{{ field.description }}</p>
+        }
+      </div>
+    }
+    @default {
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          [for]="field.id">
+          {{ field.title }}
+        </label>
+        <input
+          hlmInput
+          [id]="field.id"
+          [formControl]="field.control" />
+        @if (field.description) {
+          <p hlmFieldDescription>{{ field.description }}</p>
+        }
+      </div>
+    }
+  }
+</ng-template>

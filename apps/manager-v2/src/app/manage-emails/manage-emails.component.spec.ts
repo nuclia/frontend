@@ -1,6 +1,6 @@
 import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { GlobalAccountService } from '../manage-accounts/global-account.service';
@@ -58,7 +58,7 @@ describe('ManageEmailsComponent', () => {
         MockProvider(UserService, { getUsers }),
         MockProvider(GlobalAccountService, { getSubscriptions: vi.fn().mockReturnValue(of([])) }),
         MockProvider(EmailService, { sendToUsers }),
-        MockProvider(SisToastService, { error: vi.fn(), success }),
+        MockProvider(UiToastService, { error: vi.fn(), success }),
       ],
     }).compileComponents();
 

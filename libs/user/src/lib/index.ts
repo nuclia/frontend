@@ -1,4 +1,6 @@
 export * from './callback/callback.component';
+export * from './callback/callback-message';
+export * from './user-notifier';
 export * from './check-mail/check-mail.component';
 export * from './consent/consent.component';
 export * from './farewell';

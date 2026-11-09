@@ -1,20 +1,20 @@
+import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DOCUMENT, inject, OnInit, signal } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthTokens } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
 import { take } from 'rxjs';
 import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
-import { UserContainerComponent } from '../user-container';
+import { UserNotifier } from '../user-notifier';
+import { CALLBACK_MESSAGE_VIEW } from './callback-message';
 
 @Component({
   selector: 'stf-user-callback',
   templateUrl: './callback.component.html',
-  styleUrls: ['../_user-layout.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [UserContainerComponent],
+  imports: [NgComponentOutlet],
 })
 export class CallbackComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -24,8 +24,9 @@ export class CallbackComponent implements OnInit {
   private readonly document = inject(DOCUMENT);
   private readonly sdk = inject(SDKService);
   private readonly router = inject(Router);
-  private readonly toaster = inject(SisToastService);
+  private readonly toaster = inject(UserNotifier);
   private readonly translate = inject(TranslateService);
+  protected readonly messageView = inject(CALLBACK_MESSAGE_VIEW);
 
   // The SDK's auth client subscribes outside Angular's Router/HttpClient-instrumented paths,
   // so this must be a signal to auto-notify the zoneless CD scheduler on write.

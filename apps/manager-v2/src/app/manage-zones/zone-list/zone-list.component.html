@@ -1,58 +1,80 @@
-<div class="wide-table-container">
-  <div class="table-actions">
-    <div class="filter-container">
-      <pa-input
-        [value]="filter$ | async"
-        (valueChange)="filter$.next($event)">
-        Filter
-      </pa-input>
-    </div>
-    <pa-button
-      routerLink="./add"
-      kind="primary"
-      icon="plus"
-      iconAndText>
+<div class="my-4 px-4">
+  <div class="flex items-center gap-8 py-4">
+    <input
+      hlmInput
+      class="w-80"
+      placeholder="Filter"
+      aria-label="Filter"
+      [value]="(filter$ | async) ?? ''"
+      (input)="onFilterInput($event)" />
+    <a
+      hlmBtn
+      routerLink="./add">
+      <ng-icon
+        name="matAddRound"
+        data-icon="inline-start" />
       Add zone
-    </pa-button>
+    </a>
   </div>
 
-  <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="repeat(3, 1fr) 80px repeat(2, 160px) 96px">
-      <pa-table-header noBackground>
-        <pa-table-cell header>Id</pa-table-cell>
-        <pa-table-cell header>Slug</pa-table-cell>
-        <pa-table-cell header>Title</pa-table-cell>
-        <pa-table-cell header>Private</pa-table-cell>
-        <pa-table-cell header>Origin</pa-table-cell>
-        <pa-table-cell header>Cloud provider</pa-table-cell>
-        <pa-table-cell-menu header></pa-table-cell-menu>
-      </pa-table-header>
-      @for (zone of zones$ | async | slice: 0 : lastIndex; track zone.slug) {
-        <pa-table-row
-          [routerLink]="zone.id"
-          clickable>
-          <pa-table-cell>
-            <small>{{ zone.id }}</small>
-          </pa-table-cell>
-          <pa-table-cell>{{ zone.slug }}</pa-table-cell>
-          <pa-table-cell>{{ zone.title }}</pa-table-cell>
-          <pa-table-cell>{{ zone.private ? 'Yes' : 'No' }}</pa-table-cell>
-          <pa-table-cell>
-            <small>{{ zone.origin || '—' }}</small>
-          </pa-table-cell>
-          <pa-table-cell>{{ zone.cloud_provider }}</pa-table-cell>
-          <pa-table-cell-menu>
-            <pa-button
-              icon="trash"
-              aspect="basic"
-              size="small"
-              kind="destructive"
-              (click)="deleteZone($event, zone)">
-              Delete zone
-            </pa-button>
-          </pa-table-cell-menu>
-        </pa-table-row>
-      }
-    </pa-table>
-  </pa-infinite-scroll>
+  <div hlmTableContainer>
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Id</th>
+          <th hlmTh>Slug</th>
+          <th hlmTh>Title</th>
+          <th hlmTh>Private</th>
+          <th hlmTh>Origin</th>
+          <th hlmTh>Cloud provider</th>
+          <th
+            hlmTh
+            class="w-24"></th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (zone of zones$ | async | slice: 0 : lastIndex; track zone.slug) {
+          <tr
+            hlmTr
+            class="cursor-pointer"
+            [routerLink]="zone.id">
+            <td hlmTd>
+              <span class="text-xs">{{ zone.id }}</span>
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              {{ zone.slug }}
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              {{ zone.title }}
+            </td>
+            <td hlmTd>{{ zone.private ? 'Yes' : 'No' }}</td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              <span class="text-xs">{{ zone.origin || '—' }}</span>
+            </td>
+            <td hlmTd>{{ zone.cloud_provider }}</td>
+            <td
+              hlmTd
+              class="text-end">
+              <button
+                hlmBtn
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                aria-label="Delete zone"
+                (click)="deleteZone($event, zone)">
+                <ng-icon name="matDeleteRound" />
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <ui-infinite-scroll (reachAnchor)="onReachAnchor()" />
 </div>

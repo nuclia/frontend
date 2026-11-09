@@ -1,55 +1,149 @@
-<h3>Payment links</h3>
-<form
-  [formGroup]="paymentLinkForm"
-  (ngSubmit)="create()">
-  <pa-select
-    label="Account type"
-    formControlName="accountType">
-    @for (type of accountTypes; track type) {
-      <pa-option [value]="type">{{ type }}</pa-option>
+<div class="px-6">
+  <h3 class="mb-4 text-xl font-semibold">Payment links</h3>
+  <form
+    class="flex max-w-lg flex-col gap-4"
+    [formGroup]="paymentLinkForm"
+    (ngSubmit)="create()">
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="payment-account-type">
+        Account type
+      </label>
+      <hlm-select formControlName="accountType">
+        <hlm-select-trigger
+          buttonId="payment-account-type"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (type of accountTypes; track type) {
+            <hlm-select-item [value]="type">{{ type }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="payment-licensed-price">
+        Licensed price
+      </label>
+      <hlm-select
+        formControlName="licensedPrice"
+        [itemToString]="priceLabel">
+        <hlm-select-trigger
+          buttonId="payment-licensed-price"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (price of (licensedPrices | async)?.[accountTypeValue] || []; track price.id) {
+            <hlm-select-item [value]="price.id">{{ price.nickname }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="payment-metered-price">
+        Metered price
+      </label>
+      <hlm-select
+        formControlName="meteredPrice"
+        [itemToString]="priceLabel">
+        <hlm-select-trigger
+          buttonId="payment-metered-price"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (price of meteredPrices | async; track price.id) {
+            <hlm-select-item [value]="price.id">{{ price.nickname }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="payment-formula">
+        Billing formula
+      </label>
+      <hlm-select
+        formControlName="formula"
+        [itemToString]="formulaLabel">
+        <hlm-select-trigger
+          buttonId="payment-formula"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (formula of formulas | async; track formula.id) {
+            <hlm-select-item [value]="formula.id">
+              <ui-option-with-description
+                [label]="formula.title"
+                [description]="formula.description" />
+            </hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="payment-currency">
+        Currency
+      </label>
+      <hlm-select formControlName="currency">
+        <hlm-select-trigger
+          buttonId="payment-currency"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (currency of currencies; track currency) {
+            <hlm-select-item [value]="currency">{{ currency }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div
+      hlmField
+      orientation="horizontal">
+      <hlm-checkbox
+        inputId="payment-promotion-code"
+        formControlName="allowPromotionCode" />
+      <label
+        hlmFieldLabel
+        for="payment-promotion-code">
+        Allow promotion code
+      </label>
+    </div>
+
+    <div>
+      <button
+        type="submit"
+        hlmBtn
+        [disabled]="paymentLinkForm.pristine || paymentLinkForm.invalid || isSaving">
+        Create link
+      </button>
+    </div>
+
+    @if (paymentLink) {
+      <div hlmAlert>
+        <div
+          hlmAlertDescription
+          class="break-all">
+          {{ paymentLink }}
+        </div>
+      </div>
     }
-  </pa-select>
-
-  <pa-select
-    label="Licensed price"
-    formControlName="licensedPrice">
-    @for (price of (licensedPrices | async)?.[accountTypeValue] || []; track price.id) {
-      <pa-option [value]="price.id">{{ price.nickname }}</pa-option>
-    }
-  </pa-select>
-
-  <pa-select
-    label="Metered price"
-    formControlName="meteredPrice">
-    @for (price of meteredPrices | async; track price.id) {
-      <pa-option [value]="price.id">{{ price.nickname }}</pa-option>
-    }
-  </pa-select>
-
-  <pa-select
-    label="Billing formula"
-    formControlName="formula"
-    [options]="formulasOptions | async"></pa-select>
-
-  <pa-select
-    label="Currency"
-    formControlName="currency">
-    @for (currency of currencies; track currency) {
-      <pa-option [value]="currency">{{ currency }}</pa-option>
-    }
-  </pa-select>
-
-  <pa-checkbox formControlName="allowPromotionCode">Allow promotion code</pa-checkbox>
-
-  <div>
-    <pa-button
-      type="submit"
-      [disabled]="paymentLinkForm.pristine || paymentLinkForm.invalid || isSaving">
-      Create link
-    </pa-button>
-  </div>
-
-  @if (paymentLink) {
-    <nsi-info-card>{{ paymentLink }}</nsi-info-card>
-  }
-</form>
+  </form>
+</div>

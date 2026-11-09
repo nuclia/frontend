@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SisToastService } from '@nuclia/sistema';
-import { SvgIconRegistryService } from 'angular-svg-icon';
+import { UiToastService } from '@nuclia/ui/toast';
+import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
+import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
 import { MockComponent, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -42,18 +43,12 @@ describe('ConfigurationComponent', () => {
             }),
           ),
         }),
-        MockProvider(SisToastService),
+        MockProvider(UiToastService),
         MockProvider(GlobalAccountService, {
           getBudget: vi.fn(() => of({ budget_value: null, action_on_budget_exhausted: 'BLOCK_ACCOUNT' as const })),
         }),
-        {
-          provide: SvgIconRegistryService,
-          useValue: {
-            loadSvg: () => {
-              /* empty */
-            },
-          },
-        },
+        provideNativeDateAdapter(),
+        provideBrnCalendarI18n(),
       ],
     }).compileComponents();
 

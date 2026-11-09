@@ -1,19 +1,22 @@
 @if (account | async; as account) {
-  <div class="pa-main-container">
-    <div class="pa-main-side-panel">
-      <div class="panel-header">
-        <pa-button
-          icon="arrow-left"
-          aspect="basic"
+  <div class="flex h-[calc(100vh-4rem)]">
+    <aside class="bg-muted w-80 shrink-0 overflow-auto py-4">
+      <div class="px-4">
+        <a
+          hlmBtn
+          variant="ghost"
           routerLink=".."
           (click)="resetAccount()">
+          <ng-icon
+            name="matArrowBackRound"
+            data-icon="inline-start" />
           Back
-        </pa-button>
-        <div class="title-l">
+        </a>
+        <div class="mt-2 px-2 text-lg font-semibold break-all">
           {{ account.title }}
         </div>
       </div>
-      <div class="account-info">
+      <div class="bg-background mx-4 my-4 flex flex-col gap-2 rounded-lg p-4 text-sm">
         <div>
           Id:
           <small>
@@ -44,15 +47,17 @@
           Max ARAGs:
           <strong>{{ account.maxAgents === -1 ? 'Unlimited' : account.maxAgents }}</strong>
         </div>
-        <div>
+        <div class="flex gap-2">
           Activity:
           <a
+            class="text-link hover:text-link-hover hover:underline"
             [href]="'http://redash.nuclia.com/queries/25?p_account=' + account.id"
             target="_blank"
             rel="noopener noreferrer">
             Redash
           </a>
           <a
+            class="text-link hover:text-link-hover hover:underline"
             [href]="
               'http://europe1.grafana.nuclia.com/d/MiFMjG57z/8-messaging-nats-jetstream?orgId=1&refresh=10s&var-js_domain=All&var-server=All&var-stream=ingest&from=now-1h&to=now&var-consumer=processor-slow-' +
               account.id
@@ -63,113 +68,123 @@
           </a>
         </div>
       </div>
-      <nav>
-        <ul>
-          <li
-            routerLink="config"
-            routerLinkActive="active">
-            Configuration
-          </li>
-          @if (((projectList | async) || []).length > 0) {
-            <li
-              routerLink="projects"
-              routerLinkActive="active">
-              Projects
-            </li>
-          }
-          @for (project of projectList | async; track project.project_id) {
-            <li
-              class="child-route"
-              [routerLink]="
-                (canAccessProjects | async) ? 'zone/' + project.zone.id + '/project/' + project.project_id : undefined
-              "
-              routerLinkActive="active">
-              <pa-icon
-                name="account"
-                size="small"></pa-icon>
-              <div>
-                {{ project.name }}
-                <small class="zone-name">({{ project.zone.title }})</small>
-              </div>
-            </li>
-          }
-          <li
-            routerLink="kbs"
-            routerLinkActive="active">
-            Knowledge Boxes
-          </li>
-          @for (kb of knowledgeBoxList | async; track kb.id) {
-            <li
-              class="child-route"
-              [routerLink]="(canAccessKBs | async) ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
-              routerLinkActive="active">
-              <pa-icon
-                name="knowledge-box"
-                size="small"></pa-icon>
-              <div>
-                {{ kb.slug }}
-                <small class="zone-name">({{ kb.zone.title }})</small>
-              </div>
-            </li>
-          }
-          <li
-            routerLink="agents"
-            routerLinkActive="active">
-            Agents
-          </li>
-          @for (agent of agentList | async; track agent.id) {
-            <li
-              class="child-route"
-              [routerLink]="(canAccessKBs | async) ? 'zone/' + agent.zone.id + '/kb/' + agent.id : undefined"
-              routerLinkActive="active">
-              <pa-icon
-                name="workflows"
-                size="small"></pa-icon>
-              <div>
-                {{ agent.slug }}
-                <small class="zone-name">({{ agent.zone.title }})</small>
-              </div>
-            </li>
-          }
-          <li
-            routerLink="limits"
-            routerLinkActive="active">
-            Limits
-          </li>
-          <li
-            routerLink="tokens"
-            routerLinkActive="active">
-            Token consumption
-          </li>
-          @if (canSeeUsers | async) {
-            <li
-              routerLink="users"
-              routerLinkActive="active">
-              Users
-            </li>
-          }
-          @if (!noStripe) {
-            <li
-              routerLink="payment-links"
-              routerLinkActive="active">
-              Payment links
-            </li>
-          }
-          <li
-            routerLink="subscriptions"
-            routerLinkActive="active">
-            Subscriptions
-          </li>
-          <li
-            routerLink="models"
-            routerLinkActive="active">
-            Models
-          </li>
-        </ul>
+      <nav
+        class="my-4 flex flex-none flex-col"
+        aria-label="Account sections">
+        <a
+          [class]="navLink"
+          routerLink="config"
+          [routerLinkActive]="navLinkActive">
+          Configuration
+        </a>
+        @if (((projectList | async) || []).length > 0) {
+          <a
+            [class]="navLink"
+            routerLink="projects"
+            [routerLinkActive]="navLinkActive">
+            Projects
+          </a>
+        }
+        @for (project of projectList | async; track project.project_id) {
+          <a
+            [class]="navLinkChild"
+            [routerLink]="
+              (canAccessProjects | async) ? 'zone/' + project.zone.id + '/project/' + project.project_id : undefined
+            "
+            [routerLinkActive]="navLinkActive">
+            <ng-icon
+              name="matAccountCircleRound"
+              size="1rem" />
+            <span>
+              {{ project.name }}
+              <small class="text-muted-foreground">({{ project.zone.title }})</small>
+            </span>
+          </a>
+        }
+        <a
+          [class]="navLink"
+          routerLink="kbs"
+          [routerLinkActive]="navLinkActive">
+          Knowledge Boxes
+        </a>
+        @for (kb of knowledgeBoxList | async; track kb.id) {
+          <a
+            [class]="navLinkChild"
+            [routerLink]="(canAccessKBs | async) ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
+            [routerLinkActive]="navLinkActive">
+            <ng-icon
+              name="matInventory2Round"
+              size="1rem" />
+            <span>
+              {{ kb.slug }}
+              <small class="text-muted-foreground">({{ kb.zone.title }})</small>
+            </span>
+          </a>
+        }
+        <a
+          [class]="navLink"
+          routerLink="agents"
+          [routerLinkActive]="navLinkActive">
+          Agents
+        </a>
+        @for (agent of agentList | async; track agent.id) {
+          <a
+            [class]="navLinkChild"
+            [routerLink]="(canAccessKBs | async) ? 'zone/' + agent.zone.id + '/kb/' + agent.id : undefined"
+            [routerLinkActive]="navLinkActive">
+            <ng-icon
+              name="matSmartToyRound"
+              size="1rem" />
+            <span>
+              {{ agent.slug }}
+              <small class="text-muted-foreground">({{ agent.zone.title }})</small>
+            </span>
+          </a>
+        }
+        <a
+          [class]="navLink"
+          routerLink="limits"
+          [routerLinkActive]="navLinkActive">
+          Limits
+        </a>
+        <a
+          [class]="navLink"
+          routerLink="tokens"
+          [routerLinkActive]="navLinkActive">
+          Token consumption
+        </a>
+        @if (canSeeUsers | async) {
+          <a
+            [class]="navLink"
+            routerLink="users"
+            [routerLinkActive]="navLinkActive">
+            Users
+          </a>
+        }
+        @if (!noStripe) {
+          <a
+            [class]="navLink"
+            routerLink="payment-links"
+            [routerLinkActive]="navLinkActive">
+            Payment links
+          </a>
+        }
+        <a
+          [class]="navLink"
+          routerLink="subscriptions"
+          [routerLinkActive]="navLinkActive">
+          Subscriptions
+        </a>
+        <a
+          [class]="navLink"
+          routerLink="models"
+          [routerLinkActive]="navLinkActive">
+          Models
+        </a>
       </nav>
-    </div>
-    <div class="pa-main-container-wide">
-      <router-outlet></router-outlet>
+    </aside>
+    <div class="min-w-0 flex-1 overflow-auto py-4">
+      <router-outlet />
     </div>
   </div>
 }

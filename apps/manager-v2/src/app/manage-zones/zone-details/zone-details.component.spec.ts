@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { SisToastService } from '@nuclia/sistema';
-import { SvgIconRegistryService } from 'angular-svg-icon';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { UserService } from '../../manage-users/user.service';
 import { ZoneService } from '../zone.service';
@@ -14,19 +13,7 @@ describe('ZoneDetailsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ZoneDetailsComponent, RouterModule.forRoot([])],
-      providers: [
-        MockProvider(ZoneService),
-        MockProvider(UserService),
-        MockProvider(SisToastService),
-        {
-          provide: SvgIconRegistryService,
-          useValue: {
-            loadSvg: () => {
-              /* empty */
-            },
-          },
-        },
-      ],
+      providers: [MockProvider(ZoneService), MockProvider(UserService), MockProvider(UiToastService)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ZoneDetailsComponent);

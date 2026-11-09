@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SvgIconRegistryService } from 'angular-svg-icon';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -21,14 +20,6 @@ describe('PaymentLinksComponent', () => {
         MockProvider(ManagerStore, {
           getAccountId: () => '123abc',
         }),
-        {
-          provide: SvgIconRegistryService,
-          useValue: {
-            loadSvg: () => {
-              /* empty */
-            },
-          },
-        },
       ],
     }).compileComponents();
 

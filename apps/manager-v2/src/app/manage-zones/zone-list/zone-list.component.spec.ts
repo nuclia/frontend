@@ -1,14 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import {
-  PaButtonModule,
-  PaIconModule,
-  PaScrollModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { UiToastService } from '@nuclia/ui/toast';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ZoneService } from '../zone.service';
 import { ZoneListComponent } from './zone-list.component';
@@ -19,22 +13,14 @@ describe('ZoneListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([]),
-        MockModule(PaButtonModule),
-        MockModule(PaIconModule),
-        MockModule(PaScrollModule),
-        MockModule(PaTableModule),
-        MockModule(PaTextFieldModule),
-      ],
-      declarations: [ZoneListComponent],
+      imports: [ZoneListComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(ZoneService, {
           loadZones: vi.fn(() => of([])),
           zones: of([]),
         }),
-        MockProvider(SisModalService),
-        MockProvider(SisToastService),
+        MockProvider(UiConfirmService),
+        MockProvider(UiToastService),
       ],
     }).compileComponents();
 

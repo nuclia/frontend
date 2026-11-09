@@ -30,11 +30,6 @@
           "apps/manager-v2/src/assets",
           {
             "glob": "**/*",
-            "input": "libs/pastanaga/src/assets",
-            "output": "assets"
-          },
-          {
-            "glob": "**/*",
             "input": "libs/common/src/assets/i18n",
             "output": "assets/i18n/common"
           },
@@ -54,7 +49,7 @@
             "output": "assets"
           }
         ],
-        "styles": ["apps/manager-v2/src/styles.scss"],
+        "styles": ["apps/manager-v2/src/tailwind.css"],
         "stylePreprocessorOptions": {
           "includePaths": ["apps/manager-v2/src", "."]
         },
@@ -93,11 +88,6 @@
           "assets": [
             "apps/manager-v2/src/favicon.ico",
             "apps/manager-v2/src/assets",
-            {
-              "glob": "**/*",
-              "input": "libs/pastanaga/src/assets",
-              "output": "assets"
-            },
             {
               "glob": "**/*",
               "input": "libs/common/src/assets/i18n",
@@ -140,11 +130,6 @@
             "apps/manager-v2/src/assets",
             {
               "glob": "**/*",
-              "input": "libs/pastanaga/src/assets",
-              "output": "assets"
-            },
-            {
-              "glob": "**/*",
               "input": "libs/common/src/assets/i18n",
               "output": "assets/i18n/common"
             },
@@ -176,11 +161,6 @@
             "apps/manager-v2/src/assets",
             {
               "glob": "**/*",
-              "input": "libs/pastanaga/src/assets",
-              "output": "assets"
-            },
-            {
-              "glob": "**/*",
               "input": "libs/common/src/assets/i18n",
               "output": "assets/i18n/common"
             },
@@ -210,11 +190,6 @@
           "assets": [
             "apps/manager-v2/src/favicon.ico",
             "apps/manager-v2/src/assets",
-            {
-              "glob": "**/*",
-              "input": "libs/pastanaga/src/assets",
-              "output": "assets"
-            },
             {
               "glob": "**/*",
               "input": "libs/common/src/assets/i18n",

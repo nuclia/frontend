@@ -1,63 +1,86 @@
-<header>
+<header class="bg-foreground text-background flex h-16 items-center justify-between gap-6 px-4">
   <img
     width="128"
     [src]="assetsPath + '/logos/logo-white.svg'"
     [alt]="brandName + ' Manager'" />
 
-  @if (canUseManager | async) {
-    <nav class="title-m">
-      <ul>
-        <li
-          routerLink="accounts"
-          routerLinkActive="active">
-          Accounts
-        </li>
-        @if (canSeeUsers | async) {
-          <li
-            routerLink="users"
-            routerLinkActive="active">
-            Users
-          </li>
-        }
-        <!-- Disabled: waiting for the 'unsubscribe' button from the backend side
-        @if (canSendEmails | async) {
-          <li
-            routerLink="emails"
-            routerLinkActive="active">
-            Emails
-          </li>
-        }
-        -->
+  @if (canUseManager()) {
+    <!-- Pastanaga reboot colours every <a>; drop the "!" modifiers once it is gone -->
+    <nav class="flex flex-1 gap-4 text-base">
+      <a
+        class="text-background! hover:text-primary/80! px-2 py-1 transition-colors"
+        routerLink="accounts"
+        routerLinkActive="text-primary!">
+        Accounts
+      </a>
+      @if (canSeeUsers()) {
+        <a
+          class="text-background! hover:text-primary/80! px-2 py-1 transition-colors"
+          routerLink="users"
+          routerLinkActive="text-primary!">
+          Users
+        </a>
+      }
+      <!-- Disabled: waiting for the 'unsubscribe' button from the backend side
+      @if (canSendEmails()) {
+        <a
+          class="text-background! hover:text-primary/80! px-2 py-1 transition-colors"
+          routerLink="emails"
+          routerLinkActive="text-primary!">
+          Emails
+        </a>
+      }
+      -->
 
-        @if (canManageZones | async) {
-          <li
-            routerLink="zones"
-            routerLinkActive="active">
-            Zones
-          </li>
-        }
-      </ul>
+      @if (canManageZones()) {
+        <a
+          class="text-background! hover:text-primary/80! px-2 py-1 transition-colors"
+          routerLink="zones"
+          routerLinkActive="text-primary!">
+          Zones
+        </a>
+      }
     </nav>
   }
-  <pa-avatar
-    size="small"
-    [avatar]="avatar | async"
-    [paPopup]="userMenu"></pa-avatar>
+  <button
+    type="button"
+    class="cursor-pointer rounded-full"
+    aria-label="User menu"
+    [hlmDropdownMenuTrigger]="userMenu"
+    align="end">
+    <hlm-avatar size="sm">
+      <span hlmAvatarFallback>{{ initials() }}</span>
+    </hlm-avatar>
+  </button>
 </header>
 
-<pa-dropdown #userMenu>
-  <pa-option
-    icon="log-out"
-    (click)="logout()">
-    {{ 'generic.logout' | translate }}
-  </pa-option>
-</pa-dropdown>
-<div class="page-container">
-  @if (!(canUseManager | async)) {
-    <div class="forbidden-message">You don't have enough permissions to use the manager.</div>
-  }
+<ng-template #userMenu>
+  <div
+    hlmDropdownMenu
+    aria-label="User menu">
+    <div hlmDropdownMenuLabel>
+      {{ userName() }}
+      @if (userEmail()) {
+        <div class="text-muted-foreground text-xs font-normal">{{ userEmail() }}</div>
+      }
+    </div>
+    <div hlmDropdownMenuSeparator></div>
+    <button
+      type="button"
+      hlmDropdownMenuItem
+      (triggered)="logout()">
+      <ng-icon name="matLogoutRound" />
+      {{ 'generic.logout' | translate }}
+    </button>
+  </div>
+</ng-template>
 
-  @if (canUseManager | async) {
+<div class="max-h-[calc(100vh-4rem)] overflow-y-auto">
+  @if (canUseManager()) {
     <router-outlet></router-outlet>
+  } @else {
+    <div class="bg-warning text-warning-foreground p-4 text-center font-semibold">
+      You don't have enough permissions to use the manager.
+    </div>
   }
 </div>

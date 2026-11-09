@@ -2,18 +2,36 @@ import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TokenDialogComponent, ValidSlug } from '@flaps/common';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { ValidSlug } from '@flaps/common';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matArrowBackRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmDialogService } from '@nuclia/ui-spartan/dialog';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmSelectImports } from '@nuclia/ui-spartan/select';
 import { filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { UserService } from '../../manage-users/user.service';
+import { ZoneTokenDialogComponent } from '../zone-token-dialog/zone-token-dialog.component';
 import { Zone, ZoneAccountEntry } from '../zone.models';
 import { ZoneService } from '../zone.service';
 
 @Component({
   templateUrl: './zone-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, FormsModule, ReactiveFormsModule, PaTextFieldModule, PaDropdownModule, PaTogglesModule],
+  imports: [
+    FormsModule,
+    HlmButtonImports,
+    HlmCheckboxImports,
+    HlmFieldImports,
+    HlmInputImports,
+    HlmSelectImports,
+    NgIcon,
+    ReactiveFormsModule,
+  ],
+  providers: [provideIcons({ matArrowBackRound, matDeleteRound })],
 })
 export class ZoneDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -43,10 +61,10 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private zoneService: ZoneService,
     private userService: UserService,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
     private location: Location,
-    private modalService: SisModalService,
+    private dialogService: HlmDialogService,
   ) {}
 
   ngOnInit() {
@@ -130,16 +148,7 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
               origin: origin || null,
             }),
           ),
-          tap((token) => {
-            this.modalService.openModal(TokenDialogComponent, {
-              dismissable: true,
-              data: {
-                token: token,
-                modalTitle: 'Zone token',
-                modalDescription: '<strong>Important!</strong> Copy and save the token.',
-              },
-            });
-          }),
+          tap((token) => this.dialogService.open(ZoneTokenDialogComponent, { context: { token } })),
           switchMap(() => this.zoneService.loadZones()),
         )
         .subscribe({

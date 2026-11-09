@@ -1,6 +1,6 @@
 import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { UserSummary } from '../manage-users/user.models';
@@ -36,7 +36,7 @@ describe('EmailWizardService', () => {
         EmailWizardService,
         MockProvider(RecipientsLoaderService, { load: vi.fn().mockReturnValue(of(users)) }),
         MockProvider(EmailService, { sendToUsers }),
-        MockProvider(SisToastService, { error }),
+        MockProvider(UiToastService, { error }),
       ],
     });
     wizard = TestBed.inject(EmailWizardService);

@@ -2,7 +2,9 @@ import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { STFPipesModule } from '@flaps/core';
-import { PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matLockRound } from '@ng-icons/material-icons/round';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { filter, map, Observable, shareReplay, switchMap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { KbCounters, KbSummary } from '../../account-ui.models';
@@ -10,13 +12,13 @@ import { AccountService } from '../../account.service';
 
 /**
  * Displays either the Knowledge boxes or the Agents belonging to the account, depending on the
- * `mode` route data (see `manage-accounts.module.ts`).
+ * `mode` route data (see `manage-accounts.routes.ts`).
  */
 @Component({
   templateUrl: './containers.component.html',
-  styleUrls: ['./containers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaTableModule, RouterLink, PaIconModule, AsyncPipe, DecimalPipe, STFPipesModule],
+  imports: [HlmTableImports, NgIcon, RouterLink, AsyncPipe, DecimalPipe, STFPipesModule],
+  providers: [provideIcons({ matLockRound })],
 })
 export class ContainersComponent {
   private store = inject(ManagerStore);

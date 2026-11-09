@@ -1,8 +1,9 @@
 import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeature } from '@nuclia/core';
+import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
@@ -15,9 +16,15 @@ type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
 @Component({
   selector: 'nma-blocked-features',
   templateUrl: './blocked-features.component.html',
-  styleUrls: ['./blocked-features.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ReactiveFormsModule, PaTogglesModule, FormFooterComponent, KeyValuePipe, FeatureNamePipe],
+  imports: [
+    ReactiveFormsModule,
+    HlmCheckboxImports,
+    HlmFieldImports,
+    FormFooterComponent,
+    KeyValuePipe,
+    FeatureNamePipe,
+  ],
 })
 export class BlockedFeaturesComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

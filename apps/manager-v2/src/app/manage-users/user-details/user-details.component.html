@@ -1,116 +1,196 @@
-<div class="pa-main-container">
-  <div class="pa-main-side-panel">
-    <div class="panel-header">
-      <pa-button
-        icon="arrow-left"
-        aspect="basic"
-        (click)="goBack()">
-        Back
-      </pa-button>
-      <div class="title-l">
-        {{ userEmail }}
-      </div>
+<div class="flex h-[calc(100vh-4rem)] overflow-auto">
+  <aside class="w-80 shrink-0 px-6 py-4">
+    <button
+      hlmBtn
+      type="button"
+      variant="ghost"
+      (click)="goBack()">
+      <ng-icon name="matArrowBackRound" />
+      Back
+    </button>
+    <div class="mt-4 text-lg font-semibold break-all">
+      {{ userEmail }}
     </div>
-  </div>
-  <div class="pa-main-container-wide">
-    <h3>User details</h3>
+  </aside>
+  <div class="max-w-2xl flex-1 px-6 py-4">
+    <h3 class="mb-4 text-xl font-semibold">User details</h3>
     <form
+      class="flex flex-col gap-4"
       [formGroup]="userForm"
       (submit)="save()">
-      <pa-input
-        readonly
-        formControlName="id">
-        Id
-      </pa-input>
-      <pa-input
-        [readonly]="!isEdit"
-        formControlName="email">
-        Email
-      </pa-input>
-      @if (!isEdit) {
-        <pa-input
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="user-id">
+          Id
+        </label>
+        <input
+          hlmInput
+          id="user-id"
+          class="read-only:bg-muted read-only:text-muted-foreground"
           readonly
-          formControlName="last_login">
-          Last login
-        </pa-input>
-
-        <pa-input
-          [readonly]="!isEdit"
-          formControlName="language">
-          Language
-        </pa-input>
-        <pa-input
-          [readonly]="!isEdit"
-          formControlName="providers">
-          Providers
-        </pa-input>
+          formControlName="id" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="user-email">
+          Email
+        </label>
+        <input
+          hlmInput
+          id="user-email"
+          formControlName="email" />
+      </div>
+      @if (!isEdit) {
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="user-last-login">
+            Last login
+          </label>
+          <input
+            hlmInput
+            id="user-last-login"
+            formControlName="last_login" />
+        </div>
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="user-language">
+            Language
+          </label>
+          <input
+            hlmInput
+            id="user-language"
+            formControlName="language" />
+        </div>
+        <div hlmField>
+          <label
+            hlmFieldLabel
+            for="user-providers">
+            Providers
+          </label>
+          <input
+            hlmInput
+            id="user-providers"
+            formControlName="providers" />
+        </div>
       }
-      <pa-input
-        [readonly]="!isEdit"
-        formControlName="name">
-        Name
-      </pa-input>
-      <pa-select
-        formControlName="type"
-        [readonly]="!isEdit"
-        label="Type"
-        required>
-        <pa-option value="USER">USER</pa-option>
-        <pa-option value="ROOT">ROOT</pa-option>
-        <pa-option value="MANAGER">MANAGER</pa-option>
-        <pa-option value="SALES">SALES</pa-option>
-        <pa-option value="READONLY">READONLY</pa-option>
-      </pa-select>
-      <footer>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="user-name">
+          Name
+        </label>
+        <input
+          hlmInput
+          id="user-name"
+          formControlName="name" />
+      </div>
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="user-type">
+          Type
+        </label>
+        <hlm-select formControlName="type">
+          <hlm-select-trigger
+            buttonId="user-type"
+            class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content *hlmSelectPortal>
+            @for (type of userTypes; track type) {
+              <hlm-select-item [value]="type">{{ type }}</hlm-select-item>
+            }
+          </hlm-select-content>
+        </hlm-select>
+      </div>
+      <footer class="flex gap-4 py-6">
         @if (!isEdit) {
-          <pa-button
-            kind="destructive"
+          <button
+            hlmBtn
+            type="button"
+            variant="destructive"
             [disabled]="!(canEdit | async)"
             (click)="edit()">
             Edit
-          </pa-button>
+          </button>
         } @else {
-          <pa-button
+          <button
+            hlmBtn
             type="submit"
-            kind="primary"
             [disabled]="userForm.pristine || userForm.invalid || isSaving">
             Save
-          </pa-button>
-          <pa-button
-            kind="destructive"
+          </button>
+          <button
+            hlmBtn
+            type="button"
+            variant="destructive"
             (click)="cancel()">
             Cancel
-          </pa-button>
+          </button>
         }
       </footer>
-
-      @if (!userForm.controls.last_login.value) {
-        <pa-expander [expanded]="false">
-          <pa-expander-header><span class="title-xxs">User setup URL</span></pa-expander-header>
-          <pa-expander-body>
-            <form class="user-setup">
-              <pa-select
-                label="Application"
-                [value]="app()"
-                (valueChange)="app.set($event)">
-                <pa-option value="platform">PDP Studio</pa-option>
-                <pa-option value="rag">Agentic RAG</pa-option>
-              </pa-select>
-              <div class="input-with-copy">
-                <pa-input
-                  readonly
-                  value="{{ passwordPage() }}">
-                  Setup URL
-                </pa-input>
-                <pa-button
-                  aspect="basic"
-                  [icon]="copied() ? 'check' : 'copy'"
-                  (click)="copy()"></pa-button>
-              </div>
-            </form>
-          </pa-expander-body>
-        </pa-expander>
-      }
     </form>
+
+    @if (!userForm.controls.last_login.value) {
+      <hlm-accordion>
+        <hlm-accordion-item>
+          <hlm-accordion-trigger>User setup URL</hlm-accordion-trigger>
+          <hlm-accordion-content>
+            <div class="flex flex-col gap-4">
+              <div hlmField>
+                <label
+                  hlmFieldLabel
+                  for="user-setup-app">
+                  Application
+                </label>
+                <hlm-select
+                  [value]="app()"
+                  (valueChange)="onAppChange($event)">
+                  <hlm-select-trigger
+                    buttonId="user-setup-app"
+                    class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+                  <hlm-select-content *hlmSelectPortal>
+                    <hlm-select-item value="platform">PDP Studio</hlm-select-item>
+                    <hlm-select-item value="rag">Agentic RAG</hlm-select-item>
+                  </hlm-select-content>
+                </hlm-select>
+              </div>
+              <div hlmField>
+                <label
+                  hlmFieldLabel
+                  for="user-setup-url">
+                  Setup URL
+                </label>
+                <div hlmInputGroup>
+                  <input
+                    hlmInputGroupInput
+                    id="user-setup-url"
+                    readonly
+                    [value]="passwordPage()" />
+                  <div
+                    hlmInputGroupAddon
+                    align="inline-end">
+                    <button
+                      hlmInputGroupButton
+                      size="icon-xs"
+                      type="button"
+                      aria-label="Copy setup URL"
+                      (click)="copy()">
+                      <ng-icon [name]="copied() ? 'matCheckRound' : 'matContentCopyRound'" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </hlm-accordion-content>
+        </hlm-accordion-item>
+      </hlm-accordion>
+    }
   </div>
 </div>

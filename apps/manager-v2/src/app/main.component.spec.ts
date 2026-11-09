@@ -2,7 +2,6 @@ import { EventEmitter } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
 import { MainComponent } from './main.component';
@@ -14,7 +13,6 @@ describe('MainComponent', () => {
       providers: [
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService, { onLangChange: new EventEmitter<LangChangeEvent>() }),
-        MockProvider(PaTranslateService),
         MockProvider(SDKService),
       ],
     }).compileComponents();

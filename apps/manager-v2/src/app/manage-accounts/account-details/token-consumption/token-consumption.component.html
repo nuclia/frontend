@@ -1,186 +1,275 @@
-<h3>Token consumption</h3>
+<div class="flex flex-col gap-6 px-6">
+  <div class="flex flex-col gap-2">
+    <h3 class="text-xl font-semibold">Token consumption</h3>
+    <h4 class="text-base font-medium">
+      Total Nuclia tokens: {{ (tokenConsumption | async)?.value | number: digitsInfo }}
+    </h4>
+  </div>
 
-<h4>Total Nuclia tokens: {{ (tokenConsumption | async)?.value | number: digitsInfo }}</h4>
-
-<div class="flex-column gap-below">
-  <div class="flex-row">
-    <pa-date-picker
-      label="From"
-      [(value)]="fromDate"></pa-date-picker>
-    <span class="body-m">at</span>
-    <pa-input
-      class="input-time"
-      type="number"
-      min="0"
-      max="24"
-      [(value)]="fromTime"></pa-input>
-    <div class="body-m from-to">From:</div>
-    <strong>{{ from }}</strong>
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center gap-3">
+      <hlm-date-picker
+        class="w-56"
+        [date]="fromDate"
+        (dateChange)="fromDate = $event ?? undefined">
+        <hlm-date-picker-input
+          inputId="token-from-date"
+          placeholder="From" />
+      </hlm-date-picker>
+      <span class="text-sm">at</span>
+      <input
+        hlmInput
+        class="w-20"
+        type="number"
+        min="0"
+        max="24"
+        aria-label="From hour"
+        [(ngModel)]="fromTime" />
+      <span class="min-w-14 text-right text-sm">From:</span>
+      <strong>{{ from }}</strong>
+    </div>
     @if (fromInFuture || invalidFromTime) {
-      <nsi-info-card
-        type="warning"
-        icon="warning">
-        @if (invalidFromTime) {
-          Invalid time: {{ fromTime }}
-        } @else if (fromInFuture) {
-          This date is in the future!
-        }
-      </nsi-info-card>
+      <div hlmAlert>
+        <ng-icon name="matWarningRound" />
+        <div hlmAlertDescription>
+          @if (invalidFromTime) {
+            Invalid time: {{ fromTime }}
+          } @else if (fromInFuture) {
+            This date is in the future!
+          }
+        </div>
+      </div>
     }
   </div>
 
-  <div class="flex-row">
-    <pa-date-picker
-      label="To"
-      [(value)]="toDate"></pa-date-picker>
-    <span class="body-m">at</span>
-    <pa-input
-      class="input-time"
-      type="number"
-      min="0"
-      max="24"
-      [(value)]="toTime"></pa-input>
-    <div class="body-m from-to">To:</div>
-    <strong>{{ to }}</strong>
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center gap-3">
+      <hlm-date-picker
+        class="w-56"
+        [date]="toDate"
+        (dateChange)="toDate = $event ?? undefined">
+        <hlm-date-picker-input
+          inputId="token-to-date"
+          placeholder="To" />
+      </hlm-date-picker>
+      <span class="text-sm">at</span>
+      <input
+        hlmInput
+        class="w-20"
+        type="number"
+        min="0"
+        max="24"
+        aria-label="To hour"
+        [(ngModel)]="toTime" />
+      <span class="min-w-14 text-right text-sm">To:</span>
+      <strong>{{ to }}</strong>
+    </div>
     @if (invalidToTime) {
-      <nsi-info-card
-        type="warning"
-        icon="warning">
-        Invalid time: {{ toTime }}
-      </nsi-info-card>
+      <div hlmAlert>
+        <ng-icon name="matWarningRound" />
+        <div hlmAlertDescription>Invalid time: {{ toTime }}</div>
+      </div>
     }
   </div>
-</div>
 
-<div class="flex-column gap-below">
-  @if (invalidRange) {
-    <nsi-info-card
-      type="warning"
-      icon="warning">
-      Invalid range: From must be before To
-    </nsi-info-card>
-  }
-  <pa-button
-    [disabled]="isNotModified || invalidForm"
-    (click)="loadTokenConsumption()">
-    Load token consumption
-  </pa-button>
-</div>
-
-<pa-tabs notFullWidth>
-  <pa-tab
-    [active]="selectedTab === 'account'"
-    (click)="changeTab('account')">
-    <small>Account</small>
-  </pa-tab>
-  @for (kb of kbList | async; track kb.id) {
-    <pa-tab
-      [active]="selectedTab === kb.id"
-      (click)="changeTab(kb.id)">
-      <small>{{ kb.slug }}</small>
-    </pa-tab>
-  }
-</pa-tabs>
-
-@if (tokenConsumption | async; as metrics) {
-  <pa-table
-    border
-    columns="2fr repeat(11, 1fr)">
-    <pa-table-header>
-      <pa-table-cell
-        borderRight
-        header></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Raw usage input</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Raw usage output</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Raw usage search</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Raw usage images</span></pa-table-cell>
-      <pa-table-cell
-        header
-        borderRight>
-        <span class="center-text">Raw usage storage</span>
-      </pa-table-cell>
-      <pa-table-cell header><span class="center-text">Nuclia tokens from input</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Nuclia tokens from output</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Nuclia tokens from search</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Nuclia tokens from images</span></pa-table-cell>
-      <pa-table-cell
-        borderRight
-        header>
-        <span class="center-text">Nuclia tokens from storage</span>
-      </pa-table-cell>
-      <pa-table-cell header><span class="center-text">Total Nuclia tokens</span></pa-table-cell>
-    </pa-table-header>
-
-    @for (row of metrics.details; track row.identifier) {
-      <pa-table-row>
-        <pa-table-cell borderRight>
-          <span class="body-s">
-            <strong>{{ row.identifier.type }} {{ row.identifier.source }} {{ row.identifier.model }}</strong>
-            <small>{{ row.identifier.version }}</small>
-          </span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.input | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.output | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.search | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.image | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell
-          borderRight
-          center>
-          <span class="body-s">{{ row.raw_usage.storage | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.input | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.output | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.search | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.image | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell
-          borderRight
-          center>
-          <span class="body-s">{{ row.nuclia_tokens.storage | number: digitsInfo }}</span>
-        </pa-table-cell>
-        <pa-table-cell center>
-          <strong class="body-s">
-            @if (
-              row.nuclia_tokens.input === null &&
-              row.nuclia_tokens.output === null &&
-              row.nuclia_tokens.search === null &&
-              row.nuclia_tokens.image === null &&
-              row.nuclia_tokens.storage === null
-            ) {
-              –
-            } @else {
-              {{
-                (row.nuclia_tokens.input || 0) +
-                  (row.nuclia_tokens.output || 0) +
-                  (row.nuclia_tokens.search || 0) +
-                  (row.nuclia_tokens.image || 0) +
-                  (row.nuclia_tokens.storage || 0) | number: digitsInfo
-              }}
-            }
-          </strong>
-        </pa-table-cell>
-      </pa-table-row>
+  <div class="flex flex-col items-start gap-2">
+    @if (invalidRange) {
+      <div
+        hlmAlert
+        class="w-auto">
+        <ng-icon name="matWarningRound" />
+        <div hlmAlertDescription>Invalid range: From must be before To</div>
+      </div>
     }
-  </pa-table>
-} @else {
-  <nsi-info-card
-    type="warning"
-    icon="warning">
-    No metrics available
-  </nsi-info-card>
-}
+    <button
+      type="button"
+      hlmBtn
+      [disabled]="isNotModified || invalidForm"
+      (click)="loadTokenConsumption()">
+      Load token consumption
+    </button>
+  </div>
+
+  <div
+    hlmTabs
+    [tab]="selectedTab"
+    (tabActivated)="changeTab($event)">
+    <div
+      hlmTabsList
+      variant="line"
+      class="h-auto flex-wrap"
+      aria-label="Account or knowledge box">
+      <button
+        type="button"
+        hlmTabsTrigger="account">
+        Account
+      </button>
+      @for (kb of kbList | async; track kb.id) {
+        <button
+          type="button"
+          [hlmTabsTrigger]="kb.id">
+          {{ kb.slug }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (tokenConsumption | async; as metrics) {
+    <div hlmTableContainer>
+      <table hlmTable>
+        <thead hlmTHead>
+          <tr hlmTr>
+            <th
+              hlmTh
+              class="border-r"></th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Raw usage input
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Raw usage output
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Raw usage search
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Raw usage images
+            </th>
+            <th
+              hlmTh
+              class="border-r text-center whitespace-normal">
+              Raw usage storage
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Nuclia tokens from input
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Nuclia tokens from output
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Nuclia tokens from search
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Nuclia tokens from images
+            </th>
+            <th
+              hlmTh
+              class="border-r text-center whitespace-normal">
+              Nuclia tokens from storage
+            </th>
+            <th
+              hlmTh
+              class="text-center whitespace-normal">
+              Total Nuclia tokens
+            </th>
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (row of metrics.details; track row.identifier) {
+            <tr hlmTr>
+              <td
+                hlmTd
+                class="border-r text-xs">
+                <div class="flex flex-col">
+                  <strong>{{ row.identifier.type }} {{ row.identifier.source }} {{ row.identifier.model }}</strong>
+                  <small>{{ row.identifier.version }}</small>
+                </div>
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.raw_usage.input | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.raw_usage.output | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.raw_usage.search | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.raw_usage.image | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="border-r text-center text-xs">
+                {{ row.raw_usage.storage | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.nuclia_tokens.input | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.nuclia_tokens.output | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.nuclia_tokens.search | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs">
+                {{ row.nuclia_tokens.image | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="border-r text-center text-xs">
+                {{ row.nuclia_tokens.storage | number: digitsInfo }}
+              </td>
+              <td
+                hlmTd
+                class="text-center text-xs font-semibold">
+                @if (
+                  row.nuclia_tokens.input === null &&
+                  row.nuclia_tokens.output === null &&
+                  row.nuclia_tokens.search === null &&
+                  row.nuclia_tokens.image === null &&
+                  row.nuclia_tokens.storage === null
+                ) {
+                  –
+                } @else {
+                  {{
+                    (row.nuclia_tokens.input || 0) +
+                      (row.nuclia_tokens.output || 0) +
+                      (row.nuclia_tokens.search || 0) +
+                      (row.nuclia_tokens.image || 0) +
+                      (row.nuclia_tokens.storage || 0) | number: digitsInfo
+                  }}
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div hlmAlert>
+      <ng-icon name="matWarningRound" />
+      <div hlmAlertDescription>No metrics available</div>
+    </div>
+  }
+</div>

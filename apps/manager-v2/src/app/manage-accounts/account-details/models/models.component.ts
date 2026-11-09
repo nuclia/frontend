@@ -1,18 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SisModalService } from '@nuclia/sistema';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matMoreVertRound } from '@ng-icons/material-icons/round';
+import { CustomModelItem } from '@nuclia/core';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { filter, map, switchMap, take } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
-import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { RegionalAccountService } from '../../regional-account.service';
-import { CustomModelItem } from '@nuclia/core';
 import { AccountService } from '../../account.service';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { RegionalAccountService } from '../../regional-account.service';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaDropdownModule, PaPopupModule, PaTableModule, RouterModule],
+  imports: [AsyncPipe, NgIcon, RouterLink, HlmButtonImports, HlmDropdownMenuImports, HlmTableImports],
   templateUrl: './models.component.html',
-  styleUrls: ['./models.component.scss'],
+  providers: [provideIcons({ matMoreVertRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModelsComponent {
@@ -23,7 +27,7 @@ export class ModelsComponent {
     private store: ManagerStore,
     private accountService: AccountService,
     private regionalService: RegionalAccountService,
-    private modalService: SisModalService,
+    private confirmService: UiConfirmService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
@@ -36,17 +40,15 @@ export class ModelsComponent {
       .subscribe();
   }
 
-  delete(event: Event, model: CustomModelItem, zone: string) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.modalService
-      .openConfirm({
+  delete(model: CustomModelItem, zone: string) {
+    this.confirmService
+      .confirm({
         title: `Delete "${model.title}"`,
         description: `Are you sure you want to delete "${model.title}"?`,
         isDestructive: true,
         confirmLabel: 'Delete',
       })
-      .onClose.pipe(
+      .pipe(
         filter((confirm) => !!confirm),
         switchMap(() => {
           const accountId = this.store.getAccountId() || '';
@@ -57,9 +59,7 @@ export class ModelsComponent {
       .subscribe();
   }
 
-  goToDetails(event: Event, model: CustomModelItem, zone: string) {
-    event.preventDefault();
-    event.stopPropagation();
+  goToDetails(model: CustomModelItem, zone: string) {
     this.router.navigate([`../models/${zone}/model/${model.model_id}/kbs`], { relativeTo: this.route });
   }
 }

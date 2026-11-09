@@ -1,13 +1,16 @@
-<footer>
-  <pa-button
+<footer class="flex gap-4 py-6">
+  <button
+    hlmBtn
     type="submit"
-    [kind]="secondary ? 'secondary' : 'primary'"
-    [disabled]="disabled || !(canEdit | async)">
+    [variant]="secondary() ? 'secondary' : 'default'"
+    [disabled]="disabled() || !canEdit()">
     Save
-  </pa-button>
-  <pa-button
-    aspect="basic"
+  </button>
+  <button
+    hlmBtn
+    type="button"
+    variant="ghost"
     (click)="footerCancel.emit()">
     Cancel
-  </pa-button>
+  </button>
 </footer>

@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormFooterComponent } from './form-footer.component';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { MockProvider } from 'ng-mocks';
 import { ManagerStore } from '../../manager.store';
 import { of } from 'rxjs';
 
@@ -11,8 +10,7 @@ describe('FormFooterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaButtonModule)],
-      declarations: [FormFooterComponent],
+      imports: [FormFooterComponent],
       providers: [
         MockProvider(ManagerStore, {
           canEdit: of(true),

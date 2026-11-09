@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 import { UserSummary } from '../../manage-users/user.models';
 import { RecipientFilter } from '../email.models';
@@ -16,7 +16,7 @@ const byName = (a: UserSummary, b: UserSummary) => (a.name || a.email).localeCom
 @Injectable()
 export class RecipientsService {
   private loader = inject(RecipientsLoaderService);
-  private toast = inject(SisToastService);
+  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
   private reload$ = new Subject<void>();
   // Users listed by the filters are selected by default; only the manually unchecked ones are remembered

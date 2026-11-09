@@ -2,15 +2,17 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { combineLatest, filter, forkJoin, map, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ManagerStore } from '../../../../manager.store';
-import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { ActivatedRoute } from '@angular/router';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { CustomModel } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaTogglesModule, ReactiveFormsModule],
+  imports: [AsyncPipe, KeyValuePipe, ReactiveFormsModule, HlmButtonImports, HlmCheckboxImports, HlmFieldImports],
   templateUrl: './model-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,7 +32,7 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
     private store: ManagerStore,
     private sdk: SDKService,
     private route: ActivatedRoute,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 

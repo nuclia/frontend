@@ -1,15 +1,15 @@
-import { AsyncPipe, SlicePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import {
-  PaButtonModule,
-  PaDateTimeModule,
-  PaScrollModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { UserSummary } from '../user.models';
@@ -19,15 +19,17 @@ import { UserService } from '../user.service';
   templateUrl: './user-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PaTextFieldModule,
-    PaButtonModule,
+    HlmButtonImports,
+    UiInfiniteScrollImports,
+    HlmInputImports,
+    HlmTableImports,
+    NgIcon,
     RouterLink,
-    PaScrollModule,
-    PaTableModule,
-    PaDateTimeModule,
     AsyncPipe,
+    DatePipe,
     SlicePipe,
   ],
+  providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class UserListComponent {
   private _allUsers: BehaviorSubject<UserSummary[]> = new BehaviorSubject<UserSummary[]>([]);
@@ -52,10 +54,14 @@ export class UserListComponent {
   constructor(
     private sdk: SDKService,
     private userService: UserService,
-    private modalService: SisModalService,
-    private toast: SisToastService,
+    private confirmService: UiConfirmService,
+    private toast: UiToastService,
   ) {
     this.loadUsers();
+  }
+
+  onFilterInput(event: Event) {
+    this.filter$.next((event.target as HTMLInputElement).value);
   }
 
   onReachAnchor() {
@@ -67,15 +73,15 @@ export class UserListComponent {
   deleteUser(event: MouseEvent, user: UserSummary) {
     event.preventDefault();
     event.stopPropagation();
-    this.modalService
-      .openConfirm({
+    this.confirmService
+      .confirm({
         title: `Are you sure you want to delete "${user.email}"?`,
         description: `You’re about to delete ${user.email}${user.name ? ' (' + user.name + ')' : ''}?`,
         isDestructive: true,
         confirmLabel: 'Delete',
         cancelLabel: 'Cancel',
       })
-      .onClose.pipe(
+      .pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.userService.deleteUser(user.id)),
       )
