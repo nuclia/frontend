@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { AccountBlockingState, BlockedFeature } from '@nuclia/core';
+import { AccountBlockingState, BlockedFeature, type UserType } from '@nuclia/core';
 import { AccountDetails, AccountUser, KbDetails, KbSummary, ProjectDetails } from './manage-accounts/account-ui.models';
 import { ZoneModels } from './manage-accounts/regional-account.models';
 import { UserService } from '@flaps/core';
@@ -16,20 +16,18 @@ export class ManagerStore {
   private userService = inject(UserService);
   readonly canUseManager = this.userService.userType.pipe(map((t) => !!t && t !== 'USER'));
   readonly canDelete = this.userService.userType.pipe(map((t) => t == 'ROOT'));
+  readonly canDeleteAccount = this.hasAnyRole('ROOT', 'ADMIN');
   readonly canEdit = this.userService.userType.pipe(map((t) => !!t && t !== 'USER' && t !== 'READONLY'));
   readonly canManageZones = this.userService.userType.pipe(map((t) => t == 'ROOT'));
   readonly canSendEmails = this.userService.userType.pipe(map((t) => t === 'ROOT'));
-  readonly canSeeUsers = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'READONLY' || t === 'MANAGER'));
-  readonly canManageModels = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
-  readonly canCreateAccount = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
-  readonly canCreateUser = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
-  readonly canFullyEditAccount = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
-  readonly canAccessKBs = this.userService.userType.pipe(
-    map((t) => t == 'ROOT' || t === 'MANAGER' || t === 'READONLY'),
-  );
-  readonly canAccessProjects = this.userService.userType.pipe(
-    map((t) => t == 'ROOT' || t === 'MANAGER' || t === 'READONLY'),
-  );
+  readonly canSeeGlobalUsers = this.hasAnyRole('ROOT', 'READONLY', 'MANAGER');
+  readonly canSeeUsers = this.hasAnyRole('ROOT', 'READONLY', 'MANAGER', 'ADMIN');
+  readonly canManageModels = this.hasAnyRole('ROOT', 'MANAGER', 'ADMIN');
+  readonly canCreateAccount = this.hasAnyRole('ROOT', 'MANAGER');
+  readonly canCreateUser = this.hasAnyRole('ROOT', 'MANAGER');
+  readonly canFullyEditAccount = this.hasAnyRole('ROOT', 'MANAGER', 'ADMIN');
+  readonly canAccessKBs = this.hasAnyRole('ROOT', 'MANAGER', 'READONLY', 'ADMIN');
+  readonly canAccessProjects = this.hasAnyRole('ROOT', 'MANAGER', 'READONLY', 'ADMIN');
 
   private _accountDetails: BehaviorSubject<AccountDetails | null> = new BehaviorSubject<AccountDetails | null>(null);
   private _kbList: BehaviorSubject<KbSummary[]> = new BehaviorSubject<KbSummary[]>([]);
@@ -91,5 +89,9 @@ export class ManagerStore {
 
   getAccountId(): string | undefined {
     return this._accountDetails.value?.id;
+  }
+
+  private hasAnyRole(...roles: UserType[]): Observable<boolean> {
+    return this.userService.userType.pipe(map((userType) => !!userType && roles.includes(userType)));
   }
 }
