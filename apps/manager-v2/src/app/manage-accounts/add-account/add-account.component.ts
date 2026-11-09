@@ -3,8 +3,11 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ValidSlug } from '@flaps/common';
 import { SDKService } from '@flaps/core';
-import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmSelectImports } from '@nuclia/ui-spartan/select';
 
 const CAMPAIGN_IDS = [
   {
@@ -28,7 +31,7 @@ const CAMPAIGN_IDS = [
 @Component({
   templateUrl: 'add-account.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
+  imports: [HlmButtonImports, HlmFieldImports, HlmInputImports, HlmSelectImports, ReactiveFormsModule],
 })
 export class AddAccountComponent {
   isSaving = false;
@@ -40,12 +43,13 @@ export class AddAccountComponent {
     campaign_id: new FormControl(CAMPAIGN_IDS[0].id, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  campaignOptions = CAMPAIGN_IDS.map(({ id, label }) => new OptionModel({ id, value: id, label }));
+  readonly campaigns = CAMPAIGN_IDS;
+  readonly campaignLabel = (id: string) => CAMPAIGN_IDS.find((campaign) => campaign.id === id)?.label ?? id;
 
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
-  private toaster = inject(SisToastService);
+  private toaster = inject(UiToastService);
 
   save() {
     this.isSaving = true;

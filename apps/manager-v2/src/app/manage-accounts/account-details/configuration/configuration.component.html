@@ -1,233 +1,461 @@
-<h3>Configuration</h3>
-<form
-  [formGroup]="configForm"
-  (ngSubmit)="save()">
-  <pa-input
-    formControlName="email"
-    [readonly]="!(canFullyEditAccount | async)">
-    Email
-  </pa-input>
-  <pa-input
-    formControlName="slug"
-    [readonly]="!(canFullyEditAccount | async)">
-    Slug
-  </pa-input>
-  <pa-input
-    formControlName="created"
-    readonly>
-    Creation date
-  </pa-input>
-  <div class="field-button-container">
-    <pa-select
-      label="Account type"
-      [readonly]="!(canEdit | async)"
-      formControlName="type">
-      <pa-option value="stash-trial">Trial</pa-option>
-      <pa-option value="cowork">Cowork</pa-option>
-      <pa-option value="v3starter">Starter v3</pa-option>
-      <pa-option value="v3fly">Fly v3</pa-option>
-      <pa-option value="v3growth">Growth v3</pa-option>
-      <pa-option value="v3pro">Pro v3</pa-option>
-      <pa-option value="v3enterprise">Enterprise v3</pa-option>
-    </pa-select>
-  </div>
-
-  <div class="field-button-container">
-    <pa-select
-      label="Workflow"
-      [readonly]="!(canEdit | async)"
-      formControlName="workflow">
-      <pa-option value="classic">Classic</pa-option>
-      <pa-option value="cowork">Cowork</pa-option>
-    </pa-select>
-  </div>
-
-  <div class="field-button-container">
-    <pa-select
-      label="Zone visibility"
-      formControlName="zoneVisibility">
-      @for (option of zoneVisibilityOptions; track option.value) {
-        <pa-option [value]="option.value">{{ option.label }}</pa-option>
-      }
-    </pa-select>
-  </div>
-
-  <pa-date-picker
-    label="Trial expiration date"
-    [readonly]="!(canEdit | async)"
-    formControlName="trialExpirationDate"></pa-date-picker>
-
-  @if (canFullyEditAccount | async) {
-    <div class="field-button-container">
-      <pa-input
-        id="free-tokens"
-        type="number"
-        help="Free tokens per billing cycle"
-        [(value)]="free_tokens_per_billing_cycle">
-        Free tokens
-      </pa-input>
-      <pa-button
-        [disabled]="!provider"
-        paTooltip="Require a subscription provider"
-        paTooltipOffset="-16"
-        (click)="updateFreeTokens()">
-        Update free tokens
-      </pa-button>
-    </div>
-    <div>
+<div class="px-6">
+  <h3 class="mb-4 text-xl font-semibold">Configuration</h3>
+  <form
+    class="flex flex-col gap-6"
+    [formGroup]="configForm"
+    (ngSubmit)="save()">
+    <div hlmField>
       <label
-        class="title-xxs"
-        for="max-kbs">
-        Max knowledge boxes available
+        hlmFieldLabel
+        for="config-email">
+        Email
       </label>
-      <div
-        class="radio-limit-container"
+      <input
+        hlmInput
+        id="config-email"
+        class="read-only:bg-muted read-only:text-muted-foreground"
+        formControlName="email"
+        [readOnly]="!(canFullyEditAccount | async)" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="config-slug">
+        Slug
+      </label>
+      <input
+        hlmInput
+        id="config-slug"
+        class="read-only:bg-muted read-only:text-muted-foreground"
+        formControlName="slug"
+        [readOnly]="!(canFullyEditAccount | async)" />
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="config-created">
+        Creation date
+      </label>
+      <input
+        hlmInput
+        id="config-created"
+        class="read-only:bg-muted read-only:text-muted-foreground"
+        readonly
+        formControlName="created" />
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="config-type">
+        Account type
+      </label>
+      <hlm-select
+        formControlName="type"
+        [itemToString]="accountTypeLabel">
+        <hlm-select-trigger
+          buttonId="config-type"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of accountTypeOptions; track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="config-workflow">
+        Workflow
+      </label>
+      <hlm-select
+        formControlName="workflow"
+        [itemToString]="workflowLabel">
+        <hlm-select-trigger
+          buttonId="config-workflow"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of workflowOptions; track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="config-zone-visibility">
+        Zone visibility
+      </label>
+      <hlm-select
+        formControlName="zoneVisibility"
+        [itemToString]="zoneVisibilityLabel">
+        <hlm-select-trigger
+          buttonId="config-zone-visibility"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of zoneVisibilityOptions; track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        for="config-trial-expiration">
+        Trial expiration date
+      </label>
+      <hlm-date-picker formControlName="trialExpirationDate">
+        <hlm-date-picker-input
+          inputId="config-trial-expiration"
+          placeholder="Select a date" />
+      </hlm-date-picker>
+    </div>
+
+    @if (canFullyEditAccount | async) {
+      <div hlmField>
+        <label
+          hlmFieldLabel
+          for="free-tokens">
+          Free tokens
+        </label>
+        <div class="flex items-center gap-2">
+          <input
+            hlmInput
+            id="free-tokens"
+            type="number"
+            class="w-40"
+            [value]="free_tokens_per_billing_cycle"
+            (input)="onFreeTokensInput($event)" />
+          <span
+            hlmTooltip="Require a subscription provider"
+            [tooltipDisabled]="!!provider">
+            <button
+              hlmBtn
+              type="button"
+              [disabled]="!provider"
+              (click)="updateFreeTokens()">
+              Update free tokens
+            </button>
+          </span>
+        </div>
+        <p hlmFieldDescription>Free tokens per billing cycle</p>
+      </div>
+
+      <fieldset
+        hlmFieldSet
         formGroupName="kbs">
-        <pa-radio-group
-          id="max-kbs"
-          formControlName="kbs_radio">
-          <pa-radio value="unlimited">Unlimited</pa-radio>
-          <pa-radio value="limit">Limit</pa-radio>
-        </pa-radio-group>
-        @if (configForm.controls.kbs.controls.kbs_radio.value === 'limit') {
-          <div class="limit-container">
-            <pa-input
-              type="number"
-              externalLabel
-              formControlName="maxKbs"></pa-input>
-            <pa-button
-              icon="reload"
-              paTooltip="Reset to default"
-              aspect="basic"
-              (click)="resetMaxKbsToDefault()">
-              Reset to default
-            </pa-button>
+        <legend hlmFieldLegend>Max knowledge boxes available</legend>
+        <div class="flex items-start justify-between gap-4">
+          <div
+            hlmRadioGroup
+            aria-label="Max knowledge boxes available"
+            formControlName="kbs_radio">
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="max-kbs-unlimited"
+                value="unlimited">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="max-kbs-unlimited">
+                Unlimited
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="max-kbs-limit"
+                value="limit">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="max-kbs-limit">
+                Limit
+              </label>
+            </div>
           </div>
-        }
-      </div>
-    </div>
-  }
-  @if (canFullyEditAccount | async) {
-    <div>
-      <label
-        class="title-xxs"
-        for="max-agents">
-        Max retrieval agents available
-      </label>
-      <div
-        class="radio-limit-container"
-        formGroupName="agents">
-        <pa-radio-group
-          id="max-agents"
-          formControlName="agents_radio">
-          <pa-radio value="unlimited">Unlimited</pa-radio>
-          <pa-radio value="limit">Limit</pa-radio>
-        </pa-radio-group>
-        @if (configForm.controls.agents.controls.agents_radio.value === 'limit') {
-          <div class="limit-container">
-            <pa-input
-              type="number"
-              externalLabel
-              formControlName="maxAgents"></pa-input>
-            <pa-button
-              icon="reload"
-              paTooltip="Reset to default"
-              aspect="basic"
-              (click)="resetMaxAragsToDefault()">
-              Reset to default
-            </pa-button>
-          </div>
-        }
-      </div>
-    </div>
-    <div>
-      <label
-        class="title-xxs"
-        for="max-memories">
-        Max retrieval agents with memory
-      </label>
-      <div
-        class="radio-limit-container"
-        formGroupName="memories">
-        <pa-radio-group
-          id="max-memories"
-          formControlName="memories_radio">
-          <pa-radio value="unlimited">Unlimited</pa-radio>
-          <pa-radio value="limit">Limit</pa-radio>
-        </pa-radio-group>
-        @if (configForm.controls.memories.controls.memories_radio.value === 'limit') {
-          <div class="limit-container">
-            <pa-input
-              type="number"
-              externalLabel
-              formControlName="maxMemories"></pa-input>
-            <pa-button
-              icon="reload"
-              paTooltip="Reset to default"
-              aspect="basic"
-              (click)="resetMaxAragsWithMemoryToDefault()">
-              Reset to default
-            </pa-button>
-          </div>
-        }
-      </div>
-    </div>
-    <div [formGroup]="budgetForm">
-      <label class="title-xxs">Budget</label>
-      <div class="radio-limit-container">
-        <pa-radio-group
-          formControlName="custom_budget"
-          noBackground>
-          <pa-radio value="unlimited">Unlimited</pa-radio>
-          <pa-radio value="limit">Limit</pa-radio>
-        </pa-radio-group>
-        @if (budgetForm.controls.custom_budget.value === 'limit') {
-          <div>
-            <div class="limit-container">
-              <pa-input
+          @if (configForm.controls.kbs.controls.kbs_radio.value === 'limit') {
+            <div class="flex items-center gap-2">
+              <input
+                hlmInput
                 type="number"
-                formControlName="budget_value">
-                Tokens
-              </pa-input>
-              <pa-button
-                icon="reload"
-                paTooltip="Reset"
-                aspect="basic"
-                (click)="resetBudget()">
-                Reset
-              </pa-button>
+                class="w-40"
+                aria-label="Max knowledge boxes"
+                formControlName="maxKbs" />
+              <button
+                hlmBtn
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Reset to default"
+                hlmTooltip="Reset to default"
+                (click)="resetMaxKbsToDefault()">
+                <ng-icon name="matRefreshRound" />
+              </button>
             </div>
-            <div class="limit-action">
-              <pa-radio-group formControlName="action_on_budget_exhausted">
-                <pa-radio value="BLOCK_ACCOUNT">Block the account</pa-radio>
-                <pa-radio value="WARN_ACCOUNT_OWNER">Send a warning email</pa-radio>
-              </pa-radio-group>
+          }
+        </div>
+      </fieldset>
+    }
+    @if (canFullyEditAccount | async) {
+      <fieldset
+        hlmFieldSet
+        formGroupName="agents">
+        <legend hlmFieldLegend>Max retrieval agents available</legend>
+        <div class="flex items-start justify-between gap-4">
+          <div
+            hlmRadioGroup
+            aria-label="Max retrieval agents available"
+            formControlName="agents_radio">
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="max-agents-unlimited"
+                value="unlimited">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="max-agents-unlimited">
+                Unlimited
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="max-agents-limit"
+                value="limit">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="max-agents-limit">
+                Limit
+              </label>
             </div>
           </div>
-        }
-      </div>
-    </div>
-    <pa-toggle
-      labelOnRight
-      formControlName="allowAccessNonEnterpriseModels">
-      Allow access to non-enterprise models
-    </pa-toggle>
-    <pa-toggle
-      labelOnRight
-      formControlName="allowAccessExternalModels">
-      Allow access to external models
-    </pa-toggle>
-    <ng-container formGroupName="labels">
-      <pa-toggle
-        labelOnRight
-        formControlName="progress_account">
-        Progress account
-      </pa-toggle>
-    </ng-container>
-  }
-  <nma-form-footer
-    [disabled]="(configForm.pristine && budgetForm.pristine) || configForm.invalid || budgetForm.invalid || isSaving"
-    (footerCancel)="reset()"></nma-form-footer>
-</form>
+          @if (configForm.controls.agents.controls.agents_radio.value === 'limit') {
+            <div class="flex items-center gap-2">
+              <input
+                hlmInput
+                type="number"
+                class="w-40"
+                aria-label="Max retrieval agents"
+                formControlName="maxAgents" />
+              <button
+                hlmBtn
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Reset to default"
+                hlmTooltip="Reset to default"
+                (click)="resetMaxAragsToDefault()">
+                <ng-icon name="matRefreshRound" />
+              </button>
+            </div>
+          }
+        </div>
+      </fieldset>
 
-<nma-blocked-features></nma-blocked-features>
+      <fieldset
+        hlmFieldSet
+        formGroupName="memories">
+        <legend hlmFieldLegend>Max retrieval agents with memory</legend>
+        <div class="flex items-start justify-between gap-4">
+          <div
+            hlmRadioGroup
+            aria-label="Max retrieval agents with memory"
+            formControlName="memories_radio">
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="max-memories-unlimited"
+                value="unlimited">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="max-memories-unlimited">
+                Unlimited
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="max-memories-limit"
+                value="limit">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="max-memories-limit">
+                Limit
+              </label>
+            </div>
+          </div>
+          @if (configForm.controls.memories.controls.memories_radio.value === 'limit') {
+            <div class="flex items-center gap-2">
+              <input
+                hlmInput
+                type="number"
+                class="w-40"
+                aria-label="Max retrieval agents with memory"
+                formControlName="maxMemories" />
+              <button
+                hlmBtn
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Reset to default"
+                hlmTooltip="Reset to default"
+                (click)="resetMaxAragsWithMemoryToDefault()">
+                <ng-icon name="matRefreshRound" />
+              </button>
+            </div>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset
+        hlmFieldSet
+        [formGroup]="budgetForm">
+        <legend hlmFieldLegend>Budget</legend>
+        <div class="flex items-start justify-between gap-4">
+          <div
+            hlmRadioGroup
+            aria-label="Budget"
+            formControlName="custom_budget">
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="budget-unlimited"
+                value="unlimited">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="budget-unlimited">
+                Unlimited
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <hlm-radio
+                inputId="budget-limit"
+                value="limit">
+                <hlm-radio-indicator />
+              </hlm-radio>
+              <label
+                hlmLabel
+                for="budget-limit">
+                Limit
+              </label>
+            </div>
+          </div>
+          @if (budgetForm.controls.custom_budget.value === 'limit') {
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center gap-2">
+                <input
+                  hlmInput
+                  type="number"
+                  class="w-40"
+                  aria-label="Budget tokens"
+                  placeholder="Tokens"
+                  formControlName="budget_value" />
+                <button
+                  hlmBtn
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Reset"
+                  hlmTooltip="Reset"
+                  (click)="resetBudget()">
+                  <ng-icon name="matRefreshRound" />
+                </button>
+              </div>
+              <div
+                hlmRadioGroup
+                aria-label="Action on budget exhausted"
+                formControlName="action_on_budget_exhausted">
+                <div class="flex items-center gap-2">
+                  <hlm-radio
+                    inputId="budget-block"
+                    value="BLOCK_ACCOUNT">
+                    <hlm-radio-indicator />
+                  </hlm-radio>
+                  <label
+                    hlmLabel
+                    for="budget-block">
+                    Block the account
+                  </label>
+                </div>
+                <div class="flex items-center gap-2">
+                  <hlm-radio
+                    inputId="budget-warn"
+                    value="WARN_ACCOUNT_OWNER">
+                    <hlm-radio-indicator />
+                  </hlm-radio>
+                  <label
+                    hlmLabel
+                    for="budget-warn">
+                    Send a warning email
+                  </label>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </fieldset>
+
+      <div
+        hlmField
+        orientation="horizontal">
+        <hlm-switch
+          inputId="allow-non-enterprise"
+          formControlName="allowAccessNonEnterpriseModels" />
+        <label
+          hlmFieldLabel
+          for="allow-non-enterprise">
+          Allow access to non-enterprise models
+        </label>
+      </div>
+      <div
+        hlmField
+        orientation="horizontal">
+        <hlm-switch
+          inputId="allow-external"
+          formControlName="allowAccessExternalModels" />
+        <label
+          hlmFieldLabel
+          for="allow-external">
+          Allow access to external models
+        </label>
+      </div>
+      <div
+        hlmField
+        orientation="horizontal"
+        formGroupName="labels">
+        <hlm-switch
+          inputId="progress-account"
+          formControlName="progress_account" />
+        <label
+          hlmFieldLabel
+          for="progress-account">
+          Progress account
+        </label>
+      </div>
+    }
+    <nma-form-footer
+      [disabled]="(configForm.pristine && budgetForm.pristine) || configForm.invalid || budgetForm.invalid || isSaving"
+      (footerCancel)="reset()"></nma-form-footer>
+  </form>
+
+  <nma-blocked-features class="mt-8 block"></nma-blocked-features>
+</div>

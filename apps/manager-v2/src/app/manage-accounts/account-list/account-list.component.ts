@@ -1,14 +1,14 @@
-import { AsyncPipe, SlicePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  PaButtonModule,
-  PaDateTimeModule,
-  PaScrollModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
+import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { AccountSummary } from '../account-ui.models';
@@ -18,15 +18,17 @@ import { AccountService } from '../account.service';
   templateUrl: './account-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PaTextFieldModule,
-    PaButtonModule,
-    RouterLink,
-    PaScrollModule,
-    PaTableModule,
-    PaDateTimeModule,
     AsyncPipe,
+    DatePipe,
+    HlmButtonImports,
+    HlmInputImports,
+    HlmTableImports,
+    NgIcon,
+    RouterLink,
     SlicePipe,
+    UiInfiniteScrollImports,
   ],
+  providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class AccountListComponent {
   private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);
@@ -55,10 +57,14 @@ export class AccountListComponent {
 
   constructor(
     private accountService: AccountService,
-    private modalService: SisModalService,
-    private toast: SisToastService,
+    private confirmService: UiConfirmService,
+    private toast: UiToastService,
   ) {
     this.loadAccounts().subscribe();
+  }
+
+  onFilterInput(event: Event) {
+    this.filter$.next((event.target as HTMLInputElement).value);
   }
 
   onReachAnchor() {
@@ -70,15 +76,15 @@ export class AccountListComponent {
   deleteAccount(event: MouseEvent, account: AccountSummary) {
     event.preventDefault();
     event.stopPropagation();
-    this.modalService
-      .openConfirm({
+    this.confirmService
+      .confirm({
         title: `Are you sure you want to delete "${account.slug}"?`,
         description: `You’re about to delete "${account.title}" (${account.slug})?`,
         isDestructive: true,
         cancelLabel: 'Cancel',
         confirmLabel: 'Delete',
       })
-      .onClose.pipe(
+      .pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.accountService.deleteAccount(account.id)),
         switchMap(() => this.loadAccounts()),

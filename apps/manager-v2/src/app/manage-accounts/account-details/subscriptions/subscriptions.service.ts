@@ -1,9 +1,8 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { SisToastService } from '@nuclia/sistema';
-import { map, Observable, shareReplay } from 'rxjs';
+import { UiToastService } from '@nuclia/ui/toast';
+import { map, Observable } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { GlobalAccountService } from '../../global-account.service';
 import {
@@ -18,11 +17,17 @@ import {
 
 export type SubscriptionState = 'loading' | 'none' | 'cloud_zero' | 'manual' | 'other';
 
+export interface SelectOption {
+  value: string;
+  label: string;
+  description?: string;
+}
+
 @Injectable()
 export class SubscriptionsService {
   private store = inject(ManagerStore);
   private globalService = inject(GlobalAccountService);
-  private toast = inject(SisToastService);
+  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
 
   private accountId = this.store.getAccountId() || '';
@@ -76,43 +81,53 @@ export class SubscriptionsService {
     { value: 'BLOCK_ACCOUNT', label: 'Block account' },
   ];
 
-  // ── Formula options (observable) ─────────────────────────────────────
-  formulasOptions = this.globalService.getBillingFormulas().pipe(
-    map((formulas) =>
-      formulas.map(
-        (formula) =>
-          new OptionModel({ id: formula.id, value: formula.id, label: formula.title, help: formula.description }),
+  // ── Formula options ──────────────────────────────────────────────────
+  formulasOptions = toSignal(
+    this.globalService.getBillingFormulas().pipe(
+      map((formulas) =>
+        formulas.map(
+          (formula): SelectOption => ({
+            value: formula.id,
+            label: formula.title,
+            description: formula.description,
+          }),
+        ),
       ),
     ),
-    shareReplay(1),
+    { initialValue: [] as SelectOption[] },
   );
 
   // - Product catalog options (signals) ─────────────────────────────────────────────
   businessUnit = toSignal(this.cloudZeroForm.controls.business_unit.valueChanges, { initialValue: '' });
   productLine = toSignal(this.cloudZeroForm.controls.product_line.valueChanges, { initialValue: '' });
-  businessUnitOptions = computed(() => {
-    return Object.entries(this._productCatalog()).map(
-      ([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }),
-    );
+  businessUnitOptions = computed<SelectOption[]>(() => {
+    return Object.entries(this._productCatalog()).map(([key, value]) => ({ value: key, label: value.name || key }));
   });
-  productLineOptions = computed(() => {
+  productLineOptions = computed<SelectOption[]>(() => {
     if (!this.businessUnit()) {
       return [];
     } else {
-      return Object.entries(this._productCatalog()[this.businessUnit()]?.product_lines || {}).map(
-        ([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }),
-      );
+      return Object.entries(this._productCatalog()[this.businessUnit()]?.product_lines || {}).map(([key, value]) => ({
+        value: key,
+        label: value.name || key,
+      }));
     }
   });
-  productOptions = computed(() => {
+  productOptions = computed<SelectOption[]>(() => {
     if (!this.businessUnit() || !this.productLine()) {
       return [];
     } else {
       return Object.entries(
         this._productCatalog()[this.businessUnit()]?.product_lines[this.productLine()]?.products || {},
-      ).map(([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }));
+      ).map(([key, value]) => ({ value: key, label: value.name || key }));
     }
   });
+
+  readonly formulaLabel = (value: string) => this.labelFrom(this.formulasOptions(), value);
+  readonly businessUnitLabel = (value: string) => this.labelFrom(this.businessUnitOptions(), value);
+  readonly productLineLabel = (value: string) => this.labelFrom(this.productLineOptions(), value);
+  readonly productLabel = (value: string) => this.labelFrom(this.productOptions(), value);
+  readonly actionOnBudgetLabel = (value: ActionOnBudgetExhausted) => this.labelFrom(this.actionOnBudgetOptions, value);
 
   constructor() {
     this.setupBudgetCoupling(this.cloudZeroForm, true);
@@ -338,12 +353,23 @@ export class SubscriptionsService {
     );
   }
 
-  resetProduct() {
+  onBusinessUnitChange(value: string | null | undefined) {
+    // The select also emits when the form writes a value; only a user pick differs from the control value
+    if (value === this.cloudZeroForm.controls.business_unit.value) {
+      return;
+    }
+    this.cloudZeroForm.controls.product_line.reset();
     this.cloudZeroForm.controls.product.reset();
   }
 
-  resetProductLine() {
-    this.cloudZeroForm.controls.product_line.reset();
+  onProductLineChange(value: string | null | undefined) {
+    if (value === this.cloudZeroForm.controls.product_line.value) {
+      return;
+    }
     this.cloudZeroForm.controls.product.reset();
+  }
+
+  private labelFrom(options: { value: string; label: string }[], value: string) {
+    return options.find((option) => option.value === value)?.label ?? value;
   }
 }

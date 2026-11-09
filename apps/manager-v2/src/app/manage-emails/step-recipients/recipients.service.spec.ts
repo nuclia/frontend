@@ -1,6 +1,6 @@
 import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { GlobalAccountService } from '../../manage-accounts/global-account.service';
@@ -29,7 +29,7 @@ describe('RecipientsService', () => {
         RecipientsService,
         MockProvider(UserService, { getUsers }),
         MockProvider(GlobalAccountService, { getSubscriptions }),
-        MockProvider(SisToastService, { error }),
+        MockProvider(UiToastService, { error }),
       ],
     });
     service = TestBed.inject(RecipientsService);

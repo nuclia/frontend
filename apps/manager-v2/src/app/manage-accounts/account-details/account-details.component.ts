@@ -2,7 +2,14 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BackendConfigurationService, FeaturesService } from '@flaps/core';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  matAccountCircleRound,
+  matArrowBackRound,
+  matInventory2Round,
+  matSmartToyRound,
+} from '@ng-icons/material-icons/round';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { filter, map, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../manager.store';
@@ -10,11 +17,17 @@ import { AccountService } from '../account.service';
 
 @Component({
   templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaButtonModule, RouterLink, RouterLinkActive, PaIconModule, RouterOutlet, AsyncPipe, DatePipe],
+  imports: [HlmButtonImports, NgIcon, RouterLink, RouterLinkActive, RouterOutlet, AsyncPipe, DatePipe],
+  providers: [provideIcons({ matAccountCircleRound, matArrowBackRound, matInventory2Round, matSmartToyRound })],
 })
 export class AccountDetailsComponent implements OnInit, OnDestroy {
+  protected readonly navLink =
+    'text-foreground hover:bg-foreground/8 block px-4 py-2 text-sm no-underline transition-colors';
+  protected readonly navLinkChild =
+    'text-foreground hover:bg-foreground/8 flex items-center gap-2 py-2 pr-4 pl-8 text-sm no-underline transition-colors';
+  protected readonly navLinkActive = 'bg-foreground/8 font-semibold';
+
   private unsubscribeAll = new Subject<void>();
 
   canSeeUsers = this.store.canSeeUsers;

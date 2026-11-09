@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { EmailService, getEmailErrorMessage } from '../email.service';
 import { buildEmailBody } from './email-body.utils';
 import { normalizeSenderName, validateSenderName } from './sender-name.utils';
@@ -9,7 +9,7 @@ import { normalizeSenderName, validateSenderName } from './sender-name.utils';
 @Injectable()
 export class ComposeService {
   private emailService = inject(EmailService);
-  private toast = inject(SisToastService);
+  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
 
   subject = signal('');

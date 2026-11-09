@@ -1,0 +1,9 @@
+<div class="bg-foreground text-background flex min-h-screen flex-col items-center justify-center gap-8 p-6">
+  <img
+    width="160"
+    [src]="logoPath"
+    [alt]="brandName" />
+  <p
+    class="[&_a]:text-primary max-w-md text-center text-base [&_a]:underline"
+    [innerHTML]="message()"></p>
+</div>

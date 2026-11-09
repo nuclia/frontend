@@ -1,17 +1,20 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
-import {
-  PaButtonModule,
-  PaDatePickerModule,
-  PaDropdownModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-  PaTooltipModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matRefreshRound } from '@ng-icons/material-icons/round';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmDatePickerImports } from '@nuclia/ui-spartan/date-picker';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmLabelImports } from '@nuclia/ui-spartan/label';
+import { HlmRadioGroupImports } from '@nuclia/ui-spartan/radio-group';
+import { HlmSelectImports } from '@nuclia/ui-spartan/select';
+import { HlmSwitchImports } from '@nuclia/ui-spartan/switch';
+import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
 import { filter, forkJoin, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
 import { catchError, take, takeUntil } from 'rxjs/operators';
 import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
@@ -25,21 +28,24 @@ import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.c
 
 @Component({
   templateUrl: './configuration.component.html',
-  styleUrls: ['configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     ReactiveFormsModule,
-    PaTextFieldModule,
-    PaDropdownModule,
-    PaDatePickerModule,
-    PaButtonModule,
-    PaTogglesModule,
-    PaTooltipModule,
+    HlmButtonImports,
+    HlmDatePickerImports,
+    HlmFieldImports,
+    HlmInputImports,
+    HlmLabelImports,
+    HlmRadioGroupImports,
+    HlmSelectImports,
+    HlmSwitchImports,
+    HlmTooltipImports,
+    NgIcon,
     FormFooterComponent,
     BlockedFeaturesComponent,
     AsyncPipe,
   ],
+  providers: [provideIcons({ matRefreshRound })],
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -48,6 +54,25 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   canFullyEditAccount = this.store.canFullyEditAccount;
   canEdit = this.store.canEdit;
   readonly zoneVisibilityOptions = ZONE_VISIBILITY_OPTIONS;
+  readonly accountTypeOptions: { value: AccountTypes; label: string }[] = [
+    { value: 'stash-trial', label: 'Trial' },
+    { value: 'cowork', label: 'Cowork' },
+    { value: 'v3starter', label: 'Starter v3' },
+    { value: 'v3fly', label: 'Fly v3' },
+    { value: 'v3growth', label: 'Growth v3' },
+    { value: 'v3pro', label: 'Pro v3' },
+    { value: 'v3enterprise', label: 'Enterprise v3' },
+  ];
+  readonly workflowOptions: { value: WorkflowType; label: string }[] = [
+    { value: 'classic', label: 'Classic' },
+    { value: 'cowork', label: 'Cowork' },
+  ];
+  readonly accountTypeLabel = (value: AccountTypes) =>
+    this.accountTypeOptions.find((option) => option.value === value)?.label ?? value;
+  readonly workflowLabel = (value: WorkflowType) =>
+    this.workflowOptions.find((option) => option.value === value)?.label ?? value;
+  readonly zoneVisibilityLabel = (value: ZoneVisibility) =>
+    this.zoneVisibilityOptions.find((option) => option.value === value)?.label ?? value;
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -75,7 +100,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       maxMemories: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
     zone: new FormControl<string>(''),
-    trialExpirationDate: new FormControl<string>(''),
+    trialExpirationDate: new FormControl<Date | null>(null),
     workflow: new FormControl<WorkflowType>('classic'),
     allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
     allowAccessExternalModels: new FormControl<boolean>(true, { nonNullable: true }),
@@ -102,11 +127,21 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     private store: ManagerStore,
     private accountService: AccountService,
     private globalAccountService: GlobalAccountService,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
+    this.canEdit.pipe(takeUntil(this.unsubscribeAll)).subscribe((canEdit) => {
+      const editableControls = [
+        this.configForm.controls.type,
+        this.configForm.controls.workflow,
+        this.configForm.controls.trialExpirationDate,
+      ];
+      editableControls.forEach((control) => (canEdit ? control.enable() : control.disable()));
+      this.cdr.markForCheck();
+    });
+
     this.store.accountDetails
       .pipe(
         filter((details) => !!details),
@@ -198,7 +233,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               payload.zoneVisibility = rawValue.zoneVisibility;
             }
             if (controls.trialExpirationDate.dirty) {
-              payload.trialExpirationDate = rawValue.trialExpirationDate ?? null;
+              payload.trialExpirationDate = rawValue.trialExpirationDate?.toISOString() ?? null;
             }
             if (controls.allowAccessNonEnterpriseModels.dirty) {
               payload.allowAccessNonEnterpriseModels = rawValue.allowAccessNonEnterpriseModels;
@@ -313,8 +348,11 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   private patchConfigForm(accountDetails: AccountDetails) {
-    const { labels, ...details } = accountDetails;
-    this.configForm.patchValue(details);
+    const { labels, trialExpirationDate, ...details } = accountDetails;
+    this.configForm.patchValue({
+      ...details,
+      trialExpirationDate: trialExpirationDate ? new Date(trialExpirationDate) : null,
+    });
     this.configForm.controls.kbs.controls.kbs_radio.patchValue(accountDetails.maxKbs === -1 ? 'unlimited' : 'limit');
     this.configForm.controls.kbs.controls.maxKbs.patchValue(accountDetails.maxKbs);
     this.configForm.controls.agents.controls.agents_radio.patchValue(
@@ -337,11 +375,11 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       action_on_budget_exhausted: budget.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
       custom_budget: budget.budget_value === null ? 'unlimited' : 'limit',
     });
-    // A timeout is needed to correctly set pastanaga radios as pristine
-    setTimeout(() => {
-      this.budgetForm.markAsPristine();
-      this.cdr.markForCheck();
-    });
+    this.budgetForm.markAsPristine();
+  }
+
+  onFreeTokensInput(event: Event) {
+    this.free_tokens_per_billing_cycle = Number((event.target as HTMLInputElement).value);
   }
 
   updateFreeTokens() {

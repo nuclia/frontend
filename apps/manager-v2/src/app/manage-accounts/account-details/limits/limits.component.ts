@@ -2,9 +2,15 @@ import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypeDefaults } from '@flaps/core';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matRefreshRound } from '@ng-icons/material-icons/round';
 import { AccountLimitsPatchPayload } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmLabelImports } from '@nuclia/ui-spartan/label';
+import { HlmRadioGroupImports } from '@nuclia/ui-spartan/radio-group';
+import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
 import { filter, map, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
@@ -14,19 +20,21 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
 
 @Component({
   templateUrl: './limits.component.html',
-  styleUrls: ['./limits.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PaButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    PaTogglesModule,
-    PaTextFieldModule,
-    PaTooltipModule,
+    HlmButtonImports,
+    HlmInputImports,
+    HlmLabelImports,
+    HlmRadioGroupImports,
+    HlmTooltipImports,
+    NgIcon,
     FormFooterComponent,
     AsyncPipe,
     KeyValuePipe,
   ],
+  providers: [provideIcons({ matRefreshRound })],
 })
 export class LimitsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -44,7 +52,7 @@ export class LimitsComponent implements OnInit, OnDestroy {
   constructor(
     private store: ManagerStore,
     private accountService: AccountService,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 

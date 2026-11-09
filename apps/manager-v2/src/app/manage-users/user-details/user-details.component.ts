@@ -11,41 +11,48 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  PaButtonModule,
-  PaDropdownModule,
-  PaExpanderModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { matArrowBackRound, matCheckRound, matContentCopyRound } from '@ng-icons/material-icons/round';
 import { UserType } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmAccordionImports } from '@nuclia/ui-spartan/accordion';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
+import { HlmSelectImports } from '@nuclia/ui-spartan/select';
 import { filter, map, Subject, switchMap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { User } from '../user.models';
 import { UserService } from '../user.service';
+import { USER_TYPES } from '../user.utils';
 import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: './user-details.component.html',
-  styleUrls: ['./user-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PaButtonModule,
-    PaExpanderModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PaTextFieldModule,
-    PaDropdownModule,
     AsyncPipe,
+    FormsModule,
+    HlmAccordionImports,
+    HlmButtonImports,
+    HlmFieldImports,
+    HlmInputGroupImports,
+    HlmInputImports,
+    HlmSelectImports,
+    NgIcon,
+    ReactiveFormsModule,
   ],
+  providers: [provideIcons({ matArrowBackRound, matCheckRound, matContentCopyRound })],
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private router = inject(Router);
-  private toaster = inject(SisToastService);
+  private toaster = inject(UiToastService);
   private store = inject(ManagerStore);
   private sdk = inject(SDKService);
   canEdit = this.store.canEdit;
+  readonly userTypes = USER_TYPES;
   userEmail = '';
   userId = '';
   userForm = new FormGroup({
@@ -67,11 +74,14 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
+    if (!this.isEdit) {
+      this.userForm.disable();
+    }
     this.route.params
       .pipe(
         filter((params) => !!params['userId']),
@@ -137,6 +147,10 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         this.toaster.error(JSON.stringify(error));
       },
     });
+  }
+
+  onAppChange(value: 'platform' | 'rag' | null | undefined) {
+    this.app.set(value ?? 'platform');
   }
 
   copy() {

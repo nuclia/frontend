@@ -2,16 +2,23 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  PaButtonModule,
-  PaDropdownModule,
-  PaPopupModule,
-  PaTableModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
+  matCheckRound,
+  matContentCopyRound,
+  matMoreVertRound,
+  matPersonAddRound,
+} from '@ng-icons/material-icons/round';
 import { KBRoles } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
+import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmAutocompleteImports } from '@nuclia/ui-spartan/autocomplete';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmSwitchImports } from '@nuclia/ui-spartan/switch';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { UserSearch } from '../../../manage-users/user.models';
 import { UserService } from '../../../manage-users/user.service';
@@ -22,20 +29,23 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
 
 @Component({
   templateUrl: './kb-details.component.html',
-  styleUrls: ['./kb-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    PaTextFieldModule,
-    PaButtonModule,
-    PaPopupModule,
-    PaDropdownModule,
-    PaTogglesModule,
+    HlmAutocompleteImports,
+    HlmButtonImports,
+    HlmDropdownMenuImports,
+    HlmFieldImports,
+    HlmInputImports,
+    HlmSwitchImports,
+    HlmTableImports,
+    NgIcon,
+    UiOptionWithDescriptionImports,
     FormFooterComponent,
-    PaTableModule,
     AsyncPipe,
   ],
+  providers: [provideIcons({ matCheckRound, matContentCopyRound, matMoreVertRound, matPersonAddRound })],
 })
 export class KbDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -53,6 +63,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
   isSaving = false;
   copied = false;
 
+  memberSearch = '';
   searchMemberTerm$ = new Subject<string>();
   potentialMembers$ = this.searchMemberTerm$.pipe(
     filter((term) => term.length > 2 || term.length === 0),
@@ -61,8 +72,12 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       const accountId = this.store.getAccountId();
       return accountId ? this.userService.searchAccountUser(accountId, term) : of([]);
     }),
-    tap(() => this.cdr.markForCheck()),
+    tap((members) => {
+      this.potentialMembers = members;
+      this.cdr.markForCheck();
+    }),
   );
+  private potentialMembers: UserSearch[] = [];
 
   private backupKb?: KbDetails;
 
@@ -71,11 +86,21 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private userService: UserService,
     private store: ManagerStore,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
+    this.canEdit.pipe(takeUntil(this.unsubscribeAll)).subscribe((canEdit) => {
+      const editableControls = [
+        this.kbForm.controls.slug,
+        this.kbForm.controls.title,
+        this.kbForm.controls.prewarm_enabled,
+      ];
+      editableControls.forEach((control) => (canEdit ? control.enable() : control.disable()));
+      this.cdr.markForCheck();
+    });
+
     combineLatest([
       this.store.accountDetails.pipe(
         filter((accountDetails) => !!accountDetails),
@@ -154,6 +179,28 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   setAsMember(member: KbUser) {
     this.updateUser(member.id, 'SMEMBER');
+  }
+
+  onMemberSearch(term: string) {
+    this.memberSearch = term;
+    this.searchMemberTerm$.next(term);
+  }
+
+  onMemberSelected(memberId: string | null | undefined) {
+    const member = this.potentialMembers.find((candidate) => candidate.id === memberId);
+    if (member) {
+      this.addMember(member);
+      this.memberSearch = '';
+      this.searchMemberTerm$.next('');
+    }
+  }
+
+  userRows(kb: KbDetails): { user: KbUser; role: 'owner' | 'contributor' | 'member' }[] {
+    return [
+      ...kb.owners.map((user) => ({ user, role: 'owner' as const })),
+      ...kb.contributors.map((user) => ({ user, role: 'contributor' as const })),
+      ...kb.members.map((user) => ({ user, role: 'member' as const })),
+    ];
   }
 
   addMember(member: UserSearch) {

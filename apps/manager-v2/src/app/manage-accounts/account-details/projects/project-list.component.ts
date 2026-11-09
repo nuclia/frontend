@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { Observable } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { ProjectDetails } from '../../account-ui.models';
@@ -9,7 +9,7 @@ import { ProjectDetails } from '../../account-ui.models';
 @Component({
   templateUrl: './project-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaTableModule, RouterLink, AsyncPipe],
+  imports: [HlmTableImports, RouterLink, AsyncPipe],
 })
 export class ProjectListComponent {
   private store = inject(ManagerStore);

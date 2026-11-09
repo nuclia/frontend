@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
-import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../manager.store';
 import { AppLayoutComponent } from './app-layout.component';
@@ -13,13 +12,7 @@ describe('AppLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AppLayoutComponent,
-        RouterModule.forRoot([]),
-        MockModule(PaAvatarModule),
-        MockModule(PaDropdownModule),
-        MockModule(PaPopupModule),
-      ],
+      imports: [AppLayoutComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(SDKService, {
           nuclia: {

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SisToastService } from '@nuclia/sistema';
-import { SvgIconRegistryService } from 'angular-svg-icon';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockComponent, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -25,19 +24,11 @@ describe('LimitsComponent', () => {
         MockProvider(AccountService, {
           getDefaultLimits: vi.fn(() => of(DEFAULT_LIMITS)),
         }),
-        MockProvider(SisToastService),
+        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canEdit: of(true),
           accountDetails: of(ACCOUNT_DETAILS),
         }),
-        {
-          provide: SvgIconRegistryService,
-          useValue: {
-            loadSvg: () => {
-              /* empty */
-            },
-          },
-        },
       ],
     }).compileComponents();
 

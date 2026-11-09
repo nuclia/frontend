@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { Subject } from 'rxjs';
 import { ComposeService } from './step-compose/compose.service';
 import { BroadcastProgress } from './email.models';
@@ -13,7 +13,7 @@ export class EmailWizardService {
   private emailService = inject(EmailService);
   private recipients = inject(RecipientsService);
   private compose = inject(ComposeService);
-  private toast = inject(SisToastService);
+  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
   private completedSubject = new Subject<string>();
 

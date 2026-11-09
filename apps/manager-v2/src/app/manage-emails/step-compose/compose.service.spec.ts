@@ -1,6 +1,6 @@
 import type { Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { ComposeService } from './compose.service';
@@ -20,7 +20,7 @@ describe('ComposeService', () => {
       providers: [
         ComposeService,
         MockProvider(EmailService, { sendTestEmail }),
-        MockProvider(SisToastService, { error, success }),
+        MockProvider(UiToastService, { error, success }),
       ],
     });
     service = TestBed.inject(ComposeService);

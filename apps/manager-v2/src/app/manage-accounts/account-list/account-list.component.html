@@ -1,88 +1,96 @@
-<div class="wide-table-container">
-  <div class="table-actions">
-    <div class="filter-container">
-      <pa-input
-        [value]="filter$ | async"
-        (valueChange)="filter$.next($event)">
-        Filter
-      </pa-input>
-    </div>
+<div class="my-4 px-4">
+  <div class="flex items-center gap-8 py-4">
+    <input
+      hlmInput
+      class="w-80"
+      placeholder="Filter"
+      aria-label="Filter"
+      [value]="(filter$ | async) ?? ''"
+      (input)="onFilterInput($event)" />
     @if (canCreateAccount | async) {
-      <pa-button
-        routerLink="./add"
-        kind="primary"
-        icon="plus"
-        iconAndText>
+      <a
+        hlmBtn
+        routerLink="./add">
+        <ng-icon
+          name="matAddRound"
+          data-icon="inline-start" />
         Add account
-      </pa-button>
+      </a>
     }
   </div>
 
-  <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="1fr minmax(300px, 1fr) repeat(6, 1fr) 96px">
-      <pa-table-header noBackground>
-        <pa-table-cell header>Id</pa-table-cell>
-        <pa-table-cell header>Email</pa-table-cell>
-        <pa-table-cell header>Title</pa-table-cell>
-        <pa-table-cell header>Slug</pa-table-cell>
-        <pa-table-cell header>Type</pa-table-cell>
-        <pa-table-cell header>Workflow</pa-table-cell>
-        <pa-table-cell header>Creation</pa-table-cell>
-        <pa-table-cell header>Trial Expiration</pa-table-cell>
-        <pa-table-cell-menu header></pa-table-cell-menu>
-      </pa-table-header>
-      @for (account of accounts$ | async | slice: 0 : lastIndex; track account) {
-        <pa-table-row
-          [routerLink]="account.id"
-          clickable>
-          <pa-table-cell>
-            <small>{{ account.id }}</small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small style="word-wrap: anywhere">{{ account.email }}</small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small>{{ account.title }}</small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small>{{ account.slug }}</small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small>{{ account.type }}</small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small>{{ account.workflow }}</small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small>
-              <pa-datetime
-                [datetime]="account.created + '+00:00'"
-                format="numerical"
-                dateOnly></pa-datetime>
-            </small>
-          </pa-table-cell>
-          <pa-table-cell>
-            <small>
-              <pa-datetime
-                [datetime]="account.trial_expiration_date"
-                format="numerical"
-                dateOnly></pa-datetime>
-            </small>
-          </pa-table-cell>
-          <pa-table-cell-menu>
-            @if (canDelete | async) {
-              <pa-button
-                icon="trash"
-                aspect="basic"
-                size="small"
-                kind="destructive"
-                (click)="deleteAccount($event, account)">
-                Delete account
-              </pa-button>
-            }
-          </pa-table-cell-menu>
-        </pa-table-row>
-      }
-    </pa-table>
-  </pa-infinite-scroll>
+  <div hlmTableContainer>
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Id</th>
+          <th hlmTh>Email</th>
+          <th hlmTh>Title</th>
+          <th hlmTh>Slug</th>
+          <th hlmTh>Type</th>
+          <th hlmTh>Workflow</th>
+          <th hlmTh>Creation</th>
+          <th hlmTh>Trial Expiration</th>
+          <th
+            hlmTh
+            class="w-24"></th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (account of accounts$ | async | slice: 0 : lastIndex; track account) {
+          <tr
+            hlmTr
+            class="cursor-pointer"
+            [routerLink]="account.id">
+            <td hlmTd>
+              <span class="text-xs">{{ account.id }}</span>
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              <span class="text-xs">{{ account.email }}</span>
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              <span class="text-xs">{{ account.title }}</span>
+            </td>
+            <td
+              hlmTd
+              class="wrap-anywhere whitespace-normal">
+              <span class="text-xs">{{ account.slug }}</span>
+            </td>
+            <td hlmTd>
+              <span class="text-xs">{{ account.type }}</span>
+            </td>
+            <td hlmTd>
+              <span class="text-xs">{{ account.workflow }}</span>
+            </td>
+            <td hlmTd>
+              <span class="text-xs">{{ (account.created + '+00:00' | date: 'M/d/y') || '–' }}</span>
+            </td>
+            <td hlmTd>
+              <span class="text-xs">{{ (account.trial_expiration_date | date: 'M/d/y') || '–' }}</span>
+            </td>
+            <td
+              hlmTd
+              class="text-end">
+              @if (canDelete | async) {
+                <button
+                  hlmBtn
+                  type="button"
+                  variant="destructive"
+                  size="icon-sm"
+                  aria-label="Delete account"
+                  (click)="deleteAccount($event, account)">
+                  <ng-icon name="matDeleteRound" />
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <ui-infinite-scroll (reachAnchor)="onReachAnchor()" />
 </div>

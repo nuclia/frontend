@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { SisToastService } from '@nuclia/sistema';
+import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UserService } from '../../../manage-users/user.service';
@@ -21,7 +21,7 @@ describe('KbDetailsComponent', () => {
         MockProvider(AccountService),
         MockProvider(UserService),
         MockProvider(AccountDetailsStore),
-        MockProvider(SisToastService),
+        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canEdit: of(true),
           canSeeUsers: of(true),

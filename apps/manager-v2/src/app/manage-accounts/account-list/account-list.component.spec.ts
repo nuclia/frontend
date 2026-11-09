@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { PaButtonModule, PaScrollModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
+import { UiToastService } from '@nuclia/ui/toast';
+import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { AccountService } from '../account.service';
@@ -14,20 +14,13 @@ describe('AccountListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AccountListComponent,
-        RouterModule.forRoot([]),
-        MockModule(PaScrollModule),
-        MockModule(PaTableModule),
-        MockModule(PaTextFieldModule),
-        MockModule(PaButtonModule),
-      ],
+      imports: [AccountListComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(AccountService, {
           getAccounts: vi.fn(() => of([])),
         }),
-        MockProvider(SisModalService),
-        MockProvider(SisToastService),
+        MockProvider(UiConfirmService),
+        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canDeleteAccount: of(true),
           canCreateAccount: of(true),

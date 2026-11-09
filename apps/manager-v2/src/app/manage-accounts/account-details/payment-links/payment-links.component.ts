@@ -1,16 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  OptionModel,
-  PaButtonModule,
-  PaDropdownModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
 import { AccountTypes } from '@nuclia/core';
-import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
-import { forkJoin, map, of, shareReplay, Subject, switchMap } from 'rxjs';
+import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
+import { UiToastService } from '@nuclia/ui/toast';
+import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
+import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
+import { HlmFieldImports } from '@nuclia/ui-spartan/field';
+import { HlmSelectImports } from '@nuclia/ui-spartan/select';
+import { forkJoin, map, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { PaymentCurrency, SearchPrice } from '../../global-account.models';
@@ -18,21 +17,22 @@ import { GlobalAccountService } from '../../global-account.service';
 
 @Component({
   templateUrl: './payment-links.component.html',
-  styleUrls: ['./payment-links.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    PaTextFieldModule,
-    PaDropdownModule,
-    PaTogglesModule,
-    PaButtonModule,
-    InfoCardComponent,
+    HlmAlertImports,
+    HlmButtonImports,
+    HlmCheckboxImports,
+    HlmFieldImports,
+    HlmSelectImports,
+    UiOptionWithDescriptionImports,
     AsyncPipe,
   ],
 })
 export class PaymentLinksComponent implements OnDestroy {
   private unsubscribeAll = new Subject<void>();
+  private labels = new Map<string, string>();
 
   paymentLinkForm = new FormGroup({
     accountType: new FormControl('v3growth', { nonNullable: true, validators: [Validators.required] }),
@@ -55,9 +55,10 @@ export class PaymentLinksComponent implements OnDestroy {
     map((prices) =>
       prices.reduce(
         (acc, curr, index) => ({ ...acc, [this.accountTypes[index]]: curr }),
-        {} as { [id in AccountTypes]: SearchPrice },
+        {} as { [id in AccountTypes]: SearchPrice[] },
       ),
     ),
+    tap((prices) => Object.values(prices).forEach((list) => this.registerPrices(list))),
     shareReplay(1),
   );
   meteredPrices = this.globalService.getSearchPrice('metered').pipe(
@@ -70,17 +71,16 @@ export class PaymentLinksComponent implements OnDestroy {
         },
       ].concat(prices),
     ),
+    tap((prices) => this.registerPrices(prices)),
     shareReplay(1),
   );
-  formulasOptions = this.globalService.getBillingFormulas().pipe(
-    map((formulas) =>
-      formulas.map(
-        (formula) =>
-          new OptionModel({ id: formula.id, value: formula.id, label: formula.title, help: formula.description }),
-      ),
-    ),
+  formulas = this.globalService.getBillingFormulas().pipe(
+    tap((formulas) => formulas.forEach((formula) => this.labels.set(formula.id, formula.title))),
     shareReplay(1),
   );
+
+  readonly priceLabel = (id: string) => this.labels.get(id) ?? id;
+  readonly formulaLabel = (id: string) => this.labels.get(id) ?? id;
 
   get accountTypeValue() {
     return this.paymentLinkForm.controls.accountType.value as AccountTypes;
@@ -89,7 +89,7 @@ export class PaymentLinksComponent implements OnDestroy {
   constructor(
     private store: ManagerStore,
     private globalService: GlobalAccountService,
-    private toast: SisToastService,
+    private toast: UiToastService,
     private cdr: ChangeDetectorRef,
   ) {
     this.paymentLinkForm.controls.accountType.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
@@ -100,6 +100,10 @@ export class PaymentLinksComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  private registerPrices(prices: SearchPrice[]) {
+    prices.forEach((price) => this.labels.set(price.id, price.nickname));
   }
 
   create() {

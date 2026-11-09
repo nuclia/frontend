@@ -1,13 +1,22 @@
-<h3>Blocked features</h3>
+<h3 class="mb-4 text-xl font-semibold">Blocked features</h3>
 <form
+  class="flex flex-col gap-2"
   [formGroup]="blockedFeatures"
   (ngSubmit)="save()">
   @for (feature of blockedFeatures.controls | keyvalue; track feature.key) {
-    <pa-checkbox
-      [formControlName]="feature.key"
-      [value]="feature.value">
-      {{ feature.key | featureName }}
-    </pa-checkbox>
+    <div
+      hlmField
+      orientation="horizontal">
+      <hlm-checkbox
+        [inputId]="'blocked-' + feature.key"
+        [formControlName]="feature.key" />
+      <label
+        hlmFieldLabel
+        class="capitalize"
+        [for]="'blocked-' + feature.key">
+        {{ feature.key | featureName }}
+      </label>
+    </div>
   }
 
   <nma-form-footer

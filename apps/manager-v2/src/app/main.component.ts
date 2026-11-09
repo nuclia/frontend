@@ -1,16 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { TranslateService as PaTranslateService, TranslationEntries } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
+import { HlmToasterImports } from '@nuclia/ui-spartan/sonner';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -19,18 +11,15 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
 @Component({
   selector: 'nma-main',
   templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HlmToasterImports],
 })
 export class MainComponent implements OnInit, OnDestroy {
-  @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
   version?: string;
 
   private unsubscribeAll: Subject<void> = new Subject<void>();
 
   constructor(
-    private paTranslate: PaTranslateService,
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
     private sdk: SDKService,
@@ -68,7 +57,6 @@ export class MainComponent implements OnInit, OnDestroy {
 
     this.ngxTranslate.onLangChange.pipe(takeUntil(this.unsubscribeAll)).subscribe((event) => {
       localStorage.setItem(userLocaleKey, event.lang);
-      this.paTranslate.initTranslationsAndUse(event.lang, event.translations as any as TranslationEntries);
     });
   }
 

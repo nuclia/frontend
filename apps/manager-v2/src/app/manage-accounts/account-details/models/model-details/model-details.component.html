@@ -1,26 +1,40 @@
-<h3>{{ backupModel?.location || '' }}</h3>
-<form
-  [formGroup]="kbForm"
-  (ngSubmit)="save()">
-  <fieldset>
-    <legend class="title-s">Enable on Knowledge Boxes:</legend>
-  @for (kb of kbForm.controls | keyvalue; track kb.key) {
-    <pa-checkbox [formControlName]="kb.key">
-      {{ ((modelNames | async) || {})[kb.key] }}
-    </pa-checkbox>
-  }
-  </fieldset>
-  <footer>
-    <pa-button
-      kind="primary"
-      type="submit"
-      [disabled]="kbForm.pristine || isSaving">
-      Save
-    </pa-button>
-    <pa-button
-      aspect="basic"
-      (click)="cancel()">
-      Cancel
-    </pa-button>
-  </footer>
-</form>
+<div class="px-6">
+  <h3 class="mb-4 text-xl font-semibold">{{ backupModel?.location || '' }}</h3>
+  <form
+    class="flex max-w-lg flex-col gap-4"
+    [formGroup]="kbForm"
+    (ngSubmit)="save()">
+    <fieldset class="flex flex-col gap-3">
+      <legend class="mb-2 font-semibold">Enable on Knowledge Boxes:</legend>
+      @for (kb of kbForm.controls | keyvalue; track kb.key) {
+        <div
+          hlmField
+          orientation="horizontal">
+          <hlm-checkbox
+            [inputId]="'kb-' + kb.key"
+            [formControlName]="kb.key" />
+          <label
+            hlmFieldLabel
+            [for]="'kb-' + kb.key">
+            {{ ((modelNames | async) || {})[kb.key] }}
+          </label>
+        </div>
+      }
+    </fieldset>
+    <footer class="flex gap-4 py-6">
+      <button
+        hlmBtn
+        type="submit"
+        [disabled]="kbForm.pristine || isSaving">
+        Save
+      </button>
+      <button
+        hlmBtn
+        type="button"
+        variant="outline"
+        (click)="cancel()">
+        Cancel
+      </button>
+    </footer>
+  </form>
+</div>
