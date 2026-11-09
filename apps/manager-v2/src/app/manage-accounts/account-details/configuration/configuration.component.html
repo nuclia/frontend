@@ -2,8 +2,8 @@
   <h3 class="mb-4 text-xl font-semibold">Configuration</h3>
   <form
     class="flex flex-col gap-6"
-    [formGroup]="configForm"
-    (ngSubmit)="save()">
+    [formGroup]="vm.configForm"
+    (ngSubmit)="vm.save()">
     <div hlmField>
       <label
         hlmFieldLabel
@@ -15,7 +15,7 @@
         id="config-email"
         class="read-only:bg-muted read-only:text-muted-foreground"
         formControlName="email"
-        [readOnly]="!canFullyEditAccount()" />
+        [readOnly]="!vm.canFullyEditAccount()" />
     </div>
     <div hlmField>
       <label
@@ -28,7 +28,7 @@
         id="config-slug"
         class="read-only:bg-muted read-only:text-muted-foreground"
         formControlName="slug"
-        [readOnly]="!canFullyEditAccount()" />
+        [readOnly]="!vm.canFullyEditAccount()" />
     </div>
     <div hlmField>
       <label
@@ -123,7 +123,7 @@
       </hlm-date-picker>
     </div>
 
-    @if (canFullyEditAccount()) {
+    @if (vm.canFullyEditAccount()) {
       <div hlmField>
         <label
           hlmFieldLabel
@@ -136,16 +136,16 @@
             id="free-tokens"
             type="number"
             class="w-40"
-            [value]="free_tokens_per_billing_cycle()"
-            (input)="onFreeTokensInput($event)" />
+            [value]="vm.free_tokens_per_billing_cycle()"
+            (input)="vm.onFreeTokensInput($event)" />
           <span
             hlmTooltip="Require a subscription provider"
-            [tooltipDisabled]="!!provider()">
+            [tooltipDisabled]="!!vm.provider()">
             <button
               hlmBtn
               type="button"
-              [disabled]="!provider()"
-              (click)="updateFreeTokens()">
+              [disabled]="!vm.provider()"
+              (click)="vm.updateFreeTokens()">
               Update free tokens
             </button>
           </span>
@@ -153,266 +153,36 @@
         <p hlmFieldDescription>Free tokens per billing cycle</p>
       </div>
 
-      <fieldset
-        hlmFieldSet
-        formGroupName="kbs">
-        <legend hlmFieldLegend>Max knowledge boxes available</legend>
-        <div class="flex items-start justify-between gap-4">
-          <div
-            hlmRadioGroup
-            aria-label="Max knowledge boxes available"
-            formControlName="kbs_radio">
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="max-kbs-unlimited"
-                value="unlimited">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="max-kbs-unlimited">
-                Unlimited
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="max-kbs-limit"
-                value="limit">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="max-kbs-limit">
-                Limit
-              </label>
-            </div>
-          </div>
-          @if (configForm.controls.kbs.controls.kbs_radio.value === 'limit') {
-            <div class="flex items-center gap-2">
-              <input
-                hlmInput
-                type="number"
-                class="w-40"
-                aria-label="Max knowledge boxes"
-                formControlName="maxKbs" />
-              <button
-                hlmBtn
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Reset to default"
-                hlmTooltip="Reset to default"
-                (click)="resetMaxKbsToDefault()">
-                <ng-icon name="matRefreshRound" />
-              </button>
-            </div>
-          }
-        </div>
-      </fieldset>
+      <app-limit-field
+        label="Max knowledge boxes available"
+        inputLabel="Max knowledge boxes"
+        idPrefix="max-kbs"
+        [mode]="vm.configForm.controls.kbs.controls.kbs_radio"
+        [limit]="vm.configForm.controls.kbs.controls.maxKbs"
+        (resetToDefault)="vm.resetMaxKbsToDefault()" />
     }
-    @if (canFullyEditAccount()) {
-      <fieldset
-        hlmFieldSet
-        formGroupName="agents">
-        <legend hlmFieldLegend>Max retrieval agents available</legend>
-        <div class="flex items-start justify-between gap-4">
-          <div
-            hlmRadioGroup
-            aria-label="Max retrieval agents available"
-            formControlName="agents_radio">
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="max-agents-unlimited"
-                value="unlimited">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="max-agents-unlimited">
-                Unlimited
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="max-agents-limit"
-                value="limit">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="max-agents-limit">
-                Limit
-              </label>
-            </div>
-          </div>
-          @if (configForm.controls.agents.controls.agents_radio.value === 'limit') {
-            <div class="flex items-center gap-2">
-              <input
-                hlmInput
-                type="number"
-                class="w-40"
-                aria-label="Max retrieval agents"
-                formControlName="maxAgents" />
-              <button
-                hlmBtn
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Reset to default"
-                hlmTooltip="Reset to default"
-                (click)="resetMaxAragsToDefault()">
-                <ng-icon name="matRefreshRound" />
-              </button>
-            </div>
-          }
-        </div>
-      </fieldset>
+    @if (vm.canFullyEditAccount()) {
+      <app-limit-field
+        label="Max retrieval agents available"
+        inputLabel="Max retrieval agents"
+        idPrefix="max-agents"
+        [mode]="vm.configForm.controls.agents.controls.agents_radio"
+        [limit]="vm.configForm.controls.agents.controls.maxAgents"
+        (resetToDefault)="vm.resetMaxAragsToDefault()" />
 
-      <fieldset
-        hlmFieldSet
-        formGroupName="memories">
-        <legend hlmFieldLegend>Max retrieval agents with memory</legend>
-        <div class="flex items-start justify-between gap-4">
-          <div
-            hlmRadioGroup
-            aria-label="Max retrieval agents with memory"
-            formControlName="memories_radio">
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="max-memories-unlimited"
-                value="unlimited">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="max-memories-unlimited">
-                Unlimited
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="max-memories-limit"
-                value="limit">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="max-memories-limit">
-                Limit
-              </label>
-            </div>
-          </div>
-          @if (configForm.controls.memories.controls.memories_radio.value === 'limit') {
-            <div class="flex items-center gap-2">
-              <input
-                hlmInput
-                type="number"
-                class="w-40"
-                aria-label="Max retrieval agents with memory"
-                formControlName="maxMemories" />
-              <button
-                hlmBtn
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Reset to default"
-                hlmTooltip="Reset to default"
-                (click)="resetMaxAragsWithMemoryToDefault()">
-                <ng-icon name="matRefreshRound" />
-              </button>
-            </div>
-          }
-        </div>
-      </fieldset>
+      <app-limit-field
+        label="Max retrieval agents with memory"
+        inputLabel="Max retrieval agents with memory"
+        idPrefix="max-memories"
+        [mode]="vm.configForm.controls.memories.controls.memories_radio"
+        [limit]="vm.configForm.controls.memories.controls.maxMemories"
+        (resetToDefault)="vm.resetMaxAragsWithMemoryToDefault()" />
 
-      <fieldset
-        hlmFieldSet
-        [formGroup]="budgetForm">
-        <legend hlmFieldLegend>Budget</legend>
-        <div class="flex items-start justify-between gap-4">
-          <div
-            hlmRadioGroup
-            aria-label="Budget"
-            formControlName="custom_budget">
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="budget-unlimited"
-                value="unlimited">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="budget-unlimited">
-                Unlimited
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <hlm-radio
-                inputId="budget-limit"
-                value="limit">
-                <hlm-radio-indicator />
-              </hlm-radio>
-              <label
-                hlmLabel
-                for="budget-limit">
-                Limit
-              </label>
-            </div>
-          </div>
-          @if (budgetForm.controls.custom_budget.value === 'limit') {
-            <div class="flex flex-col gap-4">
-              <div class="flex items-center gap-2">
-                <input
-                  hlmInput
-                  type="number"
-                  class="w-40"
-                  aria-label="Budget tokens"
-                  placeholder="Tokens"
-                  formControlName="budget_value" />
-                <button
-                  hlmBtn
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Reset"
-                  hlmTooltip="Reset"
-                  (click)="resetBudget()">
-                  <ng-icon name="matRefreshRound" />
-                </button>
-              </div>
-              <div
-                hlmRadioGroup
-                aria-label="Action on budget exhausted"
-                formControlName="action_on_budget_exhausted">
-                <div class="flex items-center gap-2">
-                  <hlm-radio
-                    inputId="budget-block"
-                    value="BLOCK_ACCOUNT">
-                    <hlm-radio-indicator />
-                  </hlm-radio>
-                  <label
-                    hlmLabel
-                    for="budget-block">
-                    Block the account
-                  </label>
-                </div>
-                <div class="flex items-center gap-2">
-                  <hlm-radio
-                    inputId="budget-warn"
-                    value="WARN_ACCOUNT_OWNER">
-                    <hlm-radio-indicator />
-                  </hlm-radio>
-                  <label
-                    hlmLabel
-                    for="budget-warn">
-                    Send a warning email
-                  </label>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-      </fieldset>
+      <app-budget-field
+        [mode]="vm.budgetForm.controls.custom_budget"
+        [value]="vm.budgetForm.controls.budget_value"
+        [action]="vm.budgetForm.controls.action_on_budget_exhausted"
+        (resetBudget)="vm.resetBudget()" />
 
       <div
         hlmField
@@ -454,9 +224,12 @@
     }
     <nma-form-footer
       [disabled]="
-        (configForm.pristine && budgetForm.pristine) || configForm.invalid || budgetForm.invalid || isSaving()
+        (vm.configForm.pristine && vm.budgetForm.pristine) ||
+        vm.configForm.invalid ||
+        vm.budgetForm.invalid ||
+        vm.isSaving()
       "
-      (footerCancel)="reset()"></nma-form-footer>
+      (footerCancel)="vm.reset()"></nma-form-footer>
   </form>
 
   <nma-blocked-features class="mt-8 block"></nma-blocked-features>

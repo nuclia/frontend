@@ -1,0 +1,165 @@
+<ng-container [formGroup]="form()">
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      [for]="idPrefix() + '-price'">
+      Nuclia tokens price *
+    </label>
+    <input
+      hlmInput
+      type="number"
+      [id]="idPrefix() + '-price'"
+      formControlName="nuclia_tokens_price" />
+  </div>
+  @if (isCloudZero()) {
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        [for]="idPrefix() + '-business-unit'">
+        Business unit *
+      </label>
+      <hlm-select
+        formControlName="business_unit"
+        [itemToString]="vm.businessUnitLabel"
+        (valueChange)="vm.onBusinessUnitChange($event)">
+        <hlm-select-trigger
+          [buttonId]="idPrefix() + '-business-unit'"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.businessUnitOptions(); track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        [for]="idPrefix() + '-product-line'">
+        Product line *
+      </label>
+      <hlm-select
+        formControlName="product_line"
+        [itemToString]="vm.productLineLabel"
+        (valueChange)="vm.onProductLineChange($event)">
+        <hlm-select-trigger
+          [buttonId]="idPrefix() + '-product-line'"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.productLineOptions(); track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        [for]="idPrefix() + '-product'">
+        Product *
+      </label>
+      <hlm-select
+        formControlName="product"
+        [itemToString]="vm.productLabel">
+        <hlm-select-trigger
+          [buttonId]="idPrefix() + '-product'"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (option of vm.productOptions(); track option.value) {
+            <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+  }
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      [for]="idPrefix() + '-formula'">
+      Billing formula
+    </label>
+    <hlm-select
+      formControlName="billing_formula_id"
+      [itemToString]="vm.formulaLabel">
+      <hlm-select-trigger
+        [buttonId]="idPrefix() + '-formula'"
+        class="w-full">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        @for (option of vm.formulasOptions(); track option.value) {
+          <hlm-select-item [value]="option.value">
+            <ui-option-with-description
+              [label]="option.label"
+              [description]="option.description" />
+          </hlm-select-item>
+        }
+      </hlm-select-content>
+    </hlm-select>
+  </div>
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      [for]="idPrefix() + '-free-tokens'">
+      Free tokens per billing cycle
+    </label>
+    <input
+      hlmInput
+      type="number"
+      [id]="idPrefix() + '-free-tokens'"
+      formControlName="free_tokens_per_billing_cycle" />
+  </div>
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      [for]="idPrefix() + '-free-storage'">
+      Free storage (Nuclia tokens)
+    </label>
+    <input
+      hlmInput
+      type="number"
+      [id]="idPrefix() + '-free-storage'"
+      formControlName="free_storage_nuclia_tokens" />
+  </div>
+  <div hlmField>
+    <label
+      hlmFieldLabel
+      [for]="idPrefix() + '-budget'">
+      On-demand budget
+    </label>
+    <input
+      hlmInput
+      type="number"
+      [id]="idPrefix() + '-budget'"
+      formControlName="on_demand_budget" />
+  </div>
+  @if (showAction()) {
+    <div hlmField>
+      <label
+        hlmFieldLabel
+        [for]="idPrefix() + '-action'">
+        Action on budget exhausted
+      </label>
+      <hlm-select
+        formControlName="action_on_budget_exhausted"
+        [itemToString]="vm.actionOnBudgetLabel">
+        <hlm-select-trigger
+          [buttonId]="idPrefix() + '-action'"
+          class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content *hlmSelectPortal>
+          @for (opt of vm.actionOnBudgetOptions; track opt.value) {
+            <hlm-select-item [value]="opt.value">{{ opt.label }}</hlm-select-item>
+          }
+        </hlm-select-content>
+      </hlm-select>
+    </div>
+  }
+</ng-container>

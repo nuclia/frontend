@@ -1,185 +1,12 @@
-<ng-template
-  #formFields
-  let-form="form"
-  let-idPrefix="idPrefix"
-  let-isCloudZero="isCloudZero"
-  let-showAction="showAction">
-  <ng-container [formGroup]="form">
-    <div hlmField>
-      <label
-        hlmFieldLabel
-        [for]="idPrefix + '-price'">
-        Nuclia tokens price *
-      </label>
-      <input
-        hlmInput
-        type="number"
-        [id]="idPrefix + '-price'"
-        formControlName="nuclia_tokens_price" />
-    </div>
-    @if (isCloudZero) {
-      <div hlmField>
-        <label
-          hlmFieldLabel
-          [for]="idPrefix + '-business-unit'">
-          Business unit *
-        </label>
-        <hlm-select
-          formControlName="business_unit"
-          [itemToString]="service.businessUnitLabel"
-          (valueChange)="service.onBusinessUnitChange($event)">
-          <hlm-select-trigger
-            [buttonId]="idPrefix + '-business-unit'"
-            class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content *hlmSelectPortal>
-            @for (option of service.businessUnitOptions(); track option.value) {
-              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
-            }
-          </hlm-select-content>
-        </hlm-select>
-      </div>
-      <div hlmField>
-        <label
-          hlmFieldLabel
-          [for]="idPrefix + '-product-line'">
-          Product line *
-        </label>
-        <hlm-select
-          formControlName="product_line"
-          [itemToString]="service.productLineLabel"
-          (valueChange)="service.onProductLineChange($event)">
-          <hlm-select-trigger
-            [buttonId]="idPrefix + '-product-line'"
-            class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content *hlmSelectPortal>
-            @for (option of service.productLineOptions(); track option.value) {
-              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
-            }
-          </hlm-select-content>
-        </hlm-select>
-      </div>
-      <div hlmField>
-        <label
-          hlmFieldLabel
-          [for]="idPrefix + '-product'">
-          Product *
-        </label>
-        <hlm-select
-          formControlName="product"
-          [itemToString]="service.productLabel">
-          <hlm-select-trigger
-            [buttonId]="idPrefix + '-product'"
-            class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content *hlmSelectPortal>
-            @for (option of service.productOptions(); track option.value) {
-              <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
-            }
-          </hlm-select-content>
-        </hlm-select>
-      </div>
-    }
-    <div hlmField>
-      <label
-        hlmFieldLabel
-        [for]="idPrefix + '-formula'">
-        Billing formula
-      </label>
-      <hlm-select
-        formControlName="billing_formula_id"
-        [itemToString]="service.formulaLabel">
-        <hlm-select-trigger
-          [buttonId]="idPrefix + '-formula'"
-          class="w-full">
-          <hlm-select-value />
-        </hlm-select-trigger>
-        <hlm-select-content *hlmSelectPortal>
-          @for (option of service.formulasOptions(); track option.value) {
-            <hlm-select-item [value]="option.value">
-              <ui-option-with-description
-                [label]="option.label"
-                [description]="option.description" />
-            </hlm-select-item>
-          }
-        </hlm-select-content>
-      </hlm-select>
-    </div>
-    <div hlmField>
-      <label
-        hlmFieldLabel
-        [for]="idPrefix + '-free-tokens'">
-        Free tokens per billing cycle
-      </label>
-      <input
-        hlmInput
-        type="number"
-        [id]="idPrefix + '-free-tokens'"
-        formControlName="free_tokens_per_billing_cycle" />
-    </div>
-    <div hlmField>
-      <label
-        hlmFieldLabel
-        [for]="idPrefix + '-free-storage'">
-        Free storage (Nuclia tokens)
-      </label>
-      <input
-        hlmInput
-        type="number"
-        [id]="idPrefix + '-free-storage'"
-        formControlName="free_storage_nuclia_tokens" />
-    </div>
-    <div hlmField>
-      <label
-        hlmFieldLabel
-        [for]="idPrefix + '-budget'">
-        On-demand budget
-      </label>
-      <input
-        hlmInput
-        type="number"
-        [id]="idPrefix + '-budget'"
-        formControlName="on_demand_budget" />
-    </div>
-    @if (showAction) {
-      <div hlmField>
-        <label
-          hlmFieldLabel
-          [for]="idPrefix + '-action'">
-          Action on budget exhausted
-        </label>
-        <hlm-select
-          formControlName="action_on_budget_exhausted"
-          [itemToString]="service.actionOnBudgetLabel">
-          <hlm-select-trigger
-            [buttonId]="idPrefix + '-action'"
-            class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content *hlmSelectPortal>
-            @for (opt of service.actionOnBudgetOptions; track opt.value) {
-              <hlm-select-item [value]="opt.value">{{ opt.label }}</hlm-select-item>
-            }
-          </hlm-select-content>
-        </hlm-select>
-      </div>
-    }
-  </ng-container>
-</ng-template>
-
 <div class="px-6">
-  @switch (service.subscriptionState()) {
+  @switch (vm.subscriptionState()) {
     @case ('loading') {
       <p>Loading subscription...</p>
     }
     @case ('other') {
       <div hlmAlert>
         <div hlmAlertDescription>
-          This account already has a subscription managed by another provider ({{ service.existingProvider() }}).
+          This account already has a subscription managed by another provider ({{ vm.existingProvider() }}).
         </div>
       </div>
     }
@@ -187,23 +14,18 @@
       <h3 class="mb-4 text-xl font-semibold">Cloud Zero Subscription</h3>
       <form
         class="flex max-w-lg flex-col gap-4"
-        [formGroup]="service.cloudZeroForm"
-        (ngSubmit)="service.createCloudZeroSubscription()">
-        <ng-container
-          *ngTemplateOutlet="
-            formFields;
-            context: {
-              form: service.cloudZeroForm,
-              idPrefix: 'cz',
-              isCloudZero: true,
-              showAction: service.cloudZeroShowAction(),
-            }
-          "></ng-container>
+        [formGroup]="vm.cloudZeroForm"
+        (ngSubmit)="vm.createCloudZeroSubscription()">
+        <app-subscription-fields
+          [form]="vm.cloudZeroForm"
+          idPrefix="cz"
+          [isCloudZero]="true"
+          [showAction]="vm.cloudZeroShowAction()" />
         <div>
           <button
             type="submit"
             hlmBtn
-            [disabled]="service.cloudZeroForm.invalid || service.isSavingCloudZero()">
+            [disabled]="vm.cloudZeroForm.invalid || vm.isSavingCloudZero()">
             Create Cloud Zero Subscription
           </button>
         </div>
@@ -212,23 +34,17 @@
       <h3 class="mt-12 mb-4 text-xl font-semibold">Manual Subscription</h3>
       <form
         class="flex max-w-lg flex-col gap-4"
-        [formGroup]="service.manualForm"
-        (ngSubmit)="service.createManualSubscription()">
-        <ng-container
-          *ngTemplateOutlet="
-            formFields;
-            context: {
-              form: service.manualForm,
-              idPrefix: 'manual',
-              isCloudZero: false,
-              showAction: service.manualShowAction(),
-            }
-          "></ng-container>
+        [formGroup]="vm.manualForm"
+        (ngSubmit)="vm.createManualSubscription()">
+        <app-subscription-fields
+          [form]="vm.manualForm"
+          idPrefix="manual"
+          [showAction]="vm.manualShowAction()" />
         <div>
           <button
             type="submit"
             hlmBtn
-            [disabled]="service.manualForm.invalid || service.isSavingManual()">
+            [disabled]="vm.manualForm.invalid || vm.isSavingManual()">
             Create Manual Subscription
           </button>
         </div>
@@ -238,51 +54,23 @@
       <h3 class="mb-4 text-xl font-semibold">Cloud Zero Subscription</h3>
       <form
         class="flex max-w-lg flex-col gap-4"
-        [formGroup]="service.cloudZeroForm"
-        (ngSubmit)="service.updateCloudZeroSubscription()">
-        <ng-container
-          *ngTemplateOutlet="
-            formFields;
-            context: {
-              form: service.cloudZeroForm,
-              idPrefix: 'cz',
-              isCloudZero: true,
-              showAction: service.cloudZeroShowAction(),
-            }
-          "></ng-container>
+        [formGroup]="vm.cloudZeroForm"
+        (ngSubmit)="vm.updateCloudZeroSubscription()">
+        <app-subscription-fields
+          [form]="vm.cloudZeroForm"
+          idPrefix="cz"
+          [isCloudZero]="true"
+          [showAction]="vm.cloudZeroShowAction()" />
         <div class="flex items-center gap-4">
           <button
             type="submit"
             hlmBtn
-            [disabled]="service.cloudZeroForm.pristine || service.cloudZeroForm.invalid || service.isSavingCloudZero()">
+            [disabled]="vm.cloudZeroForm.pristine || vm.cloudZeroForm.invalid || vm.isSavingCloudZero()">
             Update
           </button>
-          @if (!showCloudZeroDeleteConfirm()) {
-            <button
-              type="button"
-              hlmBtn
-              variant="destructive"
-              (click)="showCloudZeroDeleteConfirm.set(true)">
-              Delete
-            </button>
-          } @else {
-            <span class="text-sm">Are you sure? This action cannot be undone.</span>
-            <button
-              type="button"
-              hlmBtn
-              variant="destructive"
-              [disabled]="service.isDeletingCloudZero()"
-              (click)="service.confirmDelete('cloud_zero'); showCloudZeroDeleteConfirm.set(false)">
-              Confirm delete
-            </button>
-            <button
-              type="button"
-              hlmBtn
-              variant="outline"
-              (click)="showCloudZeroDeleteConfirm.set(false)">
-              Cancel
-            </button>
-          }
+          <app-subscription-delete
+            [isDeleting]="vm.isDeletingCloudZero()"
+            (confirmed)="vm.confirmDelete('cloud_zero')" />
         </div>
       </form>
     }
@@ -290,51 +78,22 @@
       <h3 class="mb-4 text-xl font-semibold">Manual Subscription</h3>
       <form
         class="flex max-w-lg flex-col gap-4"
-        [formGroup]="service.manualForm"
-        (ngSubmit)="service.updateManualSubscription()">
-        <ng-container
-          *ngTemplateOutlet="
-            formFields;
-            context: {
-              form: service.manualForm,
-              idPrefix: 'manual',
-              isCloudZero: false,
-              showAction: service.manualShowAction(),
-            }
-          "></ng-container>
+        [formGroup]="vm.manualForm"
+        (ngSubmit)="vm.updateManualSubscription()">
+        <app-subscription-fields
+          [form]="vm.manualForm"
+          idPrefix="manual"
+          [showAction]="vm.manualShowAction()" />
         <div class="flex items-center gap-4">
           <button
             type="submit"
             hlmBtn
-            [disabled]="service.manualForm.pristine || service.manualForm.invalid || service.isSavingManual()">
+            [disabled]="vm.manualForm.pristine || vm.manualForm.invalid || vm.isSavingManual()">
             Update
           </button>
-          @if (!showManualDeleteConfirm()) {
-            <button
-              type="button"
-              hlmBtn
-              variant="destructive"
-              (click)="showManualDeleteConfirm.set(true)">
-              Delete
-            </button>
-          } @else {
-            <span class="text-sm">Are you sure? This action cannot be undone.</span>
-            <button
-              type="button"
-              hlmBtn
-              variant="destructive"
-              [disabled]="service.isDeletingManual()"
-              (click)="service.confirmDelete('manual'); showManualDeleteConfirm.set(false)">
-              Confirm delete
-            </button>
-            <button
-              type="button"
-              hlmBtn
-              variant="outline"
-              (click)="showManualDeleteConfirm.set(false)">
-              Cancel
-            </button>
-          }
+          <app-subscription-delete
+            [isDeleting]="vm.isDeletingManual()"
+            (confirmed)="vm.confirmDelete('manual')" />
         </div>
       </form>
     }

@@ -72,6 +72,18 @@ Start with `<name>.component.{html|ts}` only. Split when needed, in this order:
 Do not create small files with a few lines of code without need, and do not
 leave a file large when it should be split.
 
+### Spec files
+
+A feature has one spec file, `<feature>.spec.ts`, in the feature folder. It
+covers the feature as a whole: the main component with its subcomponents, the
+`vm` service and the utils, mostly through the main component. Cover only the
+important behavior, not every detail.
+
+Do not add a `.spec.ts` per component, service or utils file of the feature
+(`<name>.component.spec.ts`, `<name>.service.spec.ts`, `<name>.utils.spec.ts`).
+Shared components, services and utils that live outside a feature folder keep
+their own `<name>.spec.ts`.
+
 ## Components
 
 - Standalone components. Modules only when some components must be exported and
