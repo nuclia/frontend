@@ -68,20 +68,13 @@ Set <code>forceInvalid</code> on each slot to show the invalid style. Associate 
     template: `
       <div class="grid gap-3">
         <label hlmLabel for="verification-code">Verification code</label>
-        <brn-input-otp
-          hlmInputOtp
-          inputId="verification-code"
-          inputAutocomplete="one-time-code"
-          [length]="length"
-          [inputMode]="inputMode"
-          [disabled]="disabled"
-          (completed)="completed($event)">
+        <hlm-input-otp inputId="verification-code" inputAutocomplete="one-time-code" [length]="length" [inputMode]="inputMode" [disabled]="disabled" (completed)="completed($event)">
           <hlm-input-otp-group>
             @for (slot of slots; track slot) {
               <hlm-input-otp-slot [index]="slot" [forceInvalid]="forceInvalid" />
             }
           </hlm-input-otp-group>
-        </brn-input-otp>
+        </hlm-input-otp>
         <p class="text-muted-foreground text-sm">Enter the code sent to your email.</p>
       </div>
     `,
@@ -127,12 +120,7 @@ export const WithSeparator: Story = {
     template: `
       <div class="grid gap-3">
         <label hlmLabel for="verification-code-split">Verification code</label>
-        <brn-input-otp
-          hlmInputOtp
-          inputId="verification-code-split"
-          inputAutocomplete="one-time-code"
-          inputMode="numeric"
-          [length]="6">
+        <hlm-input-otp inputId="verification-code-split" inputAutocomplete="one-time-code" inputMode="numeric" [length]="6">
           <hlm-input-otp-group>
             <hlm-input-otp-slot [index]="0" />
             <hlm-input-otp-slot [index]="1" />
@@ -144,7 +132,7 @@ export const WithSeparator: Story = {
             <hlm-input-otp-slot [index]="4" />
             <hlm-input-otp-slot [index]="5" />
           </hlm-input-otp-group>
-        </brn-input-otp>
+        </hlm-input-otp>
         <p class="text-muted-foreground text-sm">Enter the six-digit code sent to your phone.</p>
       </div>
     `,
