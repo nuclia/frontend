@@ -1,6 +1,6 @@
 {
 	"account.account-title": "Compte",
-	"account.cloud-zero.is-pfs": "Compte PFS?",
+	"account.is-pfs": "Compte PFS?",
 	"account.cloud-zero.none": "Cap",
 	"account.account_name_invalid": "El nom del compte no és vàlid",
 	"account.add_user": "Afegir usuari",

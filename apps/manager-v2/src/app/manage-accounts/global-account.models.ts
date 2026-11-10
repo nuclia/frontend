@@ -160,7 +160,6 @@ export interface CloudZeroSubscriptionPayload extends BaseSubscriptionPayload {
   product?: string;
   product_line?: string;
   business_unit: string;
-  is_pfs?: boolean;
 }
 
 export type ManualSubscriptionPayload = BaseSubscriptionPayload;
@@ -184,7 +183,6 @@ export interface ManagerSubscriptionDetails {
   product?: string;
   product_line?: string;
   business_unit?: string;
-  is_pfs?: boolean;
 }
 
 export interface ManagerAccountSubscription {

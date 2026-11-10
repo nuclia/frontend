@@ -10,6 +10,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
@@ -39,6 +40,7 @@ import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.c
     FormFooterComponent,
     BlockedFeaturesComponent,
     AsyncPipe,
+    TranslatePipe,
   ],
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
@@ -82,6 +84,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     zoneVisibility: new FormControl<ZoneVisibility>('DEFAULT', { nonNullable: true }),
     labels: new FormGroup({
       progress_account: new FormControl<boolean>(false, { nonNullable: true }),
+      is_pfs: new FormControl<boolean>(false, { nonNullable: true }),
     }),
   });
   free_tokens_per_billing_cycle = 0;
@@ -325,9 +328,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       accountDetails.maxMemories === -1 ? 'unlimited' : 'limit',
     );
     this.configForm.controls.memories.controls.maxMemories.patchValue(accountDetails.maxMemories);
-    if (labels !== null) {
-      this.configForm.controls.labels.patchValue(labels);
-    }
+    this.configForm.controls.labels.patchValue({
+      ...labels,
+      is_pfs: labels?.is_pfs ?? false,
+    });
     this.cdr.markForCheck();
   }
 

@@ -74,6 +74,7 @@ export interface ZoneModels {
 
 export interface AccountLabels {
   progress_account: boolean;
+  is_pfs?: boolean | null;
 }
 
 export interface Project {

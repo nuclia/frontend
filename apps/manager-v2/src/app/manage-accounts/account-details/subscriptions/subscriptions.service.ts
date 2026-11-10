@@ -62,7 +62,6 @@ export class SubscriptionsService {
     product: new FormControl<string>('', { nonNullable: true }),
     product_line: new FormControl<string>('', { nonNullable: true }),
     business_unit: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    is_pfs: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   manualForm = new FormGroup({
@@ -248,7 +247,6 @@ export class SubscriptionsService {
       product: raw.product,
       product_line: raw.product_line,
       business_unit: raw.business_unit,
-      is_pfs: raw.is_pfs,
     };
   }
 
