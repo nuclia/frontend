@@ -149,6 +149,7 @@
                 </label>
                 <hlm-select
                   [value]="app()"
+                  [itemToString]="appLabel"
                   (valueChange)="onAppChange($event)">
                   <hlm-select-trigger
                     buttonId="user-setup-app"

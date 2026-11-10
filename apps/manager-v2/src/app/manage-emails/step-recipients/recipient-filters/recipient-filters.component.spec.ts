@@ -45,4 +45,21 @@ describe('RecipientFiltersComponent', () => {
     component.onFilterChange('ALL');
     expect(load).toHaveBeenLastCalledWith('ALL', []);
   });
+
+  it('should keep the selected role highlighted when it is clicked again', async () => {
+    const fixture = TestBed.createComponent(RecipientFiltersComponent);
+    fixture.detectChanges();
+    const roleButtons = () =>
+      Array.from<HTMLElement>(
+        fixture.nativeElement.querySelectorAll('[aria-labelledby="role-filter-label"] [hlmToggleGroupItem]'),
+      );
+    const selected = () => roleButtons().filter((button) => button.getAttribute('data-state') === 'on');
+    expect(selected().length).toBe(1);
+
+    selected()[0].click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(selected().length).toBe(1);
+  });
 });

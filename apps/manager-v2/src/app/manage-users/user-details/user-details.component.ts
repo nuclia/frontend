@@ -58,6 +58,7 @@ export class UserDetailsComponent {
   isSaving = signal(false);
 
   app = signal<'platform' | 'rag'>('platform');
+  readonly appLabel = (value: 'platform' | 'rag') => (value === 'rag' ? 'Agentic RAG' : 'PDP Studio');
   passwordPage = computed(() => this.sdk.getOriginForApp('auth') + '/setup/user?app=' + this.app());
   copied = signal(false);
 

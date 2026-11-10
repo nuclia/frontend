@@ -53,6 +53,7 @@
         type="single"
         variant="outline"
         aria-labelledby="role-filter-label"
+        [nullable]="false"
         [value]="recipients.recipientFilter()"
         (valueChange)="onFilterChange($event)">
         @for (item of recipientFilters; track item.id) {
