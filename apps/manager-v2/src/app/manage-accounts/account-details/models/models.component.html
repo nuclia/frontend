@@ -45,10 +45,29 @@
                       variant="ghost"
                       size="icon-sm"
                       aria-label="Menu"
-                      [hlmDropdownMenuTrigger]="modelMenu"
-                      [hlmDropdownMenuTriggerData]="{ model, zone: zone.zone.slug }">
+                      [hlmDropdownMenuTrigger]="modelMenu">
                       <ng-icon name="matMoreVertRound" />
                     </button>
+                    <ng-template #modelMenu>
+                      <div
+                        hlmDropdownMenu
+                        aria-label="Model actions">
+                        <button
+                          type="button"
+                          hlmDropdownMenuItem
+                          (triggered)="goToDetails(model, zone.zone.slug)">
+                          Assign to Knowledge Boxes
+                        </button>
+                        <div hlmDropdownMenuSeparator></div>
+                        <button
+                          type="button"
+                          hlmDropdownMenuItem
+                          variant="destructive"
+                          (triggered)="delete(model, zone.zone.slug)">
+                          Delete
+                        </button>
+                      </div>
+                    </ng-template>
                   }
                 </td>
               </tr>
@@ -59,27 +78,3 @@
     </div>
   }
 </div>
-
-<ng-template
-  #modelMenu
-  let-model="model"
-  let-zone="zone">
-  <div
-    hlmDropdownMenu
-    aria-label="Model actions">
-    <button
-      type="button"
-      hlmDropdownMenuItem
-      (triggered)="goToDetails(model, zone)">
-      Assign to Knowledge Boxes
-    </button>
-    <div hlmDropdownMenuSeparator></div>
-    <button
-      type="button"
-      hlmDropdownMenuItem
-      variant="destructive"
-      (triggered)="delete(model, zone)">
-      Delete
-    </button>
-  </div>
-</ng-template>

@@ -34,7 +34,6 @@ export class KbDetailsService {
   isSaving = signal(false);
   copied = signal(false);
 
-  memberSearch = signal('');
   private searchMemberTerm$ = new Subject<string>();
   potentialMembers = toSignal(
     this.searchMemberTerm$.pipe(
@@ -151,17 +150,16 @@ export class KbDetailsService {
   }
 
   onMemberSearch(term: string) {
-    this.memberSearch.set(term);
     this.searchMemberTerm$.next(term);
   }
 
-  onMemberSelected(memberId: string | null | undefined) {
+  /** Returns true when a member was added */
+  onMemberSelected(memberId: string | null | undefined): boolean {
     const member = this.potentialMembers().find((candidate) => candidate.id === memberId);
     if (member) {
       this.addMember(member);
-      this.memberSearch.set('');
-      this.searchMemberTerm$.next('');
     }
+    return !!member;
   }
 
   updateUserRole(member: KbUser, newRole: KBRoles) {

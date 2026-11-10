@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreVertRound, matPersonAddRound, matVerifiedUserRound } from '@ng-icons/material-icons/round';
 import { UiOptionWithDescription } from '@nuclia/ui/option-with-description';
+import { BrnAutocompleteSearch } from '@spartan-ng/brain/autocomplete';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAutocompleteImports } from '@nuclia/ui-spartan/autocomplete';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
@@ -47,7 +48,7 @@ export class UsersComponent {
   hasSeveralManagers = computed(() => this.users().filter((user) => user.isManager).length > 1);
   private accountDetails$ = toObservable(this.store.accountDetails);
 
-  memberSearch = '';
+  private autocomplete = viewChild(BrnAutocompleteSearch);
   searchMemberTerm$ = new Subject<string>();
   potentialMembers$ = this.searchMemberTerm$.pipe(
     filter((term) => term.length > 2 || term.length === 0),
@@ -74,7 +75,6 @@ export class UsersComponent {
   }
 
   onMemberSearch(term: string) {
-    this.memberSearch = term;
     this.searchMemberTerm$.next(term);
   }
 
@@ -82,8 +82,8 @@ export class UsersComponent {
     const member = this.potentialMembers.find((candidate) => candidate.id === memberId);
     if (member) {
       this.addMember(member);
-      this.memberSearch = '';
-      this.searchMemberTerm$.next('');
+      // the autocomplete writes the selected id into its input right after emitting, so reset once it is done
+      queueMicrotask(() => this.autocomplete()?.resetValue());
     }
   }
 

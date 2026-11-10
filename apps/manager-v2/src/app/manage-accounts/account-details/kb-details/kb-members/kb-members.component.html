@@ -1,9 +1,8 @@
 <hlm-autocomplete-search
   class="mb-6 max-w-lg"
   [disabled]="!vm.canEdit()"
-  [search]="vm.memberSearch()"
   (searchChange)="vm.onMemberSearch($event)"
-  (valueChange)="vm.onMemberSelected($event)">
+  (valueChange)="onMemberSelected($event)">
   <div hlmField>
     <label
       hlmFieldLabel
@@ -67,10 +66,47 @@
                 size="icon-sm"
                 aria-label="Menu"
                 [disabled]="!vm.canEdit()"
-                [hlmDropdownMenuTrigger]="userMenu"
-                [hlmDropdownMenuTriggerData]="{ row }">
+                [hlmDropdownMenuTrigger]="userMenu">
                 <ng-icon name="matMoreVertRound" />
               </button>
+              <ng-template #userMenu>
+                <div
+                  hlmDropdownMenu
+                  aria-label="User actions">
+                  @if (row.role !== 'owner') {
+                    <button
+                      type="button"
+                      hlmDropdownMenuItem
+                      (triggered)="vm.updateUserRole(row.user, 'SOWNER')">
+                      Set as Owner
+                    </button>
+                  }
+                  @if (row.role !== 'contributor') {
+                    <button
+                      type="button"
+                      hlmDropdownMenuItem
+                      (triggered)="vm.updateUserRole(row.user, 'SCONTRIBUTOR')">
+                      Set as Contributor
+                    </button>
+                  }
+                  @if (row.role !== 'member') {
+                    <button
+                      type="button"
+                      hlmDropdownMenuItem
+                      (triggered)="vm.updateUserRole(row.user, 'SMEMBER')">
+                      Set as Member
+                    </button>
+                  }
+                  <div hlmDropdownMenuSeparator></div>
+                  <button
+                    type="button"
+                    hlmDropdownMenuItem
+                    variant="destructive"
+                    (triggered)="vm.removeUser(row.user)">
+                    Remove
+                  </button>
+                </div>
+              </ng-template>
             }
           </td>
         </tr>
@@ -78,44 +114,3 @@
     </tbody>
   </table>
 </div>
-
-<ng-template
-  #userMenu
-  let-row="row">
-  <div
-    hlmDropdownMenu
-    aria-label="User actions">
-    @if (row.role !== 'owner') {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="vm.updateUserRole(row.user, 'SOWNER')">
-        Set as Owner
-      </button>
-    }
-    @if (row.role !== 'contributor') {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="vm.updateUserRole(row.user, 'SCONTRIBUTOR')">
-        Set as Contributor
-      </button>
-    }
-    @if (row.role !== 'member') {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="vm.updateUserRole(row.user, 'SMEMBER')">
-        Set as Member
-      </button>
-    }
-    <div hlmDropdownMenuSeparator></div>
-    <button
-      type="button"
-      hlmDropdownMenuItem
-      variant="destructive"
-      (triggered)="vm.removeUser(row.user)">
-      Remove
-    </button>
-  </div>
-</ng-template>

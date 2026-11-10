@@ -5,7 +5,6 @@
     @let members = potentialMembers$ | async;
     <hlm-autocomplete-search
       class="mb-6 max-w-lg"
-      [search]="memberSearch"
       (searchChange)="onMemberSearch($event)"
       (valueChange)="onMemberSelected($event)">
       <div hlmField>
@@ -84,10 +83,38 @@
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Menu"
-                  [hlmDropdownMenuTrigger]="userMenu"
-                  [hlmDropdownMenuTriggerData]="{ user }">
+                  [hlmDropdownMenuTrigger]="userMenu">
                   <ng-icon name="matMoreVertRound" />
                 </button>
+                <ng-template #userMenu>
+                  <div
+                    hlmDropdownMenu
+                    aria-label="User actions">
+                    @if (user.isManager) {
+                      <button
+                        type="button"
+                        hlmDropdownMenuItem
+                        (triggered)="removeFromManagers(user)">
+                        Remove from managers
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        hlmDropdownMenuItem
+                        (triggered)="addToManagers(user)">
+                        Add to managers
+                      </button>
+                    }
+                    <div hlmDropdownMenuSeparator></div>
+                    <button
+                      type="button"
+                      hlmDropdownMenuItem
+                      variant="destructive"
+                      (triggered)="removeUser(user)">
+                      Remove
+                    </button>
+                  </div>
+                </ng-template>
               }
             </td>
           </tr>
@@ -96,35 +123,3 @@
     </table>
   </div>
 </div>
-
-<ng-template
-  #userMenu
-  let-user="user">
-  <div
-    hlmDropdownMenu
-    aria-label="User actions">
-    @if (user.isManager) {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="removeFromManagers(user)">
-        Remove from managers
-      </button>
-    } @else {
-      <button
-        type="button"
-        hlmDropdownMenuItem
-        (triggered)="addToManagers(user)">
-        Add to managers
-      </button>
-    }
-    <div hlmDropdownMenuSeparator></div>
-    <button
-      type="button"
-      hlmDropdownMenuItem
-      variant="destructive"
-      (triggered)="removeUser(user)">
-      Remove
-    </button>
-  </div>
-</ng-template>
