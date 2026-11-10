@@ -18,6 +18,9 @@ Generic Angular guidance lives in `angular-developer`, UI components in
 They apply to all Angular code in this repo. Legacy code may not follow them
 yet: apply them to new and touched code, and do not rewrite untouched code.
 
+The structure rules (Code structure, Files of a component) do not apply to
+`libs/ui/src/lib/spartan-components/`: it keeps the Spartan CLI layout.
+
 ## Code structure
 
 We use a domain-driven structure to keep navigation clear and let features grow
