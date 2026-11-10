@@ -31,7 +31,6 @@ import { ActivityService } from './activity.service';
 import { ActivityLogTableComponent } from './log-table.component';
 import { LogEntry } from './log.models';
 
-type Tab = 'resources' | 'searches';
 type ActivityTab = EventType;
 type ActivityDownload = {
   [key: string]: {
@@ -87,21 +86,23 @@ const chatColumns = [
 })
 export class ActivityDownloadComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
-  activityTabs: { [tab in Tab]: ActivityTab[] } = {
-    searches: [EventType.ASK, EventType.SEARCH],
-    resources: [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED],
-  };
+  activityTabs: ActivityTab[] = [
+    EventType.PROCESSED,
+    EventType.NEW,
+    EventType.MODIFIED,
+    EventType.ASK,
+    EventType.SEARCH,
+  ];
   downloads: ActivityDownload = {};
   watchList = new Subject<{ key: string; requestId: string }>();
   email = this.user.userPrefs.pipe(map((user) => user?.email || ''));
-  selectedTab: Tab = 'resources';
-  selectedActivityTab: ActivityTab = this.activityTabs[this.selectedTab][0];
+  selectedActivityTab: ActivityTab = this.activityTabs[0];
   migrationgDate = new Date(Date.UTC(2024, 9, 1));
   askActivityTab = EventType.ASK;
   searchActivityTab = EventType.SEARCH;
   visibleTables: { [key: string]: boolean } = {};
 
-  activity = [...this.activityTabs.searches, ...this.activityTabs.resources].reduce(
+  activity = this.activityTabs.reduce(
     (acc, tab) => {
       acc[tab] = this.sdk.currentKb.pipe(
         take(1),
@@ -205,12 +206,6 @@ export class ActivityDownloadComponent implements OnDestroy {
       .subscribe((email) => {
         this.toaster.success(this.translate.instant('activity.email-sent', { email }));
       });
-  }
-
-  selectTab(tab: Tab) {
-    this.selectedTab = tab;
-    this.selectedActivityTab = this.activityTabs[tab][0];
-    this.cdr?.markForCheck();
   }
 
   selectActivityTab(tab: ActivityTab) {

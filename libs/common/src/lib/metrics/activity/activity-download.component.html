@@ -1,33 +1,16 @@
 <div class="page-spacing">
   <h1>{{ 'navbar.metrics.detailed-logs' | translate }}</h1>
-  <pa-tabs
-    class="primary-tabs"
-    noSlider
-    notFullWidth>
-    <pa-tab
-      (click)="selectTab('resources')"
-      [active]="selectedTab === 'resources'">
-      {{ 'resource.resources' | translate }}
-    </pa-tab>
-    <pa-tab
-      (click)="selectTab('searches')"
-      [active]="selectedTab === 'searches'">
-      {{ 'stash.search' | translate }}
-    </pa-tab>
+  <pa-tabs notFullWidth>
+    @for (tab of activityTabs; track tab) {
+      <pa-tab
+        [active]="tab === selectedActivityTab"
+        (click)="selectActivityTab(tab)">
+        {{ 'activity.type.' + tab | translate }}
+      </pa-tab>
+    }
   </pa-tabs>
   <div class="activity-container">
-    <pa-tabs
-      class="secondary-tabs"
-      notFullWidth>
-      @for (tab of activityTabs[selectedTab]; track tab) {
-        <pa-tab
-          [active]="tab === selectedActivityTab"
-          (click)="selectActivityTab(tab)">
-          {{ 'activity.type.' + tab | translate }}
-        </pa-tab>
-      }
-    </pa-tabs>
-    @for (tab of activityTabs[selectedTab]; track tab) {
+    @for (tab of activityTabs; track tab) {
       @if (tab === selectedActivityTab) {
         <div class="download-list">
           @for (item of activity[selectedActivityTab] | async; track selectedActivityTab + item.month) {
