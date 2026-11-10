@@ -24,7 +24,7 @@
         {{ 'account.users_amount' | translate }}
         <strong>{{ users.length }}</strong>
       </div>
-      @if (account && account.max_users != null) {
+      @if (account && account.max_users !== null && account.max_users !== undefined) {
         <div class="users-left">
           {{ 'account.users_left' | translate }}
           <strong>{{ (account.max_users || 0) - (account.current_users || 0) }}</strong>
