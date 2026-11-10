@@ -1,19 +1,20 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
 import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockComponent, MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountService } from '../../account.service';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { GlobalAccountService } from '../../global-account.service';
 import { ACCOUNT_DETAILS, DEFAULT_LIMITS } from '../../test-utils';
+import { toLimitMode, UNLIMITED } from '../account-details.utils';
 import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 import { ConfigurationComponent } from './configuration.component';
 import { ConfigurationService } from './configuration.service';
-import { isBudgetChanged, toBudgetPayload, toLimitMode, toMaxValue, UNLIMITED } from './configuration.utils';
+import { isBudgetChanged, toBudgetPayload, toMaxValue } from './configuration.utils';
 
 describe('Configuration', () => {
   let fixture: ComponentFixture<ConfigurationComponent>;
@@ -38,6 +39,7 @@ describe('Configuration', () => {
         MockProvider(AccountService, {
           updateAccount: vi.fn(() => of(ACCOUNT_DETAILS)),
           getDefaultLimits: vi.fn(() => of(DEFAULT_LIMITS)),
+          setFreeTokens: vi.fn(() => of(undefined)),
           getSubscription: vi.fn(() =>
             of({
               provider: 'MANUAL' as const,
@@ -49,7 +51,6 @@ describe('Configuration', () => {
             }),
           ),
         }),
-        MockProvider(UiToastService),
         MockProvider(GlobalAccountService, {
           patchBudget: vi.fn(() => of({ budget_value: null, action_on_budget_exhausted: null })),
           getBudget: vi.fn(() => of({ budget_value: null, action_on_budget_exhausted: 'BLOCK_ACCOUNT' as const })),
@@ -122,6 +123,45 @@ describe('Configuration', () => {
     expect(TestBed.inject(GlobalAccountService).patchBudget).toHaveBeenCalledWith(ACCOUNT_DETAILS.id, {
       budget_value: 50,
       action_on_budget_exhausted: 'BLOCK_ACCOUNT',
+    });
+  });
+
+  describe('free tokens', () => {
+    beforeEach(() => {
+      vi.spyOn(toast, 'success').mockImplementation(() => '');
+      vi.spyOn(toast, 'error').mockImplementation(() => '');
+      vm.onFreeTokensInput({ target: { value: '500' } } as unknown as Event);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('should update the free tokens and notify the success', () => {
+      vm.updateFreeTokens();
+
+      expect(TestBed.inject(AccountService).setFreeTokens).toHaveBeenCalledWith(ACCOUNT_DETAILS.id, 'MANUAL', 500);
+      expect(toast.success).toHaveBeenCalledWith('Free tokens updated successfully');
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should notify an error when the request fails', () => {
+      vi.mocked(TestBed.inject(AccountService).setFreeTokens).mockReturnValueOnce(throwError(() => new Error('boom')));
+
+      vm.updateFreeTokens();
+
+      expect(toast.error).toHaveBeenCalledWith('Failed to update free tokens');
+      expect(toast.success).not.toHaveBeenCalled();
+    });
+
+    it('should notify an error when the provider is not supported', () => {
+      vi.mocked(TestBed.inject(AccountService).setFreeTokens).mockImplementationOnce(() => {
+        throw new Error('Invalid provider for setting free tokens');
+      });
+
+      vm.updateFreeTokens();
+
+      expect(toast.error).toHaveBeenCalledWith('Failed to update free tokens');
     });
   });
 

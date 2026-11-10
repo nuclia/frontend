@@ -8,7 +8,7 @@ import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { ActivatedRoute } from '@angular/router';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { CustomModel } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 
@@ -21,7 +21,6 @@ export class ModelDetailsComponent {
   private store = inject(ManagerStore);
   private sdk = inject(SDKService);
   private route = inject(ActivatedRoute);
-  private toast = inject(UiToastService);
   private cdr = inject(ChangeDetectorRef);
 
   kbForm = new FormGroup<{ [key: string]: FormControl<boolean> }>({});
@@ -100,7 +99,7 @@ export class ModelDetailsComponent {
           this.isSaving.set(false);
         },
         error: () => {
-          this.toast.error('Modifying the model failed');
+          toast.error('Modifying the model failed');
           this.isSaving.set(false);
         },
       });

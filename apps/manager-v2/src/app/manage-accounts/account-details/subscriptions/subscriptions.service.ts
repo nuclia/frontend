@@ -1,7 +1,7 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { map, Observable } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import {
@@ -13,13 +13,13 @@ import {
   ProductCatalog,
 } from '../../global-account.models';
 import { GlobalAccountService } from '../../global-account.service';
+import { getOptionLabel } from '../account-details.utils';
 import { SelectOption, SubscriptionState } from './subscriptions.model';
 import {
   ACTION_ON_BUDGET_OPTIONS,
   buildBasePayload,
   CLOUD_ZERO_FORMULA_ID,
   getBusinessUnitOptions,
-  getOptionLabel,
   getProductLineOptions,
   getProductOptions,
   hasBudget,
@@ -30,7 +30,6 @@ import {
 export class SubscriptionsService {
   private store = inject(ManagerStore);
   private globalService = inject(GlobalAccountService);
-  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
 
   private accountId = this.store.getAccountId() || '';
@@ -287,13 +286,13 @@ export class SubscriptionsService {
     observable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         setLoading(false);
-        this.toast.success(messages.success);
+        toast.success(messages.success);
         onSuccess?.();
       },
       error: (err) => {
         setLoading(false);
         const is409 = err?.status === 409;
-        this.toast.error(is409 && messages.conflict ? messages.conflict : err?.body?.detail || messages.error);
+        toast.error(is409 && messages.conflict ? messages.conflict : err?.body?.detail || messages.error);
       },
     });
   }

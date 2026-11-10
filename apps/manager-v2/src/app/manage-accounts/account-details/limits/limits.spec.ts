@@ -1,6 +1,5 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
 import { MockComponent, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -23,7 +22,6 @@ describe('Limits', () => {
           getDefaultLimits: vi.fn(() => of(DEFAULT_LIMITS)),
           updateAccountLimits: vi.fn(() => of(ACCOUNT_DETAILS)),
         }),
-        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canEdit: signal(true),
           accountDetails: signal(ACCOUNT_DETAILS),

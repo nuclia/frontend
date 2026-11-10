@@ -2,7 +2,6 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
-import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UserSummary } from '../user.models';
@@ -37,7 +36,6 @@ describe('UserListComponent', () => {
           },
         } as SDKService),
         MockProvider(UiConfirmService),
-        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canDelete: signal(true),
           canCreateUser: signal(true),

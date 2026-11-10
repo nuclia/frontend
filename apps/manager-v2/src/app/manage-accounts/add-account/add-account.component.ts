@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ValidSlug } from '@flaps/common';
 import { SDKService } from '@flaps/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
@@ -49,7 +49,6 @@ export class AddAccountComponent {
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
-  private toaster = inject(UiToastService);
 
   save() {
     this.isSaving = true;
@@ -63,7 +62,7 @@ export class AddAccountComponent {
       error: (error) => {
         this.isSaving = false;
         this.cdr.detectChanges();
-        this.toaster.error(JSON.stringify(error));
+        toast.error(JSON.stringify(error));
       },
     });
   }

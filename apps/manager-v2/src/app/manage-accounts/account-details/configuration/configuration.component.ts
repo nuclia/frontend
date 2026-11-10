@@ -13,7 +13,8 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 import { BudgetFieldComponent } from './budget-field/budget-field.component';
 import { ConfigurationService } from './configuration.service';
-import { ACCOUNT_TYPE_OPTIONS, getOptionLabel, WORKFLOW_OPTIONS } from './configuration.utils';
+import { getOptionLabel } from '../account-details.utils';
+import { ACCOUNT_TYPE_OPTIONS, WORKFLOW_OPTIONS } from './configuration.utils';
 import { LimitFieldComponent } from './limit-field/limit-field.component';
 
 @Component({

@@ -1,11 +1,13 @@
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UiToastService } from '@nuclia/ui/toast';
+import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UserService } from '../../manage-users/user.service';
 import { Zone } from '../zone.models';
 import { ZoneService } from '../zone.service';
+import { ZoneTokenDialogComponent } from '../zone-token-dialog/zone-token-dialog.component';
 import { ZoneDetailsComponent } from './zone-details.component';
 import { ZoneDetailsService } from './zone-details.service';
 
@@ -36,7 +38,6 @@ describe('ZoneDetails', () => {
           revokeZoneFromAccount: vi.fn(() => of(undefined)),
         }),
         MockProvider(UserService),
-        MockProvider(UiToastService),
       ],
     }).compileComponents();
 
@@ -88,5 +89,33 @@ describe('ZoneDetails', () => {
     expect(text()).toContain('Add zone');
     expect(text()).not.toContain('Account whitelist');
     expect(zoneService.getZone).not.toHaveBeenCalled();
+  });
+
+  describe('ZoneTokenDialogComponent', () => {
+    it('should show a truncated token and copy the full token', async () => {
+      const writeText = vi.fn();
+      vi.stubGlobal('navigator', { clipboard: { writeText } });
+      await TestBed.configureTestingModule({
+        imports: [ZoneTokenDialogComponent],
+        providers: [
+          { provide: DIALOG_DATA, useValue: { token: `x${'a'.repeat(40)}` } },
+          {
+            provide: BrnDialogRef,
+            useValue: { dialogId: 'test', registerDescription: vi.fn(), unregisterDescription: vi.fn() },
+          },
+        ],
+      }).compileComponents();
+
+      const tokenFixture = TestBed.createComponent(ZoneTokenDialogComponent);
+      tokenFixture.detectChanges();
+      const element = tokenFixture.nativeElement as HTMLElement;
+      expect(element.querySelector('code')?.textContent?.trim()).toBe(`${'a'.repeat(29)}…`);
+
+      element.querySelector<HTMLButtonElement>('[data-cy="copy-token"]')?.click();
+      tokenFixture.detectChanges();
+      expect(writeText).toHaveBeenCalledWith(`x${'a'.repeat(40)}`);
+      expect(element.querySelector('[data-cy="copy-token"]')?.textContent).toContain('Copied');
+      vi.unstubAllGlobals();
+    });
   });
 });

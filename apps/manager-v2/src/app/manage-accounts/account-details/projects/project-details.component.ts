@@ -4,7 +4,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound, matContentCopyRound } from '@ng-icons/material-icons/round';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
@@ -34,7 +34,6 @@ export class ProjectDetailsComponent {
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
   private store = inject(ManagerStore);
-  private toast = inject(UiToastService);
 
   canEdit = this.store.canEdit;
   private accountDetails$ = toObservable(this.store.accountDetails);
@@ -93,7 +92,7 @@ export class ProjectDetailsComponent {
           },
           error: () => {
             this.isSaving.set(false);
-            this.toast.error('Updating project failed');
+            toast.error('Updating project failed');
           },
         });
     }

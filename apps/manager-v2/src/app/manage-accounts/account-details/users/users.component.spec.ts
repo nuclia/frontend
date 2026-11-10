@@ -1,7 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UserService } from '../../../manage-users/user.service';
@@ -22,7 +21,6 @@ describe('UsersComponent', () => {
           loadAccountUsers: vi.fn(() => of([])),
         }),
         MockProvider(UserService),
-        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canEdit: signal(true),
           accountDetails: signal(ACCOUNT_DETAILS),

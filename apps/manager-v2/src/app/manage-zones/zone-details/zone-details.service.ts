@@ -4,8 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidSlug } from '@flaps/common';
-import { UiToastService } from '@nuclia/ui/toast';
 import { HlmDialogService } from '@nuclia/ui-spartan/dialog';
+import { toast } from '@spartan-ng/brain/sonner';
 import { filter, map, of, switchMap, tap } from 'rxjs';
 import { UserService } from '../../manage-users/user.service';
 import { ZoneTokenDialogComponent } from '../zone-token-dialog/zone-token-dialog.component';
@@ -18,7 +18,6 @@ export class ZoneDetailsService {
   private router = inject(Router);
   private zoneService = inject(ZoneService);
   private userService = inject(UserService);
-  private toast = inject(UiToastService);
   private location = inject(Location);
   private dialogService = inject(HlmDialogService);
   private zoneBackup?: Zone;
@@ -90,7 +89,7 @@ export class ZoneDetailsService {
           },
           error: () => {
             this.isSaving.set(false);
-            this.toast.error('Add zone failed');
+            toast.error('Add zone failed');
           },
         });
     } else {
@@ -107,7 +106,7 @@ export class ZoneDetailsService {
           },
           error: () => {
             this.isSaving.set(false);
-            this.toast.error('Update zone failed');
+            toast.error('Update zone failed');
           },
         });
     }

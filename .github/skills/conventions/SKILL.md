@@ -18,6 +18,9 @@ Generic Angular guidance lives in `angular-developer`, UI components in
 They apply to all Angular code in this repo. Legacy code may not follow them
 yet: apply them to new and touched code, and do not rewrite untouched code.
 
+The structure rules (Code structure, Files of a component) do not apply to
+`libs/ui/src/lib/spartan-components/`: it keeps the Spartan CLI layout.
+
 ## Code structure
 
 We use a domain-driven structure to keep navigation clear and let features grow
@@ -25,6 +28,12 @@ independently.
 
 - Each feature has its own `<feature>/` folder.
 - It may contain components, each in its own `<component>/` folder.
+- A feature's root component (the one named like the feature) lives directly in
+  the `<feature>/` folder, never in a same-named subfolder
+  (`confirm-dialog/confirm-dialog.component.ts`, not
+  `confirm-dialog/confirm-dialog/confirm-dialog.component.ts`).
+- Do not add `src/` or `lib/` folders inside a feature, and no `index.ts` that
+  re-exports a single file: point the import path at the file instead.
 - A component may have subcomponents, stored inside the `<feature>` folder to
   avoid deep nesting.
 - 2-3 levels of nesting is fine, as long as each directory keeps a reasonable
@@ -37,12 +46,18 @@ independently.
 
 `<name>` is the component's folder name.
 
-A component **must** have:
+A component **must** have both files. Splitting `.ts` and `.html` is mandatory
+for every component, including shared libraries (`libs/ui`, `libs/common`, ...)
+and code copied from upstream (e.g. Spartan blocks): reference the template with
+`templateUrl`.
 
 | File                    | Holds                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------- |
 | `<name>.component.ts`   | Definition and UI logic                                                               |
 | `<name>.component.html` | Template. Inline only when it is a one-liner (e.g. `<router-outlet></router-outlet>`) |
+
+The only exception is a one-line template (e.g. `<router-outlet></router-outlet>`)
+or an empty one. Any multi-line template, however short, goes in the `.html` file.
 
 A component **may** have:
 

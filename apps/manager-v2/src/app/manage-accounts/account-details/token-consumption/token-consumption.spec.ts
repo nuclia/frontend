@@ -1,7 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NucliaTokensDetails, NucliaTokensMetric } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
 import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
 import { MockProvider } from 'ng-mocks';
@@ -36,7 +35,6 @@ describe('TokenConsumption', () => {
             of({ name: 'nuclia_tokens', value: 42, details: [DETAILS] } as NucliaTokensMetric),
           ),
         }),
-        MockProvider(UiToastService),
         provideNativeDateAdapter(),
         provideBrnCalendarI18n(),
       ],

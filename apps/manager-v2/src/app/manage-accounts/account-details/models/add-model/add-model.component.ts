@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { combineLatest, filter, forkJoin, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { ManagerStore } from '../../../../manager.store';
@@ -35,7 +35,6 @@ export class AddModelComponent {
   private regionalService = inject(RegionalAccountService);
   private sdk = inject(SDKService);
   private zoneService = inject(ZoneService);
-  private toast = inject(UiToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -163,7 +162,7 @@ export class AddModelComponent {
           this.router.navigate([`/accounts/${accountId}/models`]);
         },
         error: () => {
-          this.toast.error(`${this.addModel() ? 'Adding' : 'Updating'} model failed`);
+          toast.error(`${this.addModel() ? 'Adding' : 'Updating'} model failed`);
           this.isSaving.set(false);
         },
       });

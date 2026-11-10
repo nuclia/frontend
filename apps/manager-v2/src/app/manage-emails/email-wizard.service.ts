@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { Subject } from 'rxjs';
 import { ComposeService } from './step-compose/compose.service';
 import { BroadcastProgress } from './email.models';
@@ -13,7 +13,6 @@ export class EmailWizardService {
   private emailService = inject(EmailService);
   private recipients = inject(RecipientsService);
   private compose = inject(ComposeService);
-  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
   private completedSubject = new Subject<string>();
 
@@ -51,7 +50,7 @@ export class EmailWizardService {
         next: (progress) => this.progress.set(progress),
         error: (error) => {
           this.sending.set(false);
-          this.toast.error(getEmailErrorMessage(error));
+          toast.error(getEmailErrorMessage(error));
         },
         complete: () => {
           this.sending.set(false);
@@ -70,11 +69,11 @@ export class EmailWizardService {
     if (result.queued > 0) {
       // Keep only the failed recipients selected, so retrying doesn't send duplicates to the others
       this.recipients.keepOnly(new Set(result.failed.map((failure) => failure.user_id)));
-      this.toast.error(
+      toast.error(
         `${result.failed.length} of ${result.requested} emails failed. Only the failed recipients remain selected, you can try again.`,
       );
     } else {
-      this.toast.error(result.failed[0].error || 'Emails could not be sent, please try again.');
+      toast.error(result.failed[0].error || 'Emails could not be sent, please try again.');
     }
   }
 

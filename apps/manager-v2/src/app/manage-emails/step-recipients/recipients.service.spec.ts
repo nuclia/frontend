@@ -1,6 +1,6 @@
-import type { Mock } from 'vitest';
+import type { Mock, MockInstance } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { GlobalAccountService } from '../../manage-accounts/global-account.service';
@@ -17,11 +17,11 @@ describe('RecipientsService', () => {
   let service: RecipientsService;
   let getUsers: Mock;
   let getSubscriptions: Mock;
-  let error: Mock;
+  let error: MockInstance<typeof toast.error>;
   const selectedIds = () => Array.from(service.selected().keys());
 
   beforeEach(() => {
-    error = vi.fn();
+    error = vi.spyOn(toast, 'error').mockImplementation(() => '');
     getUsers = vi.fn().mockReturnValue(of(users));
     getSubscriptions = vi.fn().mockReturnValue(of([{ account_id: 'acc-stripe', type: 'stripe' }]));
     TestBed.configureTestingModule({
@@ -29,11 +29,12 @@ describe('RecipientsService', () => {
         RecipientsService,
         MockProvider(UserService, { getUsers }),
         MockProvider(GlobalAccountService, { getSubscriptions }),
-        MockProvider(UiToastService, { error }),
       ],
     });
     service = TestBed.inject(RecipientsService);
   });
+
+  afterEach(() => vi.restoreAllMocks());
 
   it('should load account owners by default, sorted by name', () => {
     expect(getUsers).toHaveBeenCalledTimes(1);

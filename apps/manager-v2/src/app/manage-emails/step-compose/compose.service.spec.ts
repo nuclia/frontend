@@ -1,6 +1,6 @@
-import type { Mock } from 'vitest';
+import type { Mock, MockInstance } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { ComposeService } from './compose.service';
@@ -9,22 +9,20 @@ import { EmailService } from '../email.service';
 describe('ComposeService', () => {
   let service: ComposeService;
   let sendTestEmail: Mock;
-  let error: Mock;
-  let success: Mock;
+  let error: MockInstance<typeof toast.error>;
+  let success: MockInstance<typeof toast.success>;
 
   beforeEach(() => {
-    error = vi.fn();
-    success = vi.fn();
+    error = vi.spyOn(toast, 'error').mockImplementation(() => '');
+    success = vi.spyOn(toast, 'success').mockImplementation(() => '');
     sendTestEmail = vi.fn().mockReturnValue(of({ preview_recipient: 'root@nuclia.com' }));
     TestBed.configureTestingModule({
-      providers: [
-        ComposeService,
-        MockProvider(EmailService, { sendTestEmail }),
-        MockProvider(UiToastService, { error, success }),
-      ],
+      providers: [ComposeService, MockProvider(EmailService, { sendTestEmail })],
     });
     service = TestBed.inject(ComposeService);
   });
+
+  afterEach(() => vi.restoreAllMocks());
 
   it('should require a subject and a body', () => {
     expect(service.isComplete()).toBe(false);

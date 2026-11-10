@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserType } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
@@ -26,7 +26,6 @@ export class AddUserComponent {
   private userService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
-  private toaster = inject(UiToastService);
 
   save() {
     this.isSaving = true;
@@ -40,7 +39,7 @@ export class AddUserComponent {
       error: (error) => {
         this.isSaving = false;
         this.cdr.detectChanges();
-        this.toaster.error(JSON.stringify(error));
+        toast.error(JSON.stringify(error));
       },
     });
   }

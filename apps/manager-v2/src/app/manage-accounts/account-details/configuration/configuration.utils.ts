@@ -1,7 +1,6 @@
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { AccountBudget, ActionOnBudgetExhausted } from '../../global-account.models';
-
-export const UNLIMITED = -1;
+import { UNLIMITED } from '../account-details.utils';
 
 export const ACCOUNT_TYPE_OPTIONS: { value: AccountTypes; label: string }[] = [
   { value: 'stash-trial', label: 'Trial' },
@@ -17,14 +16,6 @@ export const WORKFLOW_OPTIONS: { value: WorkflowType; label: string }[] = [
   { value: 'classic', label: 'Classic' },
   { value: 'cowork', label: 'Cowork' },
 ];
-
-export function getOptionLabel<T extends string>(options: readonly { value: T; label: string }[], value: T): string {
-  return options.find((option) => option.value === value)?.label ?? value;
-}
-
-export function toLimitMode(max: number): 'limit' | 'unlimited' {
-  return max === UNLIMITED ? 'unlimited' : 'limit';
-}
 
 export function toMaxValue(mode: 'limit' | 'unlimited', max: number): number {
   return mode === 'limit' ? max : UNLIMITED;

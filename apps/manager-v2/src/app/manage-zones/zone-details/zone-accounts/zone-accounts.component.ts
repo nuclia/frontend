@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untr
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matDeleteRound } from '@ng-icons/material-icons/round';
-import { UiToastService } from '@nuclia/ui/toast';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { toast } from '@spartan-ng/brain/sonner';
 import { ZoneAccountEntry } from '../../zone.models';
 import { ZoneService } from '../../zone.service';
 
@@ -18,7 +18,6 @@ import { ZoneService } from '../../zone.service';
 })
 export class ZoneAccountsComponent {
   private zoneService = inject(ZoneService);
-  private toast = inject(UiToastService);
 
   zoneId = input.required<string>();
 
@@ -47,7 +46,7 @@ export class ZoneAccountsComponent {
       },
       error: () => {
         this.isGranting.set(false);
-        this.toast.error('Failed to grant account access');
+        toast.error('Failed to grant account access');
       },
     });
   }
@@ -56,14 +55,14 @@ export class ZoneAccountsComponent {
     if (!this.zoneId()) return;
     this.zoneService.revokeZoneFromAccount(this.zoneId(), accountId).subscribe({
       next: () => this.loadGrantedAccounts(),
-      error: () => this.toast.error('Failed to revoke account access'),
+      error: () => toast.error('Failed to revoke account access'),
     });
   }
 
   private loadGrantedAccounts() {
     this.zoneService.getZoneAccounts(this.zoneId()).subscribe({
       next: (accounts) => this.grantedAccounts.set(accounts),
-      error: () => this.toast.error('Failed to load granted accounts'),
+      error: () => toast.error('Failed to load granted accounts'),
     });
   }
 }

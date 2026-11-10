@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, inject, Injector, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { UiStepper, UiStepperImports } from '@nuclia/ui/stepper';
 import { StepComposeComponent } from './step-compose/step-compose.component';
 import { ComposeService } from './step-compose/compose.service';
@@ -17,7 +17,6 @@ import { StepReviewComponent } from './step-review/step-review.component';
   providers: [RecipientsService, ComposeService, EmailWizardService],
 })
 export class ManageEmailsComponent {
-  private toast = inject(UiToastService);
   private injector = inject(Injector);
   private stepper = viewChild(UiStepper);
 
@@ -32,7 +31,7 @@ export class ManageEmailsComponent {
           if (stepper) {
             stepper.selectedIndex = 0;
           }
-          this.toast.success(message);
+          toast.success(message);
         },
         { injector: this.injector },
       );

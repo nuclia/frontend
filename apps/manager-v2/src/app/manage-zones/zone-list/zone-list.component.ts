@@ -4,11 +4,11 @@ import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
-import { UiToastService } from '@nuclia/ui/toast';
-import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
+import { UiInfiniteScroll } from '@nuclia/ui/infinite-scroll';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
+import { toast } from '@spartan-ng/brain/sonner';
 import { filter, switchMap } from 'rxjs';
 import { ZoneSummary } from '../zone.models';
 import { ZoneService } from '../zone.service';
@@ -16,13 +16,12 @@ import { ZoneService } from '../zone.service';
 @Component({
   templateUrl: './zone-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HlmButtonImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, UiInfiniteScrollImports],
+  imports: [HlmButtonImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, UiInfiniteScroll],
   providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class ZoneListComponent {
   private zoneService = inject(ZoneService);
   private confirmService = inject(UiConfirmService);
-  private toast = inject(UiToastService);
 
   private allZones = toSignal(this.zoneService.zones, { initialValue: [] });
   private lastIndex = signal(100);
@@ -66,7 +65,7 @@ export class ZoneListComponent {
         next: () => {
           /* empty */
         },
-        error: () => this.toast.error('Zone deletion failed'),
+        error: () => toast.error('Zone deletion failed'),
       });
   }
 }

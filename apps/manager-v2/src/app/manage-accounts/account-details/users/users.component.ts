@@ -4,8 +4,8 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreVertRound, matPersonAddRound, matVerifiedUserRound } from '@ng-icons/material-icons/round';
-import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
-import { UiToastService } from '@nuclia/ui/toast';
+import { UiOptionWithDescription } from '@nuclia/ui/option-with-description';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAutocompleteImports } from '@nuclia/ui-spartan/autocomplete';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';
@@ -29,7 +29,7 @@ import { AccountService } from '../../account.service';
     HlmDropdownMenuImports,
     HlmFieldImports,
     HlmTableImports,
-    UiOptionWithDescriptionImports,
+    UiOptionWithDescription,
     AsyncPipe,
   ],
   providers: [provideIcons({ matMoreVertRound, matPersonAddRound, matVerifiedUserRound })],
@@ -39,7 +39,6 @@ export class UsersComponent {
   private store = inject(ManagerStore);
   private accountService = inject(AccountService);
   private userService = inject(UserService);
-  private toast = inject(UiToastService);
   private accountId?: string;
   private potentialMembers: UserSearch[] = [];
 
@@ -91,7 +90,7 @@ export class UsersComponent {
   addMember(member: UserSearch) {
     if (this.accountId) {
       this.accountService.addAccountUser(this.accountId, member.id).subscribe({
-        error: () => this.toast.error('Adding member failed'),
+        error: () => toast.error('Adding member failed'),
       });
     }
   }
@@ -99,7 +98,7 @@ export class UsersComponent {
   removeUser(user: AccountUser) {
     if (this.accountId) {
       this.accountService.removeAccountUser(this.accountId, user.id).subscribe({
-        error: () => this.toast.error('Removing user failed'),
+        error: () => toast.error('Removing user failed'),
       });
     }
   }
@@ -107,7 +106,7 @@ export class UsersComponent {
   addToManagers(user: AccountUser) {
     if (this.accountId) {
       this.accountService.updateAccountUserType(this.accountId, user.id, 'manager').subscribe({
-        error: () => this.toast.error('Updating user permission failed'),
+        error: () => toast.error('Updating user permission failed'),
       });
     }
   }
@@ -115,7 +114,7 @@ export class UsersComponent {
   removeFromManagers(user: AccountUser) {
     if (this.accountId) {
       this.accountService.updateAccountUserType(this.accountId, user.id, 'member').subscribe({
-        error: () => this.toast.error('Updating user permission failed'),
+        error: () => toast.error('Updating user permission failed'),
       });
     }
   }

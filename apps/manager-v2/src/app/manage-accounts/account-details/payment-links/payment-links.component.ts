@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountTypes } from '@nuclia/core';
-import { UiOptionWithDescriptionImports } from '@nuclia/ui/option-with-description';
-import { UiToastService } from '@nuclia/ui/toast';
+import { UiOptionWithDescription } from '@nuclia/ui/option-with-description';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
@@ -26,14 +26,13 @@ import { GlobalAccountService } from '../../global-account.service';
     HlmCheckboxImports,
     HlmFieldImports,
     HlmSelectImports,
-    UiOptionWithDescriptionImports,
+    UiOptionWithDescription,
     AsyncPipe,
   ],
 })
 export class PaymentLinksComponent {
   private store = inject(ManagerStore);
   private globalService = inject(GlobalAccountService);
-  private toast = inject(UiToastService);
   private labels = new Map<string, string>();
 
   paymentLinkForm = new FormGroup({
@@ -117,7 +116,7 @@ export class PaymentLinksComponent {
         },
         error: (error) => {
           this.isSaving.set(false);
-          this.toast.error(error?.body?.detail || 'Creating the payment link');
+          toast.error(error?.body?.detail || 'Creating the payment link');
         },
       });
   }

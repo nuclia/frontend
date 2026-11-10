@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matArrowBackRound, matCheckRound, matContentCopyRound } from '@ng-icons/material-icons/round';
 import { UserType } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAccordionImports } from '@nuclia/ui-spartan/accordion';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
@@ -39,7 +39,6 @@ export class UserDetailsComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private userService = inject(UserService);
-  private toast = inject(UiToastService);
   private store = inject(ManagerStore);
   private sdk = inject(SDKService);
   canEdit = this.store.canEdit;
@@ -86,7 +85,7 @@ export class UserDetailsComponent {
         error: (error) => {
           const message =
             error.status === 404 ? `This user doesn't exist anymore` : 'An error occurred while loading the user';
-          this.toast.error(message);
+          toast.error(message);
         },
       });
   }
@@ -120,7 +119,7 @@ export class UserDetailsComponent {
       },
       error: (error) => {
         this.isSaving.set(false);
-        this.toast.error(JSON.stringify(error));
+        toast.error(JSON.stringify(error));
       },
     });
   }

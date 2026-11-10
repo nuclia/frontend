@@ -11,7 +11,7 @@
 Role-based access is enforced via `ManagerStore` permission signals derived from `UserService.userType`.  
 **Angular version:** 22 · **Zoneless** (`provideZonelessChangeDetection()`, `bootstrapApplication` in `main.ts`) · **Component prefix:** `nma` · **Change detection:** `OnPush`
 
-**UI:** Spartan (`@nuclia/ui-spartan/*`, Tailwind). Shared pieces live in `libs/ui` with the `ui-` / `Ui` prefix: `UiToastService` (`@nuclia/ui/toast`; `<hlm-toaster />` is rendered once in `MainComponent`), `UiConfirmService` (`@nuclia/ui/confirm-dialog`, `confirm(data): Observable<boolean>`) and `<ui-infinite-scroll>` (`@nuclia/ui/infinite-scroll`).
+**UI:** Spartan (`@nuclia/ui-spartan/*`, Tailwind). Shared pieces live in `libs/ui` with the `ui-` / `Ui` prefix: `UiConfirmService` (`@nuclia/ui/confirm-dialog`, `confirm(data): Observable<boolean>`) and `<ui-infinite-scroll>` (`@nuclia/ui/infinite-scroll`). Toasts use `toast` from `@spartan-ng/brain/sonner` directly (`toast.error(...)`); `<hlm-toaster />` is rendered once in `MainComponent`.
 
 ---
 
@@ -25,7 +25,7 @@ apps/manager-v2/src/
     ├── app.routes.ts               # Top-level routes
     ├── app.component.ts            # Thin config-ready shell: shows Loading… until AppInitService resolves, then renders MainComponent
     ├── main.component.ts           # Bootstraps translations/remote-login and hosts the router-outlet + `<hlm-toaster />`; no header/nav (that's AppLayoutComponent)
-    ├── user-callback/              # `provideUserCallback()`: Spartan overrides for `@nuclia/user` `CallbackComponent` (`UserNotifier` → `UiToastService` with translation, `CALLBACK_MESSAGE_VIEW` → Spartan message screen); wired in the `user/callback` route `providers`
+    ├── user-callback/              # `provideUserCallback()`: Spartan overrides for `@nuclia/user` `CallbackComponent` (`UserNotifier` → sonner `toast` with translation, `CALLBACK_MESSAGE_VIEW` → Spartan message screen); wired in the `user/callback` route `providers`
     ├── manager.store.ts            # Global signal store (state + permissions)
     ├── app-layout/                 # Shell: header nav, avatar, permission-gated router-outlet
     ├── manage-accounts/            # lazy routes (`manage-accounts.routes.ts`): AccountService, account CRUD components

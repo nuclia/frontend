@@ -3,8 +3,8 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
-import { filter, forkJoin, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
+import { defer, filter, forkJoin, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import { ZoneVisibility } from '../../../manage-zones/zone.models';
 import { ManagerStore } from '../../../manager.store';
@@ -12,14 +12,14 @@ import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.mo
 import { AccountService } from '../../account.service';
 import { AccountBudget, ActionOnBudgetExhausted } from '../../global-account.models';
 import { GlobalAccountService } from '../../global-account.service';
-import { isBudgetChanged, toBudgetPayload, toLimitMode, toMaxValue } from './configuration.utils';
+import { toLimitMode } from '../account-details.utils';
+import { isBudgetChanged, toBudgetPayload, toMaxValue } from './configuration.utils';
 
 @Injectable()
 export class ConfigurationService {
   private store = inject(ManagerStore);
   private accountService = inject(AccountService);
   private globalAccountService = inject(GlobalAccountService);
-  private toast = inject(UiToastService);
   // provided at component level, so this is the change detector of the configuration component
   private cdr = inject(ChangeDetectorRef);
   private accountDetails$ = toObservable(this.store.accountDetails);
@@ -118,7 +118,7 @@ export class ConfigurationService {
                 if (canFullyEditAccount) {
                   return this.globalAccountService.getBudget(accountDetails.id).pipe(
                     catchError(() => {
-                      this.toast.error('An error occurred when loading the budget');
+                      toast.error('An error occurred when loading the budget');
                       return of(null);
                     }),
                     tap((budget) => {
@@ -205,7 +205,7 @@ export class ConfigurationService {
           },
           error: () => {
             this.isSaving.set(false);
-            this.toast.error('Updating account failed');
+            toast.error('Updating account failed');
           },
         });
     }
@@ -256,16 +256,13 @@ export class ConfigurationService {
   updateFreeTokens() {
     const provider = this.provider();
     if (this.accountBackup?.id && provider) {
-      this.accountService
-        .setFreeTokens(this.accountBackup.id, provider, this.free_tokens_per_billing_cycle())
-        .pipe(map(() => true))
-        .subscribe((success) => {
-          if (success) {
-            this.toast.success('Free tokens updated successfully');
-          } else {
-            this.toast.error('Failed to update free tokens');
-          }
-        });
+      const accountId = this.accountBackup.id;
+      defer(() =>
+        this.accountService.setFreeTokens(accountId, provider, this.free_tokens_per_billing_cycle()),
+      ).subscribe({
+        next: () => toast.success('Free tokens updated successfully'),
+        error: () => toast.error('Failed to update free tokens'),
+      });
     }
   }
 
