@@ -19,7 +19,7 @@ Patterns inside the code (signals, naming, spartan) are pass 1.
 
 ### Component files
 
-- [ ] Every component has `<name>.component.ts` and `<name>.component.html` (`<name>` = its folder); inline template only for a one-liner
+- [ ] Every component has `<name>.component.ts` and `<name>.component.html` (`<name>` = its folder), in shared libs and copied upstream code too; inline template only for a one-liner (or empty) — any multi-line inline `template:` is a must
 - [ ] Split incrementally: no empty-shell or few-line `.service.ts` / `.utils.ts` / `.model.ts` on a small component or service
 - [ ] `component.ts` that grew too large (usually 80+ lines; **consider**) and does not split into meaningful sub-components: non-UI code moved to `.service.ts`
 - [ ] `service.ts` that grew (usually 80+ lines; **consider**): constants, config and pure functions in `.utils.ts`, types in `.model.ts`
