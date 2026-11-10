@@ -390,6 +390,9 @@
         "local-prod": {
           "buildTarget": "dashboard:build:local-prod"
         }
+      },
+      "readyWhen": {
+        "signal": true
       }
     },
     "extract-i18n": {
@@ -416,10 +419,6 @@
           "watch": true
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     }
   }
 }

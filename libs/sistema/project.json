@@ -37,9 +37,6 @@
           "watch": true
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     }
   }
 }

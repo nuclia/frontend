@@ -2,7 +2,7 @@ import nxPlugin from '@nx/eslint-plugin';
 
 export default [
   // Global ignores (node_modules is auto-ignored by ESLint 9)
-  { ignores: ['dist/**'] },
+  { ignores: ['dist/**', '**/eslint.config.mjs'] },
 
   // Nx base — registers the @nx plugin, ignores .nx
   ...nxPlugin.configs['flat/base'],

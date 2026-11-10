@@ -171,8 +171,8 @@ path aliases (see `tsconfig.base.json`) — they compile as part of the app, not
 }
 ```
 
-`common` and `core` have no `lint` target — ESLint runs during app build. `sistema` and
-some others do have an explicit `lint` target.
+ESLint `lint` targets are inferred by `@nx/eslint/plugin` from project ESLint config files;
+they are not declared in these `project.json` files.
 
 ---
 

@@ -41,7 +41,7 @@ Use these exact names in `nx <target> <project>` commands.
 | `pastanaga-angular`  | lib  | Angular         | `libs/pastanaga-angular/`  |
 | `chrome-ext`         | lib  | Plain JS        | `libs/chrome-ext/`         |
 
-> `common` and `core` have **no `lint` target** — linting runs as part of each app build.
+> `@nx/eslint/plugin` infers `lint` targets for configured projects, including `common` and `core`.
 
 ---
 
@@ -205,11 +205,9 @@ Every Angular project needs this official `test` target and at least one spec (t
 
 ### ESLint lint
 
-```jsonc
-"lint": {
-  "executor": "@nx/eslint:lint"
-}
-```
+Nx 24 removed the `@nx/eslint:lint` executor. The `@nx/eslint/plugin` configured in `nx.json`
+infers `lint` targets from project ESLint configs; do not add explicit executor targets to
+`project.json`. Use `nx lint <project>` to run them.
 
 Vite-based projects (search-widget-demo) rely on the `@nx/vite/plugin`
 inferred targets — they typically don't declare build/test manually in project.json.
@@ -218,15 +216,15 @@ inferred targets — they typically don't declare build/test manually in project
 
 From `nx.json`, these defaults apply workspace-wide:
 
-| Target            | `dependsOn`           | `cache` |
-| ----------------- | --------------------- | ------- |
-| `build`           | `^build` (deps first) | ✅      |
-| `test`            | —                     | ✅      |
-| `@nx/eslint:lint` | —                     | ✅      |
+| Target  | `dependsOn`           | `cache` |
+| ------- | --------------------- | ------- |
+| `build` | `^build` (deps first) | ✅      |
+| `test`  | —                     | ✅      |
 
 `dependsOn: ["^build"]` means a project's `build` will automatically build all its lib
 dependencies first. Never break this by calling `nx build` on a lib that expects other libs
 pre-built — just run on the app and Nx handles the order.
+The ESLint plugin sets caching on its inferred lint targets.
 
 For detailed project.json patterns → see `references/project-json.md`.
 
@@ -265,7 +263,8 @@ Nx hashes:
 
 ### Cache
 
-`nx.json` enables caching for `build`, `test`, and `lint`. The cache lives in `.nx/cache/`.
+`nx.json` enables caching for `build` and `test`; the ESLint plugin enables caching for inferred `lint` targets.
+The cache lives in `.nx/cache/`.
 
 ```bash
 # Skip cache for a single run

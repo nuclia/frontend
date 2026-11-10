@@ -10,9 +10,6 @@
         "command": "cd apps/search-widget-demo && vite"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "check": {
       "executor": "nx:run-commands",
       "options": {
