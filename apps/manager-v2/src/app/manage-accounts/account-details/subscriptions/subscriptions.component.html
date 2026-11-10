@@ -17,15 +17,16 @@
         (valueChange)="service.resetProductLine()"></pa-select>
       <pa-select
         formControlName="product_line"
-        label="Product line *"
+        label="Product line"
         (valueChange)="service.resetProduct()"
         [readonly]="!service.businessUnit()"
         [options]="service.productLineOptions()"></pa-select>
       <pa-select
         formControlName="product"
-        label="Product *"
+        label="Product"
         [readonly]="!service.productLine()"
         [options]="service.productOptions()"></pa-select>
+      <pa-toggle formControlName="is_pfs">{{ 'account.cloud-zero.is-pfs' | translate }}</pa-toggle>
     }
     <pa-select
       label="Billing formula"

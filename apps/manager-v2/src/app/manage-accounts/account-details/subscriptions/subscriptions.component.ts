@@ -1,7 +1,8 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { SubscriptionsService } from './subscriptions.service';
 
@@ -20,6 +21,8 @@ import { SubscriptionsService } from './subscriptions.service';
     NgTemplateOutlet,
     PaButtonModule,
     AsyncPipe,
+    PaTogglesModule,
+    TranslatePipe,
   ],
 })
 export class SubscriptionsComponent {
