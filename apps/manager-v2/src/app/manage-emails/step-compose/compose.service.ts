@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { EmailService, getEmailErrorMessage } from '../email.service';
 import { buildEmailBody } from './email-body.utils';
 import { normalizeSenderName, validateSenderName } from './sender-name.utils';
@@ -9,7 +9,6 @@ import { normalizeSenderName, validateSenderName } from './sender-name.utils';
 @Injectable()
 export class ComposeService {
   private emailService = inject(EmailService);
-  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
 
   subject = signal('');
@@ -46,11 +45,11 @@ export class ComposeService {
       .subscribe({
         next: (response) => {
           this.sendingTest.set(false);
-          this.toast.success(`Test email sent to ${response.preview_recipient || 'you'}`);
+          toast.success(`Test email sent to ${response.preview_recipient || 'you'}`);
         },
         error: (error) => {
           this.sendingTest.set(false);
-          this.toast.error(getEmailErrorMessage(error));
+          toast.error(getEmailErrorMessage(error));
         },
       });
   }

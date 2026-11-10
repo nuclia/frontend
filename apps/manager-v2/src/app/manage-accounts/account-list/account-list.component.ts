@@ -4,11 +4,11 @@ import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
-import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
+import { UiInfiniteScroll } from '@nuclia/ui/infinite-scroll';
 import { filter, Observable, switchMap, tap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
 import { AccountSummary } from '../account-ui.models';
@@ -17,13 +17,12 @@ import { AccountService } from '../account.service';
 @Component({
   templateUrl: './account-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, HlmButtonImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, UiInfiniteScrollImports],
+  imports: [DatePipe, HlmButtonImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, UiInfiniteScroll],
   providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class AccountListComponent {
   private accountService = inject(AccountService);
   private confirmService = inject(UiConfirmService);
-  private toast = inject(UiToastService);
   private store = inject(ManagerStore);
 
   private allAccounts = signal<AccountSummary[]>([]);
@@ -81,7 +80,7 @@ export class AccountListComponent {
         switchMap(() => this.loadAccounts()),
       )
       .subscribe({
-        error: () => this.toast.error('Account deletion failed'),
+        error: () => toast.error('Account deletion failed'),
       });
   }
 

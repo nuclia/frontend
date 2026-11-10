@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matWarningRound } from '@ng-icons/material-icons/round';
 import { NucliaTokensMetric } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAlertImports } from '@nuclia/ui-spartan/alert';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmDatePickerImports } from '@nuclia/ui-spartan/date-picker';
@@ -39,7 +39,6 @@ import { DIGITS_INFO, isInvalidHour, toIsoDate } from './token-consumption.utils
 export class TokenConsumptionComponent {
   private service = inject(AccountService);
   private store = inject(ManagerStore);
-  private toaster = inject(UiToastService);
 
   private account$ = toObservable(this.store.accountDetails);
   kbList = this.store.kbList;
@@ -86,7 +85,7 @@ export class TokenConsumptionComponent {
       .subscribe({
         next: (nucliaTokens) => this.tokenConsumption.set(nucliaTokens),
         error: (error) => {
-          this.toaster.error(`An error occurred while loading token consumption: <strong>${error}</strong>`);
+          toast.error(`An error occurred while loading token consumption: <strong>${error}</strong>`);
           this.tokenConsumption.set(null);
         },
       });

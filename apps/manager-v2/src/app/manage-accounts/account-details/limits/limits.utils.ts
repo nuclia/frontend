@@ -1,10 +1,8 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults } from '@flaps/core';
 import { AccountLimits, AccountLimitsPatchPayload } from '@nuclia/core';
+import { LimitMode, toLimitMode, UNLIMITED } from '../account-details.utils';
 
-export const UNLIMITED = -1;
-
-export type LimitMode = 'limit' | 'unlimited';
 export type LimitsGroupKey = 'usage' | 'upload';
 
 const UPLOAD_LIMIT_KEYS = ['upload_limit_max_media_file_size', 'upload_limit_max_non_media_file_size'] as const;
@@ -21,10 +19,6 @@ const USAGE_LIMIT_KEYS = [
   'storage_limit_max_bytes_per_kb',
   'storage_limit_max_resources_per_kb',
 ] as const;
-
-export function toLimitMode(limit: number): LimitMode {
-  return limit === UNLIMITED ? 'unlimited' : 'limit';
-}
 
 export function buildLimitGroup(key: string, limit: number): FormGroup {
   return new FormGroup({

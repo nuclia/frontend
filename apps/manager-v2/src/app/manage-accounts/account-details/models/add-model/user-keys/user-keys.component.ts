@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { keyProviders } from '@flaps/common';
 import {
   getLearningConfigPropType,
@@ -30,7 +30,7 @@ import { HlmTextareaImports } from '@nuclia/ui-spartan/textarea';
 
 export type UserKeysForm = FormGroup<{
   enabled: FormControl<boolean>;
-  user_keys: FormGroup<{ [key: string]: any }>;
+  user_keys: FormGroup<Record<string, AbstractControl>>;
 }>;
 
 export interface UserKeyField {

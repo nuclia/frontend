@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
-import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ZoneSummary } from '../zone.models';
@@ -24,7 +23,6 @@ describe('ZoneListComponent', () => {
           ] as ZoneSummary[]),
         }),
         MockProvider(UiConfirmService),
-        MockProvider(UiToastService),
       ],
     }).compileComponents();
 

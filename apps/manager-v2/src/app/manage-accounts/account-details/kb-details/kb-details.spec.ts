@@ -1,9 +1,9 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { UserService } from '../../../manage-users/user.service';
 import { ManagerStore } from '../../../manager.store';
 import { KbDetails, KbUser } from '../../account-ui.models';
@@ -45,9 +45,9 @@ describe('KbDetails', () => {
           loadKb: vi.fn(() => of(KB)),
           updateKb: vi.fn(() => of(KB)),
           updateKbUser: vi.fn(() => of(KB)),
+          publishKb: vi.fn(() => of({})),
         }),
         MockProvider(UserService),
-        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canEdit,
           canSeeUsers: signal(true),
@@ -63,6 +63,10 @@ describe('KbDetails', () => {
   });
 
   const getVm = () => fixture.debugElement.injector.get(KbDetailsService);
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('should enable and disable editable controls when edit permission changes', () => {
     const { slug, title, prewarm_enabled } = getVm().kbForm.controls;
@@ -88,6 +92,100 @@ describe('KbDetails', () => {
     expect(vm.kbForm.pristine).toBe(true);
   });
 
+  it('should not flag the kb as saving when there is nothing to save', () => {
+    const vm = getVm();
+    Object.assign(vm, { backupKb: undefined });
+
+    vm.save();
+
+    expect(vm.isSaving()).toBe(false);
+    expect(accountService.updateKb).not.toHaveBeenCalled();
+  });
+
+  it('should stop saving and notify when the update fails', () => {
+    vi.spyOn(toast, 'error').mockImplementation(() => '');
+    vi.mocked(accountService.updateKb).mockReturnValueOnce(throwError(() => new Error('boom')));
+    const vm = getVm();
+
+    vm.save();
+
+    expect(vm.isSaving()).toBe(false);
+    expect(toast.error).toHaveBeenCalledWith('Updating knowledge box failed');
+  });
+
+  it('should restore title, slug, zone and prewarm on reset', () => {
+    const vm = getVm();
+    vm.kbForm.patchValue({ title: 'Changed', slug: 'changed', zone: 'Other', prewarm_enabled: true });
+
+    vm.reset();
+
+    expect(vm.kbForm.getRawValue()).toEqual({ slug: 'my-kb', title: 'My KB', zone: 'Europe', prewarm_enabled: false });
+    expect(vm.kbForm.pristine).toBe(true);
+  });
+
+  it('should toggle the publication and notify when it fails', () => {
+    vi.spyOn(toast, 'error').mockImplementation(() => '');
+    const setKbDetails = vi.spyOn(TestBed.inject(ManagerStore), 'setKbDetails');
+    const vm = getVm();
+
+    vm.togglePublish();
+    expect(accountService.publishKb).toHaveBeenCalledWith(KB, true);
+    expect(setKbDetails).toHaveBeenCalledWith({ ...KB, published: true });
+
+    setKbDetails.mockClear();
+    vi.mocked(accountService.publishKb).mockReturnValueOnce(throwError(() => new Error('boom')));
+    vm.togglePublish();
+    expect(setKbDetails).not.toHaveBeenCalled();
+    expect(toast.error).toHaveBeenCalledWith('Updating the publication status failed');
+  });
+
+  describe('copy', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+      vi.unstubAllGlobals();
+    });
+
+    it('should flag the text as copied for a second', async () => {
+      vi.useFakeTimers();
+      vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn(() => Promise.resolve()) } });
+      const vm = getVm();
+
+      vm.copy(false);
+      expect(vm.copied()).toBe(false);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(vm.copied()).toBe(true);
+
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(vm.copied()).toBe(false);
+    });
+
+    it('should notify and not flag the text as copied when the clipboard is not available', async () => {
+      vi.spyOn(toast, 'error').mockImplementation(() => '');
+      vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn(() => Promise.reject(new Error('denied'))) } });
+      const vm = getVm();
+
+      vm.copy(false);
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(vm.copied()).toBe(false);
+      expect(toast.error).toHaveBeenCalledWith('Copying to the clipboard failed');
+    });
+
+    it('should clear the pending timer when the component is destroyed', async () => {
+      vi.useFakeTimers();
+      vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn(() => Promise.resolve()) } });
+      const vm = getVm();
+      vm.copy(false);
+      await vi.advanceTimersByTimeAsync(0);
+
+      fixture.destroy();
+      await vi.advanceTimersByTimeAsync(1000);
+
+      expect(vm.copied()).toBe(true);
+    });
+  });
+
   it('should list the members and change a member role', () => {
     const rows = Array.from(fixture.nativeElement.querySelectorAll('tbody tr')) as HTMLElement[];
     expect(rows.map((row) => row.querySelectorAll('td')[3].textContent?.trim())).toEqual([
@@ -95,7 +193,6 @@ describe('KbDetails', () => {
       'contributor',
       'member',
     ]);
-    // The last owner cannot be edited
     expect(rows[0].querySelector('button')).toBeNull();
     expect(rows[1].querySelector('button')).not.toBeNull();
 

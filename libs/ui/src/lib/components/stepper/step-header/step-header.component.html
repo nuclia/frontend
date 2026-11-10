@@ -1,0 +1,26 @@
+<span
+  aria-hidden="true"
+  hlmBtn
+  [class]="_indicatorClass()">
+  @if (_iconName(); as icon) {
+    <ng-icon [name]="icon" />
+  } @else {
+    <span>{{ index() + 1 }}</span>
+  }
+</span>
+
+<span
+  class="flex min-w-0 touch-manipulation flex-col truncate text-sm font-medium"
+  [class.text-destructive]="state() === 'error'">
+  @if (_templateLabel(); as templateLabel) {
+    <ng-container [ngTemplateOutlet]="templateLabel.template" />
+  } @else if (_stringLabel(); as stringLabel) {
+    {{ stringLabel }}
+  }
+  @if (_showOptionalLabel()) {
+    <span class="text-muted-foreground text-xs">Optional</span>
+  }
+  @if (_showErrorLabel()) {
+    <span class="text-destructive text-xs">{{ errorMessage() }}</span>
+  }
+</span>

@@ -2,7 +2,6 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
-import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ManagerStore } from '../../manager.store';
@@ -52,7 +51,6 @@ describe('AccountListComponent', () => {
           ),
         }),
         MockProvider(UiConfirmService),
-        MockProvider(UiToastService),
         MockProvider(ManagerStore, {
           canDeleteAccount: signal(true),
           canCreateAccount: signal(true),

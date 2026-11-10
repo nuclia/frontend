@@ -1,0 +1,22 @@
+<hlm-dialog-header>
+  <h2 hlmDialogTitle>{{ data.title }}</h2>
+  @if (data.description) {
+    <p hlmDialogDescription>{{ data.description }}</p>
+  }
+</hlm-dialog-header>
+<hlm-dialog-footer>
+  <button
+    hlmBtn
+    type="button"
+    variant="outline"
+    (click)="close(false)">
+    {{ data.cancelLabel ?? 'Cancel' }}
+  </button>
+  <button
+    hlmBtn
+    type="button"
+    [variant]="data.isDestructive ? 'destructive' : 'default'"
+    (click)="close(true)">
+    {{ data.confirmLabel ?? 'Confirm' }}
+  </button>
+</hlm-dialog-footer>

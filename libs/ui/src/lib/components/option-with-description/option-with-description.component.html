@@ -1,0 +1,16 @@
+<span
+  class="w-full truncate text-sm"
+  data-slot="option-with-description-label"
+  [hlmTooltip]="label()"
+  [tooltipDisabled]="!labelTruncated()">
+  {{ label() }}
+</span>
+@if (description(); as text) {
+  <span
+    class="text-muted-foreground w-full truncate text-xs"
+    data-slot="option-with-description-text"
+    [hlmTooltip]="text"
+    [tooltipDisabled]="!descriptionTruncated()">
+    {{ text }}
+  </span>
+}

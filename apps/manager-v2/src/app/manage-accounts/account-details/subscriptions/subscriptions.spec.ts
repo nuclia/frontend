@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -12,14 +12,18 @@ import { buildBasePayload, getProductLineOptions, getProductOptions } from './su
 describe('Subscriptions', () => {
   let fixture: ComponentFixture<SubscriptionsComponent>;
   let globalService: GlobalAccountService;
-  let toast: UiToastService;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   async function setup(subscription: ManagerAccountSubscription | null) {
+    vi.spyOn(toast, 'success').mockImplementation(() => '');
+    vi.spyOn(toast, 'error').mockImplementation(() => '');
     await TestBed.configureTestingModule({
       imports: [SubscriptionsComponent],
       providers: [
         MockProvider(ManagerStore, { getAccountId: vi.fn(() => 'account-id') }),
-        MockProvider(UiToastService, { success: vi.fn(), error: vi.fn() }),
         MockProvider(GlobalAccountService, {
           getBillingFormulas: vi.fn(() =>
             of([{ id: 'formula-1', title: 'Formula', description: 'Help' } as BillingFormula]),
@@ -35,7 +39,6 @@ describe('Subscriptions', () => {
     }).compileComponents();
 
     globalService = TestBed.inject(GlobalAccountService);
-    toast = TestBed.inject(UiToastService);
     fixture = TestBed.createComponent(SubscriptionsComponent);
     fixture.detectChanges();
   }

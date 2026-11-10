@@ -1,6 +1,6 @@
-import type { Mock } from 'vitest';
+import type { Mock, MockInstance } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockProvider } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { UserSummary } from '../manage-users/user.models';
@@ -21,12 +21,12 @@ describe('EmailWizardService', () => {
   let recipients: RecipientsService;
   let compose: ComposeService;
   let sendToUsers: Mock;
-  let error: Mock;
+  let error: MockInstance<typeof toast.error>;
   let completed: Mock;
   const selectedIds = () => Array.from(recipients.selected().keys());
 
   beforeEach(() => {
-    error = vi.fn();
+    error = vi.spyOn(toast, 'error').mockImplementation(() => '');
     completed = vi.fn();
     sendToUsers = vi.fn().mockReturnValue(of({ requested: 2, queued: 2, failed: [] }));
     TestBed.configureTestingModule({
@@ -36,7 +36,6 @@ describe('EmailWizardService', () => {
         EmailWizardService,
         MockProvider(RecipientsLoaderService, { load: vi.fn().mockReturnValue(of(users)) }),
         MockProvider(EmailService, { sendToUsers }),
-        MockProvider(UiToastService, { error }),
       ],
     });
     wizard = TestBed.inject(EmailWizardService);
@@ -48,6 +47,8 @@ describe('EmailWizardService', () => {
     compose.body.set('Body');
     compose.senderName.set(' Nuclia Team ');
   });
+
+  afterEach(() => vi.restoreAllMocks());
 
   it('should require recipients, subject and body to move forward', () => {
     expect(wizard.canCompose()).toBe(true);

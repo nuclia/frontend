@@ -18,10 +18,6 @@ export function nullOrNumber(value: number | string | null | undefined): number 
   return Number(value);
 }
 
-export function getOptionLabel(options: { value: string; label: string }[], value: string): string {
-  return options.find((option) => option.value === value)?.label ?? value;
-}
-
 export function buildBasePayload(raw: {
   nuclia_tokens_price: number | null;
   billing_formula_id: string;

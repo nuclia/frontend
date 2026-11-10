@@ -1,6 +1,6 @@
-import type { Mock } from 'vitest';
+import type { Mock, MockInstance } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { MockProvider } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { GlobalAccountService } from '../manage-accounts/global-account.service';
@@ -20,7 +20,7 @@ describe('ManageEmailsComponent', () => {
   let fixture: ComponentFixture<ManageEmailsComponent>;
   let getUsers: Mock;
   let sendToUsers: Mock;
-  let success: Mock;
+  let success: MockInstance<typeof toast.success>;
   const el = (): HTMLElement => fixture.nativeElement;
   const find = <T extends HTMLElement>(selector: string): T => {
     const element = el().querySelector<T>(selector);
@@ -49,7 +49,8 @@ describe('ManageEmailsComponent', () => {
   const tab = () => find('[role="tab"][aria-selected="true"]').textContent;
 
   beforeEach(async () => {
-    success = vi.fn();
+    success = vi.spyOn(toast, 'success').mockImplementation(() => '');
+    vi.spyOn(toast, 'error').mockImplementation(() => '');
     getUsers = vi.fn().mockReturnValue(of(users));
     sendToUsers = vi.fn().mockReturnValue(of({ requested: 2, queued: 2, failed: [] }));
     await TestBed.configureTestingModule({
@@ -58,13 +59,14 @@ describe('ManageEmailsComponent', () => {
         MockProvider(UserService, { getUsers }),
         MockProvider(GlobalAccountService, { getSubscriptions: vi.fn().mockReturnValue(of([])) }),
         MockProvider(EmailService, { sendToUsers }),
-        MockProvider(UiToastService, { error: vi.fn(), success }),
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ManageEmailsComponent);
     fixture.detectChanges();
   });
+
+  afterEach(() => vi.restoreAllMocks());
 
   it('should only mark a step as done once it is completed and left', () => {
     const done = () =>

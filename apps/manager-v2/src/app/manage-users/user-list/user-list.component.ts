@@ -5,9 +5,9 @@ import { SDKService } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { UiInfiniteScrollImports } from '@nuclia/ui/infinite-scroll';
+import { UiInfiniteScroll } from '@nuclia/ui/infinite-scroll';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { filter, switchMap } from 'rxjs';
@@ -18,14 +18,13 @@ import { UserService } from '../user.service';
 @Component({
   templateUrl: './user-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HlmButtonImports, UiInfiniteScrollImports, HlmInputImports, HlmTableImports, NgIcon, RouterLink, DatePipe],
+  imports: [HlmButtonImports, UiInfiniteScroll, HlmInputImports, HlmTableImports, NgIcon, RouterLink, DatePipe],
   providers: [provideIcons({ matAddRound, matDeleteRound })],
 })
 export class UserListComponent {
   private sdk = inject(SDKService);
   private userService = inject(UserService);
   private confirmService = inject(UiConfirmService);
-  private toast = inject(UiToastService);
   private store = inject(ManagerStore);
 
   private allUsers = signal<UserSummary[]>([]);
@@ -83,7 +82,7 @@ export class UserListComponent {
             error.status === 409
               ? 'User cannot be deleted, as they are the only owner on some account(s)'
               : 'User deletion failed';
-          this.toast.error(message);
+          toast.error(message);
         },
       });
   }
@@ -97,7 +96,7 @@ export class UserListComponent {
         if (error.status === 403) {
           this.sdk.nuclia.auth.logout();
         } else {
-          this.toast.error('An error occurred while loading user list');
+          toast.error('An error occurred while loading user list');
         }
       },
     });

@@ -1,7 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { UiToastService } from '@nuclia/ui/toast';
 import { MockProvider } from 'ng-mocks';
 import { ManagerStore } from '../../manager.store';
 import { UserService } from '../user.service';
@@ -17,7 +16,6 @@ describe('UserDetailsComponent', () => {
       imports: [UserDetailsComponent, RouterModule.forRoot([])],
       providers: [
         MockProvider(UserService),
-        MockProvider(UiToastService),
         MockProvider(SDKService, {
           getOriginForApp: () => '',
         }),

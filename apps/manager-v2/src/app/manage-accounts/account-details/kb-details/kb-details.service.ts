@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { ChangeDetectorRef, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { KBRoles } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { combineLatest, debounceTime, filter, map, of, Subject, switchMap } from 'rxjs';
 import { UserSearch } from '../../../manage-users/user.models';
 import { UserService } from '../../../manage-users/user.service';
@@ -18,7 +18,7 @@ export class KbDetailsService {
   private accountService = inject(AccountService);
   private userService = inject(UserService);
   private store = inject(ManagerStore);
-  private toast = inject(UiToastService);
+  private destroyRef = inject(DestroyRef);
   // Kludge: the form is patched outside of the signal graph, so the view has to be marked manually
   private cdr = inject(ChangeDetectorRef);
 
@@ -49,8 +49,11 @@ export class KbDetailsService {
   );
 
   private backupKb?: KbDetails;
+  private copiedTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
+    this.destroyRef.onDestroy(() => clearTimeout(this.copiedTimer));
+
     effect(() => {
       const canEdit = this.canEdit();
       untracked(() => {
@@ -96,8 +99,8 @@ export class KbDetailsService {
   }
 
   save() {
-    this.isSaving.set(true);
     if (this.backupKb) {
+      this.isSaving.set(true);
       this.accountService.updateKb(this.backupKb, this.kbForm.getRawValue()).subscribe({
         next: (updatedKb) => {
           this.backupKb = updatedKb;
@@ -106,7 +109,7 @@ export class KbDetailsService {
         },
         error: () => {
           this.isSaving.set(false);
-          this.toast.error('Updating knowledge box failed');
+          toast.error('Updating knowledge box failed');
         },
       });
     }
@@ -117,6 +120,7 @@ export class KbDetailsService {
       this.kbForm.patchValue({
         title: this.backupKb.title,
         slug: this.backupKb.slug,
+        zone: this.backupKb.zone.title,
         prewarm_enabled: this.backupKb.prewarm_enabled ?? false,
       });
       this.kbForm.markAsPristine();
@@ -125,17 +129,23 @@ export class KbDetailsService {
 
   copy(fullInfo: boolean) {
     if (this.backupKb) {
-      navigator.clipboard.writeText(getCopyText(this.backupKb, fullInfo));
-      this.copied.set(true);
-      setTimeout(() => this.copied.set(false), 1000);
+      navigator.clipboard.writeText(getCopyText(this.backupKb, fullInfo)).then(
+        () => {
+          this.copied.set(true);
+          clearTimeout(this.copiedTimer);
+          this.copiedTimer = setTimeout(() => this.copied.set(false), 1000);
+        },
+        () => toast.error('Copying to the clipboard failed'),
+      );
     }
   }
 
   togglePublish() {
     const kbDetails = this.kb();
     if (kbDetails) {
-      this.accountService.publishKb(kbDetails, !kbDetails.published).subscribe(() => {
-        this.store.setKbDetails({ ...kbDetails, published: !kbDetails.published });
+      this.accountService.publishKb(kbDetails, !kbDetails.published).subscribe({
+        next: () => this.store.setKbDetails({ ...kbDetails, published: !kbDetails.published }),
+        error: () => toast.error('Updating the publication status failed'),
       });
     }
   }
@@ -157,7 +167,7 @@ export class KbDetailsService {
   updateUserRole(member: KbUser, newRole: KBRoles) {
     if (this.backupKb) {
       this.accountService.updateKbUser(this.backupKb, member.id, newRole).subscribe({
-        error: () => this.toast.error('Updating user role failed'),
+        error: () => toast.error('Updating user role failed'),
       });
     }
   }
@@ -165,7 +175,7 @@ export class KbDetailsService {
   removeUser(member: KbUser) {
     if (this.backupKb) {
       this.accountService.removeKbUser(this.backupKb, member.id).subscribe({
-        error: () => this.toast.error('Removing user failed'),
+        error: () => toast.error('Removing user failed'),
       });
     }
   }
@@ -173,7 +183,7 @@ export class KbDetailsService {
   private addMember(member: UserSearch) {
     if (this.backupKb) {
       this.accountService.addKbUser(this.backupKb, member.id).subscribe({
-        error: () => this.toast.error('Adding user failed'),
+        error: () => toast.error('Adding user failed'),
       });
     }
   }

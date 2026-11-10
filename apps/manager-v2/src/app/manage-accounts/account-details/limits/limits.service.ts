@@ -3,11 +3,12 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
 import { AccountTypeDefaults } from '@flaps/core';
 import { AccountLimitsPatchPayload } from '@nuclia/core';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { filter, map, switchMap, take, tap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
 import { AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
+import { UNLIMITED } from '../account-details.utils';
 import {
   buildLimitGroup,
   getBulkLimitsPayload,
@@ -16,14 +17,12 @@ import {
   toLimitFormValue,
   toLimitsFormValue,
   toLimitsPayload,
-  UNLIMITED,
 } from './limits.utils';
 
 @Injectable()
 export class LimitsService {
   private store = inject(ManagerStore);
   private accountService = inject(AccountService);
-  private toast = inject(UiToastService);
   // Kludge: the form controls are added outside of the signal graph, so the view has to be marked manually
   private cdr = inject(ChangeDetectorRef);
   private backup?: AccountDetails;
@@ -99,7 +98,7 @@ export class LimitsService {
         },
         error: () => {
           this.isSaving.set(false);
-          this.toast.error('Updating limits failed');
+          toast.error('Updating limits failed');
         },
       });
     }

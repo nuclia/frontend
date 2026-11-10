@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UiToastService } from '@nuclia/ui/toast';
+import { toast } from '@spartan-ng/brain/sonner';
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 import { UserSummary } from '../../manage-users/user.models';
 import { RecipientFilter } from '../email.models';
@@ -16,7 +16,6 @@ const byName = (a: UserSummary, b: UserSummary) => (a.name || a.email).localeCom
 @Injectable()
 export class RecipientsService {
   private loader = inject(RecipientsLoaderService);
-  private toast = inject(UiToastService);
   private destroyRef = inject(DestroyRef);
   private reload$ = new Subject<void>();
   // Users listed by the filters are selected by default; only the manually unchecked ones are remembered
@@ -65,7 +64,7 @@ export class RecipientsService {
         switchMap(() =>
           this.loader.load(this.recipientFilter(), this.segmentFilter()).pipe(
             catchError((error) => {
-              this.toast.error(getEmailErrorMessage(error));
+              toast.error(getEmailErrorMessage(error));
               this._loadingError.set(true);
               return of([] as UserSummary[]);
             }),
