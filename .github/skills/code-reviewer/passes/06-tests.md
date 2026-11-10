@@ -19,6 +19,7 @@ and simple. Do not flag a missing test just because a file changed.
 - [ ] Bug fixes come with a regression test
 - [ ] Existing specs touched by the change are updated: no stale expectations
 - [ ] Tests assert behavior (output, state), not implementation details
+- [ ] One `<feature>.spec.ts` per feature, not a spec per component, service or utils file (`conventions › Spec files`)
 - [ ] Not flagged: presentational components, trivial pass-through code, constants, models, obvious one-liners
 
 ### E2E (Cypress)
