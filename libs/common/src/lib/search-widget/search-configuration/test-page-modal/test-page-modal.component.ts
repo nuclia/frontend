@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateAfter, SearchWidgetService } from '@flaps/common';
 import { FeatureFlagService, SDKService } from '@flaps/core';
 import {
   ModalRef,
@@ -15,6 +14,8 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { forkJoin, map, of, switchMap, take } from 'rxjs';
+import { SearchWidgetService } from '../../search-widget.service';
+import { DateAfter } from '../../../validators';
 
 @Component({
   imports: [
