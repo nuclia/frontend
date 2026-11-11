@@ -4,3 +4,4 @@ export * from './results-display-form';
 export * from './save-config-modal';
 export * from './search-box-form';
 export * from './search-configuration.component';
+export * from './test-page-modal/test-page-modal.component';

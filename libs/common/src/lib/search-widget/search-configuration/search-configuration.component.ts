@@ -83,6 +83,7 @@ import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
 import { WidgetOptionsFormComponent } from './widget-options-form';
 import { ManageWidgetsModalComponent } from './manage-widgets-modal';
+import { TestPageModalComponent } from './test-page-modal/test-page-modal.component';
 
 const NUCLIA_SEMANTIC_MODELS = new Set(['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']);
 
@@ -1054,5 +1055,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       this.currentConfig.value.kind = useGenerativeAnswer ? 'ask' : 'find';
     }
     this.cdr.markForCheck();
+  }
+
+  openTestPage() {
+    this.modalService.openModal(
+      TestPageModalComponent,
+      new ModalConfig({ data: { widget: this.linkedWidget()?.slug } }),
+    );
   }
 }

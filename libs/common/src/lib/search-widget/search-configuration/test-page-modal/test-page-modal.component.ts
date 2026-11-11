@@ -35,7 +35,7 @@ import { forkJoin, map, of, switchMap, take } from 'rxjs';
 })
 export class TestPageModalComponent {
   sdk = inject(SDKService);
-  modal = inject(ModalRef);
+  modal = inject(ModalRef<{ widget?: string }>);
   featureFlagService = inject(FeatureFlagService);
   searchWidgetService = inject(SearchWidgetService);
   toaster = inject(SisToastService);
@@ -50,7 +50,10 @@ export class TestPageModalComponent {
   serviceTitle = 'widget_testing';
 
   form = new FormGroup({
-    widget: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    widget: new FormControl<string>(this.modal.config.data?.['widget'] || '', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
     expiration: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, DateAfter(new Date().toISOString())],

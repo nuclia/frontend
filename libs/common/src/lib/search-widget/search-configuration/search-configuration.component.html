@@ -18,7 +18,9 @@
             [disabled]="!isConfigModified && !isNucliaConfig"
             [paPopup]="isNucliaConfig ? null : saveMenu"
             (click)="isNucliaConfig ? saveConfig() : null">
-            {{ (isNucliaConfig ? 'search.configuration.action.save-as' : 'search.configuration.action.save') | translate }}
+            {{
+              (isNucliaConfig ? 'search.configuration.action.save-as' : 'search.configuration.action.save') | translate
+            }}
           </nsi-button-mini>
           <pa-dropdown #saveMenu>
             <pa-option (selectOption)="saveConfig()">
@@ -74,6 +76,9 @@
               {{ 'search.configuration.action.rag-lab' | translate }}
             </pa-option>
           }
+          <pa-option (selectOption)="openTestPage()">
+            {{ 'dashboard-home.test-page.title' | translate }}
+          </pa-option>
         </pa-dropdown>
       </div>
     </div>
@@ -110,7 +115,10 @@
           <div class="section-title">{{ 'search.configuration.search-mode.title' | translate }}</div>
           <div class="section-description">{{ 'search.configuration.search-mode.description' | translate }}</div>
         </div>
-        <pa-radio-group noBackground [value]="searchMode()" (valueChange)="updateSearchMode($event)">
+        <pa-radio-group
+          noBackground
+          [value]="searchMode()"
+          (valueChange)="updateSearchMode($event)">
           <pa-radio value="simple-rag">
             <span class="search-mode-label">
               <span>{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
