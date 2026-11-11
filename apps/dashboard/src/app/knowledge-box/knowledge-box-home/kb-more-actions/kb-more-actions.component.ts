@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TestPageModalComponent } from '@flaps/common';
 import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
-import { TestPageModalComponent } from '../test-page-modal/test-page-modal.component';
 
 /**
  * "More actions" menu (developer integrations / test page), shown identically in

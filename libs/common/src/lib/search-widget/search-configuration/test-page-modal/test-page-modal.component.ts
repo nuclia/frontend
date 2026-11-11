@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateAfter, SearchWidgetService } from '@flaps/common';
 import { FeatureFlagService, SDKService } from '@flaps/core';
 import {
   ModalRef,
@@ -15,6 +14,8 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { forkJoin, map, of, switchMap, take } from 'rxjs';
+import { SearchWidgetService } from '../../search-widget.service';
+import { DateAfter } from '../../../validators';
 
 @Component({
   imports: [
@@ -35,7 +36,7 @@ import { forkJoin, map, of, switchMap, take } from 'rxjs';
 })
 export class TestPageModalComponent {
   sdk = inject(SDKService);
-  modal = inject(ModalRef);
+  modal = inject(ModalRef<{ widget?: string }>);
   featureFlagService = inject(FeatureFlagService);
   searchWidgetService = inject(SearchWidgetService);
   toaster = inject(SisToastService);
@@ -50,7 +51,10 @@ export class TestPageModalComponent {
   serviceTitle = 'widget_testing';
 
   form = new FormGroup({
-    widget: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    widget: new FormControl<string>(this.modal.config.data?.['widget'] || '', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
     expiration: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, DateAfter(new Date().toISOString())],

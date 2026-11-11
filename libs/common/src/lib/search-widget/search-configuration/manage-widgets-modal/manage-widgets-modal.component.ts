@@ -18,6 +18,7 @@ import { combineLatest, filter, forkJoin, map, Observable, of, shareReplay, swit
 import { DEFAULT_WIDGET_CONFIG } from '../../search-widget.models';
 import { SearchWidgetService } from '../../search-widget.service';
 import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from '../../widgets/dialogs';
+import { TestPageModalComponent } from '../test-page-modal/test-page-modal.component';
 
 interface ConfigurationListItem {
   config: Widget.AnySearchConfiguration;
@@ -182,5 +183,9 @@ export class ManageWidgetsModalComponent {
     return this.searchWidgetService
       .deleteSearchConfig(item.config.id)
       .pipe(switchMap(() => this.searchWidgetService.deleteWidgetsForSearchConfig(item.config.id)));
+  }
+
+  openTestPage(widget?: string) {
+    this.modalService.openModal(TestPageModalComponent, new ModalConfig({ data: { widget } }));
   }
 }

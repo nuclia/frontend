@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestPageModalComponent } from '@flaps/common';
 import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { MockModule, MockProvider } from 'ng-mocks';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 
 import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
-import { TestPageModalComponent } from '../test-page-modal/test-page-modal.component';
 import { KbMoreActionsComponent } from './kb-more-actions.component';
 
 describe('KbMoreActionsComponent', () => {
