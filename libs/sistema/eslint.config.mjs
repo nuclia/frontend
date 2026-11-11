@@ -1,5 +1,6 @@
 import nxPlugin from '@nx/eslint-plugin';
 import baseConfig from '../../eslint.config.mts';
+import angularRelaxed from '../../eslint.angular-relaxed.mts';
 
 export default [
   ...baseConfig,
@@ -25,4 +26,5 @@ export default [
       'no-extra-semi': 'error',
     },
   },
+  ...angularRelaxed,
 ];
