@@ -1,20 +1,5 @@
 @use 'apps/dashboard/src/variables' as *;
 
-.primary-tabs {
-  display: block;
-  border-bottom: 2px solid $color-light-stronger;
-}
-
-.secondary-tabs ::ng-deep {
-  .pa-tabs-link {
-    background: $color-background-tab-link-active;
-    &[aria-expanded='true'] {
-      color: $color-tab-slider-active;
-      font-weight: $font-weight-tab-item;
-    }
-  }
-}
-
 .activity-container {
   background-color: $color-neutral-lightest;
 }
