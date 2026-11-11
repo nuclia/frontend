@@ -8,6 +8,7 @@ import {
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -82,6 +83,8 @@ export class AgenticConfigurationComponent {
   // Ask-level parameters (sent alongside the agentic_config_id on ask requests)
   agenticSearchConfiguration = signal<string>('');
   private _allAskSearchConfigs = signal<string[]>([]);
+
+  private _lastEmittedConfig = '';
 
   // Agentic pipeline config draft (smart_agent + rephrase + summarize)
   availableSources = signal<Array<{ id: string; type: string; description?: string }>>([]);
@@ -186,6 +189,7 @@ export class AgenticConfigurationComponent {
       const cfg = this.config();
       this.agenticSearchConfiguration.set(cfg?.agentic?.searchConfigId || '');
       this._loadAgenticConfigDraft(cfg?.agentic?.config);
+      untracked(() => this._markCurrentDraftAsEmitted());
     });
 
     effect(() => this.sourcesValidChanged.emit(this.sourcesValid()));
@@ -226,6 +230,7 @@ export class AgenticConfigurationComponent {
           Object.entries(sources).map(([id, source]) => ({ id, type: source.type, description: source.description })),
         );
         this.agenticConfigDefaults.set(agenticConfigDefaults);
+        this._markCurrentDraftAsEmitted();
         this.newSourceTitle.set(kb.title || '');
         this.newSourceDescription.set(kb.description || '');
         this.heightChanged.emit();
@@ -255,10 +260,10 @@ export class AgenticConfigurationComponent {
     );
   }
 
-  private _emitAgenticConfig() {
+  private _buildAgenticConfig(): AgenticConfig {
     const useModels = this.useSpecificModels();
     const mode = this.mode();
-    const agenticConfig: AgenticConfig = {
+    return {
       smart_agent: {
         mode,
         extra_prompt: this.extraPrompt() || undefined,
@@ -285,10 +290,22 @@ export class AgenticConfigurationComponent {
         ...(useModels ? { model: { model_id: this.displayedSummarizeModel() } } : {}),
       },
     };
+  }
+
+  private _markCurrentDraftAsEmitted() {
+    this._lastEmittedConfig = JSON.stringify(this._buildAgenticConfig());
+  }
+
+  private _emitAgenticConfig() {
+    const agenticConfig = this._buildAgenticConfig();
+    const serialized = JSON.stringify(agenticConfig);
+    if (serialized === this._lastEmittedConfig) return;
+    this._lastEmittedConfig = serialized;
     this.configChanged.emit({ agentic: { config: agenticConfig } });
   }
 
   updateSearchConfiguration(name: string) {
+    if (name === this.agenticSearchConfiguration()) return;
     this.agenticSearchConfiguration.set(name);
     this.configChanged.emit({ agentic: { searchConfigId: name || undefined } });
   }
@@ -328,6 +345,7 @@ export class AgenticConfigurationComponent {
   }
 
   updateMode(mode: AgenticSmartAgentMode) {
+    if (mode === this.mode()) return;
     this.mode.set(mode);
     if (mode !== 'plan_execute') {
       this.plannerModel.set('');

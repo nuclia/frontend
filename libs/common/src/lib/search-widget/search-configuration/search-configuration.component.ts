@@ -349,7 +349,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         : this.searchWidgetService.searchConfigurations.pipe(take(1)),
       this.searchWidgetService.widgetList.pipe(take(1)),
     ]).pipe(
-      tap(([kb, savedConfigs, widgets]) => {
+      switchMap(([kb, savedConfigs, widgets]) => {
         const standardConfigOption = new OptionModel({
           id: 'nuclia-standard',
           value: 'nuclia-standard',
@@ -371,9 +371,6 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
           ),
         );
 
-        // Deep-link support: a widget slug passed in (e.g. from the old /widgets/:slug admin URL,
-        // now redirected here) selects that widget's linked configuration instead of the last-selected
-        // one, if it can be resolved to a configuration that still exists.
         const initialWidget = this.initialWidgetSlug
           ? widgets.find((widget) => widget.slug === this.initialWidgetSlug)
           : undefined;
@@ -385,28 +382,27 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         if (initialConfigFromWidget) {
           this.searchWidgetService.saveSelectedSearchConfig(kb.id, initialConfigFromWidget.id);
         }
-        // Set the control before publishing the options: pa-select reads its current control value
-        // when the options input changes, so this initializes the visible selection without firing
-        // the user-selection pipeline a second time.
-        this.selectedConfig.patchValue(savedConfig.id, { emitEvent: false });
-        this.configurations = options;
-        this.applySelectedConfiguration(savedConfig, initialWidget || findLinkedWidget(widgets, savedConfig.id));
-        this.agenticWidgetConfigNames.set(
-          savedConfigs
-            .filter((c) => c.type === 'config' && (c as Widget.TypedSearchConfiguration).searchMode === 'agentic')
-            .map((c) => c.id),
+
+        return this._hydrateAgenticConfig(kb, savedConfig).pipe(
+          tap((hydratedConfig) => {
+            this.selectedConfig.patchValue(hydratedConfig.id, { emitEvent: false });
+            this.configurations = options;
+            this.applySelectedConfiguration(
+              hydratedConfig,
+              initialWidget || findLinkedWidget(widgets, hydratedConfig.id),
+            );
+            this.agenticWidgetConfigNames.set(
+              savedConfigs
+                .filter((c) => c.type === 'config' && (c as Widget.TypedSearchConfiguration).searchMode === 'agentic')
+                .map((c) => c.id),
+            );
+            this.cdr.markForCheck();
+          }),
         );
-        this.cdr.markForCheck();
       }),
     );
   }
 
-  /**
-   * Looks up whether the given search configuration id already has a widget deployment (appearance
-   * settings + embed slug) attached, and updates `linkedWidget` accordingly. Called whenever the
-   * selected configuration changes, so the header actions (Get embed code, Widget options) can react
-   * to whether the current configuration has been deployed yet.
-   */
   private refreshLinkedWidget(configId: string) {
     this.searchWidgetService.widgetList.pipe(take(1), takeUntil(this.unsubscribeAll)).subscribe((widgets) => {
       this.applyLinkedWidget(widgets.find((widget) => widget.searchConfigId === configId));
