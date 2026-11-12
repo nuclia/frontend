@@ -12,11 +12,12 @@ export class SitemapCloudConnector implements IConnector {
     return of([
       {
         id: 'sitemap',
-        title: 'sync.connectors.sitemap.url.section-title',
+        title: 'sync.connectors.sitemap-cloud.url.title',
+        description: 'sync.connectors.sitemap-cloud.url.description',
         fields: [
           {
             id: 'url',
-            label: 'sync.connectors.sitemap.url.label',
+            label: 'sync.connectors.sitemap-cloud.url.title',
             type: 'text',
             help: 'generic.required-field',
             required: true,
