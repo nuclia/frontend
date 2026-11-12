@@ -2,6 +2,7 @@ import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core'
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { map, Observable, shareReplay } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -24,6 +25,8 @@ export class SubscriptionsService {
   private globalService = inject(GlobalAccountService);
   private toast = inject(SisToastService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
+  private noneOptionLabel = toSignal(this.translate.stream('account.cloud-zero.none'), { initialValue: '' });
 
   private accountId = this.store.getAccountId() || '';
 
@@ -56,8 +59,8 @@ export class SubscriptionsService {
     free_storage_nuclia_tokens: new FormControl<number | null>(null),
     on_demand_budget: new FormControl<number | null>(null),
     action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted | null>(null),
-    product: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    product_line: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    product: new FormControl<string>('', { nonNullable: true }),
+    product_line: new FormControl<string>('', { nonNullable: true }),
     business_unit: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
@@ -99,18 +102,24 @@ export class SubscriptionsService {
     if (!this.businessUnit()) {
       return [];
     } else {
-      return Object.entries(this._productCatalog()[this.businessUnit()]?.product_lines || {}).map(
-        ([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }),
-      );
+      return [
+        new OptionModel({ id: '', value: '', label: this.noneOptionLabel() }),
+        ...Object.entries(this._productCatalog()[this.businessUnit()]?.product_lines || {}).map(
+          ([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }),
+        ),
+      ];
     }
   });
   productOptions = computed(() => {
     if (!this.businessUnit() || !this.productLine()) {
       return [];
     } else {
-      return Object.entries(
-        this._productCatalog()[this.businessUnit()]?.product_lines[this.productLine()]?.products || {},
-      ).map(([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }));
+      return [
+        new OptionModel({ id: '', value: '', label: this.noneOptionLabel() }),
+        ...Object.entries(
+          this._productCatalog()[this.businessUnit()]?.product_lines[this.productLine()]?.products || {},
+        ).map(([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key })),
+      ];
     }
   });
 

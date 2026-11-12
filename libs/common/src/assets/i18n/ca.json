@@ -1,5 +1,7 @@
 {
 	"account.account-title": "Compte",
+	"account.is-pfs": "Compte PFS?",
+	"account.cloud-zero.none": "Cap",
 	"account.account_name_invalid": "El nom del compte no és vàlid",
 	"account.add_user": "Afegir usuari",
 	"account.admin.make_admin": "Fer Administrador",
