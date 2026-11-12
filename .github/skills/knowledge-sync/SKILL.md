@@ -91,23 +91,19 @@ If either check shows changes, add the affected `references/` files to your work
 
 Given the list of changed files, populate this map:
 
-| Changed path                  | Documentation to update                                                  | Priority |
-| ----------------------------- | ------------------------------------------------------------------------ | -------- |
-| `apps/<X>/` (new folder)      | Create `apps/<X>/AGENTS.md` + add row to root `AGENTS.md`                | CRITICAL |
-| `apps/<X>/src/app/*routing*`  | Update routing tree in `apps/<X>/AGENTS.md`                              | HIGH     |
-| `apps/<X>/src/app/*guard*`    | Update guards section in `apps/<X>/AGENTS.md`                            | HIGH     |
-| `apps/<X>/src/app/*.state.ts` | Update state section in `apps/<X>/AGENTS.md`                             | HIGH     |
-| `apps/<X>/` (general changes) | Review `apps/<X>/AGENTS.md` for accuracy                                 | MEDIUM   |
-| `libs/<X>/` (new folder)      | Create `libs/<X>/AGENTS.md` + add row to root `AGENTS.md`                | CRITICAL |
-| `libs/<X>/` (general changes) | Review `libs/<X>/AGENTS.md`                                              | MEDIUM   |
-| `libs/sdk-core/src/lib/`      | Review `.github/skills/api-sdk/SKILL.md` for stale API patterns          | HIGH     |
-| `libs/sistema/`               | Review `.github/skills/design-system/SKILL.md` for stale component names | MEDIUM   |
-| `libs/pastanaga-angular/`     | Review `.github/skills/design-system/SKILL.md`                           | MEDIUM   |
-| `libs/user/` auth flows       | Review `.github/skills/angular-patterns/SKILL.md` auth section           | MEDIUM   |
-| `libs/user/src/assets/i18n/`  | Review `.github/skills/i18n-patterns/SKILL.md`                           | LOW      |
-| New file in `.github/skills/` | Update `.github/copilot-instructions.md` skills list                     | CRITICAL |
-| New file in `.github/agents/` | Update `.github/copilot-instructions.md` agents list                     | CRITICAL |
-| `charts/` or `docker/`        | Review root `AGENTS.md` deployment section if one exists                 | LOW      |
+| Changed path                  | Documentation to update                                              | Priority |
+| ----------------------------- | -------------------------------------------------------------------- | -------- |
+| `apps/<X>/` (new folder)      | Create `apps/<X>/AGENTS.md` + add row to root `AGENTS.md`            | CRITICAL |
+| `apps/<X>/src/app/*routing*`  | Update routing tree in `apps/<X>/AGENTS.md`                          | HIGH     |
+| `apps/<X>/src/app/*guard*`    | Update guards section in `apps/<X>/AGENTS.md`                        | HIGH     |
+| `apps/<X>/src/app/*.state.ts` | Update state section in `apps/<X>/AGENTS.md`                         | HIGH     |
+| `apps/<X>/` (general changes) | Review `apps/<X>/AGENTS.md` for accuracy                             | MEDIUM   |
+| `libs/<X>/` (new folder)      | Create `libs/<X>/AGENTS.md` + add row to root `AGENTS.md`            | CRITICAL |
+| `libs/<X>/` (general changes) | Review `libs/<X>/AGENTS.md`                                          | MEDIUM   |
+| `libs/sdk-core/src/lib/`      | Review `.github/skills/api-sdk/SKILL.md` for stale API patterns      | HIGH     |
+| `libs/sistema/`               | Review `.github/skills/pastanaga/SKILL.md` for stale component names | MEDIUM   |
+| `libs/pastanaga-angular/`     | Review `.github/skills/pastanaga/SKILL.md`                           | MEDIUM   |
+| `charts/` or `docker/`        | Review root `AGENTS.md` deployment section if one exists             | LOW      |
 
 #### Product Knowledge Staleness
 
@@ -139,8 +135,7 @@ Also update the "last updated" references in `SKILL.md`'s "Keeping This Skill Up
 
 ### Content ROI Quick Reference
 
-Use this when deciding what belongs in an AGENTS.md. The full detailed framework lives in
-`.github/skills/agents-review/SKILL.md`, but these criteria cover the most common decisions.
+Use this when deciding what belongs in an AGENTS.md.
 
 **Core test:** "Can an agent discover this in under 5 seconds by reading the source? If yes, skip it."
 
@@ -184,7 +179,7 @@ Work through the staleness map from **CRITICAL → HIGH → MEDIUM → LOW**.
 If a new app or lib was created and has no AGENTS.md:
 
 1. Read the project's `project.json`, routing files, main module/component tree, and key services
-2. Write the file from scratch, applying the **Content ROI Quick Reference** above — include high-ROI items (guards, structure tree, run commands, non-obvious constraints), skip low-ROI items (method tables, model lists, dependency tables). Use the `agents-review` skill for the full evaluation framework if needed.
+2. Write the file from scratch, applying the **Content ROI Quick Reference** above — include high-ROI items (guards, structure tree, run commands, non-obvious constraints), skip low-ROI items (method tables, model lists, dependency tables).
 3. Then add a row for the project in the root `AGENTS.md` apps or libs table
 
 #### 4b. Existing project — update AGENTS.md
@@ -196,7 +191,7 @@ If source files changed in a project that already has an AGENTS.md:
 3. Identify which facts are now wrong or missing (routing changes, renamed services, new guards)
 4. Edit the file in-place — do not rewrite sections that are still accurate
 5. Verify every class name, method name, and file path mentioned still exists in source
-6. Apply the **Content ROI Quick Reference** above — actively remove any low-ROI content (method signature tables, model property lists, dependency tables, integration tutorials) that snuck in. Use the `agents-review` skill for the full evaluation framework if the file needs a deeper overhaul.
+6. Apply the **Content ROI Quick Reference** above — actively remove any low-ROI content (method signature tables, model property lists, dependency tables, integration tutorials) that snuck in.
 7. **Describe the current state, not the migration.** AGENTS.md documents what exists _now_, not the diff that produced it. Avoid "moved to", "no longer", "used to", "previously", "migrated", "extracted out of" — an agent reading the file later has no use for the change history and it reads as stale the moment the next move happens. Write "there is no `X` here; `Y` handles this instead" rather than "`X` moved to `Y`". The one exception: a `Gotchas`/pending-work note is fine when it flags something genuinely unfinished or fragile, not when it's just narrating a completed rename/relocation.
 
 #### 4c. Skills and agents — update inline knowledge
@@ -254,22 +249,18 @@ outdated patterns but the change was too subtle to verify automatically.>
 Use this when you need to reason about which skill or agent is the authoritative owner of a
 given piece of knowledge:
 
-| Source of truth                      | Authoritative doc                                                  |
-| ------------------------------------ | ------------------------------------------------------------------ |
-| `libs/sdk-core/src/lib/`             | `.github/skills/api-sdk/SKILL.md`                                  |
-| `libs/sistema/`                      | `.github/skills/design-system/SKILL.md`                            |
-| `libs/pastanaga-angular/`            | `.github/skills/design-system/SKILL.md`                            |
-| `libs/user/` (auth flows)            | `.github/skills/angular-patterns/SKILL.md` + `apps/auth/AGENTS.md` |
-| `*.state.ts` patterns                | `.github/skills/angular-patterns/SKILL.md`                         |
-| `*.spec.ts` patterns                 | `.github/skills/testing-patterns/SKILL.md`                         |
-| RxJS usage in services               | `.github/skills/rxjs-patterns/SKILL.md`                            |
-| `libs/*/src/assets/i18n/`            | `.github/skills/i18n-patterns/SKILL.md`                            |
-| `nx.json`, `project.json`            | `.github/skills/nx-monorepo/SKILL.md`                              |
-| App routing trees                    | Per-project `AGENTS.md` routing section                            |
-| Guards                               | Per-project `AGENTS.md` gotchas/guards section                     |
-| Feature flags                        | Per-project `AGENTS.md` gotchas section                            |
-| `../docs` repo                       | `.github/skills/product-knowledge/SKILL.md` + its `references/`    |
-| API specs (global/nua/nucliadb/zone) | `.github/skills/product-knowledge/references/api-specs/`           |
+| Source of truth                      | Authoritative doc                                               |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `libs/sdk-core/src/lib/`             | `.github/skills/api-sdk/SKILL.md`                               |
+| `libs/sistema/`                      | `.github/skills/pastanaga/SKILL.md`                             |
+| `libs/pastanaga-angular/`            | `.github/skills/pastanaga/SKILL.md`                             |
+| `libs/user/` (auth flows)            | `apps/auth/AGENTS.md`                                           |
+| `*.spec.ts` patterns                 | `.github/skills/conventions/SKILL.md` (Tests)                   |
+| App routing trees                    | Per-project `AGENTS.md` routing section                         |
+| Guards                               | Per-project `AGENTS.md` gotchas/guards section                  |
+| Feature flags                        | Per-project `AGENTS.md` gotchas section                         |
+| `../docs` repo                       | `.github/skills/product-knowledge/SKILL.md` + its `references/` |
+| API specs (global/nua/nucliadb/zone) | `.github/skills/product-knowledge/references/api-specs/`        |
 
 ---
 
@@ -334,6 +325,4 @@ When reviewing changed diffs for knowledge-impacting changes, look for:
 - **Changes to `index.ts` barrel exports** → public API of a lib changed
 - **New `environment*.ts` files** → environment configuration may have changed
 - **Changes to `tsconfig.base.json` paths** → path aliases changed, update root AGENTS.md
-- **New `i18n/*.json` keys** → check i18n-patterns skill if key naming convention changed
-- **New `@NgModule` or removal of `@NgModule`** → module architecture changed
 - **When editing prose about a moved/removed/renamed thing** → write the resulting current state, not the move itself (see Step 4b)

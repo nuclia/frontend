@@ -1,10 +1,10 @@
 ---
 name: api-sdk
 description: >
-  How the @nuclia/core SDK is structured and how to use it correctly in this monorepo.
-  Covers SDK architecture (Nuclia class, rest/db/auth layers, KnowledgeBox, RetrievalAgent),
-  adding new API calls, wrapping SDK calls in Angular services in @flaps/core, error handling
-  patterns, and URL routing (global vs regional backends). Activate this skill whenever a task
+  How Angular code in this monorepo calls the Nuclia API through the @nuclia/core SDK.
+  Covers URL routing (global vs regional backends), error handling patterns, wrapping
+  SDK calls in Angular services in @flaps/core (SDKService), and adding new API calls.
+  Activate this skill whenever a task
   involves calling the Nuclia API, adding a new endpoint, extending KnowledgeBox or RetrievalAgent,
   creating an Angular service that fetches data, working with SDKService, or handling HTTP errors.
   Do not wait for the user to say "SDK" — if they ask for "a service that fetches X from the API"
@@ -13,47 +13,18 @@ description: >
 
 # API & SDK — Nuclia Frontend Monorepo
 
-This skill describes how `@nuclia/core` (the JS/TS SDK) is structured and how Angular services
-in `@flaps/core` wrap it. Before adding any new API call, read this to avoid duplicating
-logic or bypassing the SDK entirely.
+This skill describes how Angular services in `@flaps/core` wrap `@nuclia/core` (the JS/TS SDK).
+Before adding any new API call, read this to avoid duplicating logic or bypassing the SDK entirely.
 
 ---
 
-## SDK Architecture (`libs/sdk-core`)
+## SDK Reference
 
-```
-libs/sdk-core/src/lib/
-├── core.ts          # Nuclia class — main entry point
-├── models.ts        # Shared interfaces: INuclia, IRest, IDb, IErrorResponse, NucliaOptions
-├── rest/rest.ts     # Rest class — raw HTTP (get/post/put/patch/delete/head)
-├── auth/            # Authentication class — login, token management, API keys
-└── db/
-    ├── db.ts        # Db class — account/KB/ARAG CRUD
-    ├── db.models.ts # Shared models (Account, Welcome, UsagePoint, etc.)
-    ├── kb/
-    │   ├── kb.ts        # KnowledgeBox (read) + WritableKnowledgeBox (write)
-    │   └── kb.models.ts # KB models (LabelSet, Counters, ServiceAccount, etc.)
-    ├── retrieval-agent/
-    │   └── retrieval-agent.ts  # RetrievalAgent class
-    ├── search/      # search(), find(), ask(), suggest(), catalog()
-    ├── resource/    # Resource CRUD + field types
-    ├── upload.ts    # batchUpload, upload helpers
-    └── task/        # TaskManager
-```
+The SDK's structure, class hierarchy (`Nuclia`, `Db`, `KnowledgeBox`, `RetrievalAgent`), `Rest` primitives and conventions live in `libs/sdk-core/AGENTS.md`; read it, and the source, before adding or changing a call. The essentials:
 
-### The `Nuclia` class
-
-The `Nuclia` class is the entry point. It exposes three main namespaces:
-
-| Property              | Type             | Purpose                                                |
-| --------------------- | ---------------- | ------------------------------------------------------ |
-| `nuclia.rest`         | `Rest`           | Raw HTTP calls (adds auth headers automatically)       |
-| `nuclia.db`           | `Db`             | Account / KB / ARAG CRUD                               |
-| `nuclia.auth`         | `Authentication` | Login, logout, tokens                                  |
-| `nuclia.knowledgeBox` | `KnowledgeBox`   | Shortcut (requires `knowledgeBox` + `zone` in options) |
-| `nuclia.arag`         | `RetrievalAgent` | Shortcut (requires `knowledgeBox` + `zone` in options) |
-
-**Every SDK method returns an `Observable<T>`.** Never use Promises internally — use `asyncKnowledgeBox` only when a Promise-based API is required by an external caller.
+- **Every SDK method returns an `Observable<T>`.** Never use Promises internally — use `asyncKnowledgeBox` only when an external caller requires a Promise.
+- Auth headers are added automatically — never set `Authorization` manually.
+- Pass `synchronous = true` to write operations that must wait for the backend to finish.
 
 ---
 
@@ -80,70 +51,6 @@ this.nuclia.rest.get<MyModel>('/v1/kb/<id>/something', undefined, false, 'europe
 this.nuclia.rest.get<MyModel>(`${this.path}/something`);
 //   kb.path       = '/kb/<id>'           (relative, works with zoneSlug on the Rest instance)
 //   kb.fullpath   = 'https://europe-1.../v1/kb/<id>'  (absolute)
-```
-
----
-
-## `Rest` — HTTP Primitives
-
-```ts
-// Signatures (all return Observable<T>)
-rest.get<T>(path, extraHeaders?, doNotParse?, zoneSlug?): Observable<T>
-rest.post<T>(path, body, extraHeaders?, doNotParse?, synchronous?, zoneSlug?): Observable<T>
-rest.put<T>(path, body, extraHeaders?, doNotParse?, synchronous?, zoneSlug?): Observable<T>
-rest.patch<T>(path, body, extraHeaders?, doNotParse?, synchronous?, zoneSlug?): Observable<T>
-rest.delete<T>(path, extraHeaders?, synchronous?, zoneSlug?, body?, doNotParse = true): Observable<T>
-rest.head(path, extraHeaders?): Observable<Response>
-```
-
-- `doNotParse = true` skips `response.json()` — use when you need raw `Response`.
-- `synchronous = true` waits for the server to fully complete the operation (Nuclia-specific header).
-- Auth headers are added automatically — never set `Authorization` manually.
-
----
-
-## `Db` — Account / KB / ARAG CRUD (`libs/sdk-core/src/lib/db/db.ts`)
-
-Key methods:
-
-```ts
-db.getAccounts(): Observable<Account[]>
-db.getAccount(accountSlug: string): Observable<Account>
-db.getKnowledgeBoxes(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>
-db.getKnowledgeBox(accountId, kbId, zone): Observable<WritableKnowledgeBox>
-db.createKnowledgeBox(accountId, zone, data): Observable<WritableKnowledgeBox>
-db.getRetrievalAgents(accountId, zone): Observable<IRetrievalAgentItem[]>
-db.getRetrievalAgent(accountId, aragId, zone): Observable<RetrievalAgent>
-```
-
-Add account/global-level endpoints here when they belong to the core SDK.
-
----
-
-## `KnowledgeBox` / `WritableKnowledgeBox`
-
-`KnowledgeBox` = read-only access. `WritableKnowledgeBox` extends it with write methods.
-
-Key read methods:
-
-```ts
-kb.getResource(uuid, show?, extracted?): Observable<Resource>
-kb.search(query, features, options?): Observable<Search.Results | IErrorResponse>
-kb.find(query, features, options?): Observable<Search.FindResults | IErrorResponse>
-kb.ask(query, context?, features?, options?): Observable<Ask.AnswerStream | IErrorResponse>
-kb.getEntities(): Observable<Entities>
-kb.getLabels(): Observable<LabelSets>
-kb.getFacets(facets): Observable<Search.FacetsResult>
-kb.catalog(query, options?): Observable<Search.Results | IErrorResponse>
-```
-
-`WritableKnowledgeBox` adds:
-
-```ts
-wkb.modify(data): Observable<void>
-wkb.createResource(data): Observable<{ uuid: string }>
-wkb.saveLabels(labelSets): Observable<void>
-wkb.addEntitiesGroup(groupId, data): Observable<void>
 ```
 
 ---
