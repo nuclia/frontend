@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support sitemap Sync service
+- Add methods to retrieve the list of data projects
 
 # 1.34.0 (2026-11-09)
 

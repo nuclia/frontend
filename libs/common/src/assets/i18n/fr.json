@@ -216,6 +216,7 @@
 	"account.nuclia-tokens.zone-tooltip": "Zone : {{zone}}",
 	"account.preferences": "Préférences",
 	"account.preferences-description": "Mettez à jour les informations de votre profil et vos préférences personnelles.",
+	"account.projects": "Projets",
 	"account.related_kbs": "Knowledge Boxes du compte",
 	"account.retrieval-agents.confirm-deletion": "Êtes-vous sûr de vouloir supprimer l'agent « {{name}} » ?",
 	"account.retrieval-agents.count": "{{count}} Retrieval Agents",
