@@ -518,3 +518,18 @@ export interface NuaGuardPolicy {
 
 export type NuaGuardPolicyPayload = Omit<NuaGuardPolicy, 'id' | 'zone'>;
 export type NuaGuardPolicyResponse = Omit<NuaGuardPolicy, 'zone'>;
+
+export interface Projects {
+  data: Omit<Project, 'zone'>[];
+  total: number;
+}
+
+export interface Project {
+  account_id: string;
+  project_id: string;
+  name: string;
+  description?: string;
+  created_datetime: string;
+  updated_datetime: string;
+  zone: string;
+}

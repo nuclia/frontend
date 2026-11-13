@@ -1,4 +1,10 @@
-# 1.34.0 (unreleased)
+# 1.34.1 (unreleased)
+
+### Improvements
+
+- Add methods to retrieve the list of data projects
+
+# 1.34.0 (2026-11-09)
 
 ### Improvements
 
