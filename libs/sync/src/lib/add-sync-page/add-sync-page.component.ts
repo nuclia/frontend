@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ExternalConnection } from '@nuclia/core';
+import { ExternalConnection, SyncConfigurationCreate } from '@nuclia/core';
 import {
   BackButtonComponent,
   SisModalService,
@@ -72,7 +72,10 @@ export class AddSyncPageComponent implements OnInit {
   );
   isCloud = this.connectorDefinition.pipe(map((def) => !!def.cloud));
   assumeRole = this.connectorDefinition.pipe(map((def) => def.apikey_provider === 'aws_s3_assume_role'));
-  enterCredentials = true;
+  requireCredentials = this.connectorDefinition.pipe(
+    map((def) => def.cloud && (def.apikey_provider || def.oauth_provider)),
+  );
+
   externalConnection?: ExternalConnection;
   connector: Observable<IConnector> = this.connectorId.pipe(map((id) => this.syncService.getConnector(id, '')));
   kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
@@ -101,7 +104,6 @@ export class AddSyncPageComponent implements OnInit {
       )
       .subscribe((connection) => {
         this.externalConnection = connection;
-        this.enterCredentials = false;
         localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
         this.cdr.markForCheck();
       });
@@ -157,7 +159,6 @@ export class AddSyncPageComponent implements OnInit {
               .pipe(
                 tap((data) => {
                   this.externalConnection = data;
-                  this.enterCredentials = false;
                   this.cdr.markForCheck();
                 }),
                 catchError((error) => {
@@ -216,25 +217,28 @@ export class AddSyncPageComponent implements OnInit {
       switchMap((connector) => {
         const isCloud = connector.cloud;
         if (isCloud) {
-          if (!this.externalConnection) {
-            throw new Error('No external connection');
-          }
-          if (!this.selectedFolder()) {
-            throw new Error('No folder selected');
-          }
-          return this.syncService
-            .addCloudSync({
-              name: syncEntity.title,
+          let creationPayload: SyncConfigurationCreate = {
+            name: syncEntity.title,
+            ...this.cloudSyncOptions,
+          };
+          if (this.externalConnection) {
+            creationPayload = {
+              ...creationPayload,
               external_connection_id: this.externalConnection.id,
               ...this.selectedFolder(),
-              ...this.cloudSyncOptions,
-            })
-            .pipe(
-              map((sync) => {
-                this.syncService.setCurrentSyncId(sync.id);
-                return sync.id;
-              }),
-            );
+            };
+          } else {
+            creationPayload = {
+              ...creationPayload,
+              ...syncEntity.connector.parameters,
+            };
+          }
+          return this.syncService.addCloudSync(creationPayload).pipe(
+            map((sync) => {
+              this.syncService.setCurrentSyncId(sync.id);
+              return sync.id;
+            }),
+          );
         } else {
           return this.syncService.addSync(syncEntity).pipe(
             tap(() => this.syncService.setCurrentSyncId(syncEntity.id)),

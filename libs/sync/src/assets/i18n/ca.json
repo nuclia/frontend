@@ -149,6 +149,8 @@
 	"sync.connectors.sitefinity.web-scraping.label": "Web scraping",
 	"sync.connectors.sitemap.url.label": "URL del sitemap",
 	"sync.connectors.sitemap.url.section-title": "URL del sitemap",
+	"sync.connectors.sitemap-cloud.url.description": "URL d'un mapa de lloc XML o a un canal RSS/Atom",
+	"sync.connectors.sitemap-cloud.url.title": "URL de mapa del lloc o feed",
 	"sync.details.activity-log.description": "Totes les sincronitzacions s'activen automàticament cada 60 minuts.",
 	"sync.details.activity-log.no-activity": "Encara no hi ha activitat",
 	"sync.details.activity-log.no-logs": "No s'han trobat fitxers nous per sincronitzar.",

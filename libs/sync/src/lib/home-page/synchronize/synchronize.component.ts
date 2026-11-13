@@ -85,13 +85,15 @@ export class SynchronizeComponent implements OnInit, OnDestroy {
   private _connectorList: Observable<ConnectorDefinition[]> = forkJoin([
     this.syncService.connectorsObs.pipe(take(1)),
     this.features.unstable.cloudSyncSharepoint.pipe(take(1)),
+    this.features.unstable.syncAgentSitemap.pipe(take(1)),
     this.currentZone,
   ]).pipe(
-    map(([sources, hasSharepoint, zone]) =>
+    map(([sources, hasSharepoint, hasSitemap, zone]) =>
       sources
         .filter((conn) => {
           const hidden =
             ((conn.id === 'sharepoint' || conn.id === 'onedrive-me') && !hasSharepoint) ||
+            ((conn.id === 'sitemap' || conn.id === 'rss') && !hasSitemap) ||
             (conn.id === 's3' && zone?.cloud_provider !== 'AWS');
           return !hidden;
         })

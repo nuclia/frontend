@@ -36,6 +36,8 @@ export interface IConnector extends IConnectorBase {
   getParametersValues(): ConnectorParameters;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
   getStaticFolders(): SyncItem[];
+  mapParametersToFormValues?(params: ConnectorParameters): { [key: string]: any };
+  mapFormValuesToParameters?(formValues: { [key: string]: any }): ConnectorParameters;
 }
 
 export enum FileStatus {
