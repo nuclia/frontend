@@ -29,6 +29,7 @@ import {
   LearningConfigurations,
   NUAClient,
   NucliaTokensDetails,
+  Project,
   UsagePoint,
 } from '@nuclia/core';
 import { InfoCardComponent, NsiSkeletonComponent } from '@nuclia/sistema';
@@ -95,6 +96,7 @@ export class NucliaTokensComponent implements OnDestroy {
 
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
   @Input() nuaKeys: NUAClient[] = [];
+  @Input() projects: Project[] = [];
   @Input({ transform: booleanAttribute }) showTotal = true;
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 

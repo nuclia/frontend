@@ -29,6 +29,7 @@ describe('AccountConsumptionComponent', () => {
   let zonesForAccount: { [accountId: string]: Zone[] };
   let getKnowledgeBoxesForZone: Mock;
   let getNUAClientsForZone: Mock;
+  let getProjectsForZone: Mock;
   let getUsage: Mock;
 
   beforeEach(async () => {
@@ -36,6 +37,7 @@ describe('AccountConsumptionComponent', () => {
     zonesForAccount = {};
     getKnowledgeBoxesForZone = vi.fn().mockReturnValue(of([] as IKnowledgeBoxItem[]));
     getNUAClientsForZone = vi.fn().mockReturnValue(of([] as NUAClient[]));
+    getProjectsForZone = vi.fn().mockReturnValue(of([]));
     getUsage = vi.fn().mockReturnValue(of(mockUsage()));
 
     await TestBed.configureTestingModule({
@@ -50,7 +52,7 @@ describe('AccountConsumptionComponent', () => {
         MockProvider(SDKService, {
           currentAccount: currentAccount$ as any,
           nuclia: {
-            db: { getKnowledgeBoxesForZone, getNUAClientsForZone, getUsage },
+            db: { getKnowledgeBoxesForZone, getNUAClientsForZone, getUsage, getProjectsForZone },
             options: {},
           } as any,
         }),
@@ -158,6 +160,7 @@ describe('AccountConsumptionComponent', () => {
         undefined,
         undefined,
         undefined,
+        undefined,
       );
       expect(component.usage?.['account']).toBeDefined();
       expect(getUsage).not.toHaveBeenCalledWith(
@@ -165,6 +168,7 @@ describe('AccountConsumptionComponent', () => {
         expect.any(String),
         expect.any(String),
         'kb-a',
+        undefined,
         undefined,
         undefined,
       );
@@ -176,6 +180,7 @@ describe('AccountConsumptionComponent', () => {
         expect.any(String),
         expect.any(String),
         'kb-a',
+        undefined,
         undefined,
         undefined,
       );
@@ -191,6 +196,7 @@ describe('AccountConsumptionComponent', () => {
         expect.any(String),
         expect.any(String),
         'kb-b',
+        undefined,
         undefined,
         undefined,
       );
@@ -214,6 +220,7 @@ describe('AccountConsumptionComponent', () => {
         undefined,
         undefined,
         'nua-a',
+        undefined,
       );
       expect(component.usage?.['nua-a']).toBeDefined();
     });

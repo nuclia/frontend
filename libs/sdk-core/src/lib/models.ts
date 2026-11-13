@@ -30,6 +30,7 @@ import {
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
+  Project,
   QueryInfo,
   RetrievalAgent,
   RetrievalAgentCreation,
@@ -209,6 +210,7 @@ export interface IDb {
     knowledgeBox?: string,
     aggregation?: UsageAggregation,
     nuaKeyId?: string,
+    projectId?: string,
   ): Observable<UsagePoint[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
   pull(): Observable<ProcessingPullResponse>;
@@ -270,6 +272,8 @@ export interface IDb {
     data: Partial<NuaGuardPolicyPayload>,
   ): Observable<NuaGuardPolicy>;
   deleteNuaGuardPolicy(guardId: string, accountId: string, zone: string): Observable<void>;
+  getProjectsForZone(accountId: string, zoneSlug: string): Observable<Project[]>;
+  getProjects(accountId: string): Observable<Project[]>;
 }
 
 export interface NucliaOptions {
