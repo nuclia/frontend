@@ -195,7 +195,7 @@ export class AskComponent extends TaskRouteDirective {
           properties: {
             question: {
               type: 'string',
-              description: `The targeted text is defined as follow:\n<TARGET>${this.askForm.get('agenticContext')?.value || 'the entire text of the resource'}</TARGET>\n\n.The QUESTION is:\n<QUESTION>${this.askForm.get('question')?.value || ''}</QUESTION>\n\nExtract the TARGET from the entire text, and then return the TARGET and the QUESTION.\n Use the following layout:\nCONTEXT:\n{TARGET}\n\nQUESTION:\n{QUESTION}`,
+              description: `The information to extract is defined as follow:\n<TARGET>${this.askForm.get('agenticContext')?.value || 'the entire text of the resource'}</TARGET>\n\n.The QUESTION is:\n<QUESTION>${this.askForm.get('question')?.value || ''}</QUESTION>\n\nExtract the TARGET from the entire provided text, and then return the TARGET and the QUESTION.\n Use the following layout:\nCONTEXT:\n{TARGET}\n\nQUESTION:\n{QUESTION}`,
             },
             agentic_config_id: {
               type: 'string',
