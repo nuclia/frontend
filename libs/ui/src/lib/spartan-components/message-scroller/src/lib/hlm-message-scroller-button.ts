@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matArrowDownwardRound } from '@ng-icons/material-icons/round';
+import { matArrowDownwardRound } from '@ng-icons/material-symbols/round';
 import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 import { BrnMessageScrollerButton } from '@spartan-ng/brain/message-scroller';
 

@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matMoreHorizRound } from '@ng-icons/material-icons/round';
+import { matMoreHorizRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButtonImports } from '../../../button/src/index';
 import { HlmCardImports } from '../index';

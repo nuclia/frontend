@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matFindInPageRound, matFolderOpenRound } from '@ng-icons/material-icons/round';
+import { matFindInPageRound, matFolderOpenRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmEmptyImports } from '../index';

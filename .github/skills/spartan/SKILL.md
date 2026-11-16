@@ -79,7 +79,7 @@ Read the rule file before doing the related work:
 - **`rules/composition.md`** - items belong inside their group; dialogs/sheets need a title;
   full Card composition; tabs triggers inside `hlm-tabs-list`; avatar always has a fallback;
   use `Alert`/`Empty`/`Skeleton`/`Badge`/`Separator`/`Spinner` instead of custom markup.
-- **`rules/icons.md`** - use rounded Material Icons (`@ng-icons/material-icons/round`,
+- **`rules/icons.md`** - use rounded Material Symbols (`@ng-icons/material-symbols/round`,
   `<ng-icon name="mat...Round">`); register with `provideIcons`;
   no manual sizing classes inside components - use the `size` input.
 - **`rules/brain-vs-helm.md`** - the two-layer model (one headless library, Brain, plus the styled

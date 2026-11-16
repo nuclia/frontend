@@ -1,17 +1,18 @@
 # Icons
 
 spartan/ui renders icons with [`@ng-icons`](https://ng-icons.github.io/ng-icons). This workspace uses
-rounded Material Icons (`@ng-icons/material-icons/round`) by default. Import icons from the `/round`
-entrypoint, not the package root, and use their `mat...Round` names.
+rounded Material Symbols (`@ng-icons/material-symbols/round`) by default. Import icons from the `/round`
+entrypoint, not the package root, and use their `mat...Round` names (`mat...FillRound` is the filled variant).
 
 ## Choosing icons
 
-Browse [the catalog](https://ng-icons.github.io/ng-icons/browse?sets=material-icons) and **select only the
-`round` variant** in its filters (it shows `baseline`, `outline` and `sharp` by default; those have different
-shapes and names). The exported name is `mat<Name>Round`.
+Browse [the catalog](https://ng-icons.github.io/ng-icons/browse?sets=material-symbols) and **select only the
+`round` variant** in its filters (it shows `outline` and `sharp` by default; those have different
+shapes and names). The exported name is `mat<Name>Round`. Material Symbols has no `...Outline` icon names
+(e.g. use `matDeleteRound`, not `matDeleteOutlineRound`).
 
 Confirm an icon exists before using it, e.g. `node --input-type=module -e "const i = await
-import('@ng-icons/material-icons/round'); console.log(Object.keys(i).filter(n => /Chevron/.test(n)))"`.
+import('@ng-icons/material-symbols/round'); console.log(Object.keys(i).filter(n => /Chevron/.test(n)))"`.
 A name matching is not proof the shape fits the role - check the catalog preview for unfamiliar picks.
 
 Preferred icons for common roles (keep these consistent across components):
@@ -45,7 +46,7 @@ Icon names are not global - each icon you reference must be provided to the comp
 ```ts
 import { Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronRightRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { matChevronRightRound, matDeleteRound } from '@ng-icons/material-symbols/round';
 
 @Component({
   selector: 'app-example',
@@ -77,5 +78,5 @@ For free-standing decorative icons you may set color with a semantic class
 
 The upstream Spartan CLI hardcodes its original icon set; it has no icon-set configuration option.
 After generating a component, replace its icon imports, registrations, template names and default
-inputs with rounded Material equivalents. Keep `@ng-icons/core` and `@ng-icons/material-icons` as
+inputs with rounded Material Symbols equivalents. Keep `@ng-icons/core` and `@ng-icons/material-symbols` as
 the workspace dependencies; do not retain the generator's original icon package.

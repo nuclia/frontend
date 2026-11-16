@@ -1,5 +1,5 @@
 import { provideIcons } from '@ng-icons/core';
-import { matMailRound, matGroupRound, matSendRound } from '@ng-icons/material-icons/round';
+import { matMailRound, matGroupRound, matSendRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { SpartanStepperImports } from '../index';

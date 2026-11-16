@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matInfoRound } from '@ng-icons/material-icons/round';
+import { matInfoRound } from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';
 import { HlmLabelImports } from '@nuclia/ui-spartan/label';

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCalendarTodayRound, matCloseRound } from '@ng-icons/material-icons/round';
+import { matCalendarTodayRound, matCloseRound } from '@ng-icons/material-symbols/round';
 import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
 import {
   BrnDateInput,

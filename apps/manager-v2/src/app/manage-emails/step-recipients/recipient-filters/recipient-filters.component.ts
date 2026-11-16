@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matInfoRound } from '@ng-icons/material-icons/round';
+import { matInfoRound } from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmLabelImports } from '@nuclia/ui-spartan/label';
 import { HlmToggleGroupImports } from '@nuclia/ui-spartan/toggle-group';

@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matDeleteOutlineRound } from '@ng-icons/material-icons/round';
+import { matDeleteRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmAlertDialogImports } from '../index';
@@ -18,7 +18,7 @@ const meta: Meta<AlertDialogStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmAlertDialogImports, HlmButton, NgIcon],
-      providers: [provideIcons({ matDeleteOutlineRound })],
+      providers: [provideIcons({ matDeleteRound })],
     }),
   ],
   parameters: {
@@ -101,7 +101,7 @@ export const WithMedia: Story = {
                 <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" [size]="size">
                     <hlm-alert-dialog-header>
                         <hlm-alert-dialog-media>
-                            <ng-icon name="matDeleteOutlineRound" />
+                            <ng-icon name="matDeleteRound" />
                         </hlm-alert-dialog-media>
                         <h2 hlmAlertDialogTitle>{{ title }}</h2>
                         <p hlmAlertDialogDescription>{{ description }}</p>

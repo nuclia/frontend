@@ -1,6 +1,6 @@
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matViewKanbanRound, matHomeRound, matAddRound, matGroupRound } from '@ng-icons/material-icons/round';
+import { matViewKanbanRound, matHomeRound, matAddRound, matGroupRound } from '@ng-icons/material-symbols/round';
 import { HlmSidebarImports } from '../index';
 import { HlmSidebar } from './hlm-sidebar';
 

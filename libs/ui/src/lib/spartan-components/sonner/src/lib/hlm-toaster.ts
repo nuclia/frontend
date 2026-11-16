@@ -7,7 +7,7 @@ import {
   matDataUsageRound,
   matInfoRound,
   matWarningRound,
-} from '@ng-icons/material-icons/round';
+} from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { hlm } from '@nuclia/ui-spartan/utils';
 import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
