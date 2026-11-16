@@ -19,7 +19,14 @@ const mockNuaKey = (id: string): NUAClient =>
     created: '',
     partitions: 0,
   }) as NUAClient;
-const mockZone = (slug: string): Zone => ({ id: slug, slug, cloud_provider: 'AWS', private: false, origin: null });
+const mockZone = (slug: string): Zone => ({
+  id: slug,
+  slug,
+  cloud_provider: 'AWS',
+  private: false,
+  origin: null,
+  components: [{ name: 'rag', available: true, determined_by: 'manifest_default' }],
+});
 const mockUsage = (): UsagePoint[] => [{ metrics: [] } as unknown as UsagePoint];
 
 describe('AccountConsumptionComponent', () => {

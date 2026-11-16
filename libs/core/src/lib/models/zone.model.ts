@@ -5,7 +5,7 @@ export interface Zone {
   cloud_provider: 'AWS' | 'GCP';
   private: boolean;
   origin: string | null;
-  components: Component[];
+  components?: Component[];
 }
 
 export interface Component {

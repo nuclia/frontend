@@ -16,7 +16,7 @@ export class AccountService {
     .getZones()
     .pipe(
       map((zones) =>
-        zones.some((zone) => zone.components.some((component) => component.name === 'rag' && component.available)),
+        zones.some((zone) => zone.components?.some((component) => component.name === 'rag' && component.available)),
       ),
     );
 
