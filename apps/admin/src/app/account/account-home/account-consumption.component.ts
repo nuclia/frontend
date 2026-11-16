@@ -2,7 +2,7 @@ import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MetricsService } from '@flaps/common';
-import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { AccountService, FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, NUAClient, UsagePoint, UsageType } from '@nuclia/core';
@@ -60,6 +60,7 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   private features = inject(FeaturesService);
   private zoneService = inject(ZoneService);
   private cdr = inject(ChangeDetectorRef);
+  private accountService = inject(AccountService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -78,6 +79,7 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
     this.sdk.nuclia.db.getNUAClientsForZone(accountId, zoneSlug),
   );
   isNuaActivityEnabled = this.features.unstable.viewNuaActivity;
+  isRagAccount = this.accountService.isRagAccount;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
 
   // `undefined` while still loading, to distinguish from "loaded but empty".

@@ -6,15 +6,17 @@
   <pa-tabs
     tabs
     class="settings-tabs">
-    <pa-tab
-      routerLink="knowledge-boxes"
-      routerLinkActive
-      #rla0="routerLinkActive"
-      [active]="rla0.isActive"
-      ariaControls="administration-section-panel">
-      {{ 'account.related_kbs' | translate }}
-    </pa-tab>
-    @if (isRetrievalAgentsEnabled | async) {
+    @if (isRagAccount()) {
+      <pa-tab
+        routerLink="knowledge-boxes"
+        routerLinkActive
+        #rla0="routerLinkActive"
+        [active]="rla0.isActive"
+        ariaControls="administration-section-panel">
+        {{ 'account.related_kbs' | translate }}
+      </pa-tab>
+    }
+    @if ((isRetrievalAgentsEnabled | async) && isRagAccount()) {
       <pa-tab
         routerLink="retrieval-agents"
         routerLinkActive

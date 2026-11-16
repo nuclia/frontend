@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
+  AccountService,
   AssumeRoleModalComponent,
   BEDROCK_IAM_POLICY,
   BedrockService,
@@ -65,6 +66,7 @@ export class AccountModelsComponent implements OnInit {
   private features = inject(FeaturesService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
+  private accountService = inject(AccountService);
 
   // Always rendered as a tab inside AccountConfigurationComponent
   modelConfigs = new ReplaySubject<ModelConfigurationWithZone[]>(1);
@@ -83,6 +85,7 @@ export class AccountModelsComponent implements OnInit {
   );
   isBedrockIntegrationEnabled = this.features.unstable.bedrockIntegration;
   loadingBedrock = false;
+  isRagAccount = this.accountService.isRagAccount;
 
   ngOnInit(): void {
     this.updateModelConfigs().subscribe();
