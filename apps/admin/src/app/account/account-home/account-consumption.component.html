@@ -121,7 +121,7 @@
     </ul>
   </ng-template>
 
-  @if (isRagAccount | async) {
+  @if (isRagAccount()) {
     <div class="summary-section">
       <h3 class="title-m">{{ 'account.knowledgeboxes' | translate }}</h3>
       @if (kbItems$ | async; as kbItems) {

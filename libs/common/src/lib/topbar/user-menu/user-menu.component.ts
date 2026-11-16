@@ -109,7 +109,7 @@ export class UserMenuComponent implements OnInit {
   private readonly isBillingEnabled = this.features.unstable.billing;
   private readonly isRetrievalAgentsEnabled = combineLatest([
     this.features.unstable.retrievalAgents,
-    this.accountService.isRagAccount,
+    this.accountService.isRagAccount$,
   ]).pipe(map(([retrievalAgents, isRagAccount]) => retrievalAgents && isRagAccount));
   private readonly isModelManagementEnabled = this.features.unstable.modelManagement;
   private readonly isNuaGuardManagementEnabled = this.features.unstable.nuaGuardsManagement;
@@ -256,7 +256,7 @@ export class UserMenuComponent implements OnInit {
           icon: 'knowledge-box',
           dataCy: 'go-to-account-kbs',
           action: () => this.go('administration/knowledge-boxes'),
-          visible$: this.accountService.isRagAccount,
+          visible$: this.accountService.isRagAccount$,
         },
         {
           label: 'navbar.account-retrieval-agents',

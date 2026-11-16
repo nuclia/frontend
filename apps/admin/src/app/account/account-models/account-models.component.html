@@ -126,7 +126,7 @@
     </nsi-two-columns-configuration-item>
   }
 
-  @if (isRagAccount | async) {
+  @if (isRagAccount()) {
     <div class="models-section">
       <h2 class="page-subtitle">{{ 'account.models.restrictions.title' | translate }}</h2>
       <app-model-restrictions></app-model-restrictions>

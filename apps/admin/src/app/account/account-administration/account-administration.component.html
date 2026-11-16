@@ -6,7 +6,7 @@
   <pa-tabs
     tabs
     class="settings-tabs">
-    @if (isRagAccount | async) {
+    @if (isRagAccount()) {
       <pa-tab
         routerLink="knowledge-boxes"
         routerLinkActive
@@ -16,7 +16,7 @@
         {{ 'account.related_kbs' | translate }}
       </pa-tab>
     }
-    @if ((isRetrievalAgentsEnabled | async) && (isRagAccount | async)) {
+    @if ((isRetrievalAgentsEnabled | async) && isRagAccount()) {
       <pa-tab
         routerLink="retrieval-agents"
         routerLinkActive
