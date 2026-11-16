@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-icons/round';
+import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-symbols/round';
 import { buttonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { classes, hlm } from '@nuclia/ui-spartan/utils';
 import { BrnCalendarImports, BrnMonthYearCalendar, injectBrnCalendarI18n } from '@spartan-ng/brain/calendar';

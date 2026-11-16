@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matViewSidebarRound } from '@ng-icons/material-icons/round';
+import { matViewSidebarRound } from '@ng-icons/material-symbols/round';
 import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 import { HlmSidebarService } from './hlm-sidebar.service';
 

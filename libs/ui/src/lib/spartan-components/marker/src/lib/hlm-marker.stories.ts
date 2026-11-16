@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCheckCircleRound, matAccountTreeRound } from '@ng-icons/material-icons/round';
+import { matCheckCircleRound, matAccountTreeRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmMarkerImports } from '../index';
 import { HlmMarker } from './hlm-marker';

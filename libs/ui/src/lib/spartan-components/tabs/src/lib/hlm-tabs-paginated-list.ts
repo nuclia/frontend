@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-icons/round';
+import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-symbols/round';
 import { buttonVariants } from '@nuclia/ui-spartan/button';
 import { classes, hlm } from '@nuclia/ui-spartan/utils';
 import { type BrnPaginatedTabHeaderItem, BrnTabsPaginatedList, BrnTabsTrigger } from '@spartan-ng/brain/tabs';

@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matContentCopyRound, matEditRound, matDeleteOutlineRound } from '@ng-icons/material-icons/round';
+import { matContentCopyRound, matEditRound, matDeleteRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmDropdownMenuImports } from '../../../dropdown-menu/src/index';
 import { HlmContextMenuImports } from '../index';
@@ -19,7 +19,7 @@ const meta: Meta<ContextMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [NgIcon, ...HlmContextMenuImports, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ matContentCopyRound, matEditRound, matDeleteOutlineRound })],
+      providers: [provideIcons({ matContentCopyRound, matEditRound, matDeleteRound })],
     }),
   ],
   parameters: {
@@ -106,7 +106,7 @@ export const WithIconsAndShortcuts: Story = {
           </button>
           <div hlmDropdownMenuSeparator></div>
           <button type="button" hlmDropdownMenuItem variant="destructive">
-            <ng-icon name="matDeleteOutlineRound" />
+            <ng-icon name="matDeleteRound" />
             Move to trash <span hlmDropdownMenuShortcut>⌫</span>
           </button>
         </div>

@@ -1,7 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matKeyboardArrowDownRound } from '@ng-icons/material-icons/round';
+import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
 import { ButtonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmPopoverTrigger } from '@nuclia/ui-spartan/popover';
 import { hlm } from '@nuclia/ui-spartan/utils';

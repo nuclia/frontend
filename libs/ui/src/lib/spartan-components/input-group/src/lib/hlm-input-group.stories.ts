@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matContentCopyRound, matSearchRound } from '@ng-icons/material-icons/round';
+import { matContentCopyRound, matSearchRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmInputGroupImports } from '../index';
 import { HlmLabelImports } from '../../../label/src/index';

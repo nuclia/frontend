@@ -2,7 +2,7 @@ import { CdkStepHeader, StepState } from '@angular/cdk/stepper';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCheckRound, matErrorRound, matEditRound } from '@ng-icons/material-icons/round';
+import { matCheckRound, matErrorRound, matEditRound } from '@ng-icons/material-symbols/round';
 import { ButtonVariants, buttonVariants } from '@nuclia/ui-spartan/button';
 import { SpartanStepLabel } from './spartan-step-label';
 import { SpartanStepperLabelPosition } from './spartan-stepper';

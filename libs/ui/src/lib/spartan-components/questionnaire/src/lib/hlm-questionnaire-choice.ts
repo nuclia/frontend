@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCheckRound } from '@ng-icons/material-icons/round';
+import { matCheckRound } from '@ng-icons/material-symbols/round';
 import { classes } from '@nuclia/ui-spartan/utils';
 import {
   BrnQuestionnaireChoice,

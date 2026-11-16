@@ -4,7 +4,7 @@ import {
   matDescriptionRound,
   matSettingsRound,
   matGroupRound,
-} from '@ng-icons/material-icons/round';
+} from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmCommandImports } from '../index';

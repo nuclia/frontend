@@ -1,7 +1,7 @@
 import type { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCloseRound } from '@ng-icons/material-icons/round';
+import { matCloseRound } from '@ng-icons/material-symbols/round';
 import { HlmButton } from '@nuclia/ui-spartan/button';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { BrnSheet } from '@spartan-ng/brain/sheet';

@@ -1,6 +1,6 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matDescriptionRound, matCloseRound } from '@ng-icons/material-icons/round';
+import { matDescriptionRound, matCloseRound } from '@ng-icons/material-symbols/round';
 import { HlmAttachmentImports } from '../index';
 import { HlmAttachment, type AttachmentState } from './hlm-attachment';
 

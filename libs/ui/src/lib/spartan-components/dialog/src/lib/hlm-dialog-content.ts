@@ -3,7 +3,7 @@ import type { ComponentType } from '@angular/cdk/portal';
 import { NgComponentOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCloseRound } from '@ng-icons/material-icons/round';
+import { matCloseRound } from '@ng-icons/material-symbols/round';
 import { HlmButton } from '@nuclia/ui-spartan/button';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 

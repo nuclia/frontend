@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronRightRound, matDescriptionRound, matMusicNoteRound } from '@ng-icons/material-icons/round';
+import { matChevronRightRound, matDescriptionRound, matMusicNoteRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmItemImports } from '../index';

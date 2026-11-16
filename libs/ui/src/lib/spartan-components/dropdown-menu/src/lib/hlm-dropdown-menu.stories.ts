@@ -3,9 +3,9 @@ import {
   matContentCopyRound,
   matLogoutRound,
   matEditRound,
-  matDeleteOutlineRound,
+  matDeleteRound,
   matPersonRound,
-} from '@ng-icons/material-icons/round';
+} from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmDropdownMenuImports } from '../index';
@@ -25,9 +25,7 @@ const meta: Meta<DropdownMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmDropdownMenuImports],
-      providers: [
-        provideIcons({ matContentCopyRound, matLogoutRound, matEditRound, matDeleteOutlineRound, matPersonRound }),
-      ],
+      providers: [provideIcons({ matContentCopyRound, matLogoutRound, matEditRound, matDeleteRound, matPersonRound })],
     }),
   ],
   parameters: {
@@ -140,7 +138,7 @@ export const WithIcons: Story = {
           </button>
           <div hlmDropdownMenuSeparator></div>
           <button type="button" hlmDropdownMenuItem variant="destructive">
-            <ng-icon name="matDeleteOutlineRound" />
+            <ng-icon name="matDeleteRound" />
             Delete
           </button>
         </div>
