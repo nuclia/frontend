@@ -7,8 +7,8 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matAccountCircleRound,
   matArrowBackRound,
-  matInventory2Round,
-  matSmartToyRound,
+  matBoxRound,
+  matRobot2Round,
 } from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { filter, switchMap } from 'rxjs';
@@ -19,7 +19,7 @@ import { AccountService } from '../account.service';
   templateUrl: './account-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [HlmButtonImports, NgIcon, RouterLink, RouterLinkActive, RouterOutlet, DatePipe],
-  providers: [provideIcons({ matAccountCircleRound, matArrowBackRound, matInventory2Round, matSmartToyRound })],
+  providers: [provideIcons({ matAccountCircleRound, matArrowBackRound, matBoxRound, matRobot2Round })],
 })
 export class AccountDetailsComponent {
   private route = inject(ActivatedRoute);

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmDatePickerImports } from '@nuclia/ui-spartan/date-picker';
@@ -32,7 +31,6 @@ import { LimitFieldComponent } from './limit-field/limit-field.component';
     HlmTooltipImports,
     FormFooterComponent,
     BlockedFeaturesComponent,
-    TranslatePipe,
     BudgetFieldComponent,
     LimitFieldComponent,
   ],

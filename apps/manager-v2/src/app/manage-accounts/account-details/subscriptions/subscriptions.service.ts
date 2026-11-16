@@ -1,7 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { toast } from '@spartan-ng/brain/sonner';
 import { map, Observable } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
@@ -32,8 +31,6 @@ export class SubscriptionsService {
   private store = inject(ManagerStore);
   private globalService = inject(GlobalAccountService);
   private destroyRef = inject(DestroyRef);
-  private translate = inject(TranslateService);
-  private noneOptionLabel = toSignal(this.translate.stream('account.cloud-zero.none'), { initialValue: '' });
 
   private accountId = this.store.getAccountId() || '';
 
@@ -97,8 +94,8 @@ export class SubscriptionsService {
   businessUnit = toSignal(this.cloudZeroForm.controls.business_unit.valueChanges, { initialValue: '' });
   productLine = toSignal(this.cloudZeroForm.controls.product_line.valueChanges, { initialValue: '' });
   businessUnitOptions = computed(() => getBusinessUnitOptions(this._productCatalog()));
-  productLineOptions = computed(() => getProductLineOptions(this._productCatalog(), this.businessUnit(), this.noneOptionLabel()));
-  productOptions = computed(() => getProductOptions(this._productCatalog(), this.businessUnit(), this.productLine(), this.noneOptionLabel()));
+  productLineOptions = computed(() => getProductLineOptions(this._productCatalog(), this.businessUnit()));
+  productOptions = computed(() => getProductOptions(this._productCatalog(), this.businessUnit(), this.productLine()));
 
   readonly formulaLabel = (value: string) => getOptionLabel(this.formulasOptions(), value);
   readonly businessUnitLabel = (value: string) => getOptionLabel(this.businessUnitOptions(), value);

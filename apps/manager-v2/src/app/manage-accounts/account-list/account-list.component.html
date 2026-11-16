@@ -33,7 +33,7 @@
           <th hlmTh>Trial Expiration</th>
           <th
             hlmTh
-            class="w-24"></th>
+            class="w-px"></th>
         </tr>
       </thead>
       <tbody hlmTBody>
@@ -42,22 +42,24 @@
             hlmTr
             class="cursor-pointer"
             [routerLink]="account.id">
-            <td hlmTd>
+            <td
+              hlmTd
+              class="min-w-25 wrap-anywhere whitespace-normal">
               <span class="text-xs">{{ account.id }}</span>
             </td>
             <td
               hlmTd
-              class="wrap-anywhere whitespace-normal">
+              class="min-w-30 wrap-anywhere whitespace-normal">
               <span class="text-xs">{{ account.email }}</span>
             </td>
             <td
               hlmTd
-              class="wrap-anywhere whitespace-normal">
+              class="min-w-30 wrap-anywhere whitespace-normal">
               <span class="text-xs">{{ account.title }}</span>
             </td>
             <td
               hlmTd
-              class="wrap-anywhere whitespace-normal">
+              class="min-w-30 wrap-anywhere whitespace-normal">
               <span class="text-xs">{{ account.slug }}</span>
             </td>
             <td hlmTd>
@@ -72,9 +74,7 @@
             <td hlmTd>
               <span class="text-xs">{{ (account.trial_expiration_date | date: 'M/d/y') || '–' }}</span>
             </td>
-            <td
-              hlmTd
-              class="text-end">
+            <td hlmTd>
               @if (canDelete()) {
                 <button
                   hlmBtn

@@ -43,16 +43,12 @@ export function getBusinessUnitOptions(catalog: ProductCatalog): SelectOption[] 
   return Object.entries(catalog).map(([key, value]) => ({ value: key, label: value.name || key }));
 }
 
-export function getProductLineOptions(
-  catalog: ProductCatalog,
-  businessUnit: string,
-  noneLabel: string,
-): SelectOption[] {
+export function getProductLineOptions(catalog: ProductCatalog, businessUnit: string): SelectOption[] {
   if (!businessUnit) {
     return [];
   }
   return [
-    { value: '', label: noneLabel },
+    { value: '', label: 'None' },
     ...Object.entries(catalog[businessUnit]?.product_lines || {}).map(([key, value]) => ({
       value: key,
       label: value.name || key,
@@ -60,17 +56,12 @@ export function getProductLineOptions(
   ];
 }
 
-export function getProductOptions(
-  catalog: ProductCatalog,
-  businessUnit: string,
-  productLine: string,
-  noneLabel: string,
-): SelectOption[] {
+export function getProductOptions(catalog: ProductCatalog, businessUnit: string, productLine: string): SelectOption[] {
   if (!businessUnit || !productLine) {
     return [];
   }
   return [
-    { value: '', label: noneLabel },
+    { value: '', label: 'None' },
     ...Object.entries(catalog[businessUnit]?.product_lines[productLine]?.products || {}).map(([key, value]) => ({
       value: key,
       label: value.name || key,

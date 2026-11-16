@@ -145,6 +145,8 @@ their own `<name>.spec.ts`.
   or `public/i18n/en.json` for `search-widget`).
 - Never touch the other locale files (`ca`, `es`, `fr`, ...): they are translated
   manually with BabelEdit.
+- Exception: `apps/manager-v2` is an internal, English-only tool. Its feature UI uses plain
+  English text, with no translation keys (see `apps/manager-v2/AGENTS.md`).
 
 ## Imports
 

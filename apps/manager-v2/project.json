@@ -49,7 +49,7 @@
             "output": "assets"
           }
         ],
-        "styles": ["apps/manager-v2/src/tailwind.css"],
+        "styles": ["apps/manager-v2/src/styles.css"],
         "stylePreprocessorOptions": {
           "includePaths": ["apps/manager-v2/src", "."]
         },

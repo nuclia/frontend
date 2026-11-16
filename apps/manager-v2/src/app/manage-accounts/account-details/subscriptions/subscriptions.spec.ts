@@ -120,12 +120,12 @@ describe('Subscriptions', () => {
 
     it('should resolve catalog options by selected business unit and product line', () => {
       const catalog = { bu: { name: 'BU', product_lines: { pl: { products: { p: { name: 'Product' } } } } } };
-      expect(getProductLineOptions(catalog, '', 'None')).toEqual([]);
-      expect(getProductLineOptions(catalog, 'bu', 'None')).toEqual([
+      expect(getProductLineOptions(catalog, '')).toEqual([]);
+      expect(getProductLineOptions(catalog, 'bu')).toEqual([
         { value: '', label: 'None' },
         { value: 'pl', label: 'pl' },
       ]);
-      expect(getProductOptions(catalog, 'bu', 'pl', 'None')).toEqual([
+      expect(getProductOptions(catalog, 'bu', 'pl')).toEqual([
         { value: '', label: 'None' },
         { value: 'p', label: 'Product' },
       ]);

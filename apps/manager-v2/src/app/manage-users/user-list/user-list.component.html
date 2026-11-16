@@ -29,7 +29,7 @@
           <th hlmTh>Last login</th>
           <th
             hlmTh
-            class="w-24"></th>
+            class="w-px"></th>
         </tr>
       </thead>
       <tbody hlmTBody>
@@ -38,23 +38,23 @@
             hlmTr
             class="cursor-pointer"
             [routerLink]="user.id">
-            <td hlmTd>
+            <td
+              hlmTd
+              class="min-w-25 wrap-anywhere whitespace-normal">
               <span class="text-xs">{{ user.id }}</span>
             </td>
             <td
               hlmTd
-              class="wrap-anywhere whitespace-normal">
+              class="min-w-30 wrap-anywhere whitespace-normal">
               {{ user.name }}
             </td>
             <td
               hlmTd
-              class="wrap-anywhere whitespace-normal">
+              class="min-w-30 wrap-anywhere whitespace-normal">
               {{ user.email }}
             </td>
             <td hlmTd>{{ (user.last_login | date: 'M/d/y') || '–' }}</td>
-            <td
-              hlmTd
-              class="text-end">
+            <td hlmTd>
               @if (canDelete()) {
                 <button
                   hlmBtn
