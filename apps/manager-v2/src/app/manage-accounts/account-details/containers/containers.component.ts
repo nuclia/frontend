@@ -4,7 +4,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { STFPipesModule } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matLockRound } from '@ng-icons/material-icons/round';
+import { matLockRound } from '@ng-icons/material-symbols/round';
 import { HlmTableImports } from '@nuclia/ui-spartan/table';
 import { filter, Observable, shareReplay, switchMap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';

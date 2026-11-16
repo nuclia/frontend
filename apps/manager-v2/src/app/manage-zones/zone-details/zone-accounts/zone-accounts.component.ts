@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matDeleteRound } from '@ng-icons/material-icons/round';
+import { matDeleteRound } from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';

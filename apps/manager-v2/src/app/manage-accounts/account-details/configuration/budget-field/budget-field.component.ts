@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matRefreshRound } from '@ng-icons/material-icons/round';
+import { matRefreshRound } from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';
 import { HlmInputImports } from '@nuclia/ui-spartan/input';

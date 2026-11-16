@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matArrowBackRound, matCheckRound, matContentCopyRound } from '@ng-icons/material-icons/round';
+import { matArrowBackRound, matCheckRound, matContentCopyRound } from '@ng-icons/material-symbols/round';
 import { UserType } from '@nuclia/core';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAccordionImports } from '@nuclia/ui-spartan/accordion';

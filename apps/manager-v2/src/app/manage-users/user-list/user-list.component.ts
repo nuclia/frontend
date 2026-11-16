@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-symbols/round';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';

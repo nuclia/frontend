@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matArrowBackRound } from '@ng-icons/material-icons/round';
+import { matArrowBackRound } from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';

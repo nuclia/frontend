@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matMoreVertRound } from '@ng-icons/material-icons/round';
+import { matMoreVertRound } from '@ng-icons/material-symbols/round';
 import { CustomModelItem } from '@nuclia/core';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';

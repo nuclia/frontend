@@ -13,6 +13,7 @@ const fakeTranslateService: Partial<ITranslateService> = {
   translate: (key) => signal(keyToString(key)),
   instant: (key) => keyToString(key),
   get: (key) => of(keyToString(key)),
+  stream: (key) => of(keyToString(key)),
 };
 
 export const translateTestProviders = [

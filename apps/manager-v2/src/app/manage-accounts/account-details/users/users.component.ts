@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matMoreVertRound, matPersonAddRound, matVerifiedUserRound } from '@ng-icons/material-icons/round';
+import { matMoreVertRound, matPersonAddRound, matVerifiedUserRound } from '@ng-icons/material-symbols/round';
 import { UiOptionWithDescription } from '@nuclia/ui/option-with-description';
 import { BrnAutocompleteSearch } from '@spartan-ng/brain/autocomplete';
 import { toast } from '@spartan-ng/brain/sonner';

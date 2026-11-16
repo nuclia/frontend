@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-symbols/round';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';

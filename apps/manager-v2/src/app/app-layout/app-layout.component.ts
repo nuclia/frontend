@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matLogoutRound } from '@ng-icons/material-icons/round';
+import { matLogoutRound } from '@ng-icons/material-symbols/round';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HlmAvatarImports } from '@nuclia/ui-spartan/avatar';
 import { HlmDropdownMenuImports } from '@nuclia/ui-spartan/dropdown-menu';

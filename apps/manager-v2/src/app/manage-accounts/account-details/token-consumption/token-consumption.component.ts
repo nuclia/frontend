@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matWarningRound } from '@ng-icons/material-icons/round';
+import { matWarningRound } from '@ng-icons/material-symbols/round';
 import { NucliaTokensMetric } from '@nuclia/core';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAlertImports } from '@nuclia/ui-spartan/alert';

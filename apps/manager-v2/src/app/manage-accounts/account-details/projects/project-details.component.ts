@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCheckRound, matContentCopyRound } from '@ng-icons/material-icons/round';
+import { matCheckRound, matContentCopyRound } from '@ng-icons/material-symbols/round';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { HlmFieldImports } from '@nuclia/ui-spartan/field';

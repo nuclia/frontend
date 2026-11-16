@@ -9,7 +9,7 @@ import {
   matArrowBackRound,
   matInventory2Round,
   matSmartToyRound,
-} from '@ng-icons/material-icons/round';
+} from '@ng-icons/material-symbols/round';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';
 import { filter, switchMap } from 'rxjs';
 import { ManagerStore } from '../../manager.store';

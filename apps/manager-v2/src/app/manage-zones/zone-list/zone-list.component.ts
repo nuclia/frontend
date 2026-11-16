@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matAddRound, matDeleteRound } from '@ng-icons/material-icons/round';
+import { matAddRound, matDeleteRound } from '@ng-icons/material-symbols/round';
 import { UiConfirmService } from '@nuclia/ui/confirm-dialog';
 import { UiInfiniteScroll } from '@nuclia/ui/infinite-scroll';
 import { HlmButtonImports } from '@nuclia/ui-spartan/button';

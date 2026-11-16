@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, viewChild } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matMoreVertRound, matPersonAddRound } from '@ng-icons/material-icons/round';
+import { matMoreVertRound, matPersonAddRound } from '@ng-icons/material-symbols/round';
 import { UiOptionWithDescription } from '@nuclia/ui/option-with-description';
 import { BrnAutocompleteSearch } from '@spartan-ng/brain/autocomplete';
 import { HlmAutocompleteImports } from '@nuclia/ui-spartan/autocomplete';
