@@ -33,6 +33,7 @@ export interface AccountDetails extends AccountSummary {
   allowAccessExternalModels: boolean;
   zoneVisibility: ZoneVisibility;
   trialExpirationDate?: string;
+  availableComponents: string[] | null;
 }
 
 export interface KbSummary {
@@ -101,4 +102,5 @@ export interface AccountConfigurationPayload {
   allowAccessExternalModels: boolean;
   zoneVisibility?: ZoneVisibility;
   labels: AccountLabels | null;
+  availableComponents: string[] | null;
 }

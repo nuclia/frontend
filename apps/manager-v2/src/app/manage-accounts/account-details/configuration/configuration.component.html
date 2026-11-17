@@ -77,6 +77,31 @@
     <div>
       <label
         class="title-xxs"
+        for="components">
+        Available components
+      </label>
+      <div
+        class="radio-limit-container"
+        formGroupName="components">
+        <pa-radio-group
+          id="components"
+          formControlName="components_radio">
+          <pa-radio value="default">Default</pa-radio>
+          <pa-radio value="custom">Custom</pa-radio>
+        </pa-radio-group>
+        @if (configForm.controls.components.controls.components_radio.value === 'custom') {
+          <div
+            class="components-container"
+            formGroupName="availableComponents">
+            <pa-checkbox formControlName="rag">Agentic RAG</pa-checkbox>
+            <pa-checkbox formControlName="studio">PDP Studio</pa-checkbox>
+          </div>
+        }
+      </div>
+    </div>
+    <div>
+      <label
+        class="title-xxs"
         for="max-kbs">
         Max knowledge boxes available
       </label>

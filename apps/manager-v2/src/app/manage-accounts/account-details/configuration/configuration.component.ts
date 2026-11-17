@@ -76,6 +76,16 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       }),
       maxMemories: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
+    components: new FormGroup({
+      components_radio: new FormControl<'default' | 'custom'>('default', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      availableComponents: new FormGroup({
+        rag: new FormControl<boolean>(false, { nonNullable: true }),
+        studio: new FormControl<boolean>(false, { nonNullable: true }),
+      }),
+    }),
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
     workflow: new FormControl<WorkflowType>('classic'),
@@ -222,6 +232,13 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               if (controls.memories.dirty) {
                 payload.maxMemories = rawValue.memories.memories_radio === 'limit' ? rawValue.memories.maxMemories : -1;
               }
+              if (controls.components.dirty) {
+                const availableComponents = Object.entries(rawValue.components.availableComponents)
+                  .filter(([, value]) => value)
+                  .map(([key]) => key);
+                payload.availableComponents =
+                  rawValue.components.components_radio === 'custom' ? availableComponents : null;
+              }
             }
             const saveBudgetRequest = canFullyEditAccount ? this.saveBudget() : of(null);
             return forkJoin([this.accountService.updateAccount(accountBackup.id, payload), saveBudgetRequest]);
@@ -328,6 +345,15 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       accountDetails.maxMemories === -1 ? 'unlimited' : 'limit',
     );
     this.configForm.controls.memories.controls.maxMemories.patchValue(accountDetails.maxMemories);
+    this.configForm.controls.components.controls.components_radio.patchValue(
+      accountDetails.availableComponents === null ? 'default' : 'custom',
+    );
+    this.configForm.controls.components.controls.availableComponents.patchValue(
+      (accountDetails.availableComponents || []).reduce(
+        (acc, component) => ({ ...acc, [component]: true }),
+        {} as Record<string, boolean>,
+      ),
+    );
     this.configForm.controls.labels.patchValue({
       ...labels,
       is_pfs: labels?.is_pfs ?? false,

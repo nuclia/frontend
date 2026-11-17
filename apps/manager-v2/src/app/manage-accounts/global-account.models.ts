@@ -78,6 +78,7 @@ export interface AccountPatchPayload {
   labels?: AccountLabels | null;
   workflow?: WorkflowType;
   zone_visibility?: ZoneVisibility;
+  available_components?: string[] | null;
 }
 
 export interface AccountKbList {

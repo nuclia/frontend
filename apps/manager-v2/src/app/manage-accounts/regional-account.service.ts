@@ -245,6 +245,7 @@ export class RegionalAccountService {
       allowAccessExternalModels: account.allow_access_external_models,
       zoneVisibility: account.zone_visibility ?? 'DEFAULT',
       labels: account.labels,
+      availableComponents: account.available_components,
     };
   }
 

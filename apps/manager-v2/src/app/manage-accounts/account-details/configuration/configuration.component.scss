@@ -16,3 +16,10 @@ form {
 .limit-action {
   margin: rhythm(1) 0;
 }
+
+.components-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  padding-right: rhythm(7);
+}
