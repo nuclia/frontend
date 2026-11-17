@@ -5462,16 +5462,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngx-translate/http-loader@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "@ngx-translate/http-loader@npm:18.0.0"
+"@ngx-translate/http-loader@npm:^18.1.0":
+  version: 18.1.0
+  resolution: "@ngx-translate/http-loader@npm:18.1.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/common": ">=18"
     "@angular/core": ">=18"
-    "@ngx-translate/core": ">=18.0.0"
-  checksum: 10/a9c25f892ceb58ae69fbe7d97b5f4264ed17d956d495f01a7d1440d4b89c6eae6c1b680a5d2231bd3c5e2db2d1babd723fe5ebdddc4b30f4ce80544379ffd4d8
+    "@ngx-translate/core": ">=18.1.0"
+  checksum: 10/712fa5e064f6c0223ece02fb00dbe2c5a6fa8d9056033c322ada1068ea8405b07ae9aee304acd6e8947932cb63146d0300887c0e7820f8eda0aa82f35a90aeaa
   languageName: node
   linkType: hard
 
@@ -19872,7 +19872,7 @@ __metadata:
     "@ng-icons/material-symbols": "npm:^36.1.0"
     "@ng-web-apis/common": "npm:^2.1.0"
     "@ngx-translate/core": "npm:18"
-    "@ngx-translate/http-loader": "npm:^18.0.0"
+    "@ngx-translate/http-loader": "npm:^18.1.0"
     "@nx/angular": "npm:24.0.3"
     "@nx/eslint": "npm:24.0.3"
     "@nx/eslint-plugin": "npm:24.0.3"
