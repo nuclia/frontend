@@ -1,0 +1,6 @@
+@use 'apps/manager-v2/src/variables' as *;
+
+.component {
+  display: flex;
+  justify-content: space-between;
+}
