@@ -30,7 +30,8 @@
       }
       @let kbCount = ((kbList | async) || []).length;
       @let keyCount = nuaKeys.length;
-      @if (kbCount + keyCount > 1) {
+      @let projectCount = projects.length;
+      @if (kbCount + keyCount + projectCount > 1) {
         <div class="select">
           <pa-select
             [value]="selectedItem | async"
@@ -48,6 +49,17 @@
                   [value]="kb.id"
                   icon="knowledge-box">
                   {{ kb.title }}
+                </pa-option>
+              }
+            }
+            @if (projectCount > 0) {
+              <pa-separator></pa-separator>
+              <pa-option-header>{{ 'account.projects' | translate }}</pa-option-header>
+              @for (project of projects; track project.project_id) {
+                <pa-option
+                  [value]="project.project_id"
+                  icon="account">
+                  {{ project.name }}
                 </pa-option>
               }
             }

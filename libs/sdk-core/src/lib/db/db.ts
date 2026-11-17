@@ -48,6 +48,8 @@ import {
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
+  Project,
+  Projects,
   QueryInfo,
   SignUpInfo,
   UsageAggregation,
@@ -470,6 +472,7 @@ export class Db implements IDb {
     knowledgeBoxId?: string,
     aggregation?: UsageAggregation,
     nuaKeyId?: string,
+    projectId?: string,
   ): Observable<UsagePoint[]> {
     const params = [`from=${from}`];
     if (to) {
@@ -479,6 +482,9 @@ export class Db implements IDb {
       params.push(`knowledgebox=${knowledgeBoxId}`);
     } else if (nuaKeyId) {
       params.push(`nua_key_id=${nuaKeyId}`);
+    }
+    if (projectId) {
+      params.push(`knowledgebox=dataproject-${projectId}`);
     }
     if (aggregation) {
       params.push(`aggregation=${aggregation}`);
@@ -1080,5 +1086,27 @@ export class Db implements IDb {
    */
   deleteModelConfiguration(modelId: string, accountId: string, zone: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${accountId}/default_model/${modelId}`, undefined, true, zone);
+  }
+
+  /**
+   * Get the list of projects of an account for the given zone
+   */
+  getProjectsForZone(accountId: string, zoneSlug: string): Observable<Project[]> {
+    return this.nuclia.rest.get<Projects>(`/dataplatform/${accountId}/projects`, undefined, undefined, zoneSlug).pipe(
+      map((projects) => projects.data.map((project) => ({ ...project, zone: zoneSlug }))),
+      catchError(() => of([])),
+    );
+  }
+
+  /**
+   * Get the list of projects of an account
+   */
+  getProjects(accountId: string): Observable<Project[]> {
+    return this.nuclia.rest.getAccountZones(accountId).pipe(
+      switchMap((zones) =>
+        forkJoin(Object.values(zones).map((zoneSlug) => this.getProjectsForZone(accountId, zoneSlug))),
+      ),
+      map((response) => response.flat()),
+    );
   }
 }
