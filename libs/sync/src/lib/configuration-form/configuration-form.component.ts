@@ -179,7 +179,8 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   }
 
   getExtraSections(): Observable<Section[]> {
-    if (!this.connector) {
+    const editingCloudSync = this.isCloud && !!this.syncEntity;
+    if (!this.connector || editingCloudSync) {
       return of([]);
     }
     return this.connector
@@ -226,12 +227,6 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     const title = config.name;
     const smallHash = (Math.random() + 1).toString(36).substring(7);
     const id = `${this.kbId}-${title?.toLowerCase().replace(SLUGIFY, '-')}-${smallHash}`;
-    const extraParams: { [key: string]: string } = Object.entries(config.extra || {}).reduce(
-      (fields, [key, value]) => {
-        return { ...fields, [key]: value };
-      },
-      {} as { [key: string]: string },
-    );
     const tables = Object.entries(this.tables).reduce(
       (validTables, [key, table]) => {
         if (Array.isArray(table)) {
@@ -241,6 +236,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       },
       {} as { [tableId: string]: { key: string; value: string; secret: boolean }[] },
     );
+    const allValues = { ...config.extra, ...tables };
     const assumeRole = this.assumeRole ? config.assumeRole : {};
     const opts = this.currentOptions;
     const filters: Filters = {
@@ -268,8 +264,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
         name: this.connectorId,
         parameters: {
           ...this.connectorParametersBackup,
-          ...tables,
-          ...extraParams,
+          ...(this.connector?.mapFormValuesToParameters?.(allValues) || allValues),
           ...assumeRole,
         },
       },

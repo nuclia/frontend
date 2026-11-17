@@ -29,9 +29,10 @@
       @if (loading) {
         <nsi-spinner></nsi-spinner>
       } @else {
+        @let enterCredentials = !!(requireCredentials | async) && !externalConnection;
         <nsy-configuration-form
           [useOAuth]="useOAuth"
-          [enterCredentials]="!!(isCloud | async) && enterCredentials"
+          [enterCredentials]="enterCredentials"
           [sync]="sync"
           [kbId]="kbId | async"
           [connector]="connector"
@@ -46,7 +47,7 @@
             [connectorId]="connectorId | async"
             (selection)="selectFolder($event)"></nsy-cloud-folder>
         }
-        @if (externalConnection) {
+        @if ((isCloud | async) && !enterCredentials) {
           <nsy-sync-options-form
             [isCloud]="true"
             (optionsChange)="updateCloudSyncOptions($event)"></nsy-sync-options-form>
@@ -61,7 +62,7 @@
           {{ 'generic.cancel' | translate }}
         </pa-button>
 
-        @if (!!(isCloud | async) && enterCredentials) {
+        @if ((requireCredentials | async) && !externalConnection) {
           <pa-button
             data-analytics-id="add-sync-authenticate"
             kind="primary"

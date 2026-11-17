@@ -41,6 +41,7 @@ import {
   SearchResults,
   SyncBasicData,
 } from './models';
+import { SitemapCloudConnector } from './connectors/sitemap-cloud';
 
 export type SyncServerType = 'desktop' | 'server' | 'cloud';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -140,6 +141,17 @@ export class SyncService {
         factory: () => new S3Impl(),
       },
     },
+    'sitemap-cloud': {
+      definition: {
+        id: 'sitemap-cloud',
+        title: 'Sitemap',
+        logo: `${baseLogoPath}/sitemap.svg`,
+        description: 'Upload web pages from a sitemap.xml',
+        permanentSyncOnly: true,
+        cloud: true,
+        factory: () => new SitemapCloudConnector(),
+      },
+    },
     folder: { definition: FolderConnector },
     sitemap: { definition: SitemapConnector },
     confluence: { definition: ConfluenceConnector },
@@ -225,6 +237,9 @@ export class SyncService {
     ) {
       return ONEDRIVE_CONNECTOR_ID;
     }
+    if (provider === 'sitemap') {
+      return 'sitemap-cloud';
+    }
     return Object.entries(this.connectors).find(
       ([, data]) => data.definition.oauth_provider === provider || data.definition.apikey_provider === provider,
     )?.[0];
@@ -238,13 +253,13 @@ export class SyncService {
   }
 
   private syncConfigtoISyncEntity(config: SyncConfiguration): ISyncEntity {
-    const connectorId = this.getConnectorIdForProvider(config.external_connection.provider, config.drive_type);
+    const connectorId = this.getConnectorIdForProvider(config.provider, config.drive_type);
     return {
       id: config.id,
       title: config.name,
       connectorId,
       connector: {
-        name: connectorId || config.external_connection.provider,
+        name: connectorId || config.provider,
         parameters: config,
       },
       lastSyncGMT: config.last_sync_run || undefined,
@@ -267,7 +282,7 @@ export class SyncService {
         map((config) => ({
           ...this.syncConfigtoISyncEntity(config),
           kbId: config.kb_id,
-          connectorId: this.getConnectorIdForProvider(config.external_connection.provider, config.drive_type),
+          connectorId: this.getConnectorIdForProvider(config.provider, config.drive_type),
         })),
         tap((entity) =>
           this._syncCache.next({
@@ -409,10 +424,7 @@ export class SyncService {
               configs
                 .filter((config) => config.kb_id === kbId)
                 .map((config) => {
-                  const connectorId = this.getConnectorIdForProvider(
-                    config.external_connection.provider,
-                    config.drive_type,
-                  );
+                  const connectorId = this.getConnectorIdForProvider(config.provider, config.drive_type);
                   return {
                     id: config.id,
                     kbId: config.kb_id,

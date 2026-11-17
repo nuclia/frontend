@@ -149,6 +149,8 @@
 	"sync.connectors.sitefinity.web-scraping.label": "Web scraping ",
 	"sync.connectors.sitemap.url.label": "Sitemap URL",
 	"sync.connectors.sitemap.url.section-title": "Sitemap URL",
+	"sync.connectors.sitemap-cloud.url.description": "URL of an XML sitemap or RSS/Atom feed",
+	"sync.connectors.sitemap-cloud.url.title": "Sitemap or feed URL",
 	"sync.details.activity-log.description": "All syncs are triggered automatically every 60 minutes.",
 	"sync.details.activity-log.no-activity": "No activity yet",
 	"sync.details.activity-log.no-logs": "No new files were found to synchronize.",

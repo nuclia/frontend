@@ -75,11 +75,12 @@ export interface SyncConfiguration extends SyncConfigurationOptions {
   sync_interval_minutes: number;
   last_sync_run: string | null;
   created_by: string;
-  external_connection: {
+  external_connection?: {
     id: string;
     provider: string;
   };
   provider: string;
+  sitemap?: SitemapOptions;
 }
 
 export interface SyncConfigurationCreate extends SyncConfigurationOptions {
@@ -88,7 +89,8 @@ export interface SyncConfigurationCreate extends SyncConfigurationOptions {
   sync_root_path?: string;
   drive_id?: string;
   sharepoint_site_pages_site_id?: string;
-  external_connection_id: string;
+  external_connection_id?: string;
+  sitemap?: SitemapOptions;
 }
 
 type INullable<T> = { [P in keyof T]: T[P] | null };
@@ -112,6 +114,16 @@ export interface FileFilter {
 export interface ModifiedTimeRange {
   from?: string;
   to?: string;
+}
+
+export interface SitemapOptions {
+  url: string;
+  css_selector?: string;
+  xpath_selector?: string;
+  keep_query_string?: boolean;
+  headers?: Record<string, string>;
+  cookies?: Record<string, string>;
+  localstorage?: Record<string, string>;
 }
 
 export interface JobsPage {

@@ -80,6 +80,7 @@ export class FeaturesService {
     googleSource: this.featureFlag.isFeatureEnabled('google-source'),
     agenticDAGeneration: this.featureFlag.isFeatureEnabled('agentic-da-generation'),
     contextBoxNoTrial: this.featureFlag.isFeatureEnabled('context-box-no-trial'),
+    syncAgentSitemap: this.featureFlag.isFeatureEnabled('sync-agent-sitemap'),
   };
 
   /**

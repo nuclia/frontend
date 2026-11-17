@@ -4,9 +4,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   inject,
-  Input,
+  input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -53,17 +54,16 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   private modalService = inject(ModalService);
   private syncService = inject(SyncService);
 
-  @Input({ required: true }) sync!: ISyncEntity;
-  @Input({ required: true }) connector: IConnector | null | undefined = undefined;
-  @Input() set logs(value: LogEntity[] | null | undefined) {
-    if (value) {
-      this._logs = value;
-    }
-  }
-  get logs(): LogEntity[] {
-    return this._logs;
-  }
-  private _logs: LogEntity[] = [];
+  sync = input.required<ISyncEntity>();
+  connector = input.required<IConnector | null | undefined>();
+  logs = input<LogEntity[], LogEntity[] | null | undefined>([], {
+    transform: (value) => value || [],
+  });
+  parameters = computed(
+    () =>
+      this.connector()?.mapParametersToFormValues?.(this.sync().connector.parameters) ||
+      this.sync().connector.parameters,
+  );
 
   @ViewChild('activitySection') activitySection?: ElementRef;
 
@@ -104,10 +104,10 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
       .subscribe((labelSets) => {
         this.labelSets = labelSets;
         this.coloredLabels =
-          this.sync.labels?.map((label) => ({ ...label, color: this.labelSets[label.labelset]?.color })) || [];
+          this.sync().labels?.map((label) => ({ ...label, color: this.labelSets[label.labelset]?.color })) || [];
         this.cdr.detectChanges();
       });
-    const extract_strategy = this.sync.extract_strategy;
+    const extract_strategy = this.sync().extract_strategy;
     if (extract_strategy) {
       this.sdk.currentKb
         .pipe(
@@ -124,7 +124,7 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   loadMore() {
     this.loadingJobs = true;
     this.cdr.markForCheck();
-    this.syncService.updateSyncJobs(this.sync.id, true).subscribe(() => {
+    this.syncService.updateSyncJobs(this.sync().id, true).subscribe(() => {
       this.loadingJobs = false;
       this.cdr.markForCheck();
     });
