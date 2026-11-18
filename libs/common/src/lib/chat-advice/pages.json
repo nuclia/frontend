@@ -75,8 +75,8 @@
   {
     "id": "account-nua",
     "route": "/at/:account/manage/nua",
-    "title": "Agentic RAG Understanding API keys",
-    "summary": "Manage API keys for programmatic access to the Agentic RAG Understanding API. Create, rotate, review activity, and delete NUA keys.",
+    "title": "Data Platform Understanding API keys",
+    "summary": "Manage API keys for programmatic access to the Data Platform Understanding API. Create, rotate, review activity, and delete NUA keys.",
     "capabilities": [
       "Create a new NUA API key",
       "Generate (rotate) an existing key",
