@@ -58,4 +58,5 @@ export const ACCOUNT_DETAILS: AccountDetails = {
   labels: null,
   workflow: 'classic',
   zoneVisibility: 'DEFAULT',
+  availableComponents: null,
 };

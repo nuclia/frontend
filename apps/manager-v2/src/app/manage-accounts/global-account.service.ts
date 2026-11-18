@@ -52,6 +52,7 @@ export class GlobalAccountService {
       allow_access_external_models: data.allowAccessExternalModels,
       labels: data.labels,
       zone_visibility: data.zoneVisibility,
+      available_components: data.availableComponents,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, payload);
   }

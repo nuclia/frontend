@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TokenDialogComponent, ValidSlug } from '@flaps/common';
 import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -12,6 +12,7 @@ import { ZoneService } from '../zone.service';
 
 @Component({
   templateUrl: './zone-details.component.html',
+  styleUrls: ['zone-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PaButtonModule, FormsModule, ReactiveFormsModule, PaTextFieldModule, PaDropdownModule, PaTogglesModule],
 })
@@ -29,6 +30,9 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     creator: new FormControl('', { nonNullable: true }),
     created: new FormControl('', { nonNullable: true }),
     modified: new FormControl('', { nonNullable: true }),
+    components: new FormArray<
+      FormGroup<{ id: FormControl<string>; enabled: FormControl<boolean>; overridden: FormControl<boolean> }>
+    >([]),
   });
   addZone = false;
   zoneTitle = '';
@@ -68,6 +72,7 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
           this.zoneTitle = zone.title;
           this.zoneBackup = { ...zone };
           this.zoneForm.patchValue(zone);
+          this.initComponentsForm(zone);
           this.loadGrantedAccounts();
         } else {
           this.addZone = true;
@@ -153,9 +158,13 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      const { id, slug, title, private: isPrivate, origin } = this.zoneForm.getRawValue();
+      const { id, slug, title, private: isPrivate, origin, components } = this.zoneForm.getRawValue();
+      const component_rollout = components.reduce(
+        (acc, component) => ({ ...acc, [component.id]: component.overridden ? component.enabled : null }),
+        {} as Record<string, boolean | null>,
+      );
       this.zoneService
-        .updateZone(id, { slug, title, private: isPrivate, origin: origin || null })
+        .updateZone(id, { slug, title, private: isPrivate, origin: origin || null, component_rollout })
         .pipe(switchMap(() => this.zoneService.getZone(id)))
         .subscribe({
           next: (zone) => {
@@ -177,6 +186,7 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
   reset() {
     if (this.zoneBackup) {
       this.zoneForm.patchValue(this.zoneBackup);
+      this.initComponentsForm(this.zoneBackup);
       this.zoneForm.markAsPristine();
     }
   }
@@ -192,5 +202,37 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.location.back();
+  }
+
+  private initComponentsForm(zone: Zone) {
+    this.zoneForm.controls.components.clear();
+    if (zone.component_manifest) {
+      Object.entries(zone.component_manifest.components)
+        .filter(([, value]) => value.declared)
+        .forEach(([key, value]) => {
+          const overridden = key in zone.component_rollout;
+          const componentGroup = new FormGroup({
+            id: new FormControl(key, { nonNullable: true }),
+            enabled: new FormControl(overridden ? zone.component_rollout[key] : value.default_rollout, {
+              nonNullable: true,
+            }),
+            overridden: new FormControl(overridden, { nonNullable: true }),
+          });
+          if (!overridden) {
+            componentGroup.controls.enabled.disable();
+          }
+          this.zoneForm.controls.components.push(componentGroup);
+        });
+    }
+  }
+
+  updateComponentState(id: string, overridden: boolean) {
+    const component = this.zoneForm.controls.components.controls.find((control) => control.value.id === id);
+    if (overridden) {
+      component?.controls.enabled.enable();
+    } else {
+      component?.controls.enabled.disable();
+      component?.controls.enabled.setValue(!!this.zoneBackup?.component_manifest?.components?.[id]?.default_rollout);
+    }
   }
 }

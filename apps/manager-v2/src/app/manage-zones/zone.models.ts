@@ -21,6 +21,7 @@ export interface ZoneSummary {
   cloud_provider: 'AWS' | 'GCP';
   private: boolean;
   origin: string | null;
+  component_rollout: { [key: string]: boolean };
 }
 
 export interface Zone {
@@ -33,6 +34,8 @@ export interface Zone {
   cloud_provider: 'AWS' | 'GCP';
   private: boolean;
   origin: string | null;
+  component_rollout: { [key: string]: boolean };
+  component_manifest: ComponentManifest | null;
 }
 
 export interface ZoneAddPayload {
@@ -50,4 +53,14 @@ export interface ZonePatchPayload {
   cloud_provider?: 'AWS' | 'GCP';
   private?: boolean;
   origin?: string | null;
+  component_rollout?: { [key: string]: boolean | null };
+}
+
+export interface ComponentManifest {
+  components: {
+    [key: string]: {
+      declared: boolean;
+      default_rollout: boolean;
+    };
+  };
 }

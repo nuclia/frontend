@@ -52,6 +52,30 @@
       }
       <pa-checkbox formControlName="private">Private</pa-checkbox>
 
+      @if (!addZone) {
+        <section class="form-section">
+          <h3>Available components</h3>
+          @for (component of zoneForm.controls.components.controls; track component) {
+            <div
+              class="component"
+              [formGroup]="component">
+              <pa-toggle
+                [formControlName]="'enabled'"
+                labelOnRight>
+                {{ component.value.id }}
+              </pa-toggle>
+              <pa-checkbox
+                [formControlName]="'overridden'"
+                (valueChange)="updateComponentState(component.value.id || '', $event)">
+                Override
+              </pa-checkbox>
+            </div>
+          } @empty {
+            <div>No components defined</div>
+          }
+        </section>
+      }
+
       <footer>
         <pa-button
           type="submit"
