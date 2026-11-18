@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
+import { AccountService, DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Language, WelcomeUser } from '@nuclia/core';
@@ -24,6 +24,7 @@ import { filter, Subject, switchMap, takeUntil } from 'rxjs';
   imports: [TranslatePipe, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
+  private accountService = inject(AccountService);
   embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
 
   @Output() saved = new EventEmitter<void>();
@@ -32,6 +33,7 @@ export class ProfileComponent implements OnInit {
 
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
+  canChangeLanguage = this.accountService.isRagAccount;
 
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
