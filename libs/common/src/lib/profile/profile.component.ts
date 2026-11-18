@@ -25,11 +25,16 @@ import { filter, Subject, switchMap, takeUntil } from 'rxjs';
 })
 export class ProfileComponent implements OnInit {
   private accountService = inject(AccountService);
+  private location = inject(Location);
+  private userService = inject(UserService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private translate = inject(TranslateService);
+  private loginService = inject(LoginService);
+  private cdr = inject(ChangeDetectorRef);
+
   embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
 
   @Output() saved = new EventEmitter<void>();
-
-  private location = inject(Location);
 
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
@@ -56,14 +61,6 @@ export class ProfileComponent implements OnInit {
   }
 
   private unsubscribeAll = new Subject<void>();
-
-  constructor(
-    private userService: UserService,
-    private formBuilder: UntypedFormBuilder,
-    private translate: TranslateService,
-    private loginService: LoginService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit() {
     this.userService.userPrefs
