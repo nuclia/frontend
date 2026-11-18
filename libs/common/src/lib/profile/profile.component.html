@@ -35,18 +35,20 @@
         </pa-input>
       </div>
 
-      <div class="field">
-        <label for="language">{{ 'generic.language' | translate }}</label>
-        <pa-radio-group
-          id="language"
-          formControlName="language">
-          @for (lang of languages; track lang) {
-            <pa-radio [value]="lang.value">
-              {{ lang.label | translate }}
-            </pa-radio>
-          }
-        </pa-radio-group>
-      </div>
+      @if (canChangeLanguage()) {
+        <div class="field">
+          <label for="language">{{ 'generic.language' | translate }}</label>
+          <pa-radio-group
+            id="language"
+            formControlName="language">
+            @for (lang of languages; track lang) {
+              <pa-radio [value]="lang.value">
+                {{ lang.label | translate }}
+              </pa-radio>
+            }
+          </pa-radio-group>
+        </div>
+      }
 
       <div class="actions">
         <pa-button

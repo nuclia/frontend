@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
+import { AccountService, DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Language, WelcomeUser } from '@nuclia/core';
@@ -24,14 +24,21 @@ import { filter, Subject, switchMap, takeUntil } from 'rxjs';
   imports: [TranslatePipe, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
+  private accountService = inject(AccountService);
+  private location = inject(Location);
+  private userService = inject(UserService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private translate = inject(TranslateService);
+  private loginService = inject(LoginService);
+  private cdr = inject(ChangeDetectorRef);
+
   embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
 
   @Output() saved = new EventEmitter<void>();
 
-  private location = inject(Location);
-
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
+  canChangeLanguage = this.accountService.isRagAccount;
 
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -54,14 +61,6 @@ export class ProfileComponent implements OnInit {
   }
 
   private unsubscribeAll = new Subject<void>();
-
-  constructor(
-    private userService: UserService,
-    private formBuilder: UntypedFormBuilder,
-    private translate: TranslateService,
-    private loginService: LoginService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit() {
     this.userService.userPrefs

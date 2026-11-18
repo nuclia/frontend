@@ -1,12 +1,13 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LoginService, TranslatePipeMock, UserService } from '@flaps/core';
+import { AccountService, LoginService, TranslatePipeMock, UserService } from '@flaps/core';
 import { of } from 'rxjs';
 
 import { provideRouter } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SvgIconRegistryService } from 'angular-svg-icon';
-import { MockModule } from 'ng-mocks';
+import { MockModule, MockProvider } from 'ng-mocks';
 import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
@@ -23,6 +24,7 @@ describe('ProfileComponent', () => {
         MockModule(PaTogglesModule),
       ],
       providers: [
+        MockProvider(AccountService, { isRagAccount: signal(true) }),
         provideRouter([]),
         {
           provide: UserService,
