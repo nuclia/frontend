@@ -68,8 +68,8 @@ function apply_path {
       echo "No re-branding";
     else
       echo "Re-branding to '$BRAND_NAME'";
-      sed -i "s/Agentic RAG/$BRAND_NAME/" /dist/assets/i18n/**/*.json
-      sed -i "s/<title>Agentic RAG<\/title>/<title>$BRAND_NAME<\/title>/" /dist/index.html
+      sed -i "s/Data Platform/$BRAND_NAME/" /dist/assets/i18n/**/*.json
+      sed -i "s/<title>Data Platform<\/title>/<title>$BRAND_NAME<\/title>/" /dist/index.html
     fi
 
     if [[ "$BRAND_DOMAIN" == nuclia.cloud ]]; then

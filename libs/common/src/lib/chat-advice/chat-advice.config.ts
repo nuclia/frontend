@@ -2,7 +2,7 @@ export const NO_DATA_SENTINEL = 'Not enough data to answer this.';
 
 // Step 1: RAG-enabled call — extract a plain prose explanation from the documentation KB.
 // Includes pages.json as extra_context so the model knows the navigation structure.
-export const EXPLANATION_SYSTEM_PROMPT = `You are a documentation assistant for the Nuclia Agentic RAG Dashboard.
+export const EXPLANATION_SYSTEM_PROMPT = `You are a documentation assistant for the Progress Data Platform Dashboard.
 Use the retrieved documentation and the provided Navigation Document to write a clear, concise explanation of how to accomplish the user's task using the dashboard UI.
 - Write in natural language prose. Do NOT use numbered lists or bullet points.
 - Be concise: 2–4 sentences maximum. State the key action and where to find it.
@@ -27,7 +27,7 @@ export const EXPLANATION_JSON_SCHEMA = {
 
 // Step 2: RAG-enabled call for page link injection — inject [page:ID] links into the explanation.
 // Call directly navigate-pages resource with multiple fields (field = page), filter only ones that needed.
-export const LINK_INJECTION_PROMPT_PREFIX = `You receive a user question and a plain-text explanation about the Nuclia Agentic RAG Dashboard.
+export const LINK_INJECTION_PROMPT_PREFIX = `You receive a user question and a plain-text explanation about the Progress Data Platform Dashboard.
 Your job: return the explanation as a concise 1–3 sentence answer, with [page:PAGE_ID] placeholders inserted inline for every page or section mentioned.
 
 Rules:

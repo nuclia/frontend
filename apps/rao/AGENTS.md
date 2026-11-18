@@ -78,7 +78,7 @@ apps/rao/src/
 
 Only three app-level source files exist besides `main.ts`: `AppComponent`, `AppRoutingModule`, `AppTitleStrategy`. Everything else comes from libs. `AppComponent` uses constructor injection (not `inject()`) and `STFSplashScreenService` is injected only to force its instantiation (it hides the splash once routing settles).
 
-Auth-related paths (`/user/callback`, `/user/login-redirect`, `/user/signup`, `/user/onboarding`, `/user/profile`) are declared as flat top-level routes — there is no lazy user module wrapper in this app (unlike `apps/auth`, which has its own `lazy-user.module.ts`). `index.html` hosts the splash screen (`assets/logos/logo-pdp.svg`), title "Progress Agentic RAG" and the meta description.
+Auth-related paths (`/user/callback`, `/user/login-redirect`, `/user/signup`, `/user/onboarding`, `/user/profile`) are declared as flat top-level routes — there is no lazy user module wrapper in this app (unlike `apps/auth`, which has its own `lazy-user.module.ts`). `index.html` hosts the splash screen (`assets/logos/logo-pdp.svg`), title "Progress Data Platform" and the meta description.
 
 Auth-related paths (`/user/callback`, `/user/login-redirect`, `/user/signup`, `/user/onboarding`, `/user/profile`) are declared as flat top-level routes — there is no lazy user module wrapper in this app (unlike `apps/auth`, which has its own `lazy-user.module.ts`).
 

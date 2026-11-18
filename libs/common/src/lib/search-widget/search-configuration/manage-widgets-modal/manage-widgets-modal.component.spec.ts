@@ -53,7 +53,7 @@ describe('ManageWidgetsModalComponent', () => {
           provide: TranslateService,
           useValue: {
             instant: (key: string) =>
-              key === 'search.configuration.options.nuclia-standard' ? 'Agentic RAG default' : key,
+              key === 'search.configuration.options.nuclia-standard' ? 'Data Platform default' : key,
           },
         },
         { provide: SisModalService, useValue: {} },
@@ -78,7 +78,11 @@ describe('ManageWidgetsModalComponent', () => {
       savedConfig.id,
       undeployedConfig.id,
     ]);
-    expect(items.map((item) => item.displayName)).toEqual(['Agentic RAG default', savedConfig.id, undeployedConfig.id]);
+    expect(items.map((item) => item.displayName)).toEqual([
+      'Data Platform default',
+      savedConfig.id,
+      undeployedConfig.id,
+    ]);
     expect(items.find((item) => item.config.id === undeployedConfig.id)?.widget).toBeUndefined();
   });
 

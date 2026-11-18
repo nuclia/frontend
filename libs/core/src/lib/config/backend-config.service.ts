@@ -82,7 +82,7 @@ export class BackendConfigurationService {
   }
 
   getBrandName(): string {
-    return this.config.backend.brand_name || 'Agentic RAG';
+    return this.config.backend.brand_name || 'Data Platform';
   }
 
   useRemoteLogin(): boolean {

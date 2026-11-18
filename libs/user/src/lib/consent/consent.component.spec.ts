@@ -35,7 +35,7 @@ describe('ConsentComponent', () => {
           provide: BrandService,
           useValue: {
             logoPath: of('logo.svg'),
-            brandName: of('Agentic RAG'),
+            brandName: of('Data Platform'),
           },
         },
       ],

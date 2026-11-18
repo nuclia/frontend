@@ -9,7 +9,7 @@ import { SisToastService } from '@nuclia/sistema';
 const CAMPAIGN_IDS = [
   {
     id: '701Pb00002OJnMNIA1',
-    label: 'Agentic RAG trial',
+    label: 'Data Platform trial',
   },
   {
     id: '701Pb00003vMWmsIAG',
