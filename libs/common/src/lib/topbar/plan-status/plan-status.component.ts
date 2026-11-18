@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
+import { PaChipsModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AccountTypes } from '@nuclia/core';
 import { differenceInDays } from 'date-fns';
@@ -18,11 +18,12 @@ interface PlanStatusVm {
   used: number | null;
   limit: number | null;
   isContextBox: boolean;
+  from: string | null;
 }
 
 @Component({
   selector: 'stf-plan-status',
-  imports: [CommonModule, TranslatePipe, PaChipsModule],
+  imports: [CommonModule, TranslatePipe, PaChipsModule, PaTooltipModule],
   templateUrl: './plan-status.component.html',
   styleUrl: './plan-status.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,6 +80,7 @@ export class PlanStatusComponent {
             daysLeft,
             used: usage?.used ?? null,
             limit: usage?.limit ?? null,
+            from: usage?.from ?? null,
             isContextBox: false,
           }),
         ),

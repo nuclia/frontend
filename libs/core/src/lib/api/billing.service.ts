@@ -13,6 +13,7 @@ import {
   take,
   throwError,
 } from 'rxjs';
+import { FeaturesService } from '../analytics/features.service';
 import {
   AccountBudget,
   AccountSubscription,
@@ -31,7 +32,6 @@ import {
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from '../models/billing.model';
-import { FeaturesService } from '../analytics/features.service';
 import { SDKService } from './sdk.service';
 
 export const DEFAULT_TRIAL_TOKEN_BUDGET = 20_000;
@@ -340,23 +340,25 @@ export class BillingService {
   }
 
   //Tokens consumed since the 1st of the current calendar month (00:00 UTC)
-  private getCurrentMonthTokenUsage(): Observable<number> {
+  private getCurrentMonthTokenUsage(): Observable<{ used: number; from: string }> {
     const monthStart = new Date();
     monthStart.setUTCDate(1);
     monthStart.setUTCHours(0, 0, 0, 0);
+    const from = monthStart.toISOString();
     return this.sdk.currentAccount.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.db.getUsage(account.id, monthStart.toISOString())),
-      map((usage) =>
-        usage
+      switchMap((account) => this.sdk.nuclia.db.getUsage(account.id, from)),
+      map((usage) => ({
+        from,
+        used: usage
           .flatMap((point) => point.metrics)
           .filter((metric) => metric.name === UsageType.NUCLIA_TOKENS)
           .reduce((total, metric) => total + metric.value, 0),
-      ),
+      })),
     );
   }
 
-  getTrialTokenUsage(): Observable<{ used: number; limit: number | null } | null> {
+  getTrialTokenUsage(): Observable<{ used: number; limit: number | null; from: string } | null> {
     return combineLatest([
       this.sdk.currentAccount,
       this.isSubscribedToStripe,
@@ -368,9 +370,9 @@ export class BillingService {
         if (!account.trial_expiration_date || stripe || aws || manual) return of(null);
 
         return combineLatest([this.getCurrentMonthTokenUsage(), this.getAccountTokenBudgetOverride()]).pipe(
-          map(([used, override]) => {
+          map(([usage, override]) => {
             const limit = override ? override.budget_value : DEFAULT_TRIAL_TOKEN_BUDGET;
-            return { used, limit };
+            return { ...usage, limit };
           }),
         );
       }),
@@ -382,7 +384,7 @@ export class BillingService {
    * (matches the "Billable"/quota columns on the usage table).
    * Others (AWS/manual): usage for the current calendar month + limit from the budget override
    * endpoint (same one used for trial accounts); `null` limit means unlimited. */
-  getPlanTokenUsage(): Observable<{ used: number; limit: number | null } | null> {
+  getPlanTokenUsage(): Observable<{ used: number; limit: number | null; from?: string } | null> {
     return this.isSubscribedToStripe.pipe(
       take(1),
       switchMap((stripe) => {
@@ -395,7 +397,7 @@ export class BillingService {
           );
         }
         return combineLatest([this.getCurrentMonthTokenUsage(), this.getAccountTokenBudgetOverride()]).pipe(
-          map(([used, override]) => ({ used, limit: override?.budget_value ?? null })),
+          map(([usage, override]) => ({ ...usage, limit: override?.budget_value ?? null })),
         );
       }),
       catchError(() => of(null)),
