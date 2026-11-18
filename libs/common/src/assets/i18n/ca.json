@@ -2439,7 +2439,7 @@
 	"search.configuration.manage-embeds-modal.title": "Configuracions",
 	"search.configuration.modification-warning": "Canvis sense desar. Deseu-los o restabliu per descartar-los.",
 	"search.configuration.options.nuclia-image": "El millor per al reconeixement d’imatges - Data Platform",
-	"search.configuration.options.nuclia-standard": "Predeterminada d'Data Platform",
+	"search.configuration.options.nuclia-standard": "Predeterminada d'Agentic RAG",
 	"search.configuration.overwrite-config-confirm.description": "Això substituirà la configuració desada pels canvis actuals. Aquesta acció no es pot desfer.",
 	"search.configuration.overwrite-config-confirm.title": "Vols sobreescriure {{configName}}?",
 	"search.configuration.panel-title": "Configuració",

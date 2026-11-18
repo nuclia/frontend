@@ -2439,7 +2439,7 @@
 	"search.configuration.manage-embeds-modal.title": "Configurations",
 	"search.configuration.modification-warning": "Unsaved changes. Save them or reset to discard.",
 	"search.configuration.options.nuclia-image": "Best for image recognition - Data Platform",
-	"search.configuration.options.nuclia-standard": "Data Platform default",
+	"search.configuration.options.nuclia-standard": "Agentic RAG default",
 	"search.configuration.overwrite-config-confirm.description": "This will replace the saved configuration with your current changes. This action cannot be undone.",
 	"search.configuration.overwrite-config-confirm.title": "Overwrite {{configName}} ?",
 	"search.configuration.panel-title": "Configuration settings",

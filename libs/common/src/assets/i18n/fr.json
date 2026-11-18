@@ -2439,7 +2439,7 @@
 	"search.configuration.manage-embeds-modal.title": "Configurations",
 	"search.configuration.modification-warning": "Modifications non enregistrées. Enregistrez-les ou réinitialisez pour les annuler.",
 	"search.configuration.options.nuclia-image": "Meilleur pour la reconnaissance d’images - Data Platform",
-	"search.configuration.options.nuclia-standard": "Par défaut Data Platform",
+	"search.configuration.options.nuclia-standard": "Par défaut Agentic RAG",
 	"search.configuration.overwrite-config-confirm.description": "Cette action remplacera la configuration enregistrée par vos modifications actuelles. Cette action est irréversible.",
 	"search.configuration.overwrite-config-confirm.title": "Écraser {{configName}} ?",
 	"search.configuration.panel-title": "Paramètres de configuration",
