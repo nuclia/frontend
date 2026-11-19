@@ -49,7 +49,6 @@ import {
   suggest,
   SuggestOptions,
 } from '../search';
-import { Agentic } from '../search/agentic';
 import { Ask, PredictAnswerOptions } from '../search/ask.models';
 import { SyncManager } from '../sync/sync';
 import { ISyncManager } from '../sync/sync.models';
@@ -349,10 +348,6 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   getResourceFromData(data: IResource): Resource {
     return new Resource(this.nuclia, this.id, data);
-  }
-
-  createAgenticRAGPipeline(steps: Agentic.Steps): Agentic.Pipeline {
-    return new Agentic.Pipeline(this, steps);
   }
 
   /**
