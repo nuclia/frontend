@@ -20,7 +20,7 @@
         {{ 'generic.email' | translate }}*
       </pa-input>
 
-      @if (!editMode) {
+      @if (!editMode && isRagAccount()) {
         <pa-toggle
           formControlName="allow_kb_management"
           labelOnRight
