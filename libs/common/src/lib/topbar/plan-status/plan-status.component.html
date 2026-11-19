@@ -22,7 +22,9 @@
     <pa-chip class="plan-summary">
       <ng-container [ngTemplateOutlet]="label"></ng-container>
       @if (vm.used !== null) {
-        <span class="plan-summary__tokens">
+        <span
+          class="plan-summary__tokens"
+          [paTooltip]="'account.nuclia-tokens.consumption-from' | translate: { date: (vm.from | date) }">
           @if (vm.limit !== null) {
             {{
               'account.trial.token-usage-value'
