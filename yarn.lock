@@ -8306,6 +8306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sindresorhus/transliterate@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@sindresorhus/transliterate@npm:3.0.0"
+  checksum: 10/f2b681fdbb3f3b8176644301c7c707d524d251a1e1194daada9e46fb4a0e045c974e5a0aa2c3087808b798d8d87060bf56ea3ca7f8cb3a2cfd8db7edca5c1bdd
+  languageName: node
+  linkType: hard
+
 "@sinonjs/commons@npm:^3.0.1":
   version: 3.0.1
   resolution: "@sinonjs/commons@npm:3.0.1"
@@ -9807,13 +9814,6 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: 10/4e5aed58cabb2bbf6f725da13421aa50a49abb6bc17bfab6c31b8774b073fa7b50d557c61f961a09a85f6056151190f8ac95f13f5b48136ba5841f7d4484ec56
-  languageName: node
-  linkType: hard
-
-"@types/latinize@npm:^0.2.16":
-  version: 0.2.18
-  resolution: "@types/latinize@npm:0.2.18"
-  checksum: 10/72dda24bdf09d07c4984652d7ec113b7fec37edbd6dd2ef4c3b3b17c825d6ff0d23c01b88eea66044f9c0307e827f18226db6c1d4ecd10c301e5bc1ed20dd38d
   languageName: node
   linkType: hard
 
@@ -17917,13 +17917,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"latinize@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "latinize@npm:0.5.0"
-  checksum: 10/bc6b56c93379748d603e2051dd84929dc81690595a6a6b0491cba1f680ccbdeea65f6237a995259891b1615e4ea7cba0c98be3ab6caa340f1ae712a637e975fc
-  languageName: node
-  linkType: hard
-
 "launch-editor@npm:^2.14.1":
   version: 2.14.2
   resolution: "launch-editor@npm:2.14.2"
@@ -20154,6 +20147,7 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^12.3.0"
     "@schematics/angular": "npm:22.1.7"
     "@sentry/angular": "npm:11.10.0"
+    "@sindresorhus/transliterate": "npm:3.0.0"
     "@spartan-ng/brain": "npm:1.9.0"
     "@spartan-ng/cli": "npm:1.9.0"
     "@storybook/addon-docs": "npm:10.6.5"
@@ -20176,7 +20170,6 @@ __metadata:
     "@types/d3": "npm:^7.4.3"
     "@types/jexl": "npm:^2.2.0"
     "@types/json-schema": "npm:^7.0.15"
-    "@types/latinize": "npm:^0.2.16"
     "@types/lru-cache": "npm:^5.1.0"
     "@types/mime": "npm:^3.0.4"
     "@types/node": "npm:20.19.9"
@@ -20222,7 +20215,6 @@ __metadata:
     isomorphic-unfetch: "npm:^4.0.2"
     jiti: "npm:2.4.2"
     jsdom: "npm:^26.1.0"
-    latinize: "npm:^0.5.0"
     lint-staged: "npm:^16.4.0"
     localstorage-polyfill: "npm:^1.0.1"
     mime: "npm:3.0.0"
