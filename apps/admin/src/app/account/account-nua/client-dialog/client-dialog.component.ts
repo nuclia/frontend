@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  AccountService,
   BillingService,
   FeaturesService,
   HintComponent,
@@ -47,13 +48,15 @@ const DEFAULT_TOKENS_LIMIT = 50_000;
 })
 export class ClientDialogComponent implements OnInit {
   private billingService = inject(BillingService);
+  private accountService = inject(AccountService);
 
   account = this.sdkService.currentAccount.pipe(take(1));
   hasSubscription = this.billingService.getSubscription().pipe(map((subscription) => !!subscription));
+  isRagAccount = this.accountService.isRagAccount;
 
   email = this.userService.userPrefs.pipe(
     filter((prefs) => !!prefs),
-    map((prefs) => prefs!.email),
+    map((prefs) => prefs.email),
     take(1),
   );
 
