@@ -108,11 +108,15 @@ export class MissingLabelsDialogComponent {
             return this.labelsService.saveLabelSet(labelSet, payload).pipe(
               catchError((error) => {
                 if (error?.status === 422) {
-                  this.toaster.error(this.translate.instant('label-set.duplicate-title', { title: payload.title }));
+                  if (error?.body?.detail?.[0]?.type === 'value_error') {
+                    this.toaster.error(this.translate.instant('label-set.duplicate-labels', { title: payload.title }));
+                  } else {
+                    this.toaster.error(this.translate.instant('label-set.duplicate-title', { title: payload.title }));
+                  }
                 } else {
                   this.toaster.error('label-set.error');
                 }
-                throw error;
+                return of(undefined);
               }),
             );
           });

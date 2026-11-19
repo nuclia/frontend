@@ -17,6 +17,11 @@ export function noDuplicateListItemsValidator(separator: string, error: string):
       .split(separator)
       .map((item) => item.trim())
       .filter((item) => !!item);
-    return list.some((item, index) => list.lastIndexOf(item) !== index) ? { duplicate: error } : null;
+    return list.some((item, index) => {
+      const duplicatedIndex = list.findIndex((i) => i.toLowerCase() === item.toLowerCase());
+      return duplicatedIndex !== -1 && duplicatedIndex !== index;
+    })
+      ? { duplicate: error }
+      : null;
   };
 }
