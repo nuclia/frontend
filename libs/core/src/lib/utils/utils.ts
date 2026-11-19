@@ -1,7 +1,7 @@
-import latinize from 'latinize';
-import { map, Observable, of, Subject, take } from 'rxjs';
 import { LearningConfigurations } from '@nuclia/core';
+import transliterate from '@sindresorhus/transliterate';
 import DOMPurify from 'dompurify';
+import { map, Observable, of, Subject, take } from 'rxjs';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -79,7 +79,7 @@ export class STFUtils {
     }
 
     // latinize characters when possible
-    let slug = latinize(text);
+    let slug = transliterate(text);
 
     // Strip non allowed characters
     slug = slug.replaceAll(/[^\w\s-]+/g, '');
