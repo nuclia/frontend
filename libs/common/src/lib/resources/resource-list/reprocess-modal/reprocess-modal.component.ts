@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { isOriginalFieldId, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -16,6 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ConversationField, IFieldData, Resource, ResourceField, ResourceProperties } from '@nuclia/core';
 import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
+import { getOriginalFields } from './reprocess-modal.utils';
 
 @Component({
   imports: [
@@ -51,22 +52,8 @@ export class ReprocessModalComponent {
     ),
   );
   resource = signal<Resource | null>(null);
-  fields = computed<ResourceField[]>(() =>
-    Object.entries(this.resource()?.data || {})
-      .filter(([fieldType]) => ['files', 'links', 'texts', 'conversations'].includes(fieldType))
-      .reduce((acc, [fieldType, fields]) => {
-        acc.push(
-          ...Object.entries(fields)
-            .filter(([fieldId]) => isOriginalFieldId(fieldId))
-            .map(([fieldId, field]) => ({
-              ...field,
-              field_id: fieldId,
-              field_type: fieldType.slice(0, -1),
-            })),
-        );
-        return acc;
-      }, [] as ResourceField[]),
-  );
+  isBulk = !!this.modal.config.data?.['bulk'];
+  fields = computed<ResourceField[]>(() => getOriginalFields(this.resource()));
   currentField = toSignal(this.form.controls.field.valueChanges);
   fieldStrategy = computed(() => {
     const fieldValue = this.fields().find((f) => f.field_id === this.currentField())?.value as Exclude<
@@ -78,6 +65,11 @@ export class ReprocessModalComponent {
   loading = signal(false);
 
   constructor() {
+    if (this.isBulk) {
+      this.form.controls.field.disable();
+      return;
+    }
+
     effect(() => {
       if (this.fields().length > 0) {
         this.form.controls.field.setValue(this.fields()[0].field_id);
@@ -100,6 +92,10 @@ export class ReprocessModalComponent {
 
   submit() {
     const value = this.form.getRawValue();
+    if (this.isBulk) {
+      this.modal.close(value.extractStrategy);
+      return;
+    }
     const field = this.fields().find((f) => f.field_id === value.field);
     if (field) {
       this.loading.set(true);

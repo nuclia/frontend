@@ -1828,7 +1828,7 @@
 	"resource.reprocess-modal.extract-configuration": "Configuration d'extraction",
 	"resource.reprocess-modal.field-to-reprocess": "Champ à retraiter",
 	"resource.reprocess-modal.no-configs": "Vous n'avez pas encore créé de configurations d'extraction.",
-	"resource.reprocess-modal.title": "Retraitement avec stratégie",
+	"resource.reprocess-modal.title": "Repenser avec une nouvelle stratégie",
 	"resource.resource_page_number": "{{num}} par page",
 	"resource.resources": "Ressources",
 	"resource.save-successful": "Ressource économisée",

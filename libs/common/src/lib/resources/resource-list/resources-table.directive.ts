@@ -13,7 +13,7 @@ import {
 } from '@flaps/core';
 import { HeaderCell, IconModel, ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { HIDDEN_PREFIX, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
+import { HIDDEN_PREFIX, Resource, RESOURCE_STATUS, ResourceProperties, SortField, SortOption } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
@@ -34,6 +34,7 @@ import { delay, finalize, map, switchMap } from 'rxjs/operators';
 import { ResourceCacheService } from '../resource-cache.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReprocessModalComponent } from './reprocess-modal/reprocess-modal.component';
+import { getOriginalFields } from './reprocess-modal/reprocess-modal.utils';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false },
@@ -296,10 +297,11 @@ export class ResourcesTableDirective implements OnInit {
       }),
       switchMap(() => {
         const bulkActionItems = resources.map((resource) => this.updateBulkAction(defer(() => resource.delete())));
-        return from(bulkActionItems);
+        return from(bulkActionItems).pipe(
+          mergeMap((obs) => obs, 6),
+          toArray(),
+        );
       }),
-      mergeMap((obs) => obs, 6),
-      toArray(),
       delay(1000),
       switchMap(() => this.resourceListService.loadResources()),
       tap(() => {
@@ -375,45 +377,56 @@ export class ResourcesTableDirective implements OnInit {
   }
 
   reprocess(resources: Resource[]) {
-    const wait: number = this.resourceListService.status === RESOURCE_STATUS.ERROR ? 2000 : 1000;
     const title = resources.length > 1 ? 'resource.confirm-reprocess.plural-title' : 'resource.confirm-reprocess.title';
     const description =
       resources.length > 1 ? 'resource.confirm-reprocess.plural-description' : 'resource.confirm-reprocess.description';
 
-    return this.modalService
-      .openConfirm({
-        title,
-        description,
-      })
-      .onClose.pipe(
-        filter((yes) => !!yes),
-        tap((yes) => {
-          this.isLoading = true;
-          if (resources.length > 1) {
-            this.bulkAction = {
-              inProgress: true,
-              done: 0,
-              errors: 0,
-              total: resources.length,
-              label: 'generic.reindexing',
-            };
-            this.cdr.markForCheck();
-          }
-        }),
-        switchMap(() => {
-          const bulkActionItems = resources.map((resource) => this.updateBulkAction(defer(() => resource.reprocess())));
-          return from(bulkActionItems);
-        }),
-        mergeMap((obs) => obs, 6),
-        toArray(),
-        delay(wait),
-        switchMap(() => this.resourceListService.loadResources()),
-        tap(() => {
-          this.manageBulkActionResults('reprocessing');
-          this.sdk.refreshCounter(true);
+    return this.reprocessConfirmed(
+      resources,
+      this.modalService
+        .openConfirm({
+          title,
+          description,
+        })
+        .onClose.pipe(filter((yes) => !!yes)),
+      (resource) => resource.reprocess(),
+    );
+  }
+
+  private reprocessConfirmed<T>(
+    resources: Resource[],
+    confirmed: Observable<T>,
+    job: (resource: Resource, value: T) => Observable<void>,
+  ) {
+    const wait: number = this.resourceListService.status === RESOURCE_STATUS.ERROR ? 2000 : 1000;
+    return confirmed.pipe(
+      tap(() => {
+        this.isLoading = true;
+        if (resources.length > 1) {
+          this.bulkAction = {
+            inProgress: true,
+            done: 0,
+            errors: 0,
+            total: resources.length,
+            label: 'generic.reindexing',
+          };
           this.cdr.markForCheck();
-        }),
-      );
+        }
+      }),
+      switchMap((value) =>
+        from(resources.map((resource) => this.updateBulkAction(defer(() => job(resource, value))))).pipe(
+          mergeMap((obs) => obs, 6),
+          toArray(),
+        ),
+      ),
+      delay(wait),
+      switchMap(() => this.resourceListService.loadResources()),
+      tap(() => {
+        this.manageBulkActionResults('reprocessing');
+        this.sdk.refreshCounter(true);
+        this.cdr.markForCheck();
+      }),
+    );
   }
 
   reprocessStrategy(resources: Resource) {
@@ -426,8 +439,18 @@ export class ResourcesTableDirective implements OnInit {
   }
 
   bulkReprocess() {
+    this.runBulkReprocess((resources) => this.reprocess(resources));
+  }
+
+  bulkReprocessStrategy() {
+    this.runBulkReprocess((resources) =>
+      resources.length === 1 ? this.reprocessStrategy(resources[0]) : this.reprocessStrategyInBulk(resources),
+    );
+  }
+
+  private runBulkReprocess(action: (resources: Resource[]) => Observable<unknown>) {
     const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
-    resourcesObs.pipe(switchMap((resources) => this.reprocess(resources))).subscribe({
+    resourcesObs.pipe(switchMap(action)).subscribe({
       next: () => {
         if (this.allResourcesSelected) {
           this.toaster.info('resource.reindex-all-info');
@@ -438,6 +461,30 @@ export class ResourcesTableDirective implements OnInit {
         this.allResourcesSelected = false;
       },
     });
+  }
+
+  protected reprocessStrategyInBulk(resources: Resource[]) {
+    return this.reprocessConfirmed(
+      resources,
+      this.modalService
+        .openModal(ReprocessModalComponent, new ModalConfig({ data: { bulk: true } }))
+        .onClose.pipe(filter((strategy): strategy is string => !!strategy)),
+      (resource, strategy) => this.applyExtractStrategy(resource.id, strategy),
+    );
+  }
+
+  private applyExtractStrategy(resourceId: string, strategy: string): Observable<void> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.getResource(resourceId, [ResourceProperties.BASIC, ResourceProperties.VALUES])),
+      switchMap((resource) =>
+        from(getOriginalFields(resource)).pipe(
+          mergeMap((field) => resource.patchField(field.field_type, field.field_id, { extract_strategy: strategy })),
+          toArray(),
+        ),
+      ),
+      map(() => undefined),
+    );
   }
 
   changeVisibility(resources: Resource[], hide: boolean) {
