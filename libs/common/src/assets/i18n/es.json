@@ -1828,7 +1828,7 @@
 	"resource.reprocess-modal.extract-configuration": "Configuración de extracción",
 	"resource.reprocess-modal.field-to-reprocess": "Campo a reprocesar",
 	"resource.reprocess-modal.no-configs": "Aún no has creado ninguna configuración de extracción.",
-	"resource.reprocess-modal.title": "Reprocesar con estrategia",
+	"resource.reprocess-modal.title": "Reprocesar con nueva estrategia",
 	"resource.resource_page_number": "{{num}} por página",
 	"resource.resources": "Recursos",
 	"resource.save-successful": "Recurso guardado",

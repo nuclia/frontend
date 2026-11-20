@@ -20,13 +20,26 @@
               {{ 'resource.menu.summarize' | translate }}
             </pa-button>
           }
-          <pa-button
-            aspect="basic"
-            size="small"
-            [disabled]="bulkAction.inProgress"
-            (click)="bulkReprocess()">
-            {{ 'resource.reprocess' | translate }}
-          </pa-button>
+          <div>
+            <nsi-dropdown-button
+              size="small"
+              aspect="basic"
+              [disabled]="bulkAction.inProgress"
+              [popupRef]="reprocessActions"
+              freeWidth>
+              {{ 'resource.reprocess' | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown
+              #reprocessActions
+              dontAdjustPosition>
+              <pa-option (selectOption)="bulkReprocess()">
+                {{ 'resource.reprocess' | translate }}
+              </pa-option>
+              <pa-option (selectOption)="bulkReprocessStrategy()">
+                {{ 'resource.reprocess-modal.title' | translate }}
+              </pa-option>
+            </pa-dropdown>
+          </div>
           <pa-button
             data-cy="delete-selection"
             kind="destructive"
