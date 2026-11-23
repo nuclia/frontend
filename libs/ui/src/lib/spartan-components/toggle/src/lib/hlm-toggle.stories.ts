@@ -23,7 +23,7 @@ const meta: Meta<ToggleStoryArgs> = {
     docs: {
       description: {
         component: `A two-state button that can be either on or off.
-Import <code>HlmToggleImports</code> from <code>@nuclia/ui-spartan/toggle</code> and apply <code>hlmToggle</code> to a native <code>&lt;button&gt;</code>.
+Import <code>HlmToggleImports</code> from <code>@progress/pdp-ui-spartan/toggle</code> and apply <code>hlmToggle</code> to a native <code>&lt;button&gt;</code>.
 
 Use <code>state</code> to set the initial state and listen to <code>stateChange</code> for updates. Icon-only toggles should include an <code>aria-label</code>.`,
       },

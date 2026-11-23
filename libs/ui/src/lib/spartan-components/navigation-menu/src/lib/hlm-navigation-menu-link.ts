@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnNavigationMenuLink } from '@spartan-ng/brain/navigation-menu';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'a[hlmNavigationMenuLink]',

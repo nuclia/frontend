@@ -22,7 +22,7 @@ const meta: Meta<TextareaStoryArgs> = {
     docs: {
       description: {
         component: `Style a native multi-line text field with consistent borders, focus ring, and invalid state.
-Import <code>HlmTextareaImports</code> from <code>@nuclia/ui-spartan/textarea</code> and apply <code>hlmTextarea</code> to a native <code>&lt;textarea&gt;</code>.
+Import <code>HlmTextareaImports</code> from <code>@progress/pdp-ui-spartan/textarea</code> and apply <code>hlmTextarea</code> to a native <code>&lt;textarea&gt;</code>.
 
 Native attributes such as <code>placeholder</code>, <code>rows</code>, and <code>disabled</code> work as usual.
 Set <code>forceInvalid</code> to show the invalid style, and pair the textarea with <code>hlmLabel</code> through matching <code>id</code> and <code>for</code> values.`,

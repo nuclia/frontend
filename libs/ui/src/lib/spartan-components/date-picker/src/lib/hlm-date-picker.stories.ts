@@ -28,7 +28,7 @@ const meta: Meta<DatePickerStoryArgs> = {
     docs: {
       description: {
         component: `Let users choose dates from a calendar opened from a field or button. Use it for scheduling, deadlines or date filters when a full calendar should only appear during selection.
-Import <code>HlmDatePickerImports</code> from <code>@nuclia/ui-spartan/date-picker</code> (and <code>HlmLabelImports</code> from <code>@nuclia/ui-spartan/label</code> for the label). Provide a date adapter with <code>provideNativeDateAdapter()</code> and <code>provideBrnCalendarI18n()</code> (done in these stories; configure it once in your app providers).
+Import <code>HlmDatePickerImports</code> from <code>@progress/pdp-ui-spartan/date-picker</code> (and <code>HlmLabelImports</code> from <code>@progress/pdp-ui-spartan/label</code> for the label). Provide a date adapter with <code>provideNativeDateAdapter()</code> and <code>provideBrnCalendarI18n()</code> (done in these stories; configure it once in your app providers).
 
 Compose <code>hlm-date-picker</code> with either an <code>hlm-date-picker-trigger</code> (a button showing the formatted date; its content is the placeholder) or an <code>hlm-date-picker-input</code> (a typeable field with a calendar button).
 Inputs on <code>hlm-date-picker</code>: <code>date</code>, <code>minDate</code>, <code>maxDate</code>, <code>disabled</code>, <code>align</code>, <code>captionLayout</code>, <code>autoCloseOnSelect</code>, <code>formatDate</code>; output: <code>dateChange</code>. It also works with <code>ngModel</code> / reactive forms.

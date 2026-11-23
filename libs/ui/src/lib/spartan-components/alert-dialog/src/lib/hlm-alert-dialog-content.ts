@@ -1,6 +1,6 @@
 import { Directive, inject, input } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAlertDialogContent],hlm-alert-dialog-content',

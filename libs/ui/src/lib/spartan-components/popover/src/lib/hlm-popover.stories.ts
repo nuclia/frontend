@@ -29,7 +29,7 @@ const meta: Meta<PopoverStoryArgs> = {
     docs: {
       description: {
         component: `Opens a small panel anchored to a trigger for contextual information or controls. Use it for quick settings, filters, or compact forms that do not need a full dialog.
-Import <code>HlmPopoverImports</code> from <code>@nuclia/ui-spartan/popover</code> and wrap a <code>button[hlmPopoverTrigger]</code> and a <code>[hlmPopoverContent]</code> element in <code>hlm-popover</code>. The content must use the <code>*hlmPopoverPortal</code> structural directive, which renders it lazily in an overlay.
+Import <code>HlmPopoverImports</code> from <code>@progress/pdp-ui-spartan/popover</code> and wrap a <code>button[hlmPopoverTrigger]</code> and a <code>[hlmPopoverContent]</code> element in <code>hlm-popover</code>. The content must use the <code>*hlmPopoverPortal</code> structural directive, which renders it lazily in an overlay.
 
 Inside the content, <code>hlmPopoverHeader</code>, <code>hlmPopoverTitle</code> and <code>hlmPopoverDescription</code> provide the standard layout. <code>align</code>, <code>sideOffset</code> and <code>offsetX</code> position the panel; listen to <code>stateChanged</code> or <code>closed</code> on <code>hlm-popover</code>.
 Icon-only triggers need an <code>aria-label</code>. Unlike a tooltip, a popover can hold interactive content and also works with touch.`,

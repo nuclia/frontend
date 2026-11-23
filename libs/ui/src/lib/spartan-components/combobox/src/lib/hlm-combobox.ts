@@ -1,7 +1,7 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnCombobox } from '@spartan-ng/brain/combobox';
 import { BrnPopover, provideBrnPopoverConfig, provideBrnPopoverDefaultOptions } from '@spartan-ng/brain/popover';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmCombobox],hlm-combobox',

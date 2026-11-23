@@ -9,8 +9,8 @@ import {
   numberAttribute,
   untracked,
 } from '@angular/core';
-import { HlmSelectImports } from '@nuclia/ui-spartan/select';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { HlmSelectImports } from '@progress/pdp-ui-spartan/select';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { createPageArray, outOfBoundCorrection } from './hlm-numbered-pagination';
 import { HlmPagination } from './hlm-pagination';
 import { HlmPaginationContent } from './hlm-pagination-content';

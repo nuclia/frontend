@@ -21,7 +21,7 @@ const meta: Meta<AutocompleteStoryArgs> = {
     docs: {
       description: {
         component: `Suggests matching options as users type into a text field. Use it for search suggestions or assisted text entry to reduce typing and help users discover relevant values.
-Import <code>HlmAutocompleteImports</code> from <code>@nuclia/ui-spartan/autocomplete</code> and compose <code>hlm-autocomplete</code> with an <code>hlm-autocomplete-input</code> and an <code>hlm-autocomplete-content</code> rendered through <code>*hlmAutocompletePortal</code>.
+Import <code>HlmAutocompleteImports</code> from <code>@progress/pdp-ui-spartan/autocomplete</code> and compose <code>hlm-autocomplete</code> with an <code>hlm-autocomplete-input</code> and an <code>hlm-autocomplete-content</code> rendered through <code>*hlmAutocompletePortal</code>.
 Inside the content, use <code>hlmAutocompleteList</code> (with an <code>aria-label</code>) holding <code>hlm-autocomplete-item</code> elements with a <code>value</code>, plus optional <code>hlm-autocomplete-empty</code>, <code>hlmAutocompleteGroup</code>/<code>hlmAutocompleteLabel</code>, <code>hlmAutocompleteSeparator</code> and <code>hlm-autocomplete-status</code>.
 
 Items are filtered by what the user types. Use <code>[(value)]</code> and <code>[(search)]</code> (or forms) to read the selected value and the typed text; for server-side suggestions use <code>hlm-autocomplete-search</code> instead.

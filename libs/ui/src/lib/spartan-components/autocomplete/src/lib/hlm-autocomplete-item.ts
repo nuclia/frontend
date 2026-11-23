@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnAutocompleteItem } from '@spartan-ng/brain/autocomplete';
 
 @Component({

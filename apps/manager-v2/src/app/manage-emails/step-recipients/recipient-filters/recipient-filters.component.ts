@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matInfoRound } from '@ng-icons/material-symbols/round';
-import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { HlmLabelImports } from '@nuclia/ui-spartan/label';
-import { HlmToggleGroupImports } from '@nuclia/ui-spartan/toggle-group';
-import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
+import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import { HlmLabelImports } from '@progress/pdp-ui-spartan/label';
+import { HlmToggleGroupImports } from '@progress/pdp-ui-spartan/toggle-group';
+import { HlmTooltipImports } from '@progress/pdp-ui-spartan/tooltip';
 import { RecipientFilter } from '../../email.models';
 import { RecipientsService } from '../recipients.service';
 import { USER_SEGMENTS, UserSegment } from '../user-segments';

@@ -22,7 +22,7 @@ const meta: Meta<BadgeStoryArgs> = {
     docs: {
       description: {
         component: `Highlight a status, count, or short label.
-Import <code>HlmBadgeImports</code> from <code>@nuclia/ui-spartan/badge</code> and apply <code>hlmBadge</code> to an element (or use <code>hlm-badge</code>).
+Import <code>HlmBadgeImports</code> from <code>@progress/pdp-ui-spartan/badge</code> and apply <code>hlmBadge</code> to an element (or use <code>hlm-badge</code>).
 
 Choose a <code>variant</code> to convey meaning; apply it to an anchor to get hover styles for the <code>default</code>, <code>secondary</code>, <code>destructive</code>, and <code>outline</code> variants.`,
       },

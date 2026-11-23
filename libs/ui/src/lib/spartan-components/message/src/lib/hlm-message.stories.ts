@@ -23,9 +23,9 @@ const meta: Meta<MessageStoryArgs> = {
     docs: {
       description: {
         component: `Organizes a message within a conversation, combining its content with optional avatar, sender details, timestamp, and actions. Use it to make authorship and message grouping clear in chat interfaces.
-Import <code>HlmMessageImports</code> from <code>@nuclia/ui-spartan/message</code>. The examples also use the avatar and bubble components.
+Import <code>HlmMessageImports</code> from <code>@progress/pdp-ui-spartan/message</code>. The examples also use the avatar and bubble components.
 
-Compose <code>hlmMessage</code> with an optional <code>hlmMessageAvatar</code> and an <code>hlmMessageContent</code> column made of <code>hlmMessageHeader</code> (sender name), a bubble (<code>hlmBubble</code> from <code>@nuclia/ui-spartan/bubble</code>) and <code>hlmMessageFooter</code> (time, status). Wrap consecutive messages in <code>hlmMessageGroup</code>.
+Compose <code>hlmMessage</code> with an optional <code>hlmMessageAvatar</code> and an <code>hlmMessageContent</code> column made of <code>hlmMessageHeader</code> (sender name), a bubble (<code>hlmBubble</code> from <code>@progress/pdp-ui-spartan/bubble</code>) and <code>hlmMessageFooter</code> (time, status). Wrap consecutive messages in <code>hlmMessageGroup</code>.
 The <code>align</code> input is <code>start</code> (incoming, default) or <code>end</code> (outgoing, mirrors the row). Use semantic elements such as <code>article</code> for each message, and mark purely decorative avatars with <code>aria-hidden="true"</code> since the sender is already named in the header.`,
       },
     },

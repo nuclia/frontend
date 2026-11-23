@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCheckCircleRound, matAccountTreeRound } from '@ng-icons/material-symbols/round';
+import { matAccountTreeRound, matCheckCircleRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmMarkerImports } from '../index';
 import { HlmMarker } from './hlm-marker';
@@ -23,7 +23,7 @@ const meta: Meta<MarkerStoryArgs> = {
     docs: {
       description: {
         component: `Displays a status update, system note, or labeled separator within a conversation. Use it to distinguish events such as processing activity or conversation milestones from messages sent by participants.
-Import <code>HlmMarkerImports</code> from <code>@nuclia/ui-spartan/marker</code>.
+Import <code>HlmMarkerImports</code> from <code>@progress/pdp-ui-spartan/marker</code>.
 
 Compose <code>hlmMarker</code> with an optional <code>hlmMarkerIcon</code> (decorative, hidden from assistive technology) and an <code>hlmMarkerContent</code> holding the text. The <code>variant</code> input is <code>default</code> (plain line), <code>separator</code> (text centered between two rules) or <code>border</code> (underlined).
 Because the icon is <code>aria-hidden</code>, the text must carry the whole meaning of the marker.`,

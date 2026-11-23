@@ -23,7 +23,7 @@ const meta: Meta<ComboboxStoryArgs> = {
     docs: {
       description: {
         component: `Combine a text input with a list of predefined options to select from. Use it when users need to search a long list of choices rather than browse a simple select menu.
-Import <code>HlmComboboxImports</code> from <code>@nuclia/ui-spartan/combobox</code> (and <code>HlmLabelImports</code> from <code>@nuclia/ui-spartan/label</code> for the label).
+Import <code>HlmComboboxImports</code> from <code>@progress/pdp-ui-spartan/combobox</code> (and <code>HlmLabelImports</code> from <code>@progress/pdp-ui-spartan/label</code> for the label).
 
 Compose <code>hlm-combobox</code> with an <code>hlm-combobox-input</code> and an <code>hlm-combobox-content</code> rendered through <code>*hlmComboboxPortal</code>, containing a <code>div[hlmComboboxList]</code> of <code>hlm-combobox-item</code> (each with a <code>value</code>) and an optional <code>hlm-combobox-empty</code>.
 Group options with <code>hlmComboboxGroup</code>, <code>hlmComboboxLabel</code> and <code>hlmComboboxSeparator</code>.

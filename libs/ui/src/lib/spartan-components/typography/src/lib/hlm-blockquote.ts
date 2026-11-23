@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 export const hlmBlockquote = 'mt-6 border-border border-l-2 pl-6 italic';
 

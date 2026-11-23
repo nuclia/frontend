@@ -1,7 +1,7 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnAutocompleteSearch } from '@spartan-ng/brain/autocomplete';
 import { BrnPopover, provideBrnPopoverConfig, provideBrnPopoverDefaultOptions } from '@spartan-ng/brain/popover';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteSearch],hlm-autocomplete-search',

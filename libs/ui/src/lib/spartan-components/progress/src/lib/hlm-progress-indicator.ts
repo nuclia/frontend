@@ -1,7 +1,7 @@
 import { Directionality } from '@angular/cdk/bidi';
 import { Directive, computed, inject } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnProgressIndicator, injectBrnProgress } from '@spartan-ng/brain/progress';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmProgressIndicator],hlm-progress-indicator',

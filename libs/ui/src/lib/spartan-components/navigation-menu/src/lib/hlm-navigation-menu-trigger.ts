@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnNavigationMenuTrigger } from '@spartan-ng/brain/navigation-menu';
 
 @Component({

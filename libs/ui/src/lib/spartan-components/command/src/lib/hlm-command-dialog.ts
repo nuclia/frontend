@@ -8,9 +8,9 @@ import {
   linkedSignal,
   output,
 } from '@angular/core';
+import { HlmDialogImports } from '@progress/pdp-ui-spartan/dialog';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
-import { HlmDialogImports } from '@nuclia/ui-spartan/dialog';
-import { hlm } from '@nuclia/ui-spartan/utils';
 import { ClassValue } from 'clsx';
 
 @Component({

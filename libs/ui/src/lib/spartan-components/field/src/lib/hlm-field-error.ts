@@ -10,8 +10,8 @@ import {
   input,
   OnDestroy,
 } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnField, BrnFieldA11yService } from '@spartan-ng/brain/field';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-field-error',

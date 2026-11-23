@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreHorizRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-breadcrumb-ellipsis',

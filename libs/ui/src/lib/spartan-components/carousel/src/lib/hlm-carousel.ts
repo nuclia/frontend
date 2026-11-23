@@ -10,7 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import type { EmblaEventType, EmblaOptionsType, EmblaPluginType } from 'embla-carousel';
 import { EmblaCarouselDirective } from 'embla-carousel-angular';
 

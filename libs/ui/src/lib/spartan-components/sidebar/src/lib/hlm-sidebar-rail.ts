@@ -1,5 +1,5 @@
 import { Directive, inject, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmSidebarService } from './hlm-sidebar.service';
 
 @Directive({

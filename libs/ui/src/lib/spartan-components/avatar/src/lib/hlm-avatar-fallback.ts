@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnAvatarFallback } from '@spartan-ng/brain/avatar';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAvatarFallback]',

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matArrowForwardRound } from '@ng-icons/material-symbols/round';
-import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { HlmButton, provideBrnButtonConfig } from '@progress/pdp-ui-spartan/button';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { HlmCarousel } from './hlm-carousel';
 
 @Component({

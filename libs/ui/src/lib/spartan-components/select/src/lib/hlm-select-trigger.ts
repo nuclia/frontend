@@ -2,7 +2,7 @@ import type { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { BrnSelectTrigger } from '@spartan-ng/brain/select';
 import type { ClassValue } from 'clsx';

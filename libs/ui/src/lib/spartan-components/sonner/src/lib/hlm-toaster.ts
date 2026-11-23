@@ -8,8 +8,8 @@ import {
   matInfoRound,
   matWarningRound,
 } from '@ng-icons/material-symbols/round';
-import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
 import type { ClassValue } from 'clsx';
 

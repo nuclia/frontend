@@ -10,9 +10,9 @@ import {
   output,
 } from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
 import { BrnSwitch, type BrnSwitchSize } from '@spartan-ng/brain/switch';
-import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 import { HlmSwitchThumb } from './hlm-switch-thumb';
 

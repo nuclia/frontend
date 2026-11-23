@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
-import { HlmLabel } from '@nuclia/ui-spartan/label';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { HlmLabel } from '@progress/pdp-ui-spartan/label';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmFieldLabel],hlm-field-label',

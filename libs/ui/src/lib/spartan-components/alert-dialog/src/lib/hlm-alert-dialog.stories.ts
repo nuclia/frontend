@@ -25,7 +25,7 @@ const meta: Meta<AlertDialogStoryArgs> = {
     docs: {
       description: {
         component: `A modal dialog that interrupts the user with important content and expects a response.
-Import <code>HlmAlertDialogImports</code> from <code>@nuclia/ui-spartan/alert-dialog</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the trigger).
+Import <code>HlmAlertDialogImports</code> from <code>@progress/pdp-ui-spartan/alert-dialog</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the trigger).
 
 Compose <code>hlm-alert-dialog</code> with a <code>hlmAlertDialogTrigger</code> button and an <code>hlm-alert-dialog-content</code> rendered through <code>*hlmAlertDialogPortal</code>.
 Inside, use <code>hlm-alert-dialog-header</code> (<code>hlmAlertDialogTitle</code>, <code>hlmAlertDialogDescription</code>) and <code>hlm-alert-dialog-footer</code> (<code>hlmAlertDialogCancel</code>, <code>hlmAlertDialogAction</code>).

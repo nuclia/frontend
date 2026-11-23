@@ -25,7 +25,7 @@ const meta: Meta<SpinnerStoryArgs> = {
     docs: {
       description: {
         component: `An animated indicator that shows a task is in progress without specifying how much is complete. Use it for loading or processing states when a measurable progress value is not available.
-Import <code>HlmSpinnerImports</code> from <code>@nuclia/ui-spartan/spinner</code> and use <code>&lt;hlm-spinner /&gt;</code>.
+Import <code>HlmSpinnerImports</code> from <code>@progress/pdp-ui-spartan/spinner</code> and use <code>&lt;hlm-spinner /&gt;</code>.
 
 The spinner renders an icon (<code>icon</code> input, <code>matDataUsageRound</code> by default; register custom icons with <code>provideIcons</code>) and exposes <code>role="status"</code>. Set a meaningful <code>aria-label</code> (default "Loading").
 Resize it with a text-size class, e.g. <code>class="text-2xl"</code>. The rotation is disabled for users who prefer reduced motion.`,

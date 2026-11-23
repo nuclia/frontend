@@ -29,7 +29,7 @@ const meta: Meta<ScrollAreaStoryArgs> = {
     docs: {
       description: {
         component: `Contains overflowing content in a scrollable region with consistently styled scrollbars. Use it for long lists or panels that need to stay within a fixed area of the layout.
-Import <code>HlmScrollAreaImports</code> from <code>@nuclia/ui-spartan/scroll-area</code> and add the <code>hlm</code> attribute to an <code>ng-scrollbar</code> element (also import <code>NgScrollbar</code> from <code>ngx-scrollbar</code>). The directive applies the Spartan track and thumb styles.
+Import <code>HlmScrollAreaImports</code> from <code>@progress/pdp-ui-spartan/scroll-area</code> and add the <code>hlm</code> attribute to an <code>ng-scrollbar</code> element (also import <code>NgScrollbar</code> from <code>ngx-scrollbar</code>). The directive applies the Spartan track and thumb styles.
 
 Give the element a fixed height or width so the content can overflow. Inputs such as <code>orientation</code>, <code>visibility</code>, <code>appearance</code> and <code>position</code> come from <code>ngx-scrollbar</code>, and it emits <code>afterInit</code> and <code>afterUpdate</code>.
 The scrolling happens in a native container, so keyboard and screen reader behaviour is preserved; label the region when it holds standalone content.`,

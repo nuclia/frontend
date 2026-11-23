@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { BrnDrawer, BrnDrawerHandle } from '@spartan-ng/brain/drawer';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-drawer-content',

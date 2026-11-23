@@ -1,5 +1,5 @@
 import { Directive, input } from '@angular/core';
-import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
+import { HlmButton, provideBrnButtonConfig } from '@progress/pdp-ui-spartan/button';
 
 @Directive({
   selector: 'button[hlmAttachmentAction]',

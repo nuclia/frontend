@@ -1,5 +1,5 @@
 import { provideIcons } from '@ng-icons/core';
-import { matMailRound, matGroupRound, matSendRound } from '@ng-icons/material-symbols/round';
+import { matGroupRound, matMailRound, matSendRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { SpartanStepperImports } from '../index';
@@ -28,7 +28,7 @@ const meta: Meta<StepperStoryArgs> = {
     docs: {
       description: {
         component: `A multi-step wizard that guides users through a sequence of steps. This is a Spartan <em>block</em> built on the CDK stepper.
-Import <code>SpartanStepperImports</code> from <code>@nuclia/ui-spartan/stepper</code> and compose <code>spartan-stepper</code> with <code>spartan-step</code> children, each with a <code>label</code> and its content.
+Import <code>SpartanStepperImports</code> from <code>@progress/pdp-ui-spartan/stepper</code> and compose <code>spartan-stepper</code> with <code>spartan-step</code> children, each with a <code>label</code> and its content.
 
 Use <code>spartanStepperNext</code> and <code>spartanStepperPrevious</code> on buttons inside a step to navigate.
 Set <code>linear</code> to require each step to be <code>completed</code> before moving on; use <code>editable</code>, <code>optional</code>, and <code>hasError</code> on steps to reflect their state.

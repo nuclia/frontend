@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input, numberAttribute, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { cva } from 'class-variance-authority';
 import { tap } from 'rxjs/operators';
 import { SpartanStep } from './spartan-step';

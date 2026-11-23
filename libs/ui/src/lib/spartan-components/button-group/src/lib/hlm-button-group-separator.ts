@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnSeparator, provideBrnSeparatorConfig } from '@spartan-ng/brain/separator';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmButtonGroupSeparator],hlm-button-group-separator',

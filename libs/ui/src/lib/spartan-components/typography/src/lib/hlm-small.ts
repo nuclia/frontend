@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 export const hlmSmall = 'text-sm font-medium leading-none';
 

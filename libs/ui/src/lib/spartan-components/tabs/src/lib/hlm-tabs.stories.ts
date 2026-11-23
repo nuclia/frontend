@@ -19,7 +19,7 @@ const meta: Meta<TabsStoryArgs> = {
     docs: {
       description: {
         component: `Organizes related content into panels, showing one panel at a time. Use tabs to switch between peer views or sections within the same context without leaving the page.
-Import <code>HlmTabsImports</code> from <code>@nuclia/ui-spartan/tabs</code> and compose <code>hlmTabs</code> (root, with the active <code>tab</code> id), <code>hlmTabsList</code>, one <code>hlmTabsTrigger="id"</code> per tab and one <code>hlmTabsContent="id"</code> panel per trigger. Use <code>ng-template hlmTabsContentLazy</code> inside a panel to render its content only when first activated, and <code>hlm-paginated-tabs-list</code> when there are too many tabs to fit.
+Import <code>HlmTabsImports</code> from <code>@progress/pdp-ui-spartan/tabs</code> and compose <code>hlmTabs</code> (root, with the active <code>tab</code> id), <code>hlmTabsList</code>, one <code>hlmTabsTrigger="id"</code> per tab and one <code>hlmTabsContent="id"</code> panel per trigger. Use <code>ng-template hlmTabsContentLazy</code> inside a panel to render its content only when first activated, and <code>hlm-paginated-tabs-list</code> when there are too many tabs to fit.
 
 Set <code>orientation</code> and <code>activationMode</code> (automatic activates on focus, manual on Enter/Space) on the root, <code>variant</code> (<code>default</code> or <code>line</code>) on the list, and <code>disabled</code> on a trigger. Listen to <code>tabActivated</code> for the active tab id.
 Keyboard arrows move between triggers. Give the list an <code>aria-label</code> describing the set of tabs.`,

@@ -10,9 +10,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { HlmCheckboxImports } from '@nuclia/ui-spartan/checkbox';
-import { HlmInputImports } from '@nuclia/ui-spartan/input';
+import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import { HlmCheckboxImports } from '@progress/pdp-ui-spartan/checkbox';
+import { HlmInputImports } from '@progress/pdp-ui-spartan/input';
 import { UserSummary } from '../../../manage-users/user.models';
 import { RecipientsService } from '../recipients.service';
 

@@ -1,6 +1,6 @@
 import { Directive, inject } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnHoverCardContentService } from '@spartan-ng/brain/hover-card';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmHoverCardContent],hlm-hover-card-content',

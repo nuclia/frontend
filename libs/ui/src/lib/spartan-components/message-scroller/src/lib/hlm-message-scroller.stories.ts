@@ -41,7 +41,7 @@ const meta: Meta<MessageScrollerStoryArgs> = {
     docs: {
       description: {
         component: `A scrollable conversation area with a shortcut back to the latest messages. Use it to let users browse earlier messages and easily return to the current conversation.
-Import <code>HlmMessageScrollerImports</code> from <code>@nuclia/ui-spartan/message-scroller</code>.
+Import <code>HlmMessageScrollerImports</code> from <code>@progress/pdp-ui-spartan/message-scroller</code>.
 
 Nest <code>hlmMessageScrollerProvider</code> (configuration, renders no box) &gt; <code>hlmMessageScroller</code> &gt; <code>hlmMessageScrollerViewport</code> &gt; <code>hlmMessageScrollerContent</code> &gt; one <code>hlmMessageScrollerItem</code> per message; add a <code>button[hlmMessageScrollerButton]</code> inside the scroller. The scroller needs a bounded height (for example <code>h-72</code> on a parent).
 The provider exposes <code>autoScroll</code> (follow new messages while at the bottom), <code>defaultScrollPosition</code> (<code>start</code>, <code>end</code> or <code>last-anchor</code>), <code>scrollEdgeThreshold</code>, <code>scrollMargin</code> and <code>scrollPreviousItemPeek</code>. Items accept <code>messageId</code> and <code>scrollAnchor</code>; the viewport accepts <code>preserveScrollOnPrepend</code> to keep the position when older messages are loaded above.

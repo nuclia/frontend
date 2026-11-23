@@ -1,7 +1,7 @@
 import { Directive } from '@angular/core';
+import { hlmSeparatorClass } from '@progress/pdp-ui-spartan/separator';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnSeparator } from '@spartan-ng/brain/separator';
-import { hlmSeparatorClass } from '@nuclia/ui-spartan/separator';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmItemSeparator],hlm-item-separator',

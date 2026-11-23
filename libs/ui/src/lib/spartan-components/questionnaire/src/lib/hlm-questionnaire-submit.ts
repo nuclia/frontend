@@ -1,7 +1,7 @@
 import { Directive, input } from '@angular/core';
+import { type ButtonVariants, buttonVariants } from '@progress/pdp-ui-spartan/button';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnQuestionnaireSubmit } from '@spartan-ng/brain/questionnaire';
-import { type ButtonVariants, buttonVariants } from '@nuclia/ui-spartan/button';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmQuestionnaireSubmit]',

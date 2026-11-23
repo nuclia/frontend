@@ -1,12 +1,12 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, inject, Injector, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SisToastService } from '@nuclia/sistema';
-import { SpartanStepper, SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
-import { StepComposeComponent } from './step-compose/step-compose.component';
-import { ComposeService } from './step-compose/compose.service';
+import { SpartanStepper, SpartanStepperImports } from '@progress/pdp-ui-spartan/stepper';
 import { EmailWizardService } from './email-wizard.service';
-import { StepRecipientsComponent } from './step-recipients/step-recipients.component';
+import { ComposeService } from './step-compose/compose.service';
+import { StepComposeComponent } from './step-compose/step-compose.component';
 import { RecipientsService } from './step-recipients/recipients.service';
+import { StepRecipientsComponent } from './step-recipients/step-recipients.component';
 import { StepReviewComponent } from './step-review/step-review.component';
 
 @Component({

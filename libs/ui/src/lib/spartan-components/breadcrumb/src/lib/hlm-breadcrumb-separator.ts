@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matChevronRightRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

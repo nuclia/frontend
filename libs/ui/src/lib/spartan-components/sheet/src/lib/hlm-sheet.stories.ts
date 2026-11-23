@@ -21,7 +21,7 @@ const meta: Meta<SheetStoryArgs> = {
     docs: {
       description: {
         component: `A dialog that slides in from an edge of the screen to display content alongside the main view. Use it for details, filters, or editing tasks that benefit from a larger contextual panel.
-Import <code>HlmSheetImports</code> from <code>@nuclia/ui-spartan/sheet</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the trigger).
+Import <code>HlmSheetImports</code> from <code>@progress/pdp-ui-spartan/sheet</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the trigger).
 
 Compose <code>hlm-sheet</code> (set <code>side</code> to <code>top</code>, <code>right</code>, <code>bottom</code> or <code>left</code>) with a <code>button[hlmSheetTrigger]</code> and an <code>hlm-sheet-content</code> rendered through <code>*hlmSheetPortal</code>.
 Inside, use <code>hlmSheetHeader</code> (<code>hlmSheetTitle</code>, <code>hlmSheetDescription</code>) and <code>hlmSheetFooter</code>, and <code>button[hlmSheetClose]</code> to close it. The content shows a close button by default, hide it with <code>[showCloseButton]="false"</code>.

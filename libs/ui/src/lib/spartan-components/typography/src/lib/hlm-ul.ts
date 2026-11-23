@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 export const hlmUl = 'my-6 ml-6 list-disc [&>li]:mt-2';
 

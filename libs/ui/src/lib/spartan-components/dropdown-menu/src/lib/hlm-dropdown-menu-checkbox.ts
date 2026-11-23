@@ -1,7 +1,7 @@
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { CdkMenuItem, CdkMenuItemCheckbox, CdkMenuItemSelectable } from '@angular/cdk/menu';
 import { Directive, booleanAttribute, inject, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmDropdownMenuFocusOnHover } from './hlm-dropdown-menu-focus-on-hover';
 
 /** @internal. Use HlmDropdownMenuCheckbox instead. */

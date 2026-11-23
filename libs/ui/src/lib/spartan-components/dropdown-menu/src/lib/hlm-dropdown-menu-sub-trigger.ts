@@ -1,5 +1,6 @@
 import { CdkMenuTrigger } from '@angular/cdk/menu';
 import { computed, Directive, effect, forwardRef, inject, input } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import {
   createMenuPosition,
   MENU_SIDE,
@@ -7,7 +8,6 @@ import {
   type MenuSide,
   updateMenuPosition,
 } from '@spartan-ng/brain/core';
-import { classes } from '@nuclia/ui-spartan/utils';
 import { injectHlmDropdownMenuConfig } from './hlm-dropdown-menu-token';
 
 @Directive({

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnQuestionnaireError } from '@spartan-ng/brain/questionnaire';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector -- attribute selector matching brain API

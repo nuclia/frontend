@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnSeparator } from '@spartan-ng/brain/separator';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 export const hlmSeparatorClass =
   'inline-flex shrink-0 bg-border data-horizontal:h-px data-horizontal:w-full data-vertical:w-px data-vertical:self-stretch';

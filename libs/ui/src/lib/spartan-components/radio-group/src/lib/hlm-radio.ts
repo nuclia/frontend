@@ -14,8 +14,8 @@ import {
   PLATFORM_ID,
   Renderer2,
 } from '@angular/core';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnRadio, BrnRadioGroup, type BrnRadioChange } from '@spartan-ng/brain/radio-group';
-import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Component({

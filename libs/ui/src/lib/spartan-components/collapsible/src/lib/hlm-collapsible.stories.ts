@@ -26,7 +26,7 @@ const meta: Meta<CollapsibleStoryArgs> = {
     docs: {
       description: {
         component: `Reveal or hide a single section of content. Use it for optional details or advanced settings that should remain available without taking up space by default.
-Import <code>HlmCollapsibleImports</code> from <code>@nuclia/ui-spartan/collapsible</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for a styled trigger).
+Import <code>HlmCollapsibleImports</code> from <code>@progress/pdp-ui-spartan/collapsible</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for a styled trigger).
 
 Put <code>hlmCollapsible</code> on a wrapper, a <code>button[hlmCollapsibleTrigger]</code> inside it to toggle, and <code>hlmCollapsibleContent</code> on the section to show or hide.
 Use <code>expanded</code> to set the initial state (it supports two-way binding with <code>[(expanded)]</code>), <code>expandedChange</code> to react to changes and <code>disabled</code> to lock the section.

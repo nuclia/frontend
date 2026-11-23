@@ -18,7 +18,7 @@ const meta: Meta<NativeSelectStoryArgs> = {
     docs: {
       description: {
         component: `Lets users choose an option through the browser's built-in select control. Use it for straightforward choices where familiar platform behavior, including the mobile picker, is preferred.
-Import <code>HlmNativeSelectImports</code> from <code>@nuclia/ui-spartan/native-select</code> and place native <code>&lt;option&gt;</code> elements inside <code>hlm-native-select</code>.
+Import <code>HlmNativeSelectImports</code> from <code>@progress/pdp-ui-spartan/native-select</code> and place native <code>&lt;option&gt;</code> elements inside <code>hlm-native-select</code>.
 
 Add <code>hlmNativeSelectOption</code> to options and <code>hlmNativeSelectOptGroup</code> to <code>&lt;optgroup&gt;</code> elements so they follow the theme colors in the browser popup.
 The component is a form control: bind it with <code>ngModel</code> or reactive forms, or use <code>value</code> and <code>valueChange</code>. Give it an accessible name by pairing <code>selectId</code> with a <code>&lt;label for&gt;</code>.`,

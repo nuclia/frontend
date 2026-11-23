@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matErrorRound, matCheckCircleRound } from '@ng-icons/material-symbols/round';
+import { matCheckCircleRound, matErrorRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
 import { HlmAlertImports } from '../index';
@@ -25,7 +25,7 @@ const meta: Meta<AlertStoryArgs> = {
     docs: {
       description: {
         component: `Highlights important information within the page, such as a warning, an error, or a status update. Unlike a dialog, an alert keeps the message in context without interrupting the user's task.
-Import <code>HlmAlertImports</code> from <code>@nuclia/ui-spartan/alert</code> and compose <code>hlm-alert</code> with <code>hlmAlertTitle</code> and <code>hlmAlertDescription</code> children.
+Import <code>HlmAlertImports</code> from <code>@progress/pdp-ui-spartan/alert</code> and compose <code>hlm-alert</code> with <code>hlmAlertTitle</code> and <code>hlmAlertDescription</code> children.
 
 Add an <code>ng-icon</code> as the first child to show a leading icon, and a <code>hlmAlertAction</code> element (e.g. a small button) to place an action in the top-right corner.
 Set <code>variant</code> to <code>destructive</code> for errors. The host gets <code>role="alert"</code>, so screen readers announce it; give icon-only actions an <code>aria-label</code>.`,

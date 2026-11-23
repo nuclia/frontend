@@ -25,7 +25,7 @@ const meta: Meta<ToggleGroupStoryArgs> = {
     docs: {
       description: {
         component: `A set of two-state buttons that can be toggled on or off.
-Import <code>HlmToggleGroupImports</code> from <code>@nuclia/ui-spartan/toggle-group</code> and compose <code>hlm-toggle-group</code> with <code>button[hlmToggleGroupItem]</code> children, each with a unique <code>value</code>.
+Import <code>HlmToggleGroupImports</code> from <code>@progress/pdp-ui-spartan/toggle-group</code> and compose <code>hlm-toggle-group</code> with <code>button[hlmToggleGroupItem]</code> children, each with a unique <code>value</code>.
 
 Use <code>type="single"</code> to allow one pressed item or <code>type="multiple"</code> for several. Listen to <code>valueChange</code> for updates.
 Variant, size, spacing, and orientation are set on the group and apply to every item. Icon-only items should include an <code>aria-label</code>.`,

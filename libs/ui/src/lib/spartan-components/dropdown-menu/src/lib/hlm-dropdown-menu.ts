@@ -2,8 +2,8 @@ import { type NumberInput } from '@angular/cdk/coercion';
 import { CdkMenu } from '@angular/cdk/menu';
 import { Directive, ElementRef, inject, input, numberAttribute, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { deriveMenuSideFromTransformOrigin, MENU_SIDE, type MenuSide } from '@spartan-ng/brain/core';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmDropdownMenu],hlm-dropdown-menu',

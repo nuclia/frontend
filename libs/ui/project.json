@@ -6,36 +6,10 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "test-build": {
-      "executor": "@angular/build:application",
-      "options": {
-        "tsConfig": "libs/ui/tsconfig.spec.json",
-        "outputPath": "dist/test-build/ui",
-        "polyfills": [],
-        "styles": [],
-        "assets": [],
-        "aot": false,
-        "stylePreprocessorOptions": {
-          "includePaths": ["."]
-        }
-      }
-    },
     "test": {
-      "executor": "@angular/build:unit-test",
-      "outputs": ["{workspaceRoot}/coverage/libs/ui"],
+      "outputs": ["{projectRoot}/{options.coverage.reportsDirectory}", "{workspaceRoot}/coverage/libs/ui"],
       "options": {
-        "buildTarget": "ui:test-build",
-        "tsConfig": "libs/ui/tsconfig.spec.json",
-        "runnerConfig": true,
-        "watch": false
-      },
-      "configurations": {
-        "ci": {
-          "coverage": true
-        },
-        "watch": {
-          "watch": true
-        }
+        "coverage.reportsDirectory": "../../coverage/libs/ui"
       }
     },
     "storybook": {

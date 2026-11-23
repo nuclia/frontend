@@ -2,9 +2,9 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { ButtonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { HlmPopoverTrigger } from '@nuclia/ui-spartan/popover';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { ButtonVariants, HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import { HlmPopoverTrigger } from '@progress/pdp-ui-spartan/popover';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import {
   type BrnDatePickerTriggerBase,
   injectBrnDatePicker,

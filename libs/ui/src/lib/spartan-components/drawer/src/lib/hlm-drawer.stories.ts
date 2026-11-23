@@ -20,7 +20,7 @@ const meta: Meta<DrawerStoryArgs> = {
     docs: {
       description: {
         component: `A sliding dialog with a draggable surface, following the bottom-sheet pattern common on mobile devices. Use it for contextual details or short tasks that benefit from a touch-friendly overlay.
-Import <code>HlmDrawerImports</code> from <code>@nuclia/ui-spartan/drawer</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the buttons).
+Import <code>HlmDrawerImports</code> from <code>@progress/pdp-ui-spartan/drawer</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the buttons).
 
 Compose <code>hlm-drawer</code> with a <code>button[hlmDrawerTrigger]</code> and an <code>hlm-drawer-content</code> rendered through <code>*hlmDrawerPortal</code>.
 Inside, use <code>hlmDrawerHeader</code> (with <code>hlmDrawerTitle</code> and <code>hlmDrawerDescription</code>) and <code>hlmDrawerFooter</code>; add <code>hlmDrawerClose</code> to any button that should close the drawer.

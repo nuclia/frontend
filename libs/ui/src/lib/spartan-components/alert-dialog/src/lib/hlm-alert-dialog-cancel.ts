@@ -1,6 +1,6 @@
 import { Directive, input } from '@angular/core';
+import { HlmButton, provideBrnButtonConfig } from '@progress/pdp-ui-spartan/button';
 import { BrnDialogClose } from '@spartan-ng/brain/dialog';
-import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
 
 @Directive({
   selector: 'button[hlmAlertDialogCancel]',

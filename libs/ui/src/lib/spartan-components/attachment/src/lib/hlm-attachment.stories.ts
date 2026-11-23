@@ -1,6 +1,6 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matDescriptionRound, matCloseRound } from '@ng-icons/material-symbols/round';
+import { matCloseRound, matDescriptionRound } from '@ng-icons/material-symbols/round';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmAttachmentImports } from '../index';
 import { HlmAttachment, type AttachmentState } from './hlm-attachment';
 
@@ -26,7 +26,7 @@ const meta: Meta<AttachmentStoryArgs> = {
     docs: {
       description: {
         component: `Represents an attached file or image with a preview, file details, upload status, and related actions. Use it to help users recognize and manage files in messages or upload flows.
-Import <code>HlmAttachmentImports</code> from <code>@nuclia/ui-spartan/attachment</code> and compose <code>hlm-attachment</code> with <code>hlmAttachmentMedia</code> (icon or image preview), <code>hlmAttachmentContent</code> (<code>hlmAttachmentTitle</code> and <code>hlmAttachmentDescription</code>), and <code>hlmAttachmentActions</code> containing <code>button[hlmAttachmentAction]</code> buttons.
+Import <code>HlmAttachmentImports</code> from <code>@progress/pdp-ui-spartan/attachment</code> and compose <code>hlm-attachment</code> with <code>hlmAttachmentMedia</code> (icon or image preview), <code>hlmAttachmentContent</code> (<code>hlmAttachmentTitle</code> and <code>hlmAttachmentDescription</code>), and <code>hlmAttachmentActions</code> containing <code>button[hlmAttachmentAction]</code> buttons.
 
 Set <code>state</code>, <code>size</code> and <code>orientation</code> on the attachment. Error titles use the destructive color, and actions align to the top of the content. Add <code>hlmAttachmentTrigger</code> (a <code>button</code> or <code>a</code>) to make the whole card clickable, and wrap several attachments in <code>hlmAttachmentGroup</code> for a horizontally scrollable list.
 Icon-only triggers and actions need an <code>aria-label</code>.`,

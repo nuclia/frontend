@@ -1,6 +1,6 @@
 import { Directive, input } from '@angular/core';
-import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { HlmButton, provideBrnButtonConfig } from '@progress/pdp-ui-spartan/button';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const inputGroupAddonVariants = cva('gap-2 text-sm flex items-center shadow-none', {

@@ -1,6 +1,6 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmCalendarImports } from '../index';
 import { HlmCalendar } from './hlm-calendar';
 
@@ -26,7 +26,7 @@ const meta: Meta<CalendarStoryArgs> = {
     docs: {
       description: {
         component: `Presents a calendar for browsing months and selecting a date, multiple dates, or a date range. Use it when users need to see dates in context, such as scheduling or choosing a reporting period.
-Import <code>HlmCalendarImports</code> from <code>@nuclia/ui-spartan/calendar</code> and use <code>hlm-calendar</code> (single date), <code>hlm-calendar-multi</code> (several dates), <code>hlm-calendar-range</code> (start and end date) or <code>hlm-month-year-calendar</code> (month or year picker).
+Import <code>HlmCalendarImports</code> from <code>@progress/pdp-ui-spartan/calendar</code> and use <code>hlm-calendar</code> (single date), <code>hlm-calendar-multi</code> (several dates), <code>hlm-calendar-range</code> (start and end date) or <code>hlm-month-year-calendar</code> (month or year picker).
 The calendars need a date adapter and i18n config: provide <code>provideNativeDateAdapter()</code> and <code>provideBrnCalendarI18n()</code> (as these stories do).
 
 Bind the selection with <code>[(date)]</code> (single and multi) or <code>[(startDate)]</code>/<code>[(endDate)]</code> (range). Restrict choices with <code>min</code>, <code>max</code> and <code>dateDisabled</code>, and set <code>weekStartsOn</code> (0 = Sunday).

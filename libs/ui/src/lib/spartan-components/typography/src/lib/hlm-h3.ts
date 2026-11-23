@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 export const hlmH3 = 'scroll-m-20 text-2xl font-semibold tracking-tight';
 

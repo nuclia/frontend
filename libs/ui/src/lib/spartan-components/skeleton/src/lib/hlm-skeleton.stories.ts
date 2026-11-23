@@ -17,7 +17,7 @@ const meta: Meta<SkeletonStoryArgs> = {
     docs: {
       description: {
         component: `A placeholder that mirrors the shape of content while it loads. Use it to preserve the page's visual structure and give users a sense of what will appear.
-Import <code>HlmSkeletonImports</code> from <code>@nuclia/ui-spartan/skeleton</code> and apply <code>hlmSkeleton</code> to an element (or use <code>&lt;hlm-skeleton&gt;</code>).
+Import <code>HlmSkeletonImports</code> from <code>@progress/pdp-ui-spartan/skeleton</code> and apply <code>hlmSkeleton</code> to an element (or use <code>&lt;hlm-skeleton&gt;</code>).
 
 The skeleton has no inputs: set its size and shape with Tailwind classes such as <code>h-4 w-2/3</code> or <code>size-12 rounded-full</code>. The pulse animation is disabled for users who prefer reduced motion.
 Skeletons are purely visual: mark them <code>aria-hidden="true"</code> and set <code>aria-busy="true"</code> (plus a label) on the container that is loading.`,

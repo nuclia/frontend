@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { HlmAccordionImports } from '@nuclia/ui-spartan/accordion';
-import { HlmButtonImports } from '@nuclia/ui-spartan/button';
+import { HlmAccordionImports } from '@progress/pdp-ui-spartan/accordion';
+import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
 import { ComposeService } from '../compose.service';
 
 @Component({

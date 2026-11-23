@@ -1,7 +1,7 @@
 import { Directive } from '@angular/core';
+import { buttonVariants } from '@progress/pdp-ui-spartan/button';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnComboboxChipRemove } from '@spartan-ng/brain/combobox';
-import { buttonVariants } from '@nuclia/ui-spartan/button';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmComboboxChipRemove]',

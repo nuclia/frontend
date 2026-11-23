@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnMessageScrollerViewport } from '@spartan-ng/brain/message-scroller';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMessageScrollerViewport],hlm-message-scroller-viewport',

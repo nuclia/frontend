@@ -24,7 +24,7 @@ const meta: Meta<ToasterStoryArgs> = {
     docs: {
       description: {
         component: `Displays brief toast notifications that give feedback without interrupting the current task. Use it for action results and background updates; critical information should also remain available outside a temporary toast.
-Import <code>HlmToasterImports</code> from <code>@nuclia/ui-spartan/sonner</code> and render a single <code>&lt;hlm-toaster /&gt;</code> once near the root of the app.
+Import <code>HlmToasterImports</code> from <code>@progress/pdp-ui-spartan/sonner</code> and render a single <code>&lt;hlm-toaster /&gt;</code> once near the root of the app.
 
 Toasts are then triggered from anywhere with the <code>toast</code> function from <code>@spartan-ng/brain/sonner</code>: <code>toast('Saved')</code>, <code>toast.success()</code>, <code>toast.error()</code>, <code>toast.info()</code>, <code>toast.warning()</code>, <code>toast.loading()</code> and <code>toast.promise()</code>. Pass <code>description</code>, <code>action</code> or <code>cancel</code> in the options argument.
 The toaster inputs (<code>position</code>, <code>theme</code>, <code>richColors</code>, <code>closeButton</code>, <code>duration</code>, <code>visibleToasts</code>...) apply to every toast. The toaster is an <code>aria-live</code> region, and the hotkey <code>Alt + T</code> moves focus to it.`,

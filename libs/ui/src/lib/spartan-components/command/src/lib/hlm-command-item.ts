@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnCommandItem } from '@spartan-ng/brain/command';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmCommandItem],button[hlm-command-item]',

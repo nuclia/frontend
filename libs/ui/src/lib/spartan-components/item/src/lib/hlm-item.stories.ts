@@ -26,7 +26,7 @@ const meta: Meta<ItemStoryArgs> = {
     docs: {
       description: {
         component: `Presents a single entry with optional media, a title, supporting text, and actions. Use it for consistent rows in lists of people, files, settings, or other related content.
-Import <code>HlmItemImports</code> from <code>@nuclia/ui-spartan/item</code>.
+Import <code>HlmItemImports</code> from <code>@progress/pdp-ui-spartan/item</code>.
 
 Compose <code>hlmItem</code> with <code>hlmItemMedia</code> (<code>variant</code>: <code>default</code>, <code>icon</code> or <code>image</code>), <code>hlmItemContent</code> holding <code>hlmItemTitle</code> and <code>hlmItemDescription</code>, and <code>hlmItemActions</code>. <code>hlmItemHeader</code> and <code>hlmItemFooter</code> add full-width rows above and below.
 Stack several items in <code>hlmItemGroup</code>, optionally separated by <code>hlmItemSeparator</code>. <code>variant</code> (<code>default</code>, <code>outline</code>, <code>muted</code>) and <code>size</code> (<code>default</code>, <code>sm</code>, <code>xs</code>) are set on the item; defaults can be provided with <code>provideHlmItemConfig</code>.

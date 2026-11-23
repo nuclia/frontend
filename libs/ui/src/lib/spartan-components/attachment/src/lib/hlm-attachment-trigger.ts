@@ -1,5 +1,5 @@
 import { computed, Directive, ElementRef, inject, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmAttachmentTrigger],a[hlmAttachmentTrigger]',

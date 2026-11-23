@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
-import { HlmTextarea } from '@nuclia/ui-spartan/textarea';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { HlmTextarea } from '@progress/pdp-ui-spartan/textarea';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: 'textarea[hlmInputGroupTextarea]',

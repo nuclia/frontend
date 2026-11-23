@@ -1,8 +1,8 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matContentCopyRound, matSearchRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { HlmInputGroupImports } from '../index';
 import { HlmLabelImports } from '../../../label/src/index';
+import { HlmInputGroupImports } from '../index';
 import { HlmInputGroup } from './hlm-input-group';
 
 type InputGroupAddonAlign = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
@@ -28,7 +28,7 @@ const meta: Meta<InputGroupStoryArgs> = {
     docs: {
       description: {
         component: `Combines an input with supporting text, icons, or actions inside one visual control. Use it for search fields, values with units, or entries with a related action such as copying or submitting.
-Import <code>HlmInputGroupImports</code> from <code>@nuclia/ui-spartan/input-group</code>.
+Import <code>HlmInputGroupImports</code> from <code>@progress/pdp-ui-spartan/input-group</code>.
 
 Wrap the parts in <code>hlmInputGroup</code>: one control (<code>input[hlmInputGroupInput]</code> or <code>textarea[hlmInputGroupTextarea]</code>) plus any number of <code>hlmInputGroupAddon</code> elements.
 The addon <code>align</code> input places it at the <code>inline-start</code> (default), <code>inline-end</code>, <code>block-start</code> or <code>block-end</code> of the control. Inside an addon use <code>hlmInputGroupText</code> for text or icons and <code>button[hlmInputGroupButton]</code> for actions (<code>size</code>: <code>xs</code>, <code>sm</code>, <code>icon-xs</code>, <code>icon-sm</code>; <code>variant</code> as on the button).

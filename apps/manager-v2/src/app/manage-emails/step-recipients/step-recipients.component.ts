@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
+import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import { SpartanStepperImports } from '@progress/pdp-ui-spartan/stepper';
 import { RecipientFiltersComponent } from './recipient-filters/recipient-filters.component';
 import { RecipientListComponent } from './recipient-list/recipient-list.component';
 import { RecipientsService } from './recipients.service';

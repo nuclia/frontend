@@ -1,5 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matRemoveRound, matAddRound, matSearchRound } from '@ng-icons/material-symbols/round';
+import { matAddRound, matRemoveRound, matSearchRound } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButtonImports } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
@@ -26,7 +26,7 @@ const meta: Meta<ButtonGroupStoryArgs> = {
     docs: {
       description: {
         component: `Visually connects related buttons into a single group. Use it for compact sets of actions, such as editing tools or a primary action paired with additional options.
-Import <code>HlmButtonGroupImports</code> from <code>@nuclia/ui-spartan/button-group</code> (and <code>HlmButtonImports</code> from <code>@nuclia/ui-spartan/button</code> for the buttons) and wrap <code>button[hlmBtn]</code> elements in <code>hlmButtonGroup</code>.
+Import <code>HlmButtonGroupImports</code> from <code>@progress/pdp-ui-spartan/button-group</code> (and <code>HlmButtonImports</code> from <code>@progress/pdp-ui-spartan/button</code> for the buttons) and wrap <code>button[hlmBtn]</code> elements in <code>hlmButtonGroup</code>.
 Set <code>orientation</code> to <code>vertical</code> to stack the buttons. Use <code>hlm-button-group-separator</code> to divide buttons that share the same style and <code>hlmButtonGroupText</code> for a non-interactive label.
 
 The host has <code>role="group"</code>: give it an <code>aria-label</code> describing the set of actions, and give icon-only buttons their own <code>aria-label</code>.`,

@@ -1,6 +1,6 @@
 import { Directive, inject } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnOverlayRef } from '@spartan-ng/brain/overlay';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmPopoverContent],hlm-popover-content',

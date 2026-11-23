@@ -2,8 +2,8 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matCalendarTodayRound,
   matDescriptionRound,
-  matSettingsRound,
   matGroupRound,
+  matSettingsRound,
 } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmButton } from '../../../button/src/index';
@@ -30,7 +30,7 @@ const meta: Meta<CommandStoryArgs> = {
     docs: {
       description: {
         component: `A searchable list of commands or destinations that users can navigate with the keyboard. Use it for command palettes and quick-action menus that help users find and perform tasks efficiently.
-Import <code>HlmCommandImports</code> from <code>@nuclia/ui-spartan/command</code>.
+Import <code>HlmCommandImports</code> from <code>@progress/pdp-ui-spartan/command</code>.
 
 Compose <code>hlmCommand</code> with <code>hlm-command-input</code> and an <code>hlm-command-list</code> holding one or more <code>hlmCommandGroup</code> (with <code>hlmCommandGroupLabel</code>) of <code>button[hlmCommandItem]</code>, separated by <code>hlmCommandSeparator</code>.
 Each item needs a <code>value</code> (used for filtering) and emits <code>selected</code>; <code>hlmCommandShortcut</code> shows a keyboard hint inside an item.

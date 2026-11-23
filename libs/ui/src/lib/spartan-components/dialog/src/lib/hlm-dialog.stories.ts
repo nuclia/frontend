@@ -23,7 +23,7 @@ const meta: Meta<DialogStoryArgs> = {
     docs: {
       description: {
         component: `Open a focused task or piece of information in a modal window above the page. Use it for short forms, editing details or interactions that users can complete without leaving their current context.
-Import <code>HlmDialogImports</code> from <code>@nuclia/ui-spartan/dialog</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the buttons).
+Import <code>HlmDialogImports</code> from <code>@progress/pdp-ui-spartan/dialog</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the buttons).
 
 Compose <code>hlm-dialog</code> with a <code>button[hlmDialogTrigger]</code> and an <code>hlm-dialog-content</code> rendered through <code>*hlmDialogPortal</code>.
 Inside, use <code>hlmDialogHeader</code> (with <code>hlmDialogTitle</code> and <code>hlmDialogDescription</code>) and <code>hlmDialogFooter</code>; add <code>hlmDialogClose</code> to any button that should close the dialog.

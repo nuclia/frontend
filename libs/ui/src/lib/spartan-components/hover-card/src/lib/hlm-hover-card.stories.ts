@@ -22,7 +22,7 @@ const meta: Meta<HoverCardStoryArgs> = {
     docs: {
       description: {
         component: `Shows a richer preview of linked content when users hover over its trigger. Use it for supplemental details, such as a person's profile or a destination summary, without requiring users to leave the page.
-Import <code>HlmHoverCardImports</code> from <code>@nuclia/ui-spartan/hover-card</code>.
+Import <code>HlmHoverCardImports</code> from <code>@progress/pdp-ui-spartan/hover-card</code>.
 
 Wrap the trigger and the card in <code>hlmHoverCard</code>. Put <code>hlmHoverCardTrigger</code> on the element users hover or focus, and render the card with <code>&lt;hlm-hover-card-content *hlmHoverCardPortal&gt;</code> so it is only created in an overlay while open.
 The trigger exposes <code>align</code> (side of the trigger where the card appears), <code>sideOffset</code>, <code>showDelay</code>, <code>hideDelay</code> and <code>animationDelay</code> (milliseconds). Alternatively, bind an <code>ng-template</code> with <code>hlmHoverCardTriggerFor</code>.

@@ -19,7 +19,7 @@ const meta: Meta<SwitchStoryArgs> = {
     docs: {
       description: {
         component: `Turns a setting on or off, usually with an immediate effect. Use it for binary preferences such as enabling notifications, rather than selecting items to submit as a group.
-Import <code>HlmSwitchImports</code> from <code>@nuclia/ui-spartan/switch</code> and use <code>&lt;hlm-switch /&gt;</code>; the thumb (<code>hlm-switch-thumb</code>) is rendered internally.
+Import <code>HlmSwitchImports</code> from <code>@progress/pdp-ui-spartan/switch</code> and use <code>&lt;hlm-switch /&gt;</code>; the thumb (<code>hlm-switch-thumb</code>) is rendered internally.
 
 Listen to <code>checkedChange</code> for the new value, or bind it with <code>ngModel</code> / reactive forms. Set <code>inputId</code> to link an external <code>&lt;label for&gt;</code>, or pass <code>aria-label</code> / <code>aria-labelledby</code> when there is no visible label.
 Use <code>size</code> for the default or compact variant and <code>forceInvalid</code> to display the invalid style.`,

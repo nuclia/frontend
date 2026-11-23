@@ -1,3 +1,5 @@
+/* Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved. */
+
 /* source-code-pro-regular - latin */
 @font-face {
   font-family: 'Source Code Pro';
@@ -8,66 +10,41 @@
     url('/assets/fonts/source-code-pro/source-code-pro-v14-latin-regular.woff') format('woff');
 }
 
-/* Enable with ?fontTest=progress-sans (and disable with ?fontTest=default) */
 @font-face {
-  font-family: 'Progress Sans Text';
-  src: url('/assets/fonts/progress-sans/ProgressSansText-Regular.woff2') format('woff2');
+  font-family: 'Progress UI';
+  src: url('/assets/fonts/progress-ui/ProgressUIBeta_v1-Light.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress UI';
+  src: url('/assets/fonts/progress-ui/ProgressUIBeta_v1-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Progress Sans Text';
-  src: url('/assets/fonts/progress-sans/ProgressSansText-Medium.woff2') format('woff2');
+  font-family: 'Progress UI';
+  src: url('/assets/fonts/progress-ui/ProgressUIBeta_v1-Medium.woff2') format('woff2');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Progress Sans Text';
-  src: url('/assets/fonts/progress-sans/ProgressSansText-Bold.woff2') format('woff2');
+  font-family: 'Progress UI';
+  src: url('/assets/fonts/progress-ui/ProgressUIBeta_v1-Bold.woff2') format('woff2');
   font-style: normal;
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Progress Sans Text';
-  src: url('/assets/fonts/progress-sans/ProgressSansText-ExtraBold.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Progress Sans Display';
-  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Regular.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Progress Sans Display';
-  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Medium.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Progress Sans Display';
-  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-Bold.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Progress Sans Display';
-  src: url('/assets/fonts/progress-sans/ProgressSansDisplay-ExtraBold.woff2') format('woff2');
+  font-family: 'Progress UI';
+  src: url('/assets/fonts/progress-ui/ProgressUIBeta_v1-ExtraBold.woff2') format('woff2');
   font-style: normal;
   font-weight: 800;
   font-display: swap;

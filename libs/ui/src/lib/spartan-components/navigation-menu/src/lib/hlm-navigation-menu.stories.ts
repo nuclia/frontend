@@ -18,7 +18,7 @@ const meta: Meta<NavigationMenuStoryArgs> = {
     docs: {
       description: {
         component: `Organizes links to the main sections of a site or application, with expandable panels for related destinations. Use it for primary navigation rather than menus of commands or actions.
-Import <code>HlmNavigationMenuImports</code> from <code>@nuclia/ui-spartan/navigation-menu</code> and compose <code>nav[hlmNavigationMenu]</code> &gt; <code>ul[hlmNavigationMenuList]</code> &gt; <code>li[hlmNavigationMenuItem]</code>.
+Import <code>HlmNavigationMenuImports</code> from <code>@progress/pdp-ui-spartan/navigation-menu</code> and compose <code>nav[hlmNavigationMenu]</code> &gt; <code>ul[hlmNavigationMenuList]</code> &gt; <code>li[hlmNavigationMenuItem]</code>.
 
 An item holds either a plain <code>a[hlmNavigationMenuLink]</code>, or a <code>button[hlmNavigationMenuTrigger]</code> followed by <code>hlm-navigation-menu-content</code> with the <code>*hlmNavigationMenuPortal</code> structural directive, which renders the panel lazily.
 Set <code>[active]="true"</code> on the link of the current page. <code>orientation</code>, <code>openOn</code>, the delays and <code>[(value)]</code> (id of the open item) are set on the <code>nav</code>. Always give the <code>nav</code> an <code>aria-label</code>.`,

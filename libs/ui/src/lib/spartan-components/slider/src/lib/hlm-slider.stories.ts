@@ -23,7 +23,7 @@ const meta: Meta<SliderStoryArgs> = {
     docs: {
       description: {
         component: `Lets users adjust a value or range along a track. Use it for settings such as volume, zoom, or price ranges where the position within a range is more useful than typing an exact value.
-Import <code>HlmSliderImports</code> from <code>@nuclia/ui-spartan/slider</code> and use <code>&lt;hlm-slider /&gt;</code>.
+Import <code>HlmSliderImports</code> from <code>@progress/pdp-ui-spartan/slider</code> and use <code>&lt;hlm-slider /&gt;</code>.
 
 The <code>value</code> input is an array: one number renders a single thumb, two numbers render a range with two thumbs. Listen to <code>valueChange</code> for the new array, or bind it with <code>ngModel</code> / reactive forms.
 Configure the track with <code>min</code>, <code>max</code>, <code>step</code>, <code>orientation</code>, <code>inverted</code> and <code>showTicks</code>. Always provide an <code>aria-label</code> or <code>aria-labelledby</code>; keyboard arrows, Home and End move the focused thumb.`,

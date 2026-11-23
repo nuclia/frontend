@@ -14,13 +14,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { HlmCalendarMulti } from '@progress/pdp-ui-spartan/calendar';
+import { HlmPopoverImports } from '@progress/pdp-ui-spartan/popover';
 import { type BrnDatePickerBase, BrnDatePickerTriggerToken, provideBrnDatePicker } from '@spartan-ng/brain/date-picker';
 import { BrnFieldControl, provideBrnLabelable } from '@spartan-ng/brain/field';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
 import type { BrnOverlayState } from '@spartan-ng/brain/overlay';
 import { BrnPopover, type BrnPopoverAlign } from '@spartan-ng/brain/popover';
-import { HlmCalendarMulti } from '@nuclia/ui-spartan/calendar';
-import { HlmPopoverImports } from '@nuclia/ui-spartan/popover';
 import { injectHlmDatePickerMultiConfig } from './hlm-date-picker-multi.token';
 
 export const HLM_DATE_PICKER_MULTI_VALUE_ACCESSOR = {

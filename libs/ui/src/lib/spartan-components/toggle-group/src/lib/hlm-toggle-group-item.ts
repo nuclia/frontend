@@ -1,7 +1,7 @@
 import { computed, Directive, input } from '@angular/core';
+import { toggleVariants, ToggleVariants } from '@progress/pdp-ui-spartan/toggle';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnToggleGroupItem } from '@spartan-ng/brain/toggle-group';
-import { toggleVariants, ToggleVariants } from '@nuclia/ui-spartan/toggle';
-import { classes } from '@nuclia/ui-spartan/utils';
 import { injectHlmToggleGroup } from './hlm-toggle-group.token';
 
 @Directive({

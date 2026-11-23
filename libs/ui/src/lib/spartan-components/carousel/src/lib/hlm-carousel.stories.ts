@@ -30,7 +30,7 @@ const meta: Meta<CarouselStoryArgs> = {
     docs: {
       description: {
         component: `Displays a sequence of items that users can browse one slide at a time. Use it for image galleries, featured content, or related items within a limited space.
-Import <code>HlmCarouselImports</code> from <code>@nuclia/ui-spartan/carousel</code> and compose <code>hlm-carousel</code> with <code>hlm-carousel-content</code> holding one <code>hlm-carousel-item</code> per slide, plus <code>button[hlmCarouselPrevious]</code> and <code>button[hlmCarouselNext]</code> to navigate and an optional <code>hlm-carousel-slide-display</code> showing "current / total".
+Import <code>HlmCarouselImports</code> from <code>@progress/pdp-ui-spartan/carousel</code> and compose <code>hlm-carousel</code> with <code>hlm-carousel-content</code> holding one <code>hlm-carousel-item</code> per slide, plus <code>button[hlmCarouselPrevious]</code> and <code>button[hlmCarouselNext]</code> to navigate and an optional <code>hlm-carousel-slide-display</code> showing "current / total".
 The carousel is built on Embla: <code>orientation</code> sets the scroll axis, <code>options</code> takes Embla options (<code>loop</code>, <code>align</code>, ...) and <code>plugins</code> takes Embla plugins such as autoplay. Set the slide width with a <code>basis-*</code> class on the items.
 
 The host is a <code>region</code> with <code>aria-roledescription="carousel"</code> (add an <code>aria-label</code>), slides are announced as groups, and the left/right arrow keys scroll when the carousel has focus. Reserve horizontal space (for example <code>px-12</code>) for the arrows, which sit outside the slides.`,

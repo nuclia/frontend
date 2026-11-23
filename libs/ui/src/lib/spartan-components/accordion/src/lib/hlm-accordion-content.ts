@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnAccordionContent } from '@spartan-ng/brain/accordion';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-accordion-content',

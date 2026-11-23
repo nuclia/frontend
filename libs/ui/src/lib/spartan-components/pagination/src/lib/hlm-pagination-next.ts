@@ -3,8 +3,8 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input }
 import type { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matChevronRightRound } from '@ng-icons/material-symbols/round';
-import type { ButtonVariants } from '@nuclia/ui-spartan/button';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import type { ButtonVariants } from '@progress/pdp-ui-spartan/button';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 import { HlmPaginationLink } from './hlm-pagination-link';
 import { injectHlmPaginationConfig } from './hlm-pagination.token';

@@ -1,8 +1,8 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { HlmCheckboxImports } from '../../../checkbox/src/index';
-import { HlmFieldImports } from '../index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
+import { HlmFieldImports } from '../index';
 import { HlmField } from './hlm-field';
 
 type FieldOrientation = 'vertical' | 'horizontal' | 'responsive';
@@ -29,7 +29,7 @@ const meta: Meta<FieldStoryArgs> = {
     docs: {
       description: {
         component: `Organizes a form control with its label, help text, and validation feedback. Use fields and field groups to give forms a consistent structure and make requirements and errors easy to understand.
-Import <code>HlmFieldImports</code> from <code>@nuclia/ui-spartan/field</code>.
+Import <code>HlmFieldImports</code> from <code>@progress/pdp-ui-spartan/field</code>.
 
 Wrap a control in <code>hlmField</code> and add <code>hlmFieldLabel</code> (linked to the control with <code>for</code>/<code>id</code>), <code>hlm-field-description</code> and <code>hlm-field-error</code>.
 The <code>orientation</code> input of <code>hlmField</code> is <code>vertical</code> (default), <code>horizontal</code> or <code>responsive</code> (switches to a row inside a <code>hlmFieldGroup</code> container that is wide enough).

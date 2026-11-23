@@ -16,7 +16,7 @@ const meta: Meta<ProgressStoryArgs> = {
     docs: {
       description: {
         component: `Shows how far a task has advanced toward completion. Use it for uploads, processing, or multi-step flows when users benefit from seeing progress rather than only a loading indicator.
-Import <code>HlmProgressImports</code> from <code>@nuclia/ui-spartan/progress</code> and place an <code>hlm-progress-indicator</code> inside <code>hlm-progress</code>; the indicator fills the track according to the parent.
+Import <code>HlmProgressImports</code> from <code>@progress/pdp-ui-spartan/progress</code> and place an <code>hlm-progress-indicator</code> inside <code>hlm-progress</code>; the indicator fills the track according to the parent.
 
 Set <code>value</code> between 0 and <code>max</code> (100 by default). A <code>null</code> value renders the indeterminate animation for tasks of unknown length. Use <code>getValueLabel</code> to customise the text announced to screen readers.
 The host has the <code>progressbar</code> role, so always provide an <code>aria-label</code> (or <code>aria-labelledby</code>) describing what is progressing.`,

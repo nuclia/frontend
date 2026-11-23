@@ -13,7 +13,7 @@ import {
 import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { classes, hlm } from '@nuclia/ui-spartan/utils';
+import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnFieldControl, provideBrnLabelable } from '@spartan-ng/brain/field';
 import { type ChangeFn, type TouchFn } from '@spartan-ng/brain/forms';
 import type { ClassValue } from 'clsx';

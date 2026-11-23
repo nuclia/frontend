@@ -1,6 +1,6 @@
 import { type NumberInput } from '@angular/cdk/coercion';
 import { Directive, input, numberAttribute } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmNavigationMenuContent],hlm-navigation-menu-content',

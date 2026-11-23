@@ -26,7 +26,7 @@ const meta: Meta<EmptyStoryArgs> = {
     docs: {
       description: {
         component: `Explain why an area has no content and guide users toward a useful next step. Use it for first-use experiences, empty collections or searches with no results.
-Import <code>HlmEmptyImports</code> from <code>@nuclia/ui-spartan/empty</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for actions).
+Import <code>HlmEmptyImports</code> from <code>@progress/pdp-ui-spartan/empty</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for actions).
 
 Compose <code>hlmEmpty</code> with <code>hlmEmptyHeader</code> (containing an optional <code>hlmEmptyMedia</code>, <code>hlmEmptyTitle</code> and <code>hlmEmptyDescription</code>) and an optional <code>hlmEmptyContent</code> for actions.
 <code>hlmEmptyMedia</code> has a <code>variant</code> input: <code>default</code> (bare icon or illustration) or <code>icon</code> (icon in a muted rounded box). Decorative icons should be hidden from assistive technology.

@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnQuestionnaire } from '@spartan-ng/brain/questionnaire';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: 'form[hlmQuestionnaire]',

@@ -1,6 +1,6 @@
 import { CdkMenuBar } from '@angular/cdk/menu';
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMenubar],hlm-menubar',

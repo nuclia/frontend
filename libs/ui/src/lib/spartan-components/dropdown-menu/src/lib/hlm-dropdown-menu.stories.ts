@@ -1,9 +1,9 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matContentCopyRound,
-  matLogoutRound,
-  matEditRound,
   matDeleteRound,
+  matEditRound,
+  matLogoutRound,
   matPersonRound,
 } from '@ng-icons/material-symbols/round';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
@@ -33,7 +33,7 @@ const meta: Meta<DropdownMenuStoryArgs> = {
     docs: {
       description: {
         component: `Open a menu of actions or options from a button. Use it to keep secondary commands, account actions or related choices available without displaying them all on the page.
-Import <code>HlmDropdownMenuImports</code> from <code>@nuclia/ui-spartan/dropdown-menu</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the trigger).
+Import <code>HlmDropdownMenuImports</code> from <code>@progress/pdp-ui-spartan/dropdown-menu</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the trigger).
 
 Define the menu in an <code>&lt;ng-template #menu&gt;</code> whose root is <code>hlmDropdownMenu</code> (set an <code>aria-label</code>), then bind it on the trigger with <code>[hlmDropdownMenuTrigger]="menu"</code>. The trigger accepts <code>side</code> and <code>align</code>.
 Inside the menu use <code>button[hlmDropdownMenuItem]</code> (inputs <code>disabled</code>, <code>variant="destructive"</code>, <code>inset</code>; output <code>triggered</code>), <code>hlmDropdownMenuLabel</code>, <code>hlmDropdownMenuSeparator</code>, <code>hlmDropdownMenuShortcut</code> and <code>hlmDropdownMenuGroup</code>.

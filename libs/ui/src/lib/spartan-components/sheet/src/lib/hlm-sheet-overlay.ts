@@ -1,7 +1,7 @@
 import { Directive, computed, effect, input, untracked } from '@angular/core';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { injectCustomClassSettable } from '@spartan-ng/brain/core';
 import { BrnSheetOverlay } from '@spartan-ng/brain/sheet';
-import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Directive({

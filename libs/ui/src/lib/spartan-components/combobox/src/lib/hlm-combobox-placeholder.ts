@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnComboboxPlaceholder } from '@spartan-ng/brain/combobox';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmComboboxPlaceholder],hlm-combobox-placeholder',

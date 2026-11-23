@@ -40,7 +40,7 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ['Foundations', 'Spartan', '*'],
+        order: ['Foundations', 'PDP-UI', 'Spartan', '*'],
       },
     },
   },

@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { HlmSheetImports } from '@nuclia/ui-spartan/sheet';
-import { classes, hlm } from '@nuclia/ui-spartan/utils';
+import { HlmSheetImports } from '@progress/pdp-ui-spartan/sheet';
+import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 import { HlmSidebarService, type SidebarVariant } from './hlm-sidebar.service';
 import { injectHlmSidebarConfig } from './hlm-sidebar.token';

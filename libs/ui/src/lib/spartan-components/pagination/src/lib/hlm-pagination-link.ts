@@ -1,8 +1,8 @@
 import type { BooleanInput } from '@angular/cdk/coercion';
 import { Directive, booleanAttribute, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { buttonVariants, type ButtonVariants } from '@nuclia/ui-spartan/button';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { buttonVariants, type ButtonVariants } from '@progress/pdp-ui-spartan/button';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmPaginationLink]',

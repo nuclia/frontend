@@ -25,7 +25,7 @@ const meta: Meta<CardStoryArgs> = {
     docs: {
       description: {
         component: `Groups related information and actions in a distinct surface. Use cards for summaries, settings, or self-contained content that needs a clear visual boundary within a page.
-Import <code>HlmCardImports</code> from <code>@nuclia/ui-spartan/card</code> and compose <code>hlmCard</code> with <code>hlmCardHeader</code> (<code>hlmCardTitle</code>, <code>hlmCardDescription</code>, optional <code>hlmCardAction</code>), <code>hlmCardContent</code> and <code>hlmCardFooter</code>.
+Import <code>HlmCardImports</code> from <code>@progress/pdp-ui-spartan/card</code> and compose <code>hlmCard</code> with <code>hlmCardHeader</code> (<code>hlmCardTitle</code>, <code>hlmCardDescription</code>, optional <code>hlmCardAction</code>), <code>hlmCardContent</code> and <code>hlmCardFooter</code>.
 Set <code>size</code> to <code>sm</code> for tighter spacing; the default can also be changed for a whole subtree with <code>provideHlmCardConfig</code>. A leading <code>img</code> is flush with the top edge of the card.
 
 Cards have no implicit semantics: use a <code>section</code> or <code>article</code> element with a heading as the title, and give icon-only actions an <code>aria-label</code>.`,

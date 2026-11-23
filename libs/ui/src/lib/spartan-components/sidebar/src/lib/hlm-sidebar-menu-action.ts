@@ -1,6 +1,6 @@
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmSidebarMenuAction]',

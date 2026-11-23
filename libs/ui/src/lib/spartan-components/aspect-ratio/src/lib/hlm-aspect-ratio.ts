@@ -1,6 +1,6 @@
 import { type NumberInput, coerceNumberProperty } from '@angular/cdk/coercion';
 import { Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 const parseDividedString = (value: NumberInput): NumberInput => {
   if (typeof value !== 'string' || !value.includes('/')) return value;

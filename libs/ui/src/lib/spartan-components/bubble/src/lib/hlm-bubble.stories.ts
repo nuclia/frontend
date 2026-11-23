@@ -18,7 +18,7 @@ const meta: Meta<BubbleStoryArgs> = {
     docs: {
       description: {
         component: `Displays conversational content inside a message bubble, with visual treatments for different speakers and grouped messages. Use it as the content surface within a conversation, with optional reactions or expandable details.
-Import <code>HlmBubbleImports</code> from <code>@nuclia/ui-spartan/bubble</code> and place a <code>hlmBubbleContent</code> element inside <code>hlm-bubble</code>; wrap several bubbles in <code>hlmBubbleGroup</code> to stack them.
+Import <code>HlmBubbleImports</code> from <code>@progress/pdp-ui-spartan/bubble</code> and place a <code>hlmBubbleContent</code> element inside <code>hlm-bubble</code>; wrap several bubbles in <code>hlmBubbleGroup</code> to stack them.
 Set <code>variant</code> for the colour treatment and <code>align</code> (<code>start</code> or <code>end</code>) for the speaker side. Add <code>hlmBubbleReactions</code> (inputs <code>side</code> and <code>align</code>) for reactions that overlap the bubble edge.
 
 <code>hlmBubbleContent</code> can also be a <code>button</code> or <code>a</code> to make the bubble interactive. Reactions should have an <code>aria-label</code> describing them.`,

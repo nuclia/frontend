@@ -9,7 +9,7 @@ import {
   numberAttribute,
   untracked,
 } from '@angular/core';
-import { HlmSelectImports } from '@nuclia/ui-spartan/select';
+import { HlmSelectImports } from '@progress/pdp-ui-spartan/select';
 import { HlmPagination } from './hlm-pagination';
 import { HlmPaginationContent } from './hlm-pagination-content';
 import { HlmPaginationEllipsis } from './hlm-pagination-ellipsis';

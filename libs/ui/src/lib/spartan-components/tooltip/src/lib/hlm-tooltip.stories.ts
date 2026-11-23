@@ -30,7 +30,7 @@ const meta: Meta<TooltipStoryArgs> = {
     docs: {
       description: {
         component: `Show short, non-interactive help when an element is hovered or focused.
-Import <code>HlmTooltipImports</code> from <code>@nuclia/ui-spartan/tooltip</code> and set the text on the host element with <code>hlmTooltip="..."</code>.
+Import <code>HlmTooltipImports</code> from <code>@progress/pdp-ui-spartan/tooltip</code> and set the text on the host element with <code>hlmTooltip="..."</code>.
 
 The tooltip opens on mouse hover and keyboard focus, never on a touch tap. Use a popover if touch users must be able to read the content.
 Give icon-only triggers an <code>aria-label</code>. Content wider than 36rem wraps onto several lines.`,

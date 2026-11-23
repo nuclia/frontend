@@ -1,7 +1,7 @@
 import { computed, Directive, effect, input, untracked } from '@angular/core';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { injectCustomClassSettable } from '@spartan-ng/brain/core';
 import { BrnDialogOverlay } from '@spartan-ng/brain/dialog';
-import { hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 export const hlmDialogOverlayClass = hlm(

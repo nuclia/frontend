@@ -14,7 +14,7 @@ import {
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-symbols/round';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnCheckbox } from '@spartan-ng/brain/checkbox';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';

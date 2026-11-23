@@ -1,7 +1,7 @@
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import { booleanAttribute, ChangeDetectionStrategy, Component, input, numberAttribute } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnInputOtpSlot } from '@spartan-ng/brain/input-otp';
-import { classes } from '@nuclia/ui-spartan/utils';
 import { HlmInputOtpFakeCaret } from './hlm-input-otp-fake-caret';
 
 @Component({

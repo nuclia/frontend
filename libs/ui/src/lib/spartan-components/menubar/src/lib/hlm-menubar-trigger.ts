@@ -1,6 +1,7 @@
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { booleanAttribute, computed, Directive, effect, forwardRef, inject, input } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import {
   createMenuPosition,
   MENU_SIDE,
@@ -8,7 +9,6 @@ import {
   type MenuSide,
   updateMenuPosition,
 } from '@spartan-ng/brain/core';
-import { classes } from '@nuclia/ui-spartan/utils';
 import { injectHlmMenubarConfig } from './hlm-menubar-token';
 
 @Directive({

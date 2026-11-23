@@ -1,5 +1,5 @@
 import { Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const bubbleReactionsVariants = cva(

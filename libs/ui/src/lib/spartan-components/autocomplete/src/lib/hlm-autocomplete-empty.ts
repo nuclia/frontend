@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnAutocompleteEmpty } from '@spartan-ng/brain/autocomplete';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteEmpty],hlm-autocomplete-empty',

@@ -4,10 +4,10 @@ import { NgComponentOutlet } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCloseRound } from '@ng-icons/material-symbols/round';
-import { HlmButton } from '@nuclia/ui-spartan/button';
+import { HlmButton } from '@progress/pdp-ui-spartan/button';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmDialogClose } from './hlm-dialog-close';
 
 type HlmDialogContentContext = {

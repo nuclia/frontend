@@ -1,6 +1,6 @@
 import { Directive, input } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnTabsContent } from '@spartan-ng/brain/tabs';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Directive({
   selector: '[hlmTabsContent]',

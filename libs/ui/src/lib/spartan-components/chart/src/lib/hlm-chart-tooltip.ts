@@ -1,4 +1,4 @@
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ChartTooltipInput, ChartTooltipOptions, ChartValue } from '@tanstack/charts';
 import { tooltip } from '@tanstack/charts/tooltip';
 

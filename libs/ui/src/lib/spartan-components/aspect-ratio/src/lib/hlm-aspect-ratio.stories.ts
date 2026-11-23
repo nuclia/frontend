@@ -16,7 +16,7 @@ const meta: Meta<AspectRatioStoryArgs> = {
     docs: {
       description: {
         component: `Keeps content at a consistent width-to-height ratio as its container resizes. Use it for images, videos, and media previews that need predictable proportions across layouts.
-Import <code>HlmAspectRatioImports</code> from <code>@nuclia/ui-spartan/aspect-ratio</code> and add the <code>hlmAspectRatio</code> directive to a block element.
+Import <code>HlmAspectRatioImports</code> from <code>@progress/pdp-ui-spartan/aspect-ratio</code> and add the <code>hlmAspectRatio</code> directive to a block element.
 
 The directive input takes the ratio as a number (<code>[hlmAspectRatio]="1.5"</code>) or a "width/height" string (<code>hlmAspectRatio="16/9"</code>); invalid or non-positive values fall back to <code>1</code>.
 The element must have a width (for example from its container); the height is derived from it. Make child media fill the box, e.g. an <code>img</code> with <code>class="size-full object-cover"</code> and a meaningful <code>alt</code>.`,

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matSearchRound } from '@ng-icons/material-symbols/round';
-import { HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { HlmInputGroupImports } from '@progress/pdp-ui-spartan/input-group';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnCommandInput } from '@spartan-ng/brain/command';
 
 @Component({

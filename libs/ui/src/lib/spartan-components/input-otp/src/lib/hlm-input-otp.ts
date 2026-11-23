@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnInputOtp, BrnInputOtpInput, type InputMode } from '@spartan-ng/brain/input-otp';
-import { classes, hlm } from '@nuclia/ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Component({

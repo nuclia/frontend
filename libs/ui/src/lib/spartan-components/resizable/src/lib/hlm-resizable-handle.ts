@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnResizableHandle } from '@spartan-ng/brain/resizable';
-import { classes } from '@nuclia/ui-spartan/utils';
 
 @Component({
   selector: 'hlm-resizable-handle',

@@ -1,5 +1,5 @@
 import { Directive, input, signal } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnButton } from '@spartan-ng/brain/button';
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { ClassValue } from 'clsx';

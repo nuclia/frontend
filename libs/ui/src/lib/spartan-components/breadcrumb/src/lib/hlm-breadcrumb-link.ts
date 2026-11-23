@@ -1,6 +1,6 @@
 import { Directive, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmBreadcrumbLink]',

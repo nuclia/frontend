@@ -1,8 +1,8 @@
 import { NumberInput } from '@angular/cdk/coercion';
 import { Directive, input, numberAttribute } from '@angular/core';
+import { ToggleVariants } from '@progress/pdp-ui-spartan/toggle';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnToggleGroup } from '@spartan-ng/brain/toggle-group';
-import { ToggleVariants } from '@nuclia/ui-spartan/toggle';
-import { classes } from '@nuclia/ui-spartan/utils';
 import { provideHlmToggleGroup } from './hlm-toggle-group.token';
 
 @Directive({
