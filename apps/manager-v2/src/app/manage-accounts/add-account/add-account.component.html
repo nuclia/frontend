@@ -30,12 +30,35 @@
         label="Campaign"
         [options]="campaignOptions"
         required></pa-select>
+      <div>
+        <label
+          class="title-xxs"
+          for="components">
+          Available capabilities
+        </label>
+        <div formGroupName="components">
+          <pa-radio-group
+            id="components"
+            formControlName="components_radio">
+            <pa-radio value="default">Default</pa-radio>
+            <pa-radio value="custom">Custom</pa-radio>
+          </pa-radio-group>
+          @if (components.controls['components_radio'].value === 'custom') {
+            <div
+              style="margin: 0.5rem 0 0 1.75rem"
+              formGroupName="availableComponents">
+              <pa-checkbox formControlName="rag">Agentic RAG</pa-checkbox>
+              <pa-checkbox formControlName="studio">PDP Studio</pa-checkbox>
+            </div>
+          }
+        </div>
+      </div>
 
       <footer>
         <pa-button
           type="submit"
           kind="primary"
-          [disabled]="form.pristine || form.invalid || isSaving">
+          [disabled]="form.pristine || form.invalid || isSaving()">
           Save
         </pa-button>
         <pa-button

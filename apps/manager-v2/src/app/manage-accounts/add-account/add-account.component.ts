@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ValidSlug } from '@flaps/common';
 import { SDKService } from '@flaps/core';
-import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
+import { of, switchMap } from 'rxjs';
+import { AccountService } from '../account.service';
 
 const CAMPAIGN_IDS = [
   {
@@ -27,41 +29,66 @@ const CAMPAIGN_IDS = [
 
 @Component({
   templateUrl: 'add-account.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
+  imports: [PaButtonModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule],
 })
 export class AddAccountComponent {
-  isSaving = false;
+  private sdk = inject(SDKService);
+  private router = inject(Router);
+  private toaster = inject(SisToastService);
+  private accountService = inject(AccountService);
+
+  isSaving = signal(false);
   form = new FormGroup({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     slug: new FormControl('', { nonNullable: true, validators: [Validators.required, ValidSlug()] }),
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true }),
     campaign_id: new FormControl(CAMPAIGN_IDS[0].id, { nonNullable: true, validators: [Validators.required] }),
+    components: new FormGroup({
+      components_radio: new FormControl<'default' | 'custom'>('default', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      availableComponents: new FormGroup({
+        rag: new FormControl<boolean>(false, { nonNullable: true }),
+        studio: new FormControl<boolean>(false, { nonNullable: true }),
+      }),
+    }),
   });
 
   campaignOptions = CAMPAIGN_IDS.map(({ id, label }) => new OptionModel({ id, value: id, label }));
 
-  private sdk = inject(SDKService);
-  private cdr = inject(ChangeDetectorRef);
-  private router = inject(Router);
-  private toaster = inject(SisToastService);
+  get components(): FormGroup {
+    return this.form.controls.components;
+  }
 
   save() {
-    this.isSaving = true;
-    this.cdr.detectChanges();
-    this.sdk.nuclia.db.createAccount(this.form.getRawValue()).subscribe({
-      next: (account) => {
-        this.isSaving = false;
-        this.cdr.detectChanges();
-        this.router.navigate([`/accounts/${account.id}`]);
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.cdr.detectChanges();
-        this.toaster.error(JSON.stringify(error));
-      },
-    });
+    this.isSaving.set(true);
+    const { components, ...creationPayload } = this.form.getRawValue();
+    const availableComponents: string[] | null =
+      components.components_radio === 'custom'
+        ? Object.entries(components.availableComponents)
+            .filter(([, value]) => value)
+            .map(([key]) => key)
+        : null;
+
+    this.sdk.nuclia.db
+      .createAccount(creationPayload)
+      .pipe(
+        switchMap((account) =>
+          this.components.dirty ? this.accountService.updateAccount(account.id, { availableComponents }) : of(account),
+        ),
+      )
+      .subscribe({
+        next: (account) => {
+          this.isSaving.set(false);
+          this.router.navigate([`/accounts/${account.id}`]);
+        },
+        error: (error) => {
+          this.isSaving.set(false);
+          this.toaster.error(JSON.stringify(error));
+        },
+      });
   }
 
   cancel() {
