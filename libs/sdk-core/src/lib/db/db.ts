@@ -484,7 +484,7 @@ export class Db implements IDb {
       params.push(`nua_key_id=${nuaKeyId}`);
     }
     if (projectId) {
-      params.push(`knowledgebox=dataproject-${projectId}`);
+      params.push(`dataproject=${projectId}`);
     }
     if (aggregation) {
       params.push(`aggregation=${aggregation}`);
