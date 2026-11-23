@@ -78,11 +78,9 @@
       <label
         class="title-xxs"
         for="components">
-        Available components
+        Available capabilities
       </label>
-      <div
-        class="radio-limit-container"
-        formGroupName="components">
+      <div formGroupName="components">
         <pa-radio-group
           id="components"
           formControlName="components_radio">
@@ -91,7 +89,7 @@
         </pa-radio-group>
         @if (configForm.controls.components.controls.components_radio.value === 'custom') {
           <div
-            class="components-container"
+            style="margin: 0.5rem 0 0 1.75rem"
             formGroupName="availableComponents">
             <pa-checkbox formControlName="rag">Agentic RAG</pa-checkbox>
             <pa-checkbox formControlName="studio">PDP Studio</pa-checkbox>

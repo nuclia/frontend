@@ -2,6 +2,7 @@
   <div class="pa-main-container-wide">
     <h3>New account</h3>
     <form
+      style="width: 30rem"
       [formGroup]="form"
       (submit)="save()">
       <pa-input
@@ -19,22 +20,50 @@
         required>
         Title
       </pa-input>
-      <pa-input formControlName="description">Description</pa-input>
+      <pa-textarea
+        resizable=""
+        formControlName="description">
+        Description
+      </pa-textarea>
       <pa-select
         formControlName="campaign_id"
         label="Campaign"
         [options]="campaignOptions"
         required></pa-select>
+      <div>
+        <label
+          class="title-xxs"
+          for="components">
+          Available capabilities
+        </label>
+        <div formGroupName="components">
+          <pa-radio-group
+            id="components"
+            formControlName="components_radio">
+            <pa-radio value="default">Default</pa-radio>
+            <pa-radio value="custom">Custom</pa-radio>
+          </pa-radio-group>
+          @if (components.controls['components_radio'].value === 'custom') {
+            <div
+              style="margin: 0.5rem 0 0 1.75rem"
+              formGroupName="availableComponents">
+              <pa-checkbox formControlName="rag">Agentic RAG</pa-checkbox>
+              <pa-checkbox formControlName="studio">PDP Studio</pa-checkbox>
+            </div>
+          }
+        </div>
+      </div>
 
       <footer>
         <pa-button
           type="submit"
           kind="primary"
-          [disabled]="form.pristine || form.invalid || isSaving">
+          [disabled]="form.pristine || form.invalid || isSaving()">
           Save
         </pa-button>
         <pa-button
-          kind="destructive"
+          kind="secondary"
+          aspect="basic"
           (click)="cancel()">
           Cancel
         </pa-button>
