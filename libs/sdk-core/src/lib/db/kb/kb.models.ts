@@ -14,7 +14,6 @@ import type {
   SearchOptions,
   SuggestOptions,
 } from '../search';
-import { Agentic } from '../search/agentic';
 import type { AragResponse, HistoryEntry } from '../retrieval-agent/interactions.models';
 import { TaskManager } from '../task';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
@@ -117,8 +116,6 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
   getFullResourceBySlug(slug: string): Observable<IResource>;
-
-  createAgenticRAGPipeline(steps: Agentic.Steps): Agentic.Pipeline;
 
   ask(
     query: string,
