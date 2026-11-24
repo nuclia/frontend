@@ -508,7 +508,7 @@ function _linkNodeToParent(
   if (property === 'registered_agents') {
     registeredAgentParams.set({ description: '', functions: [], nodeType });
   }
-  if (property === 'then' || property === 'else_' || property === 'agents') {
+  if (property === 'then' || property === 'else_' || property === 'agents' || property === 'registered_agents') {
     const existing = (parent as any)?.[property];
     const childIds = Array.isArray(existing) ? [...existing] : [];
     const currentIndex = childIds.indexOf(nodeId);
