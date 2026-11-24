@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matInfoRound } from '@ng-icons/material-symbols/round';
+import { UiStepperImports } from '@progress/pdp-ui';
 import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
 import { HlmInputImports } from '@progress/pdp-ui-spartan/input';
 import { HlmLabelImports } from '@progress/pdp-ui-spartan/label';
-import { SpartanStepperImports } from '@progress/pdp-ui-spartan/stepper';
 import { HlmTextareaImports } from '@progress/pdp-ui-spartan/textarea';
 import { HlmTooltipImports } from '@progress/pdp-ui-spartan/tooltip';
 import { EmailWizardService } from '../email-wizard.service';
@@ -26,7 +26,7 @@ import { SENDER_NAME_MAX_LENGTH } from './sender-name.utils';
     HlmTooltipImports,
     NgIcon,
     PersonalizationHelpComponent,
-    SpartanStepperImports,
+    UiStepperImports,
   ],
   providers: [provideIcons({ matInfoRound })],
 })
