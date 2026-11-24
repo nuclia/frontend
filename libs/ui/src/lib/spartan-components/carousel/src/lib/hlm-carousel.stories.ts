@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmCarouselImports } from '../index';
 import { HlmCarousel } from './hlm-carousel';
 
@@ -14,11 +20,27 @@ interface Slide {
 }
 
 const SLIDES: Slide[] = [
-  { title: 'Getting started', description: 'Create a knowledge box and upload your first documents.' },
-  { title: 'Connect your data', description: 'Sync files from cloud storage or a website.' },
-  { title: 'Search and ask', description: 'Query your content with semantic search and generative answers.' },
-  { title: 'Tune relevance', description: 'Adjust filters and ranking to improve results.' },
-  { title: 'Share with your team', description: 'Invite collaborators and manage access.' },
+  {
+    title: 'Getting started',
+    description: 'Create a knowledge box and upload your first documents.',
+  },
+  {
+    title: 'Connect your data',
+    description: 'Sync files from cloud storage or a website.',
+  },
+  {
+    title: 'Search and ask',
+    description:
+      'Query your content with semantic search and generative answers.',
+  },
+  {
+    title: 'Tune relevance',
+    description: 'Adjust filters and ranking to improve results.',
+  },
+  {
+    title: 'Share with your team',
+    description: 'Invite collaborators and manage access.',
+  },
 ];
 
 const meta: Meta<CarouselStoryArgs> = {
@@ -49,11 +71,13 @@ The host is a <code>region</code> with <code>aria-roledescription="carousel"</co
       options: ['horizontal', 'vertical'],
     },
     loop: {
-      description: 'Embla option: continue from the last slide back to the first one.',
+      description:
+        'Embla option: continue from the last slide back to the first one.',
       control: 'boolean',
     },
     align: {
-      description: 'Embla option: how the active slide is aligned within the viewport.',
+      description:
+        'Embla option: how the active slide is aligned within the viewport.',
       control: 'inline-radio',
       options: ['start', 'center', 'end'],
     },

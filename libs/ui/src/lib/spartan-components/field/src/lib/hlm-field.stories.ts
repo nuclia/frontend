@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmCheckboxImports } from '../../../checkbox/src/index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
@@ -22,7 +28,12 @@ const meta: Meta<FieldStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     moduleMetadata({
-      imports: [...HlmFieldImports, ...HlmInputImports, ...HlmLabelImports, ...HlmCheckboxImports],
+      imports: [
+        ...HlmFieldImports,
+        ...HlmInputImports,
+        ...HlmLabelImports,
+        ...HlmCheckboxImports,
+      ],
     }),
   ],
   parameters: {
@@ -53,20 +64,24 @@ Description and error ids are linked to the control through <code>aria-described
       control: 'text',
     },
     description: {
-      description: 'Help text shown below the control (<code>hlm-field-description</code>).',
+      description:
+        'Help text shown below the control (<code>hlm-field-description</code>).',
       control: 'text',
     },
     errorMessage: {
-      description: 'Validation message (<code>hlm-field-error</code>), displayed when the field is invalid.',
+      description:
+        'Validation message (<code>hlm-field-error</code>), displayed when the field is invalid.',
       control: 'text',
     },
     orientation: {
-      description: 'Layout of the field children: stacked, in a row, or responsive to the field group width.',
+      description:
+        'Layout of the field children: stacked, in a row, or responsive to the field group width.',
       control: 'inline-radio',
       options: ['vertical', 'horizontal', 'responsive'],
     },
     invalid: {
-      description: 'Forces the invalid style on the field and the input, and shows the error message.',
+      description:
+        'Forces the invalid style on the field and the input, and shows the error message.',
       control: 'boolean',
     },
     disabled: {

@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 
 import nx from '@nx/eslint-plugin';
-import baseConfig from '../../eslint.config.mjs';
+import baseConfig from '../../eslint.config.mts';
 
 export default [
   ...nx.configs['flat/angular'],

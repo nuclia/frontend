@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import type { ClassValue } from 'clsx';
 import { HlmCarousel } from './hlm-carousel';
 
@@ -11,9 +19,7 @@ import { HlmCarousel } from './hlm-carousel';
   },
   template: `
     <span class="sr-only">{{ _labelContent() }}</span>
-    <div
-      aria-hidden="true"
-      [class]="slideClass()">
+    <div aria-hidden="true" [class]="slideClass()">
       {{ _currentSlide() }} / {{ _carousel.slideCount() }}
     </div>
   `,
@@ -21,9 +27,13 @@ import { HlmCarousel } from './hlm-carousel';
 export class HlmCarouselSlideDisplay {
   protected readonly _carousel = inject(HlmCarousel);
 
-  protected readonly _currentSlide = computed(() => this._carousel.currentSlide() + 1);
+  protected readonly _currentSlide = computed(
+    () => this._carousel.currentSlide() + 1,
+  );
 
-  public readonly slideClass = input<ClassValue>('text-muted-foreground text-sm');
+  public readonly slideClass = input<ClassValue>(
+    'text-muted-foreground text-sm',
+  );
 
   /** Screen reader only text for the slide display */
   public readonly label = input<string>('Slide');
