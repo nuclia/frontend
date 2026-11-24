@@ -305,7 +305,7 @@ export class WorkflowEffectService {
   }
 
   private addAgent(node: ParentNode) {
-    const agentCreation = getAgentFromConfig(node.nodeType, node.nodeConfig);
+    const agentCreation = getAgentFromConfig(node.nodeType, node.nodeConfig, undefined, true);
     return this.sdk.currentArag.pipe(
       take(1),
       switchMap((arag) => {
@@ -324,7 +324,7 @@ export class WorkflowEffectService {
   }
 
   private updateAgent(node: ParentNode, agentId: string): Observable<void> {
-    const agentConfig = getAgentFromConfig(node.nodeType, node.nodeConfig);
+    const agentConfig = getAgentFromConfig(node.nodeType, node.nodeConfig, undefined, true);
     return this.sdk.currentArag.pipe(
       take(1),
       switchMap((arag) => {

@@ -86,6 +86,9 @@ export function isCategory(x: any): x is NodeCategory {
   return CATEGORY_LIST.has(x);
 }
 
+export const SINGLE_LINKS = ['fallback', 'next_agent'];
+export const MULTIPLE_LINKS = ['then', 'else_', 'agents', 'registered_agents'];
+
 export interface ParentNode {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
@@ -359,7 +362,7 @@ export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
   const { sources, ...agentConfig } = config;
   return {
     module: 'ask',
-    sources: sources.split(','),
+    sources: Array.isArray(sources) ? sources : sources.split(','),
     ...agentConfig,
   };
 }
@@ -502,31 +505,61 @@ export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
   id?: string,
+  recursive = false,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
   const configCopy = structuredClone(config ?? {});
   if (id && !configCopy.id) {
     configCopy.id = id;
   }
   const cleanConfig = cleanupConfig(configCopy);
+  let agent: PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation;
   switch (nodeType) {
     case 'rephrase':
-      return rephraseUiToCreation(cleanConfig);
+      agent = rephraseUiToCreation(cleanConfig);
+      break;
     case 'sql':
-      return sqlUiToCreation(cleanConfig);
+      agent = sqlUiToCreation(cleanConfig);
+      break;
     case 'ask':
-      return askUiToCreation(cleanConfig);
+      agent = askUiToCreation(cleanConfig);
+      break;
     case 'basic_ask':
-      return basicAskUiToCreation(cleanConfig);
+      agent = basicAskUiToCreation(cleanConfig);
+      break;
     case 'external':
-      return externalUiToCreation(cleanConfig);
+      agent = externalUiToCreation(cleanConfig);
+      break;
     case 'smart':
-      return smartUiToCreation(cleanConfig);
+      agent = smartUiToCreation(cleanConfig);
+      break;
     case 'preprocess_alinia':
     case 'postprocess_alinia':
-      return guardrailsUiToCreation(cleanConfig);
+      agent = guardrailsUiToCreation(cleanConfig);
+      break;
     default:
-      return { module: nodeType, ...cleanConfig };
+      agent = { module: nodeType, ...cleanConfig };
+      break;
   }
+
+  if (recursive) {
+    SINGLE_LINKS.forEach((key) => {
+      const child = (agent as any)[key];
+      if (child) {
+        const nodeType = getNodeTypeFromAgent(child);
+        (agent as any)[key] = getAgentFromConfig(nodeType, child, undefined, true);
+      }
+    });
+    MULTIPLE_LINKS.forEach((key) => {
+      const children = (agent as any)[key];
+      if (Array.isArray(children)) {
+        (agent as any)[key] = children.map((item) => {
+          const nodeType = getNodeTypeFromAgent(item);
+          return getAgentFromConfig(nodeType, item, undefined, true);
+        });
+      }
+    });
+  }
+  return agent;
 }
 
 /**
