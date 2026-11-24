@@ -1,11 +1,20 @@
 import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MetricsService } from '@flaps/common';
 import { AccountService, FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { IKnowledgeBoxItem, NUAClient, UsagePoint, UsageType } from '@nuclia/core';
+import { IKnowledgeBoxItem, NUAClient, Project, UsagePoint, UsageType } from '@nuclia/core';
 import { NsiSkeletonComponent } from '@nuclia/sistema';
 import {
   catchError,
@@ -78,6 +87,8 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   nuaKeys: Observable<NUAClient[]> = this.loadPerZone((accountId, zoneSlug) =>
     this.sdk.nuclia.db.getNUAClientsForZone(accountId, zoneSlug),
   );
+  projects$ = this.loadPerZone((accountId, zoneSlug) => this.sdk.nuclia.db.getProjectsForZone(accountId, zoneSlug));
+  projects = toSignal(this.projects$);
   isNuaActivityEnabled = this.features.unstable.viewNuaActivity;
   isRagAccount = this.accountService.isRagAccount;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
@@ -113,6 +124,19 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
       ),
     ),
     startWith(undefined),
+  );
+
+  projectItems = computed(() =>
+    this.projects()?.map(
+      (project): UsageListItem => ({
+        id: project.project_id,
+        title: project.name,
+        icon: 'account',
+        enabled: true,
+        onClick: () => this.goToProject(project),
+        zone: project.zone,
+      }),
+    ),
   );
 
   ngOnInit() {
@@ -162,6 +186,10 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
       });
   }
 
+  goToProject(project: Project): void {
+    this.navigation.navigateExternal(`${this.sdk.getOriginForApp('platform')}/projects/${project.project_id}`);
+  }
+
   /** Loads `getForZone` across all the account's zones in parallel, growing the result list as each zone resolves. */
   private loadPerZone<T>(getForZone: (accountId: string, zoneSlug: string) => Observable<T[]>): Observable<T[]> {
     return this.sdk.currentAccount.pipe(
@@ -200,9 +228,17 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   private getUsageMap(): Observable<{ [key: string]: UsagePoint[] } | undefined> {
     return combineLatest([this.metrics.account$, this.selectedPeriod]).pipe(
       switchMap(([account, period]) => {
-        const getUsageEntry = (key: string, kbId?: string, nuaKeyId?: string) =>
+        const getUsageEntry = (key: string, kbId?: string, nuaKeyId?: string, projectId?: string) =>
           this.sdk.nuclia.db
-            .getUsage(account.id, period.start.toISOString(), period.end.toISOString(), kbId, undefined, nuaKeyId)
+            .getUsage(
+              account.id,
+              period.start.toISOString(),
+              period.end.toISOString(),
+              kbId,
+              undefined,
+              nuaKeyId,
+              projectId,
+            )
             .pipe(
               map((usage) => ({ key, usage })),
               catchError(() => of({ key, usage: [] as UsagePoint[] })),
@@ -216,9 +252,17 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
             merge(...nuaKeys.map((nuaKey) => getUsageEntry(nuaKey.internal_id, undefined, nuaKey.internal_id))),
           ),
         );
+        const newProjectUsage$ = this.newItemsOnly(this.projects$, (project) => project.project_id).pipe(
+          mergeMap((projects) =>
+            merge(
+              ...projects.map((project) => getUsageEntry(project.project_id, undefined, undefined, project.project_id)),
+            ),
+          ),
+        );
+
         const accountUsage$ = getUsageEntry('account');
 
-        return merge(newKbUsage$, newNuaUsage$, accountUsage$).pipe(
+        return merge(newKbUsage$, newNuaUsage$, accountUsage$, newProjectUsage$).pipe(
           scan((acc, curr) => ({ ...acc, [curr.key]: curr.usage }), {} as { [key: string]: UsagePoint[] }),
           // Reset to `undefined` so the UI shows skeletons again while the new period loads.
           startWith(undefined),
