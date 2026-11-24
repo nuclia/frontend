@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, inject, input } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmSidebarService } from './hlm-sidebar.service';
@@ -16,7 +18,9 @@ import { HlmSidebarService } from './hlm-sidebar.service';
 export class HlmSidebarRail {
   private readonly _sidebarService = inject(HlmSidebarService);
 
-  public readonly ariaLabel = input<string>('Toggle Sidebar', { alias: 'aria-label' });
+  public readonly ariaLabel = input<string>('Toggle Sidebar', {
+    alias: 'aria-label',
+  });
 
   constructor() {
     classes(() => [

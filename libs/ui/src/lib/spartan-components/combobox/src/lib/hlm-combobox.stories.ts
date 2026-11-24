@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmComboboxImports } from '../index';
 import { HlmCombobox } from './hlm-combobox';
@@ -18,7 +24,9 @@ const meta: Meta<ComboboxStoryArgs> = {
   title: 'Spartan/Combobox',
   component: HlmCombobox,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmComboboxImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({ imports: [...HlmComboboxImports, ...HlmLabelImports] }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -45,11 +53,13 @@ Use <code>hlm-combobox-multiple</code> with <code>hlm-combobox-chips</code> for 
   },
   argTypes: {
     placeholder: {
-      description: 'Placeholder of the input (<code>hlm-combobox-input</code> input).',
+      description:
+        'Placeholder of the input (<code>hlm-combobox-input</code> input).',
       control: 'text',
     },
     value: {
-      description: 'Selected value (<code>hlm-combobox</code> input). Empty means nothing selected.',
+      description:
+        'Selected value (<code>hlm-combobox</code> input). Empty means nothing selected.',
       control: 'select',
       options: ['', 'design', 'engineering', 'research'],
     },
@@ -63,15 +73,18 @@ Use <code>hlm-combobox-multiple</code> with <code>hlm-combobox-chips</code> for 
       control: 'boolean',
     },
     showClear: {
-      description: 'Shows a button to clear the selection (<code>hlm-combobox-input</code> input).',
+      description:
+        'Shows a button to clear the selection (<code>hlm-combobox-input</code> input).',
       control: 'boolean',
     },
     showTrigger: {
-      description: 'Shows the chevron button that toggles the options (<code>hlm-combobox-input</code> input).',
+      description:
+        'Shows the chevron button that toggles the options (<code>hlm-combobox-input</code> input).',
       control: 'boolean',
     },
     autoHighlight: {
-      description: 'Automatically highlights the first matching option while searching.',
+      description:
+        'Automatically highlights the first matching option while searching.',
       control: 'boolean',
     },
     closeOnSelect: {

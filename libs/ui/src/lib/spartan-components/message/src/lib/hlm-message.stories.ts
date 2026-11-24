@@ -1,10 +1,23 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmAvatarImports } from '../../../avatar/src';
 import { HlmBubbleImports } from '../../../bubble/src';
 import { HlmMessageImports } from '../index';
 import { HlmMessage } from './hlm-message';
 
-type BubbleVariant = 'default' | 'secondary' | 'muted' | 'tinted' | 'outline' | 'ghost' | 'destructive';
+type BubbleVariant =
+  | 'default'
+  | 'secondary'
+  | 'muted'
+  | 'tinted'
+  | 'outline'
+  | 'ghost'
+  | 'destructive';
 
 interface MessageStoryArgs {
   align: 'start' | 'end';
@@ -18,7 +31,11 @@ const meta: Meta<MessageStoryArgs> = {
   title: 'Spartan/Message',
   component: HlmMessage,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmMessageImports, ...HlmAvatarImports, ...HlmBubbleImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmMessageImports, ...HlmAvatarImports, ...HlmBubbleImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -47,7 +64,15 @@ The <code>align</code> input is <code>start</code> (incoming, default) or <code>
     bubbleVariant: {
       description: 'Variant of the <code>hlmBubble</code> wrapping the text.',
       control: 'select',
-      options: ['default', 'secondary', 'muted', 'tinted', 'outline', 'ghost', 'destructive'],
+      options: [
+        'default',
+        'secondary',
+        'muted',
+        'tinted',
+        'outline',
+        'ghost',
+        'destructive',
+      ],
     },
     sender: {
       description: 'Sender name displayed in the message header.',

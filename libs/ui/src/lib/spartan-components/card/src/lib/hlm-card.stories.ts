@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreHorizRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButtonImports } from '../../../button/src/index';
 import { HlmCardImports } from '../index';
 import { HlmCard } from './hlm-card';

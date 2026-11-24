@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matAutorenewRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmSpinnerImports } from '../index';
 import { HlmSpinner } from './hlm-spinner';
@@ -44,11 +50,13 @@ Resize it with a text-size class, e.g. <code>class="text-2xl"</code>. The rotati
       options: ['matDataUsageRound', 'matAutorenewRound'],
     },
     ariaLabel: {
-      description: 'Accessible label announced for the status role, set through the <code>aria-label</code> attribute.',
+      description:
+        'Accessible label announced for the status role, set through the <code>aria-label</code> attribute.',
       control: 'text',
     },
     sizeClass: {
-      description: 'Text size class applied to the host to resize the spinner (not an input).',
+      description:
+        'Text size class applied to the host to resize the spinner (not an input).',
       control: 'select',
       options: ['text-base', 'text-2xl', 'text-4xl'],
     },

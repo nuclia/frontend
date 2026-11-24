@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmMessage } from './lib/hlm-message';
 import { HlmMessageAvatar } from './lib/hlm-message-avatar';
 import { HlmMessageContent } from './lib/hlm-message-content';

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { InjectionToken, type ValueProvider, inject } from '@angular/core';
 import type { ItemVariants } from './hlm-item';
 import type { ItemMediaVariants } from './hlm-item-media';
@@ -14,8 +16,13 @@ const defaultConfig: HlmItemConfig = {
 
 const HlmItemConfigToken = new InjectionToken<HlmItemConfig>('HlmItemConfig');
 
-export function provideHlmItemConfig(config: Partial<HlmItemConfig>): ValueProvider {
-  return { provide: HlmItemConfigToken, useValue: { ...defaultConfig, ...config } };
+export function provideHlmItemConfig(
+  config: Partial<HlmItemConfig>,
+): ValueProvider {
+  return {
+    provide: HlmItemConfigToken,
+    useValue: { ...defaultConfig, ...config },
+  };
 }
 
 export function injectHlmItemConfig(): HlmItemConfig {
@@ -30,12 +37,21 @@ const defaultMediaConfig: HlmItemMediaConfig = {
   variant: 'default',
 };
 
-const HlmItemMediaConfigToken = new InjectionToken<HlmItemMediaConfig>('HlmItemMediaConfig');
+const HlmItemMediaConfigToken = new InjectionToken<HlmItemMediaConfig>(
+  'HlmItemMediaConfig',
+);
 
-export function provideHlmItemMediaConfig(config: Partial<HlmItemMediaConfig>): ValueProvider {
-  return { provide: HlmItemMediaConfigToken, useValue: { ...defaultMediaConfig, ...config } };
+export function provideHlmItemMediaConfig(
+  config: Partial<HlmItemMediaConfig>,
+): ValueProvider {
+  return {
+    provide: HlmItemMediaConfigToken,
+    useValue: { ...defaultMediaConfig, ...config },
+  };
 }
 
 export function injectHlmItemMediaConfig(): HlmItemMediaConfig {
-  return inject(HlmItemMediaConfigToken, { optional: true }) ?? defaultMediaConfig;
+  return (
+    inject(HlmItemMediaConfigToken, { optional: true }) ?? defaultMediaConfig
+  );
 }

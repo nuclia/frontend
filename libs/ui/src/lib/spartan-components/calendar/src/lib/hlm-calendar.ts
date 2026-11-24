@@ -1,23 +1,56 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-symbols/round';
-import { buttonVariants, HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import {
+  matChevronLeftRound,
+  matChevronRightRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  buttonVariants,
+  HlmButtonImports,
+} from '@progress/pdp-ui-spartan/button';
 import { HlmSelectImports } from '@progress/pdp-ui-spartan/select';
 import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
-import { BrnCalendar, BrnCalendarImports, injectBrnCalendarI18n } from '@spartan-ng/brain/calendar';
+import {
+  BrnCalendar,
+  BrnCalendarImports,
+  injectBrnCalendarI18n,
+} from '@spartan-ng/brain/calendar';
 import { injectDateAdapter } from '@spartan-ng/brain/date-time';
 
 @Component({
   selector: 'hlm-calendar',
   exportAs: 'hlmCalendar',
-  imports: [BrnCalendarImports, NgIcon, HlmSelectImports, NgTemplateOutlet, HlmButtonImports],
+  imports: [
+    BrnCalendarImports,
+    NgIcon,
+    HlmSelectImports,
+    NgTemplateOutlet,
+    HlmButtonImports,
+  ],
   viewProviders: [provideIcons({ matChevronLeftRound, matChevronRightRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
     {
       directive: BrnCalendar,
-      inputs: ['min', 'max', 'disabled', 'date', 'dateDisabled', 'weekStartsOn', 'highlightDays', 'defaultFocusedDate'],
+      inputs: [
+        'min',
+        'max',
+        'disabled',
+        'date',
+        'dateDisabled',
+        'weekStartsOn',
+        'highlightDays',
+        'defaultFocusedDate',
+      ],
       outputs: ['dateChange'],
     },
   ],
@@ -27,17 +60,11 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
       <!-- Header -->
       <div class="flex w-full items-center justify-between gap-1.5">
         <ng-template #month>
-          <hlm-select
-            brnCalendarMonthSelect
-            class="order-1">
-            <hlm-select-trigger
-              size="sm"
-              [class]="_selectClass">
+          <hlm-select brnCalendarMonthSelect class="order-1">
+            <hlm-select-trigger size="sm" [class]="_selectClass">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content
-              *hlmSelectPortal
-              class="max-h-80">
+            <hlm-select-content *hlmSelectPortal class="max-h-80">
               <hlm-select-group>
                 @for (month of _i18n.config().months(); track month) {
                   <hlm-select-item [value]="month">{{ month }}</hlm-select-item>
@@ -47,17 +74,11 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
           </hlm-select>
         </ng-template>
         <ng-template #year>
-          <hlm-select
-            brnCalendarYearSelect
-            class="order-3">
-            <hlm-select-trigger
-              size="sm"
-              [class]="_selectClass">
+          <hlm-select brnCalendarYearSelect class="order-3">
+            <hlm-select-trigger size="sm" [class]="_selectClass">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content
-              *hlmSelectPortal
-              class="max-h-80">
+            <hlm-select-content *hlmSelectPortal class="max-h-80">
               <hlm-select-group>
                 @for (year of _i18n.config().years(); track year) {
                   <hlm-select-item [value]="year">{{ year }}</hlm-select-item>
@@ -72,10 +93,9 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
           brnCalendarPreviousButton
           variant="ghost"
           hlmBtn
-          class="order-first size-(--cell-size) p-0 select-none aria-disabled:opacity-50">
-          <ng-icon
-            name="matChevronLeftRound"
-            class="rtl:rotate-180" />
+          class="order-first size-(--cell-size) p-0 select-none aria-disabled:opacity-50"
+        >
+          <ng-icon name="matChevronLeftRound" class="rtl:rotate-180" />
         </button>
 
         @switch (captionLayout()) {
@@ -85,24 +105,18 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
           }
           @case ('dropdown-months') {
             <ng-container [ngTemplateOutlet]="month" />
-            <div
-              brnCalendarHeader
-              class="order-4 text-sm font-medium">
+            <div brnCalendarHeader class="order-4 text-sm font-medium">
               {{ heading.year }}
             </div>
           }
           @case ('dropdown-years') {
-            <div
-              brnCalendarHeader
-              class="order-2 text-sm font-medium">
+            <div brnCalendarHeader class="order-2 text-sm font-medium">
               {{ heading.month }}
             </div>
             <ng-container [ngTemplateOutlet]="year" />
           }
           @case ('label') {
-            <div
-              brnCalendarHeader
-              class="order-5 text-sm font-medium">
+            <div brnCalendarHeader class="order-5 text-sm font-medium">
               {{ heading.header }}
             </div>
           }
@@ -112,40 +126,34 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
           brnCalendarNextButton
           hlmBtn
           variant="ghost"
-          class="order-last size-(--cell-size) p-0 select-none aria-disabled:opacity-50">
-          <ng-icon
-            name="matChevronRightRound"
-            class="rtl:rotate-180" />
+          class="order-last size-(--cell-size) p-0 select-none aria-disabled:opacity-50"
+        >
+          <ng-icon name="matChevronRightRound" class="rtl:rotate-180" />
         </button>
       </div>
 
-      <table
-        class="w-full border-collapse space-y-1"
-        brnCalendarGrid>
+      <table class="w-full border-collapse space-y-1" brnCalendarGrid>
         <thead aria-hidden="true">
           <tr class="flex">
             <th
               *brnCalendarWeekday="let weekday"
               scope="col"
               class="text-muted-foreground flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal select-none"
-              [attr.aria-label]="_i18n.config().labelWeekday(weekday)">
+              [attr.aria-label]="_i18n.config().labelWeekday(weekday)"
+            >
               {{ _i18n.config().formatWeekdayName(weekday) }}
             </th>
           </tr>
         </thead>
 
         <tbody role="rowgroup">
-          <tr
-            *brnCalendarWeek="let week"
-            class="mt-2 flex w-full">
+          <tr *brnCalendarWeek="let week" class="mt-2 flex w-full">
             @for (date of week; track _dateAdapter.getTime(date)) {
               <td
                 brnCalendarCell
-                class="group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none [&:first-child[data-selected=true]_button]:rounded-s-(--cell-radius) [&:last-child[data-selected=true]_button]:rounded-e-(--cell-radius)">
-                <button
-                  brnCalendarCellButton
-                  [date]="date"
-                  [class]="_btnClass">
+                class="group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none [&:first-child[data-selected=true]_button]:rounded-s-(--cell-radius) [&:last-child[data-selected=true]_button]:rounded-e-(--cell-radius)"
+              >
+                <button brnCalendarCellButton [date]="date" [class]="_btnClass">
                   {{ _dateAdapter.getDate(date) }}
                 </button>
               </td>
@@ -164,7 +172,9 @@ export class HlmCalendar<T> {
   protected readonly _dateAdapter = injectDateAdapter<T>();
 
   /** Show dropdowns to navigate between months or years. */
-  public readonly captionLayout = input<'dropdown' | 'label' | 'dropdown-months' | 'dropdown-years'>('label');
+  public readonly captionLayout = input<
+    'dropdown' | 'label' | 'dropdown-months' | 'dropdown-years'
+  >('label');
 
   /** Access the calendar directive */
   private readonly _calendar = inject(BrnCalendar);
@@ -175,7 +185,10 @@ export class HlmCalendar<T> {
     const date = this._calendar.focusedDate();
 
     return {
-      header: config.formatHeader(this._dateAdapter.getMonth(date), this._dateAdapter.getYear(date)),
+      header: config.formatHeader(
+        this._dateAdapter.getMonth(date),
+        this._dateAdapter.getYear(date),
+      ),
       month: config.formatMonth(this._dateAdapter.getMonth(date)),
       year: config.formatYear(this._dateAdapter.getYear(date)),
     };

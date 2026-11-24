@@ -1,6 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matKeyboardArrowDownRound, matKeyboardArrowUpRound } from '@ng-icons/material-symbols/round';
+import {
+  matKeyboardArrowDownRound,
+  matKeyboardArrowUpRound,
+} from '@ng-icons/material-symbols/round';
 import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnAccordionImports } from '@spartan-ng/brain/accordion';
 import type { ClassValue } from 'clsx';
@@ -9,25 +19,28 @@ import type { ClassValue } from 'clsx';
   selector: 'hlm-accordion-trigger',
   exportAs: 'hlmAccordionTrigger',
   imports: [BrnAccordionImports, NgIcon],
-  providers: [provideIcons({ matKeyboardArrowDownRound, matKeyboardArrowUpRound })],
+  providers: [
+    provideIcons({ matKeyboardArrowDownRound, matKeyboardArrowUpRound }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h3
-      brnAccordionHeader
-      class="flex">
+    <h3 brnAccordionHeader class="flex">
       <button
         brnAccordionTrigger
         data-slot="accordion-trigger"
-        [class]="_computedTriggerClass()">
+        [class]="_computedTriggerClass()"
+      >
         <ng-content />
         <ng-icon
           name="matKeyboardArrowDownRound"
           data-slot="accordion-trigger-icon"
-          class="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
+          class="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+        />
         <ng-icon
           name="matKeyboardArrowUpRound"
           data-slot="accordion-trigger-icon"
-          class="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:inline group-aria-[expanded=false]/accordion-trigger:hidden" />
+          class="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:inline group-aria-[expanded=false]/accordion-trigger:hidden"
+        />
       </button>
     </h3>
   `,

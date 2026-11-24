@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmToggleGroupImports } from '../index';
 import { HlmToggleGroup } from './hlm-toggle-group';
 
@@ -58,7 +64,8 @@ Variant, size, spacing, and orientation are set on the group and apply to every 
       options: ['default', 'sm', 'lg'],
     },
     spacing: {
-      description: 'Gap between items, in spacing units. Use 0 for items joined together.',
+      description:
+        'Gap between items, in spacing units. Use 0 for items joined together.',
       control: 'number',
     },
     orientation: {
@@ -67,7 +74,8 @@ Variant, size, spacing, and orientation are set on the group and apply to every 
       options: ['horizontal', 'vertical'],
     },
     nullable: {
-      description: 'Whether the single-selection group allows having no pressed item.',
+      description:
+        'Whether the single-selection group allows having no pressed item.',
       control: 'boolean',
     },
     disabled: {

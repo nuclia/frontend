@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmSliderImports } from '../index';
 import { HlmSlider } from './hlm-slider';
 
@@ -43,7 +49,8 @@ Configure the track with <code>min</code>, <code>max</code>, <code>step</code>, 
   },
   argTypes: {
     value: {
-      description: 'Current value(s). One number gives a single thumb, two numbers give a range.',
+      description:
+        'Current value(s). One number gives a single thumb, two numbers give a range.',
       control: 'object',
     },
     min: {
@@ -72,7 +79,8 @@ Configure the track with <code>min</code>, <code>max</code>, <code>step</code>, 
       control: 'boolean',
     },
     minStepsBetweenThumbs: {
-      description: 'Minimum number of steps that must remain between thumbs of a range slider.',
+      description:
+        'Minimum number of steps that must remain between thumbs of a range slider.',
       control: 'number',
     },
     disabled: {

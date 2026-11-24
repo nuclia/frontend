@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmCommand } from './lib/hlm-command';
 import { HlmCommandDialog } from './lib/hlm-command-dialog';
 import { HlmCommandEmpty } from './lib/hlm-command-empty';

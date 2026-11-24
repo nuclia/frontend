@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matInfoRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
@@ -20,7 +26,13 @@ const meta: Meta<PopoverStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     moduleMetadata({
-      imports: [HlmButton, NgIcon, ...HlmInputImports, ...HlmLabelImports, ...HlmPopoverImports],
+      imports: [
+        HlmButton,
+        NgIcon,
+        ...HlmInputImports,
+        ...HlmLabelImports,
+        ...HlmPopoverImports,
+      ],
       providers: [provideIcons({ matInfoRound })],
     }),
   ],

@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
@@ -16,7 +22,16 @@ const meta: Meta<SheetStoryArgs> = {
   title: 'Spartan/Sheet',
   component: HlmSheet,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [HlmButton, ...HlmInputImports, ...HlmLabelImports, ...HlmSheetImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [
+        HlmButton,
+        ...HlmInputImports,
+        ...HlmLabelImports,
+        ...HlmSheetImports,
+      ],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -37,12 +52,14 @@ The sheet is a modal dialog: focus is trapped, <code>Esc</code> closes it, and t
   },
   argTypes: {
     side: {
-      description: 'Edge of the screen from which the sheet slides in, set on <code>hlm-sheet</code>.',
+      description:
+        'Edge of the screen from which the sheet slides in, set on <code>hlm-sheet</code>.',
       control: 'inline-radio',
       options: ['top', 'right', 'bottom', 'left'],
     },
     showCloseButton: {
-      description: 'Shows the close button in the corner of the content, set on <code>hlm-sheet-content</code>.',
+      description:
+        'Shows the close button in the corner of the content, set on <code>hlm-sheet-content</code>.',
       control: 'boolean',
     },
     title: {

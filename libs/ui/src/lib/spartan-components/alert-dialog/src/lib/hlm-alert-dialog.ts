@@ -1,6 +1,14 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
-import { BRN_ALERT_DIALOG_DEFAULT_OPTIONS, BrnAlertDialog } from '@spartan-ng/brain/alert-dialog';
-import { BrnDialog, provideBrnDialogDefaultOptions } from '@spartan-ng/brain/dialog';
+import {
+  BRN_ALERT_DIALOG_DEFAULT_OPTIONS,
+  BrnAlertDialog,
+} from '@spartan-ng/brain/alert-dialog';
+import {
+  BrnDialog,
+  provideBrnDialogDefaultOptions,
+} from '@spartan-ng/brain/dialog';
 import { HlmAlertDialogOverlay } from './hlm-alert-dialog-overlay';
 
 @Component({

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreHorizRound } from '@ng-icons/material-symbols/round';
@@ -21,7 +23,8 @@ export class HlmPaginationEllipsis {
 
   constructor() {
     classes(
-      () => "size-8 [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(4)] flex items-center justify-center",
+      () =>
+        "size-8 [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(4)] flex items-center justify-center",
     );
   }
 }

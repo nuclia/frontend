@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { BrnDrawer, BrnDrawerHandle } from '@spartan-ng/brain/drawer';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-drawer-content',
@@ -15,7 +17,8 @@ import { BrnDrawer, BrnDrawerHandle } from '@spartan-ng/brain/drawer';
   },
   template: `
     <div
-      class="bg-muted mx-auto mt-4 hidden h-1 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block"></div>
+      class="bg-muted mx-auto mt-4 hidden h-1 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block"
+    ></div>
     <ng-content />
   `,
 })

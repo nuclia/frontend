@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmDrawer } from './lib/hlm-drawer';
 import { HlmDrawerClose } from './lib/hlm-drawer-close';
 import { HlmDrawerContent } from './lib/hlm-drawer-content';

@@ -1,12 +1,20 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
-import { HlmButton, provideBrnButtonConfig } from '@progress/pdp-ui-spartan/button';
 import { BrnDialogClose } from '@spartan-ng/brain/dialog';
+import {
+  HlmButton,
+  provideBrnButtonConfig,
+} from '@progress/pdp-ui-spartan/button';
 
 @Directive({
   selector: 'button[hlmAlertDialogCancel]',
   exportAs: 'hlmAlertDialogCancel',
   providers: [provideBrnButtonConfig({ variant: 'outline' })],
-  hostDirectives: [BrnDialogClose, { directive: HlmButton, inputs: ['variant', 'size'] }],
+  hostDirectives: [
+    BrnDialogClose,
+    { directive: HlmButton, inputs: ['variant', 'size'] },
+  ],
   host: { 'data-slot': 'alert-dialog-cancel', '[type]': 'type()' },
 })
 export class HlmAlertDialogCancel {

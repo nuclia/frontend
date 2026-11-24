@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmMessageScroller } from './lib/hlm-message-scroller';
 import { HlmMessageScrollerButton } from './lib/hlm-message-scroller-button';
 import { HlmMessageScrollerContent } from './lib/hlm-message-scroller-content';

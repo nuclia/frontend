@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmCalendarImports } from '../index';
 import { HlmCalendar } from './hlm-calendar';
 
@@ -10,7 +16,8 @@ interface CalendarStoryArgs {
   weekStartsOn: number;
 }
 
-const isWeekend = (date: Date): boolean => date.getDay() === 0 || date.getDay() === 6;
+const isWeekend = (date: Date): boolean =>
+  date.getDay() === 0 || date.getDay() === 6;
 
 const meta: Meta<CalendarStoryArgs> = {
   title: 'Spartan/Calendar',
@@ -41,7 +48,8 @@ Days are keyboard navigable with the arrow keys; <code>captionLayout</code> swit
   },
   argTypes: {
     captionLayout: {
-      description: 'Controls whether month and year navigation uses a heading or select controls.',
+      description:
+        'Controls whether month and year navigation uses a heading or select controls.',
       control: 'select',
       options: ['label', 'dropdown', 'dropdown-months', 'dropdown-years'],
     },
@@ -50,7 +58,8 @@ Days are keyboard navigable with the arrow keys; <code>captionLayout</code> swit
       control: 'boolean',
     },
     weekStartsOn: {
-      description: 'First day of the week: 0 is Sunday, 1 is Monday, and so on.',
+      description:
+        'First day of the week: 0 is Sunday, 1 is Monday, and so on.',
       control: 'select',
       options: [0, 1, 6],
     },
@@ -102,7 +111,11 @@ export const MinAndMaxDate: Story = {
   render: (args) => {
     const day = 24 * 60 * 60 * 1000;
     return {
-      props: { ...args, min: new Date(Date.now() - 7 * day), max: new Date(Date.now() + 30 * day) },
+      props: {
+        ...args,
+        min: new Date(Date.now() - 7 * day),
+        max: new Date(Date.now() + 30 * day),
+      },
       template: `
         <hlm-calendar
           [captionLayout]="captionLayout"

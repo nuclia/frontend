@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { barY, defineChart, lineY } from '@tanstack/charts';
 import { scaleBand } from '@tanstack/charts/scales/band';
 import { scaleLinear } from '@tanstack/charts/scales/linear';
@@ -18,17 +24,32 @@ const monthlyResources = [
 const barChartOptions = {
   definition: defineChart(
     {
-      marks: [barY(monthlyResources, { x: 'month', y: 'resources', fill: 'var(--chart-1)' })],
+      marks: [
+        barY(monthlyResources, {
+          x: 'month',
+          y: 'resources',
+          fill: 'var(--chart-1)',
+        }),
+      ],
       scales: {
-        x: { scale: () => scaleBand<string>().paddingInner(0.2).paddingOuter(0.1), axis: { line: false } },
-        y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Resources' } },
+        x: {
+          scale: () => scaleBand<string>().paddingInner(0.2).paddingOuter(0.1),
+          axis: { line: false },
+        },
+        y: {
+          scale: scaleLinear,
+          nice: true,
+          grid: true,
+          axis: { label: 'Resources' },
+        },
       },
       theme: HLM_CHART_THEME,
     },
     { focus: 'group-x', tooltip: hlmChartTooltip() },
   ),
   ariaLabel: 'Resources added by month',
-  ariaDescription: 'Bar chart showing resources added from January through June.',
+  ariaDescription:
+    'Bar chart showing resources added from January through June.',
   height: 250,
 };
 
@@ -45,15 +66,24 @@ const lineChartOptions = {
         }),
       ],
       scales: {
-        x: { scale: () => scalePoint<string>().padding(0.2), axis: { label: 'Month' } },
-        y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Resources' } },
+        x: {
+          scale: () => scalePoint<string>().padding(0.2),
+          axis: { label: 'Month' },
+        },
+        y: {
+          scale: scaleLinear,
+          nice: true,
+          grid: true,
+          axis: { label: 'Resources' },
+        },
       },
       theme: HLM_CHART_THEME,
     },
     { focus: 'nearest-x', tooltip: hlmChartTooltip() },
   ),
   ariaLabel: 'Resources added by month',
-  ariaDescription: 'Line chart showing resources added from January through June.',
+  ariaDescription:
+    'Line chart showing resources added from January through June.',
   aspectRatio: 16 / 9,
 };
 

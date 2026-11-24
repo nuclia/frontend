@@ -1,8 +1,10 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NumberInput } from '@angular/cdk/coercion';
 import { Directive, input, numberAttribute } from '@angular/core';
+import { BrnToggleGroup } from '@spartan-ng/brain/toggle-group';
 import { ToggleVariants } from '@progress/pdp-ui-spartan/toggle';
 import { classes } from '@progress/pdp-ui-spartan/utils';
-import { BrnToggleGroup } from '@spartan-ng/brain/toggle-group';
 import { provideHlmToggleGroup } from './hlm-toggle-group.token';
 
 @Directive({
@@ -28,7 +30,9 @@ import { provideHlmToggleGroup } from './hlm-toggle-group.token';
 export class HlmToggleGroup {
   public readonly variant = input<ToggleVariants['variant']>('default');
   public readonly size = input<ToggleVariants['size']>('default');
-  public readonly spacing = input<number, NumberInput>(0, { transform: numberAttribute });
+  public readonly spacing = input<number, NumberInput>(0, {
+    transform: numberAttribute,
+  });
   public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
 
   constructor() {

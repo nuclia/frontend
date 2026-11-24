@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmFieldLegend, HlmFieldSet } from '../../../field/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmRadioGroupImports } from '../index';
@@ -14,7 +20,16 @@ const meta: Meta<RadioGroupStoryArgs> = {
   title: 'Spartan/Radio Group',
   component: HlmRadioGroup,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmRadioGroupImports, ...HlmLabelImports, HlmFieldSet, HlmFieldLegend] })],
+  decorators: [
+    moduleMetadata({
+      imports: [
+        ...HlmRadioGroupImports,
+        ...HlmLabelImports,
+        HlmFieldSet,
+        HlmFieldLegend,
+      ],
+    }),
+  ],
   parameters: {
     docs: {
       description: {

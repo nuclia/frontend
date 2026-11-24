@@ -4,7 +4,7 @@
   "sourceRoot": "libs/ui/src/lib/spartan-components/src",
   "prefix": "hlm",
   "projectType": "library",
-  "tags": [],
+  "tags": ["type:ui", "scope:shared"],
   "// targets": "to see all targets run: nx show project ui-helm --web",
   "targets": {}
 }

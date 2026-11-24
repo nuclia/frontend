@@ -1,6 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronRightRound, matDescriptionRound, matMusicNoteRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matChevronRightRound,
+  matDescriptionRound,
+  matMusicNoteRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmItemImports } from '../index';
 import { HlmItem } from './hlm-item';
@@ -19,7 +29,13 @@ const meta: Meta<ItemStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmItemImports, HlmButton, NgIcon],
-      providers: [provideIcons({ matChevronRightRound, matDescriptionRound, matMusicNoteRound })],
+      providers: [
+        provideIcons({
+          matChevronRightRound,
+          matDescriptionRound,
+          matMusicNoteRound,
+        }),
+      ],
     }),
   ],
   parameters: {

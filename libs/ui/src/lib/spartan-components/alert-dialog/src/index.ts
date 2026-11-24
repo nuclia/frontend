@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmAlertDialog } from './lib/hlm-alert-dialog';
 import { HlmAlertDialogAction } from './lib/hlm-alert-dialog-action';
 import { HlmAlertDialogCancel } from './lib/hlm-alert-dialog-cancel';

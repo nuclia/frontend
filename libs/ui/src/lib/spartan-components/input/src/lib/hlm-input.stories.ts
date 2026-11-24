@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmInputImports } from '../index';
 import { HlmInput } from './hlm-input';
@@ -51,7 +57,8 @@ Set <code>forceInvalid</code> to show the invalid style, and pair the input with
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state.',
+      description:
+        'Forces the invalid style regardless of form validation state.',
       control: 'boolean',
     },
   },

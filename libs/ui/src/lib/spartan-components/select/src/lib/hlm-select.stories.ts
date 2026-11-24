@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmFieldImports } from '../../../field/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmSelectImports } from '../index';
@@ -15,7 +21,11 @@ const meta: Meta<SelectStoryArgs> = {
   title: 'Spartan/Select',
   component: HlmSelect,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmSelectImports, ...HlmFieldImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmSelectImports, ...HlmFieldImports, ...HlmLabelImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -35,7 +45,8 @@ Associate a visible label with the trigger through <code>buttonId</code> and <co
   },
   argTypes: {
     disabled: {
-      description: 'Disables the select and prevents the dropdown from opening.',
+      description:
+        'Disables the select and prevents the dropdown from opening.',
       control: 'boolean',
     },
     size: {
@@ -44,7 +55,8 @@ Associate a visible label with the trigger through <code>buttonId</code> and <co
       options: ['default', 'sm'],
     },
     forceInvalid: {
-      description: 'Forces the trigger into the invalid state, useful outside of Angular forms.',
+      description:
+        'Forces the trigger into the invalid state, useful outside of Angular forms.',
       control: 'boolean',
     },
     placeholder: {

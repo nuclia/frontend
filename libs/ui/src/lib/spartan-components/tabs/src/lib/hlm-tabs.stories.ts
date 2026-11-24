@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmTabsImports } from '../index';
 import { HlmTabs } from './hlm-tabs';
 
@@ -35,7 +41,8 @@ Keyboard arrows move between triggers. Give the list an <code>aria-label</code> 
   },
   argTypes: {
     tab: {
-      description: 'Id of the active tab, matching an <code>hlmTabsTrigger</code> value.',
+      description:
+        'Id of the active tab, matching an <code>hlmTabsTrigger</code> value.',
       control: 'select',
       options: ['overview', 'activity', 'members'],
     },
@@ -45,17 +52,20 @@ Keyboard arrows move between triggers. Give the list an <code>aria-label</code> 
       options: ['horizontal', 'vertical'],
     },
     activationMode: {
-      description: 'Whether a tab is activated when focused (automatic) or only after Enter/Space (manual).',
+      description:
+        'Whether a tab is activated when focused (automatic) or only after Enter/Space (manual).',
       control: 'inline-radio',
       options: ['automatic', 'manual'],
     },
     variant: {
-      description: 'Visual style of the tab list, set on <code>hlmTabsList</code>.',
+      description:
+        'Visual style of the tab list, set on <code>hlmTabsList</code>.',
       control: 'inline-radio',
       options: ['default', 'line'],
     },
     membersDisabled: {
-      description: 'Disables the "Members" trigger (the <code>disabled</code> input of <code>hlmTabsTrigger</code>).',
+      description:
+        'Disables the "Members" trigger (the <code>disabled</code> input of <code>hlmTabsTrigger</code>).',
       control: 'boolean',
     },
   },

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 
@@ -11,7 +13,8 @@ import { classes } from '@progress/pdp-ui-spartan/utils';
 export class HlmCommandShortcut {
   constructor() {
     classes(
-      () => 'text-muted-foreground group-data-[selected]/command-item:text-foreground ms-auto text-xs tracking-widest',
+      () =>
+        'text-muted-foreground group-data-[selected]/command-item:text-foreground ms-auto text-xs tracking-widest',
     );
   }
 }

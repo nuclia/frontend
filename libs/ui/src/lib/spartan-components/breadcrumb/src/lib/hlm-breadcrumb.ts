@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
 
 @Directive({
@@ -10,5 +12,7 @@ import { Directive, input } from '@angular/core';
   },
 })
 export class HlmBreadcrumb {
-  public readonly ariaLabel = input<string>('breadcrumb', { alias: 'aria-label' });
+  public readonly ariaLabel = input<string>('breadcrumb', {
+    alias: 'aria-label',
+  });
 }

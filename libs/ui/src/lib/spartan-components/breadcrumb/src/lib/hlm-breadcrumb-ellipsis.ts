@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoreHorizRound } from '@ng-icons/material-symbols/round';
@@ -23,6 +25,9 @@ export class HlmBreadcrumbEllipsis {
   public readonly srOnlyText = input<string>('More');
 
   constructor() {
-    classes(() => 'size-5 [&>ng-icon]:text-[length:--spacing(4)] flex items-center justify-center');
+    classes(
+      () =>
+        'size-5 [&>ng-icon]:text-[length:--spacing(4)] flex items-center justify-center',
+    );
   }
 }

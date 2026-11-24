@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { ComponentType } from '@angular/cdk/portal';
 import { inject, Injectable, type TemplateRef } from '@angular/core';
 import {
@@ -28,9 +30,13 @@ export class HlmDialogService {
   ): BrnDialogRef<TResult> {
     const mergedOptions = {
       ...(options ?? {}),
-      backdropClass: cssClassesToArray(`${hlmDialogOverlayClass} ${options?.backdropClass ?? ''}`),
+      backdropClass: cssClassesToArray(
+        `${hlmDialogOverlayClass} ${options?.backdropClass ?? ''}`,
+      ),
       context: {
-        ...(options?.context && typeof options.context === 'object' ? options.context : {}),
+        ...(options?.context && typeof options.context === 'object'
+          ? options.context
+          : {}),
         $component: component,
         $dynamicComponentClass: options?.contentClass,
         $showCloseButton: options?.showCloseButton,

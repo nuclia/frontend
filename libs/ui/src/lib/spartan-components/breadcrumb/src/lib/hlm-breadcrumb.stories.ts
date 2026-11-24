@@ -1,5 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { provideRouter } from '@angular/router';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  applicationConfig,
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmBreadcrumbImports } from '../index';
 import { HlmBreadcrumb } from './hlm-breadcrumb';
 
@@ -33,11 +40,13 @@ The host has <code>role="navigation"</code>; set its accessible name with <code>
   },
   argTypes: {
     ariaLabel: {
-      description: 'Accessible name of the navigation landmark, set through the <code>aria-label</code> input.',
+      description:
+        'Accessible name of the navigation landmark, set through the <code>aria-label</code> input.',
       control: 'text',
     },
     currentPage: {
-      description: 'Label of the current page, rendered with <code>hlmBreadcrumbPage</code>.',
+      description:
+        'Label of the current page, rendered with <code>hlmBreadcrumbPage</code>.',
       control: 'text',
     },
   },

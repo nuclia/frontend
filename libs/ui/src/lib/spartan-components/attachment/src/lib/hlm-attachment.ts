@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -25,7 +27,8 @@ const attachmentVariants = cva(
 );
 
 export type AttachmentVariants = VariantProps<typeof attachmentVariants>;
-export type AttachmentState = 'idle' | 'uploading' | 'processing' | 'error' | 'done';
+export type AttachmentState =
+  'idle' | 'uploading' | 'processing' | 'error' | 'done';
 
 @Directive({
   selector: '[hlmAttachment],hlm-attachment',
@@ -40,9 +43,15 @@ export type AttachmentState = 'idle' | 'uploading' | 'processing' | 'error' | 'd
 export class HlmAttachment {
   public readonly state = input<AttachmentState>('done');
   public readonly size = input<AttachmentVariants['size']>('default');
-  public readonly orientation = input<AttachmentVariants['orientation']>('horizontal');
+  public readonly orientation =
+    input<AttachmentVariants['orientation']>('horizontal');
 
   constructor() {
-    classes(() => attachmentVariants({ size: this.size(), orientation: this.orientation() }));
+    classes(() =>
+      attachmentVariants({
+        size: this.size(),
+        orientation: this.orientation(),
+      }),
+    );
   }
 }

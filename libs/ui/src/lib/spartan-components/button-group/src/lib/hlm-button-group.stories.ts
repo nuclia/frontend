@@ -1,6 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matAddRound, matRemoveRound, matSearchRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matAddRound,
+  matRemoveRound,
+  matSearchRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButtonImports } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmButtonGroupImports } from '../index';
@@ -18,8 +28,15 @@ const meta: Meta<ButtonGroupStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     moduleMetadata({
-      imports: [...HlmButtonGroupImports, ...HlmButtonImports, ...HlmInputImports, NgIcon],
-      providers: [provideIcons({ matRemoveRound, matAddRound, matSearchRound })],
+      imports: [
+        ...HlmButtonGroupImports,
+        ...HlmButtonImports,
+        ...HlmInputImports,
+        NgIcon,
+      ],
+      providers: [
+        provideIcons({ matRemoveRound, matAddRound, matSearchRound }),
+      ],
     }),
   ],
   parameters: {
@@ -45,12 +62,14 @@ The host has <code>role="group"</code>: give it an <code>aria-label</code> descr
       options: ['horizontal', 'vertical'],
     },
     variant: {
-      description: 'Variant of the buttons (set on each <code>hlmBtn</code>, not on the group).',
+      description:
+        'Variant of the buttons (set on each <code>hlmBtn</code>, not on the group).',
       control: 'select',
       options: ['default', 'outline', 'secondary', 'ghost'],
     },
     size: {
-      description: 'Size of the buttons (set on each <code>hlmBtn</code>, not on the group).',
+      description:
+        'Size of the buttons (set on each <code>hlmBtn</code>, not on the group).',
       control: 'inline-radio',
       options: ['default', 'sm', 'lg'],
     },

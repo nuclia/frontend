@@ -1,12 +1,17 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
-import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { BrnTextarea } from '@spartan-ng/brain/textarea';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmTextarea]',
   exportAs: 'hlmTextarea',
-  hostDirectives: [{ directive: BrnTextarea, inputs: ['id', 'forceInvalid'] }, BrnFieldControlDescribedBy],
+  hostDirectives: [
+    { directive: BrnTextarea, inputs: ['id', 'forceInvalid'] },
+    BrnFieldControlDescribedBy,
+  ],
   host: { 'data-slot': 'textarea' },
 })
 export class HlmTextarea {

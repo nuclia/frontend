@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmBreadcrumb } from './lib/hlm-breadcrumb';
 import { HlmBreadcrumbEllipsis } from './lib/hlm-breadcrumb-ellipsis';
 import { HlmBreadcrumbItem } from './lib/hlm-breadcrumb-item';

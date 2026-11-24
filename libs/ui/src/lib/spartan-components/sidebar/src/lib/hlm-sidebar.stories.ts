@@ -1,6 +1,18 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matAddRound, matGroupRound, matHomeRound, matViewKanbanRound } from '@ng-icons/material-symbols/round';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matAddRound,
+  matGroupRound,
+  matHomeRound,
+  matViewKanbanRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  applicationConfig,
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmSidebarImports } from '../index';
 import { HlmSidebar } from './hlm-sidebar';
 
@@ -17,7 +29,14 @@ const meta: Meta<SidebarStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     applicationConfig({
-      providers: [provideIcons({ matViewKanbanRound, matHomeRound, matAddRound, matGroupRound })],
+      providers: [
+        provideIcons({
+          matViewKanbanRound,
+          matHomeRound,
+          matAddRound,
+          matGroupRound,
+        }),
+      ],
     }),
     moduleMetadata({ imports: [...HlmSidebarImports, NgIcon] }),
   ],
@@ -48,7 +67,8 @@ Open and collapsed state is shared through <code>HlmSidebarService</code> (persi
       options: ['left', 'right'],
     },
     variant: {
-      description: 'Visual style of the sidebar: attached to the edge, floating card, or inset content area.',
+      description:
+        'Visual style of the sidebar: attached to the edge, floating card, or inset content area.',
       control: 'inline-radio',
       options: ['sidebar', 'floating', 'inset'],
     },

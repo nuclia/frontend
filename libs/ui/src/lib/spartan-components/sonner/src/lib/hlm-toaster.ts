@@ -1,5 +1,14 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
-import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+  numberAttribute,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matCheckCircleRound,
@@ -18,7 +27,13 @@ import type { ClassValue } from 'clsx';
   exportAs: 'hlmToaster',
   imports: [BrnSonnerImports, HlmButtonImports, NgIcon],
   providers: [
-    provideIcons({ matCheckCircleRound, matInfoRound, matWarningRound, matDangerousRound, matDataUsageRound }),
+    provideIcons({
+      matCheckCircleRound,
+      matInfoRound,
+      matWarningRound,
+      matDangerousRound,
+      matDataUsageRound,
+    }),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -35,38 +50,36 @@ import type { ClassValue } from 'clsx';
       [closeButton]="closeButton()"
       [toastOptions]="_computedToastOptions()"
       [offset]="offset()"
-      [style]="userStyle()">
+      [style]="userStyle()"
+    >
       <ng-template #loadingIcon>
         <ng-icon
           name="matDataUsageRound"
-          class="overflow-visible! text-base [&>svg]:motion-safe:animate-spin" />
+          class="overflow-visible! text-base [&>svg]:motion-safe:animate-spin"
+        />
       </ng-template>
       <ng-template #successIcon>
         <ng-icon
           name="matCheckCircleRound"
-          class="overflow-visible! text-base" />
+          class="overflow-visible! text-base"
+        />
       </ng-template>
       <ng-template #errorIcon>
-        <ng-icon
-          name="matDangerousRound"
-          class="overflow-visible! text-base" />
+        <ng-icon name="matDangerousRound" class="overflow-visible! text-base" />
       </ng-template>
       <ng-template #infoIcon>
-        <ng-icon
-          name="matInfoRound"
-          class="overflow-visible! text-base" />
+        <ng-icon name="matInfoRound" class="overflow-visible! text-base" />
       </ng-template>
       <ng-template #warningIcon>
-        <ng-icon
-          name="matWarningRound"
-          class="overflow-visible! text-base" />
+        <ng-icon name="matWarningRound" class="overflow-visible! text-base" />
       </ng-template>
       <button
         *brnToastAction="let action; let toast = toast"
         [style]="toast.actionButtonStyle"
         hlmBtn
         size="sm"
-        (click)="action.onClick($event)">
+        (click)="action.onClick($event)"
+      >
         {{ action.label }}
       </button>
       <button
@@ -75,7 +88,8 @@ import type { ClassValue } from 'clsx';
         hlmBtn
         size="sm"
         variant="secondary"
-        (click)="cancel.onClick($event)">
+        (click)="cancel.onClick($event)"
+      >
         {{ cancel.label }}
       </button>
     </brn-sonner-toaster>
@@ -88,19 +102,31 @@ export class HlmToaster {
   public readonly theme = input<ToasterProps['theme']>('light');
   public readonly position = input<ToasterProps['position']>('bottom-right');
   public readonly hotKey = input<ToasterProps['hotkey']>(['altKey', 'KeyT']);
-  public readonly richColors = input<ToasterProps['richColors'], BooleanInput>(false, {
-    transform: booleanAttribute,
-  });
+  public readonly richColors = input<ToasterProps['richColors'], BooleanInput>(
+    false,
+    {
+      transform: booleanAttribute,
+    },
+  );
   public readonly expand = input<ToasterProps['expand'], BooleanInput>(false, {
     transform: booleanAttribute,
   });
-  public readonly duration = input<ToasterProps['duration'], NumberInput>(4000, {
+  public readonly duration = input<ToasterProps['duration'], NumberInput>(
+    4000,
+    {
+      transform: numberAttribute,
+    },
+  );
+  public readonly visibleToasts = input<
+    ToasterProps['visibleToasts'],
+    NumberInput
+  >(3, {
     transform: numberAttribute,
   });
-  public readonly visibleToasts = input<ToasterProps['visibleToasts'], NumberInput>(3, {
-    transform: numberAttribute,
-  });
-  public readonly closeButton = input<ToasterProps['closeButton'], BooleanInput>(false, {
+  public readonly closeButton = input<
+    ToasterProps['closeButton'],
+    BooleanInput
+  >(false, {
     transform: booleanAttribute,
   });
   public readonly toastOptions = input<ToasterProps['toastOptions']>({});
@@ -127,5 +153,7 @@ export class HlmToaster {
     { alias: 'style' },
   );
 
-  protected readonly _computedClass = computed(() => hlm('toaster group', this.userClass()));
+  protected readonly _computedClass = computed(() =>
+    hlm('toaster group', this.userClass()),
+  );
 }

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmField } from './lib/hlm-field';
 import { HlmFieldContent } from './lib/hlm-field-content';
 import { HlmFieldDescription } from './lib/hlm-field-description';

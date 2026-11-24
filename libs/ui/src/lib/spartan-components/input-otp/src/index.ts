@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmInputOtp } from './lib/hlm-input-otp';
 import { HlmInputOtpFakeCaret } from './lib/hlm-input-otp-fake-caret';
 import { HlmInputOtpGroup } from './lib/hlm-input-otp-group';

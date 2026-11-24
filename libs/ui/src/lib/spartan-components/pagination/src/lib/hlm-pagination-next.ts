@@ -1,5 +1,13 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import type { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matChevronRightRound } from '@ng-icons/material-symbols/round';
@@ -23,11 +31,10 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
       [queryParams]="queryParams()"
       [queryParamsHandling]="queryParamsHandling()"
       [size]="_size()"
-      [attr.aria-label]="ariaLabel()">
+      [attr.aria-label]="ariaLabel()"
+    >
       <span [class]="_labelClass()">{{ text() }}</span>
-      <ng-icon
-        name="matChevronRightRound"
-        class="rtl:rotate-180" />
+      <ng-icon name="matChevronRightRound" class="rtl:rotate-180" />
     </a>
   `,
 })
@@ -40,19 +47,28 @@ export class HlmPaginationNext {
   /** The query parameters to pass to the next page. */
   public readonly queryParams = input<RouterLink['queryParams']>();
   /** How to handle query parameters when navigating to the next page. */
-  public readonly queryParamsHandling = input<RouterLink['queryParamsHandling']>();
+  public readonly queryParamsHandling =
+    input<RouterLink['queryParamsHandling']>();
 
   /** The aria-label for the next page link. */
-  public readonly ariaLabel = input<string>(this._config.nextAriaLabel, { alias: 'aria-label' });
+  public readonly ariaLabel = input<string>(this._config.nextAriaLabel, {
+    alias: 'aria-label',
+  });
   /** The text to display for the next page link. */
   public readonly text = input<string>(this._config.nextLabel);
   /** Whether the button should only display the icon. */
   public readonly iconOnly = input<boolean, BooleanInput>(false, {
     transform: booleanAttribute,
   });
-  protected readonly _labelClass = computed(() => (this.iconOnly() ? 'sr-only' : 'hidden sm:block'));
+  protected readonly _labelClass = computed(() =>
+    this.iconOnly() ? 'sr-only' : 'hidden sm:block',
+  );
 
-  protected readonly _size = computed<ButtonVariants['size']>(() => (this.iconOnly() ? 'icon' : 'default'));
+  protected readonly _size = computed<ButtonVariants['size']>(() =>
+    this.iconOnly() ? 'icon' : 'default',
+  );
 
-  protected readonly _computedClass = computed(() => hlm(!this.iconOnly() && 'pe-1.5!', this.userClass()));
+  protected readonly _computedClass = computed(() =>
+    hlm(!this.iconOnly() && 'pe-1.5!', this.userClass()),
+  );
 }

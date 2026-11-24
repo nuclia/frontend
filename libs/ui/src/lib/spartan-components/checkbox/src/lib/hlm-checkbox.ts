@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -55,10 +57,12 @@ export const HLM_CHECKBOX_VALUE_ACCESSOR = {
       [aria-describedby]="ariaDescribedby()"
       [forceInvalid]="forceInvalid()"
       (checkedChange)="_handleChange($event)"
-      (touched)="_onTouched?.()">
+      (touched)="_onTouched?.()"
+    >
       @if (checked() || indeterminate()) {
         <span
-          class="[&>ng-icon]:text-[length:--spacing(3.5)] flex items-center justify-center text-current transition-none">
+          class="[&>ng-icon]:text-[length:--spacing(3.5)] flex items-center justify-center text-current transition-none"
+        >
           <ng-icon name="matCheckRound" />
         </span>
       }
@@ -80,16 +84,25 @@ export class HlmCheckbox implements ControlValueAccessor {
   public readonly inputId = input<string | null>(null);
 
   /** Used to set the aria-label attribute on the underlying brn element. */
-  public readonly ariaLabel = input<string | null>(null, { alias: 'aria-label' });
+  public readonly ariaLabel = input<string | null>(null, {
+    alias: 'aria-label',
+  });
 
   /** Used to set the aria-labelledby attribute on the underlying brn element. */
-  public readonly ariaLabelledby = input<string | null>(null, { alias: 'aria-labelledby' });
+  public readonly ariaLabelledby = input<string | null>(null, {
+    alias: 'aria-labelledby',
+  });
 
   /** Used to set the aria-describedby attribute on the underlying brn element. */
-  public readonly ariaDescribedby = input<string | null>(null, { alias: 'aria-describedby' });
+  public readonly ariaDescribedby = input<string | null>(null, {
+    alias: 'aria-describedby',
+  });
 
   /** The checked state of the checkbox. */
-  public readonly checkedInput = input<boolean, BooleanInput>(false, { alias: 'checked', transform: booleanAttribute });
+  public readonly checkedInput = input<boolean, BooleanInput>(false, {
+    alias: 'checked',
+    transform: booleanAttribute,
+  });
   public readonly checked = linkedSignal(this.checkedInput);
 
   /** Emits when checked state changes. */
@@ -105,19 +118,27 @@ export class HlmCheckbox implements ControlValueAccessor {
   public readonly name = input<string | null>(null);
 
   /** Whether the checkbox is required. */
-  public readonly required = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly required = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Whether the checkbox is disabled. */
-  public readonly disabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly disabled = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Whether to force the checkbox into an invalid state. */
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   protected readonly _disabled = linkedSignal(this.disabled);
 
   private readonly _brnCheckbox = viewChild.required(BrnCheckbox);
 
-  private readonly _spartanInvalid = computed(() => this.forceInvalid() || this._brnCheckbox().spartanInvalid?.());
+  private readonly _spartanInvalid = computed(
+    () => this.forceInvalid() || this._brnCheckbox().spartanInvalid?.(),
+  );
   protected readonly _errorStateClass = computed(() =>
     this._spartanInvalid()
       ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40'

@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmAccordionImports } from '../index';
 import { HlmAccordion } from './hlm-accordion';
 
@@ -46,7 +52,8 @@ Triggers support keyboard navigation and expose their expanded state to assistiv
       control: 'boolean',
     },
     disabled: {
-      description: 'Disables the first item without affecting the remaining items.',
+      description:
+        'Disables the first item without affecting the remaining items.',
       control: 'boolean',
     },
   },

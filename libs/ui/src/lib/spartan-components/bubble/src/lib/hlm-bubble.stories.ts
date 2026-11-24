@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmBubbleImports } from '../index';
 import { HlmBubble, type BubbleAlign, type BubbleVariants } from './hlm-bubble';
 
@@ -35,7 +41,15 @@ Set <code>variant</code> for the colour treatment and <code>align</code> (<code>
     variant: {
       description: 'Colour treatment of the bubble content.',
       control: 'select',
-      options: ['default', 'secondary', 'muted', 'tinted', 'outline', 'ghost', 'destructive'],
+      options: [
+        'default',
+        'secondary',
+        'muted',
+        'tinted',
+        'outline',
+        'ghost',
+        'destructive',
+      ],
     },
     align: {
       description: 'Side of the conversation the bubble sticks to.',
@@ -47,7 +61,8 @@ Set <code>variant</code> for the colour treatment and <code>align</code> (<code>
       control: 'text',
     },
     showReactions: {
-      description: 'Shows an <code>hlmBubbleReactions</code> badge attached to the bubble.',
+      description:
+        'Shows an <code>hlmBubbleReactions</code> badge attached to the bubble.',
       control: 'boolean',
     },
   },
@@ -76,7 +91,8 @@ export const Outgoing: Story = {
   args: {
     align: 'end',
     variant: 'secondary',
-    message: 'The team completed the migration and is preparing the release notes.',
+    message:
+      'The team completed the migration and is preparing the release notes.',
   },
 };
 

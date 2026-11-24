@@ -1,5 +1,13 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCloseRound } from '@ng-icons/material-symbols/round';
 import { HlmButton } from '@progress/pdp-ui-spartan/button';
@@ -29,7 +37,8 @@ import { HlmSheetClose } from './hlm-sheet-close';
         variant="ghost"
         size="icon-sm"
         class="absolute end-3 top-3"
-        hlmSheetClose>
+        hlmSheetClose
+      >
         <span class="sr-only">{{ closeLabel() }}</span>
         <ng-icon name="matCloseRound" />
       </button>
@@ -42,7 +51,9 @@ export class HlmSheetContent {
 
   public readonly state = this._dialogRef.state;
 
-  public readonly showCloseButton = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
+  public readonly showCloseButton = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
   public readonly closeLabel = input<string>('Close');
 
   constructor() {

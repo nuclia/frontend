@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matInfoRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmTooltipImports } from '../index';
 import { HlmTooltip } from './hlm-tooltip';
@@ -46,7 +52,8 @@ Give icon-only triggers an <code>aria-label</code>. Content wider than 36rem wra
   },
   argTypes: {
     text: {
-      description: 'Tooltip content, set through the <code>hlmTooltip</code> input.',
+      description:
+        'Tooltip content, set through the <code>hlmTooltip</code> input.',
       control: 'text',
     },
     position: {

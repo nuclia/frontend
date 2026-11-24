@@ -1,13 +1,20 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnQuestionnaireProgress } from '@spartan-ng/brain/questionnaire';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector -- attribute selector matching brain API
   selector: '[hlmQuestionnaireProgress]',
   exportAs: 'hlmQuestionnaireProgress',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  hostDirectives: [{ directive: BrnQuestionnaireProgress, inputs: ['aria-label', 'valueText'] }],
+  hostDirectives: [
+    {
+      directive: BrnQuestionnaireProgress,
+      inputs: ['aria-label', 'valueText'],
+    },
+  ],
   host: {
     'data-slot': 'questionnaire-progress',
   },
@@ -35,6 +42,9 @@ export class HlmQuestionnaireProgress {
   public readonly segments = this._progress.segments;
 
   constructor() {
-    classes(() => 'text-xs text-muted-foreground min-h-lh w-fit min-w-[14ch] font-medium tabular-nums');
+    classes(
+      () =>
+        'text-xs text-muted-foreground min-h-lh w-fit min-w-[14ch] font-medium tabular-nums',
+    );
   }
 }

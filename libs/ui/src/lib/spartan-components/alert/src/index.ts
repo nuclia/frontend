@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmAlert } from './lib/hlm-alert';
 import { HlmAlertAction } from './lib/hlm-alert-action';
 import { HlmAlertDescription } from './lib/hlm-alert-description';
@@ -8,4 +10,9 @@ export * from './lib/hlm-alert-action';
 export * from './lib/hlm-alert-description';
 export * from './lib/hlm-alert-title';
 
-export const HlmAlertImports = [HlmAlert, HlmAlertAction, HlmAlertDescription, HlmAlertTitle] as const;
+export const HlmAlertImports = [
+  HlmAlert,
+  HlmAlertAction,
+  HlmAlertDescription,
+  HlmAlertTitle,
+] as const;

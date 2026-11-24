@@ -1,6 +1,10 @@
 // Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { UiInfiniteScroll } from './infinite-scroll.component';
 
 interface InfiniteScrollStoryArgs {
@@ -29,7 +33,8 @@ Put <code>&lt;ui-infinite-scroll&gt;</code> right after the last item and handle
   },
   argTypes: {
     rootMargin: {
-      description: 'Margin around the viewport used to anticipate the anchor becoming visible.',
+      description:
+        'Margin around the viewport used to anticipate the anchor becoming visible.',
       control: 'text',
     },
     disabled: {

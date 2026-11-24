@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -11,7 +13,10 @@ import {
 } from '@angular/core';
 import { HlmSelectImports } from '@progress/pdp-ui-spartan/select';
 import { classes } from '@progress/pdp-ui-spartan/utils';
-import { createPageArray, outOfBoundCorrection } from './hlm-numbered-pagination';
+import {
+  createPageArray,
+  outOfBoundCorrection,
+} from './hlm-numbered-pagination';
 import { HlmPagination } from './hlm-pagination';
 import { HlmPaginationContent } from './hlm-pagination-content';
 import { HlmPaginationEllipsis } from './hlm-pagination-ellipsis';
@@ -36,7 +41,9 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="text-muted-foreground flex items-center gap-1 text-sm text-nowrap">
+    <div
+      class="text-muted-foreground flex items-center gap-1 text-sm text-nowrap"
+    >
       <b>{{ totalItems() }}</b>
       {{ totalItemsLabel() }} |
       <b>{{ _lastPageNumber() }}</b>
@@ -52,7 +59,8 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
               [queryParams]="{ page: currentPage() - 1 }"
               queryParamsHandling="merge"
               [text]="previousLabel()"
-              [aria-label]="previousAriaLabel()" />
+              [aria-label]="previousAriaLabel()"
+            />
           </li>
         }
 
@@ -66,7 +74,8 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
                 [link]="currentPage() !== page ? link() : undefined"
                 [queryParams]="{ page }"
                 queryParamsHandling="merge"
-                [isActive]="currentPage() === page">
+                [isActive]="currentPage() === page"
+              >
                 {{ page }}
               </a>
             }
@@ -80,16 +89,15 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
               [queryParams]="{ page: currentPage() + 1 }"
               queryParamsHandling="merge"
               [text]="nextLabel()"
-              [aria-label]="nextAriaLabel()" />
+              [aria-label]="nextAriaLabel()"
+            />
           </li>
         }
       </ul>
     </nav>
 
     <!-- Show Page Size selector -->
-    <hlm-select
-      [(value)]="itemsPerPage"
-      class="ml-auto">
+    <hlm-select [(value)]="itemsPerPage" class="ml-auto">
       <hlm-select-trigger class="w-fit">
         <hlm-select-value />
       </hlm-select-trigger>
@@ -185,7 +193,9 @@ export class HlmNumberedPaginationQueryParams {
    * The aria-label to show on the previous button
    * Defaults to config's previousAriaLabel
    */
-  public readonly previousAriaLabel = input<string>(this._config.previousAriaLabel);
+  public readonly previousAriaLabel = input<string>(
+    this._config.previousAriaLabel,
+  );
 
   protected readonly _pageSizesWithCurrent = computed(() => {
     const pageSizes = this.pageSizes();
@@ -194,8 +204,12 @@ export class HlmNumberedPaginationQueryParams {
       : [...pageSizes, this.itemsPerPage()].sort((a, b) => a - b); // otherwise, add current page size and sort the array
   });
 
-  protected readonly _isFirstPageActive = computed(() => this.currentPage() === 1);
-  protected readonly _isLastPageActive = computed(() => this.currentPage() === this._lastPageNumber());
+  protected readonly _isFirstPageActive = computed(
+    () => this.currentPage() === 1,
+  );
+  protected readonly _isLastPageActive = computed(
+    () => this.currentPage() === this._lastPageNumber(),
+  );
 
   protected readonly _lastPageNumber = computed(() => {
     if (this.totalItems() < 1) {
@@ -207,14 +221,23 @@ export class HlmNumberedPaginationQueryParams {
   });
 
   protected readonly _pages = computed(() => {
-    const correctedCurrentPage = outOfBoundCorrection(this.totalItems(), this.itemsPerPage(), this.currentPage());
+    const correctedCurrentPage = outOfBoundCorrection(
+      this.totalItems(),
+      this.itemsPerPage(),
+      this.currentPage(),
+    );
 
     if (correctedCurrentPage !== this.currentPage()) {
       // update the current page
       untracked(() => this.currentPage.set(correctedCurrentPage));
     }
 
-    return createPageArray(correctedCurrentPage, this.itemsPerPage(), this.totalItems(), this.maxSize());
+    return createPageArray(
+      correctedCurrentPage,
+      this.itemsPerPage(),
+      this.totalItems(),
+      this.maxSize(),
+    );
   });
 
   constructor() {

@@ -8,7 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import { HlmButton } from '@progress/pdp-ui-spartan/button';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { UiConfirmData, UiConfirmDialog } from './confirm-dialog.component';
 import { UiConfirmService } from './confirm.service';
 

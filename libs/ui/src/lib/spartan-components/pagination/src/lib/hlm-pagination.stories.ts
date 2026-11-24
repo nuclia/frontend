@@ -1,5 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { provideRouter } from '@angular/router';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  applicationConfig,
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmPaginationImports } from '../index';
 import { HlmPagination } from './hlm-pagination';
 
@@ -46,11 +53,13 @@ Links rely on the Angular router, so provide it in the application. Set an <code
       control: { type: 'number', min: 0 },
     },
     currentPage: {
-      description: 'Active page (1-based). Two-way bindable with <code>[(currentPage)]</code>.',
+      description:
+        'Active page (1-based). Two-way bindable with <code>[(currentPage)]</code>.',
       control: { type: 'number', min: 1 },
     },
     itemsPerPage: {
-      description: 'Number of items on each page. Two-way bindable with <code>[(itemsPerPage)]</code>.',
+      description:
+        'Number of items on each page. Two-way bindable with <code>[(itemsPerPage)]</code>.',
       control: { type: 'number', min: 1 },
     },
     maxSize: {
@@ -66,8 +75,22 @@ Links rely on the Angular router, so provide it in the application. Set an <code
       control: 'object',
     },
   },
-  render: ({ totalItems, currentPage, itemsPerPage, maxSize, showEdges, pageSizes }) => ({
-    props: { totalItems, currentPage, itemsPerPage, maxSize, showEdges, pageSizes },
+  render: ({
+    totalItems,
+    currentPage,
+    itemsPerPage,
+    maxSize,
+    showEdges,
+    pageSizes,
+  }) => ({
+    props: {
+      totalItems,
+      currentPage,
+      itemsPerPage,
+      maxSize,
+      showEdges,
+      pageSizes,
+    },
     template: `
       <hlm-numbered-pagination
         [totalItems]="totalItems"

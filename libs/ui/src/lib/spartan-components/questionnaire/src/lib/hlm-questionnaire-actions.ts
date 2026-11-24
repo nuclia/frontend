@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 
@@ -10,6 +12,9 @@ import { classes } from '@progress/pdp-ui-spartan/utils';
 })
 export class HlmQuestionnaireActions {
   constructor() {
-    classes(() => 'min-h-11 gap-2 sm:min-h-8 grid w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center');
+    classes(
+      () =>
+        'min-h-11 gap-2 sm:min-h-8 grid w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center',
+    );
   }
 }

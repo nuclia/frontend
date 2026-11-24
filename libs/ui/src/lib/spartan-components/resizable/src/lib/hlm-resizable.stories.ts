@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmResizableImports } from '../index';
 import { HlmResizableGroup } from './hlm-resizable-group';
 
@@ -44,7 +50,8 @@ Handles are keyboard focusable and can be moved with the arrow keys; panels with
       control: 'boolean',
     },
     disabled: {
-      description: 'Prevents the handle from being dragged or moved with the keyboard.',
+      description:
+        'Prevents the handle from being dragged or moved with the keyboard.',
       control: 'boolean',
     },
     minSize: {
@@ -52,7 +59,8 @@ Handles are keyboard focusable and can be moved with the arrow keys; panels with
       control: { type: 'number', min: 0, max: 50 },
     },
     collapsible: {
-      description: 'Allows the panel to collapse when dragged below its minimum size.',
+      description:
+        'Allows the panel to collapse when dragged below its minimum size.',
       control: 'boolean',
     },
   },

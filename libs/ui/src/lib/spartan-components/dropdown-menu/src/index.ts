@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmDropdownMenu } from './lib/hlm-dropdown-menu';
 import { HlmDropdownMenuCheckbox } from './lib/hlm-dropdown-menu-checkbox';
 import { HlmDropdownMenuCheckboxIndicator } from './lib/hlm-dropdown-menu-checkbox-indicator';

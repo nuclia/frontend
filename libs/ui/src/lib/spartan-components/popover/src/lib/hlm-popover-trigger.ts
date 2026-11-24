@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnPopoverTrigger } from '@spartan-ng/brain/popover';
 
@@ -5,7 +7,10 @@ import { BrnPopoverTrigger } from '@spartan-ng/brain/popover';
   selector: 'button[hlmPopoverTrigger],button[hlmPopoverTriggerFor]',
   exportAs: 'hlmPopoverTrigger',
   hostDirectives: [
-    { directive: BrnPopoverTrigger, inputs: ['id', 'brnPopoverTriggerFor: hlmPopoverTriggerFor', 'type'] },
+    {
+      directive: BrnPopoverTrigger,
+      inputs: ['id', 'brnPopoverTriggerFor: hlmPopoverTriggerFor', 'type'],
+    },
   ],
   host: { 'data-slot': 'popover-trigger' },
 })

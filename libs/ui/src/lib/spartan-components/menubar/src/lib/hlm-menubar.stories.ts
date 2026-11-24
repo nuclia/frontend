@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmDropdownMenuImports } from '../../../dropdown-menu/src/index';
 import { HlmMenubarImports } from '../index';
 import { HlmMenubar } from './hlm-menubar';
@@ -13,7 +19,11 @@ const meta: Meta<MenubarStoryArgs> = {
   title: 'Spartan/Menubar',
   component: HlmMenubar,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmMenubarImports, ...HlmDropdownMenuImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmMenubarImports, ...HlmDropdownMenuImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {

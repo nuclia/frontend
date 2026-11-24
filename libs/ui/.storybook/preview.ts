@@ -1,6 +1,6 @@
 import { DocsContainer, type DocsContainerProps } from '@storybook/addon-docs/blocks';
 import { withThemeByClassName } from '@storybook/addon-themes';
-import type { Preview } from '@storybook/angular';
+import type { Preview } from '@storybook/angular-vite';
 import { createElement, useEffect, type PropsWithChildren } from 'react';
 import { GLOBALS_UPDATED, SET_GLOBALS } from 'storybook/internal/core-events';
 import type { GlobalsUpdatedPayload, SetGlobalsPayload } from 'storybook/internal/types';

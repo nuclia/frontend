@@ -1,6 +1,14 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { CdkMenuItem } from '@angular/cdk/menu';
-import { booleanAttribute, Directive, HOST_TAG_NAME, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  Directive,
+  HOST_TAG_NAME,
+  inject,
+  input,
+} from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmDropdownMenuFocusOnHover } from './hlm-dropdown-menu-focus-on-hover';
 
@@ -26,7 +34,9 @@ import { HlmDropdownMenuFocusOnHover } from './hlm-dropdown-menu-focus-on-hover'
 export class HlmDropdownMenuItem {
   protected readonly _isButton = inject(HOST_TAG_NAME) === 'button';
 
-  public readonly disabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly disabled = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   public readonly variant = input<'default' | 'destructive'>('default');
 

@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmMessageScrollerImports } from '../index';
 import { HlmMessageScroller } from './hlm-message-scroller';
 
@@ -11,13 +17,33 @@ interface ConversationMessage {
 const CONVERSATION: ConversationMessage[] = [
   { id: 'm1', mine: false, text: 'Welcome to the project conversation.' },
   { id: 'm2', mine: true, text: 'Thanks! When is the design review?' },
-  { id: 'm3', mine: false, text: 'The design review is scheduled for Thursday at 10:00.' },
-  { id: 'm4', mine: false, text: 'Please add your notes to the shared document before the meeting.' },
-  { id: 'm5', mine: true, text: 'Done, I also added the mockups to the shared folder.' },
+  {
+    id: 'm3',
+    mine: false,
+    text: 'The design review is scheduled for Thursday at 10:00.',
+  },
+  {
+    id: 'm4',
+    mine: false,
+    text: 'Please add your notes to the shared document before the meeting.',
+  },
+  {
+    id: 'm5',
+    mine: true,
+    text: 'Done, I also added the mockups to the shared folder.',
+  },
   { id: 'm6', mine: false, text: 'Great, I will review them this afternoon.' },
   { id: 'm7', mine: true, text: 'Can we also check the dark theme?' },
-  { id: 'm8', mine: false, text: 'Sure, the color tokens are already in place.' },
-  { id: 'm9', mine: true, text: 'Perfect. Let’s sync tomorrow morning if anything is missing.' },
+  {
+    id: 'm8',
+    mine: false,
+    text: 'Sure, the color tokens are already in place.',
+  },
+  {
+    id: 'm9',
+    mine: true,
+    text: 'Perfect. Let’s sync tomorrow morning if anything is missing.',
+  },
   { id: 'm10', mine: false, text: 'Sounds good to me. See you then!' },
 ];
 
@@ -59,24 +85,29 @@ The button takes <code>direction</code> (<code>start</code> or <code>end</code>)
   },
   argTypes: {
     autoScroll: {
-      description: 'Follows new content at the bottom while the viewport is already at the end.',
+      description:
+        'Follows new content at the bottom while the viewport is already at the end.',
       control: 'boolean',
     },
     defaultScrollPosition: {
-      description: 'Where the viewport is positioned the first time messages are rendered.',
+      description:
+        'Where the viewport is positioned the first time messages are rendered.',
       control: 'inline-radio',
       options: ['start', 'end', 'last-anchor'],
     },
     scrollEdgeThreshold: {
-      description: 'Distance in pixels from an edge that still counts as being at the top or bottom.',
+      description:
+        'Distance in pixels from an edge that still counts as being at the top or bottom.',
       control: 'number',
     },
     scrollMargin: {
-      description: 'Margin in pixels kept on the aligned edge when scrolling to a message.',
+      description:
+        'Margin in pixels kept on the aligned edge when scrolling to a message.',
       control: 'number',
     },
     buttonDirection: {
-      description: 'Edge of the conversation the floating button scrolls toward.',
+      description:
+        'Edge of the conversation the floating button scrolls toward.',
       control: 'inline-radio',
       options: ['start', 'end'],
     },

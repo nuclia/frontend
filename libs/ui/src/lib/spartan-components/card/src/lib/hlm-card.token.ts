@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { inject, InjectionToken, type ValueProvider } from '@angular/core';
 
 export type HlmCardConfig = {
@@ -10,8 +12,13 @@ const defaultConfig: HlmCardConfig = {
 
 const HlmCardConfigToken = new InjectionToken<HlmCardConfig>('HlmCardConfig');
 
-export function provideHlmCardConfig(config: Partial<HlmCardConfig>): ValueProvider {
-  return { provide: HlmCardConfigToken, useValue: { ...defaultConfig, ...config } };
+export function provideHlmCardConfig(
+  config: Partial<HlmCardConfig>,
+): ValueProvider {
+  return {
+    provide: HlmCardConfigToken,
+    useValue: { ...defaultConfig, ...config },
+  };
 }
 
 export function injectHlmCardConfig(): HlmCardConfig {

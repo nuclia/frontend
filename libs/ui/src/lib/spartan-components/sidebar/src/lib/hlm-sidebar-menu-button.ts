@@ -1,12 +1,25 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, computed, Directive, effect, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  computed,
+  Directive,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
+import {
+  BrnTooltip,
+  BrnTooltipPosition,
+  provideBrnTooltipDefaultOptions,
+} from '@spartan-ng/brain/tooltip';
 import {
   DEFAULT_TOOLTIP_CONTENT_CLASSES,
   DEFAULT_TOOLTIP_SVG_CLASS,
   tooltipPositionVariants,
 } from '@progress/pdp-ui-spartan/tooltip';
 import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
-import { BrnTooltip, BrnTooltipPosition, provideBrnTooltipDefaultOptions } from '@spartan-ng/brain/tooltip';
 import { cva } from 'class-variance-authority';
 import { HlmSidebarService } from './hlm-sidebar.service';
 import { injectHlmSidebarConfig } from './hlm-sidebar.token';
@@ -42,7 +55,8 @@ const sidebarMenuButtonVariants = cva(
       hideDelay: 0,
       tooltipContentClasses: DEFAULT_TOOLTIP_CONTENT_CLASSES,
       svgClasses: DEFAULT_TOOLTIP_SVG_CLASS,
-      arrowClasses: (position: BrnTooltipPosition) => hlm(tooltipPositionVariants({ position })),
+      arrowClasses: (position: BrnTooltipPosition) =>
+        hlm(tooltipPositionVariants({ position })),
       position: 'right',
     }),
   ],
@@ -67,19 +81,27 @@ export class HlmSidebarMenuButton {
 
   public readonly variant = input<'default' | 'outline'>('default');
   public readonly size = input<'default' | 'sm' | 'lg'>('default');
-  public readonly isActive = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly isActive = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
   public readonly closeMobileSidebarOnClick = input<boolean, BooleanInput>(
     this._config.closeMobileSidebarOnMenuButtonClick,
     { transform: booleanAttribute },
   );
 
   protected readonly _isTooltipHidden = computed(
-    () => this._sidebarService.state() !== 'collapsed' || this._sidebarService.isMobile(),
+    () =>
+      this._sidebarService.state() !== 'collapsed' ||
+      this._sidebarService.isMobile(),
   );
 
   constructor() {
-    classes(() => sidebarMenuButtonVariants({ variant: this.variant(), size: this.size() }));
-    effect(() => this._brnTooltip.mutableTooltipDisabled.set(this._isTooltipHidden()));
+    classes(() =>
+      sidebarMenuButtonVariants({ variant: this.variant(), size: this.size() }),
+    );
+    effect(() =>
+      this._brnTooltip.mutableTooltipDisabled.set(this._isTooltipHidden()),
+    );
   }
 
   protected onClick(): void {

@@ -1,6 +1,15 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCloseRound, matDescriptionRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matCloseRound,
+  matDescriptionRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmAttachmentImports } from '../index';
 import { HlmAttachment, type AttachmentState } from './hlm-attachment';
 
@@ -42,7 +51,8 @@ Icon-only triggers and actions need an <code>aria-label</code>.`,
   },
   argTypes: {
     state: {
-      description: 'Upload lifecycle state. It drives the border, media and text styling.',
+      description:
+        'Upload lifecycle state. It drives the border, media and text styling.',
       control: 'select',
       options: ['idle', 'uploading', 'processing', 'error', 'done'],
     },
@@ -61,7 +71,8 @@ Icon-only triggers and actions need an <code>aria-label</code>.`,
       control: 'text',
     },
     description: {
-      description: 'Secondary text such as the file size or status, shown in <code>hlmAttachmentDescription</code>.',
+      description:
+        'Secondary text such as the file size or status, shown in <code>hlmAttachmentDescription</code>.',
       control: 'text',
     },
   },
@@ -108,7 +119,10 @@ export const Processing: Story = {
 };
 
 export const Error: Story = {
-  args: { state: 'error', description: 'Upload failed. Unsupported file format.' },
+  args: {
+    state: 'error',
+    description: 'Upload failed. Unsupported file format.',
+  },
 };
 
 export const Small: Story = {

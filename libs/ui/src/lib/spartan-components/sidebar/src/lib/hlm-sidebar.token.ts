@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { inject, InjectionToken, type ValueProvider } from '@angular/core';
 
 export interface HlmSidebarConfig {
@@ -24,10 +26,17 @@ const defaultConfig: HlmSidebarConfig = {
   closeMobileSidebarOnMenuButtonClick: false,
 };
 
-const HlmSidebarConfigToken = new InjectionToken<HlmSidebarConfig>('HlmSidebarConfig');
+const HlmSidebarConfigToken = new InjectionToken<HlmSidebarConfig>(
+  'HlmSidebarConfig',
+);
 
-export function provideHlmSidebarConfig(config: Partial<HlmSidebarConfig>): ValueProvider {
-  return { provide: HlmSidebarConfigToken, useValue: { ...defaultConfig, ...config } };
+export function provideHlmSidebarConfig(
+  config: Partial<HlmSidebarConfig>,
+): ValueProvider {
+  return {
+    provide: HlmSidebarConfigToken,
+    useValue: { ...defaultConfig, ...config },
+  };
 }
 
 export function injectHlmSidebarConfig(): HlmSidebarConfig {

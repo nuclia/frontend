@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
-import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnQuestionnaireTitle } from '@spartan-ng/brain/questionnaire';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: 'legend[hlmQuestionnaireTitle]',
@@ -13,7 +15,8 @@ import { BrnQuestionnaireTitle } from '@spartan-ng/brain/questionnaire';
 export class HlmQuestionnaireTitle {
   constructor() {
     classes(
-      () => 'text-base leading-snug font-medium [&:not(:has(~[data-slot=questionnaire-description]))]:mb-4 text-pretty',
+      () =>
+        'text-base leading-snug font-medium [&:not(:has(~[data-slot=questionnaire-description]))]:mb-4 text-pretty',
     );
   }
 }

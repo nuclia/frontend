@@ -1,7 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directionality } from '@angular/cdk/bidi';
 import { Directive, computed, inject } from '@angular/core';
+import {
+  BrnProgressIndicator,
+  injectBrnProgress,
+} from '@spartan-ng/brain/progress';
 import { classes } from '@progress/pdp-ui-spartan/utils';
-import { BrnProgressIndicator, injectBrnProgress } from '@spartan-ng/brain/progress';
 
 @Directive({
   selector: '[hlmProgressIndicator],hlm-progress-indicator',
@@ -23,7 +28,8 @@ export class HlmProgressIndicator {
     return `translateX(${this._dir.valueSignal() === 'rtl' ? '' : '-'}${offset}%)`;
   });
   protected readonly _indeterminate = computed(
-    () => this._progress.value() === null || this._progress.value() === undefined,
+    () =>
+      this._progress.value() === null || this._progress.value() === undefined,
   );
 
   constructor() {

@@ -6,7 +6,11 @@ import {
   matGroupRound,
   matSendRound,
 } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '@progress/pdp-ui-spartan/button';
 import { UiStepperImports } from './index';
 import { UiStepper } from './stepper.component';

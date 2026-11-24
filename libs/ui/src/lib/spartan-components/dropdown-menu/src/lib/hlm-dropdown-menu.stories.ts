@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matContentCopyRound,
@@ -6,7 +8,11 @@ import {
   matLogoutRound,
   matPersonRound,
 } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmDropdownMenuImports } from '../index';
 import { HlmDropdownMenu } from './hlm-dropdown-menu';
@@ -25,7 +31,15 @@ const meta: Meta<DropdownMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ matContentCopyRound, matLogoutRound, matEditRound, matDeleteRound, matPersonRound })],
+      providers: [
+        provideIcons({
+          matContentCopyRound,
+          matLogoutRound,
+          matEditRound,
+          matDeleteRound,
+          matPersonRound,
+        }),
+      ],
     }),
   ],
   parameters: {
@@ -50,17 +64,20 @@ Keyboard navigation (arrows, Home/End, Enter, Escape) is provided by the CDK men
   },
   argTypes: {
     side: {
-      description: 'Side of the trigger where the menu opens (<code>hlmDropdownMenuTrigger</code> input).',
+      description:
+        'Side of the trigger where the menu opens (<code>hlmDropdownMenuTrigger</code> input).',
       control: 'inline-radio',
       options: ['top', 'bottom', 'left', 'right'],
     },
     align: {
-      description: 'Alignment of the menu relative to the trigger (<code>hlmDropdownMenuTrigger</code> input).',
+      description:
+        'Alignment of the menu relative to the trigger (<code>hlmDropdownMenuTrigger</code> input).',
       control: 'inline-radio',
       options: ['start', 'center', 'end'],
     },
     sideOffset: {
-      description: 'Distance in pixels between the trigger and the menu (<code>hlmDropdownMenu</code> input).',
+      description:
+        'Distance in pixels between the trigger and the menu (<code>hlmDropdownMenu</code> input).',
       control: 'number',
     },
     triggerLabel: {

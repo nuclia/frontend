@@ -1,6 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matContentCopyRound, matDeleteRound, matEditRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matContentCopyRound,
+  matDeleteRound,
+  matEditRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmDropdownMenuImports } from '../../../dropdown-menu/src/index';
 import { HlmContextMenuImports } from '../index';
 import { HlmContextMenuTrigger } from './hlm-context-menu-trigger';
@@ -19,7 +29,13 @@ const meta: Meta<ContextMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [NgIcon, ...HlmContextMenuImports, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ matContentCopyRound, matEditRound, matDeleteRound })],
+      providers: [
+        provideIcons({
+          matContentCopyRound,
+          matEditRound,
+          matDeleteRound,
+        }),
+      ],
     }),
   ],
   parameters: {
@@ -42,7 +58,8 @@ Fill the menu with <code>hlmDropdownMenuItem</code>, <code>hlmDropdownMenuLabel<
   },
   argTypes: {
     disabled: {
-      description: 'Disables the context menu so the browser menu is shown instead.',
+      description:
+        'Disables the context menu so the browser menu is shown instead.',
       control: 'boolean',
     },
     side: {

@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matViewSidebarRound } from '@ng-icons/material-symbols/round';
-import { HlmButton, provideBrnButtonConfig } from '@progress/pdp-ui-spartan/button';
+import {
+  HlmButton,
+  provideBrnButtonConfig,
+} from '@progress/pdp-ui-spartan/button';
 import { HlmSidebarService } from './hlm-sidebar.service';
 
 @Component({
@@ -9,7 +19,10 @@ import { HlmSidebarService } from './hlm-sidebar.service';
   selector: 'button[hlmSidebarTrigger]',
   exportAs: 'hlmSidebarTrigger',
   imports: [NgIcon],
-  providers: [provideIcons({ matViewSidebarRound }), provideBrnButtonConfig({ variant: 'ghost', size: 'icon-sm' })],
+  providers: [
+    provideIcons({ matViewSidebarRound }),
+    provideBrnButtonConfig({ variant: 'ghost', size: 'icon-sm' }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: HlmButton, inputs: ['variant', 'size'] }],
   host: {

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-symbols/round';
@@ -10,7 +12,9 @@ import { BrnAutocompleteItem } from '@spartan-ng/brain/autocomplete';
   imports: [NgIcon],
   providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  hostDirectives: [{ directive: BrnAutocompleteItem, inputs: ['id', 'disabled', 'value'] }],
+  hostDirectives: [
+    { directive: BrnAutocompleteItem, inputs: ['id', 'disabled', 'value'] },
+  ],
   host: { 'data-slot': 'autocomplete-item' },
   template: `
     <ng-content />
@@ -18,7 +22,8 @@ import { BrnAutocompleteItem } from '@spartan-ng/brain/autocomplete';
       <ng-icon
         name="matCheckRound"
         class="absolute end-2 flex items-center justify-center text-[length:--spacing(4)]"
-        aria-hidden="true" />
+        aria-hidden="true"
+      />
     }
   `,
 })

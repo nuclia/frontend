@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmAttachment } from './lib/hlm-attachment';
 import { HlmAttachmentAction } from './lib/hlm-attachment-action';
 import { HlmAttachmentActions } from './lib/hlm-attachment-actions';

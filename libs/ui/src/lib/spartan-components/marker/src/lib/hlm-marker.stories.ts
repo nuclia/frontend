@@ -1,6 +1,15 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matAccountTreeRound, matCheckCircleRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matAccountTreeRound,
+  matCheckCircleRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmMarkerImports } from '../index';
 import { HlmMarker } from './hlm-marker';
 

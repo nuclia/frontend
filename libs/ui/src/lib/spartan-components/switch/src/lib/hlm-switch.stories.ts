@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmSwitchImports } from '../index';
 import { HlmSwitch } from './hlm-switch';
@@ -14,7 +20,9 @@ const meta: Meta<SwitchStoryArgs> = {
   title: 'Spartan/Switch',
   component: HlmSwitch,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmSwitchImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({ imports: [...HlmSwitchImports, ...HlmLabelImports] }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -26,7 +34,12 @@ Use <code>size</code> for the default or compact variant and <code>forceInvalid<
       },
     },
   },
-  args: { checked: false, disabled: false, size: 'default', forceInvalid: false },
+  args: {
+    checked: false,
+    disabled: false,
+    size: 'default',
+    forceInvalid: false,
+  },
   argTypes: {
     checked: {
       description: 'Checked (on) state of the switch.',
@@ -42,7 +55,8 @@ Use <code>size</code> for the default or compact variant and <code>forceInvalid<
       options: ['default', 'sm'],
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state.',
+      description:
+        'Forces the invalid style regardless of form validation state.',
       control: 'boolean',
     },
   },
@@ -75,7 +89,9 @@ export const Small: Story = { args: { size: 'sm', checked: true } };
 
 export const Disabled: Story = { args: { disabled: true } };
 
-export const DisabledChecked: Story = { args: { disabled: true, checked: true } };
+export const DisabledChecked: Story = {
+  args: { disabled: true, checked: true },
+};
 
 export const Invalid: Story = { args: { forceInvalid: true } };
 

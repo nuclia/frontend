@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmNavigationMenuImports } from '../index';
 import { HlmNavigationMenu } from './hlm-navigation-menu';
 
@@ -33,7 +39,8 @@ Set <code>[active]="true"</code> on the link of the current page. <code>orientat
   },
   argTypes: {
     orientation: {
-      description: 'Layout direction of the menu and the keyboard navigation axis.',
+      description:
+        'Layout direction of the menu and the keyboard navigation axis.',
       control: 'inline-radio',
       options: ['horizontal', 'vertical'],
     },
@@ -44,11 +51,13 @@ Set <code>[active]="true"</code> on the link of the current page. <code>orientat
       options: ['hover', 'click'],
     },
     delayDuration: {
-      description: 'Milliseconds between the pointer entering a trigger and its panel opening.',
+      description:
+        'Milliseconds between the pointer entering a trigger and its panel opening.',
       control: 'number',
     },
     skipDelayDuration: {
-      description: 'Milliseconds during which moving to another trigger opens its panel without the delay.',
+      description:
+        'Milliseconds during which moving to another trigger opens its panel without the delay.',
       control: 'number',
     },
   },

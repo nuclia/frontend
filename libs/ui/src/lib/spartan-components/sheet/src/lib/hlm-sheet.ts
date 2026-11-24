@@ -1,5 +1,10 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
-import { BrnDialog, provideBrnDialogDefaultOptions } from '@spartan-ng/brain/dialog';
+import {
+  BrnDialog,
+  provideBrnDialogDefaultOptions,
+} from '@spartan-ng/brain/dialog';
 import { BrnSheet } from '@spartan-ng/brain/sheet';
 import { HlmSheetOverlay } from './hlm-sheet-overlay';
 

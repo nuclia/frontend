@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { computed, Directive, effect, input, untracked } from '@angular/core';
-import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { injectCustomClassSettable } from '@spartan-ng/brain/core';
 import { BrnDialogOverlay } from '@spartan-ng/brain/dialog';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 export const hlmDialogOverlayClass = hlm(
@@ -14,10 +16,15 @@ export const hlmDialogOverlayClass = hlm(
   hostDirectives: [BrnDialogOverlay],
 })
 export class HlmDialogOverlay {
-  private readonly _classSettable = injectCustomClassSettable({ optional: true, host: true });
+  private readonly _classSettable = injectCustomClassSettable({
+    optional: true,
+    host: true,
+  });
 
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
-  protected readonly _computedClass = computed(() => hlm(hlmDialogOverlayClass, this.userClass()));
+  protected readonly _computedClass = computed(() =>
+    hlm(hlmDialogOverlayClass, this.userClass()),
+  );
 
   constructor() {
     effect(() => {

@@ -1,6 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
+import {
+  BrnInputOtp,
+  BrnInputOtpInput,
+  type InputMode,
+} from '@spartan-ng/brain/input-otp';
 import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
-import { BrnInputOtp, BrnInputOtpInput, type InputMode } from '@spartan-ng/brain/input-otp';
 import type { ClassValue } from 'clsx';
 
 @Component({
@@ -34,12 +45,15 @@ import type { ClassValue } from 'clsx';
       [autocomplete]="inputAutocomplete()"
       [inputMode]="inputMode()"
       [class]="_inputClass()"
-      [inputStyles]="inputStyles()" />
+      [inputStyles]="inputStyles()"
+    />
   `,
 })
 export class HlmInputOtp {
   /** Custom autocomplete attribute applied to the input element */
-  public readonly inputAutocomplete = input<'one-time-code' | 'off'>('one-time-code');
+  public readonly inputAutocomplete = input<'one-time-code' | 'off'>(
+    'one-time-code',
+  );
 
   /** Virtual keyboard appearance on mobile */
   public readonly inputMode = input<InputMode>('numeric');
@@ -50,7 +64,9 @@ export class HlmInputOtp {
   /** Overrides the default styles applied to the input element. */
   public readonly inputStyles = input<string | undefined>(undefined);
 
-  protected readonly _inputClass = computed(() => hlm('disabled:cursor-not-allowed', this.inputClass()));
+  protected readonly _inputClass = computed(() =>
+    hlm('disabled:cursor-not-allowed', this.inputClass()),
+  );
 
   constructor() {
     classes(() => 'gap-2 flex items-center has-disabled:opacity-50');

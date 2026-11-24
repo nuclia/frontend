@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmBubble } from './lib/hlm-bubble';
 import { HlmBubbleContent } from './lib/hlm-bubble-content';
 import { HlmBubbleGroup } from './lib/hlm-bubble-group';
@@ -8,4 +10,9 @@ export * from './lib/hlm-bubble-content';
 export * from './lib/hlm-bubble-group';
 export * from './lib/hlm-bubble-reactions';
 
-export const HlmBubbleImports = [HlmBubble, HlmBubbleContent, HlmBubbleGroup, HlmBubbleReactions] as const;
+export const HlmBubbleImports = [
+  HlmBubble,
+  HlmBubbleContent,
+  HlmBubbleGroup,
+  HlmBubbleReactions,
+] as const;

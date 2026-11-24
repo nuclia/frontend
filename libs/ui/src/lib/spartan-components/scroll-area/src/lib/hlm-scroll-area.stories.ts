@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { HlmScrollAreaImports } from '../index';
 import { HlmScrollArea } from './hlm-scroll-area';
@@ -13,9 +19,15 @@ const activities = [
   { title: 'Project created', detail: 'Jordan created Atlas redesign.' },
   { title: 'A teammate joined', detail: 'Sam joined the Product workspace.' },
   { title: 'Report updated', detail: 'The weekly progress report is ready.' },
-  { title: 'Review scheduled', detail: 'The design review is scheduled for Thursday.' },
+  {
+    title: 'Review scheduled',
+    detail: 'The design review is scheduled for Thursday.',
+  },
   { title: 'Comment added', detail: 'Priya commented on the onboarding flow.' },
-  { title: 'File uploaded', detail: 'Quarterly-metrics.pdf was added to Documents.' },
+  {
+    title: 'File uploaded',
+    detail: 'Quarterly-metrics.pdf was added to Documents.',
+  },
   { title: 'Task completed', detail: 'Alex finished the accessibility audit.' },
   { title: 'Invitation sent', detail: 'Morgan invited two reviewers.' },
 ];
@@ -24,7 +36,9 @@ const meta: Meta<ScrollAreaStoryArgs> = {
   title: 'Spartan/Scroll Area',
   component: HlmScrollArea,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [NgScrollbar, ...HlmScrollAreaImports] })],
+  decorators: [
+    moduleMetadata({ imports: [NgScrollbar, ...HlmScrollAreaImports] }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -43,17 +57,20 @@ The scrolling happens in a native container, so keyboard and screen reader behav
   },
   argTypes: {
     orientation: {
-      description: 'Axis on which the scrollbar is shown; auto picks it from the content overflow.',
+      description:
+        'Axis on which the scrollbar is shown; auto picks it from the content overflow.',
       control: 'inline-radio',
       options: ['auto', 'vertical', 'horizontal'],
     },
     visibility: {
-      description: 'When the scrollbar is displayed: native, only on hover, or always visible.',
+      description:
+        'When the scrollbar is displayed: native, only on hover, or always visible.',
       control: 'inline-radio',
       options: ['native', 'hover', 'visible'],
     },
     appearance: {
-      description: 'Native keeps space for the scrollbar, compact overlays it on the content.',
+      description:
+        'Native keeps space for the scrollbar, compact overlays it on the content.',
       control: 'inline-radio',
       options: ['native', 'compact'],
     },
@@ -99,7 +116,16 @@ export const Horizontal: Story = {
   render: (args) => ({
     props: {
       ...args,
-      images: ['Mountains', 'Coastline', 'Forest', 'Desert', 'Glacier', 'Canyon', 'Meadow', 'Island'],
+      images: [
+        'Mountains',
+        'Coastline',
+        'Forest',
+        'Desert',
+        'Glacier',
+        'Canyon',
+        'Meadow',
+        'Island',
+      ],
     },
     template: `
       <ng-scrollbar

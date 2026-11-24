@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmSeparatorImports } from '../index';
 import { HlmSeparator } from './hlm-separator';
 
@@ -34,7 +40,8 @@ By default the separator is exposed to assistive technology with <code>role="sep
       options: ['horizontal', 'vertical'],
     },
     decorative: {
-      description: 'When true the separator is purely visual and is hidden from assistive technology.',
+      description:
+        'When true the separator is purely visual and is hidden from assistive technology.',
       control: 'boolean',
     },
   },

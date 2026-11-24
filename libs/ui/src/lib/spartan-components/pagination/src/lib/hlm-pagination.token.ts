@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { inject, InjectionToken, type ValueProvider } from '@angular/core';
 
 export interface HlmPaginationConfig {
@@ -18,10 +20,17 @@ const defaultConfig: HlmPaginationConfig = {
   previousAriaLabel: 'Go to previous page',
 };
 
-const HlmPaginationConfigToken = new InjectionToken<HlmPaginationConfig>('HlmPaginationConfig');
+const HlmPaginationConfigToken = new InjectionToken<HlmPaginationConfig>(
+  'HlmPaginationConfig',
+);
 
-export function provideHlmPaginationConfig(config: Partial<HlmPaginationConfig>): ValueProvider {
-  return { provide: HlmPaginationConfigToken, useValue: { ...defaultConfig, ...config } };
+export function provideHlmPaginationConfig(
+  config: Partial<HlmPaginationConfig>,
+): ValueProvider {
+  return {
+    provide: HlmPaginationConfigToken,
+    useValue: { ...defaultConfig, ...config },
+  };
 }
 
 export function injectHlmPaginationConfig(): HlmPaginationConfig {

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -14,13 +16,17 @@ import {
   viewChild,
 } from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { HlmCalendarRange } from '@progress/pdp-ui-spartan/calendar';
-import { HlmPopoverImports } from '@progress/pdp-ui-spartan/popover';
-import { type BrnDatePickerBase, BrnDatePickerTriggerToken, provideBrnDatePicker } from '@spartan-ng/brain/date-picker';
+import {
+  type BrnDatePickerBase,
+  BrnDatePickerTriggerToken,
+  provideBrnDatePicker,
+} from '@spartan-ng/brain/date-picker';
 import { BrnFieldControl, provideBrnLabelable } from '@spartan-ng/brain/field';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
 import type { BrnOverlayState } from '@spartan-ng/brain/overlay';
 import { BrnPopover, type BrnPopoverAlign } from '@spartan-ng/brain/popover';
+import { HlmCalendarRange } from '@progress/pdp-ui-spartan/calendar';
+import { HlmPopoverImports } from '@progress/pdp-ui-spartan/popover';
 import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
 
 export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
@@ -46,12 +52,11 @@ export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
       [align]="align()"
       sideOffset="5"
       [state]="_popoverState()"
-      (stateChanged)="_onStateChange($event)">
+      (stateChanged)="_onStateChange($event)"
+    >
       <ng-content />
 
-      <hlm-popover-content
-        class="w-fit p-0"
-        *hlmPopoverPortal="let ctx">
+      <hlm-popover-content class="w-fit p-0" *hlmPopoverPortal="let ctx">
         <ng-content select="[hlmDatePickerHeader]" />
         <hlm-calendar-range
           class="rounded-none border-0"
@@ -62,13 +67,16 @@ export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
           [max]="maxDate()"
           [disabled]="_disabled()"
           (startDateChange)="_handleStartDayChange($event)"
-          (endDateChange)="_handleEndDateChange($event)" />
+          (endDateChange)="_handleEndDateChange($event)"
+        />
         <ng-content select="[hlmDatePickerFooter]" />
       </hlm-popover-content>
     </hlm-popover>
   `,
 })
-export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, ControlValueAccessor {
+export class HlmDateRangePicker<T>
+  implements BrnDatePickerBase<[T, T]>, ControlValueAccessor
+{
   private readonly _config = injectHlmDateRangePickerConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
@@ -78,7 +86,9 @@ export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, Control
   public readonly align = input<BrnPopoverAlign>('center');
 
   /** Show dropdowns to navigate between months or years. */
-  public readonly captionLayout = input<'dropdown' | 'label' | 'dropdown-months' | 'dropdown-years'>('label');
+  public readonly captionLayout = input<
+    'dropdown' | 'label' | 'dropdown-months' | 'dropdown-years'
+  >('label');
 
   /** The minimum date that can be selected.*/
   public readonly minDate = input<T>();
@@ -100,15 +110,22 @@ export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, Control
   protected readonly _end = linkedSignal(() => this._mutableDate()?.[1]);
 
   /** If true, the date picker will close when the end date is selected */
-  public readonly autoCloseOnEndSelection = input<boolean, BooleanInput>(this._config.autoCloseOnEndSelection, {
-    transform: booleanAttribute,
-  });
+  public readonly autoCloseOnEndSelection = input<boolean, BooleanInput>(
+    this._config.autoCloseOnEndSelection,
+    {
+      transform: booleanAttribute,
+    },
+  );
 
   /** Defines how the date should be displayed in the UI.  */
-  public readonly formatDates = input<(dates: [T | null, T | null]) => string>(this._config.formatDates);
+  public readonly formatDates = input<(dates: [T | null, T | null]) => string>(
+    this._config.formatDates,
+  );
 
   /** Defines how the date should be transformed before saving to model/form. */
-  public readonly transformDates = input<(date: [T, T]) => [T, T]>(this._config.transformDates);
+  public readonly transformDates = input<(date: [T, T]) => [T, T]>(
+    this._config.transformDates,
+  );
 
   protected readonly _popoverState = signal<BrnOverlayState | null>(null);
 
@@ -120,7 +137,9 @@ export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, Control
   public readonly formattedDate = computed(() => {
     const start = this._start();
     const end = this._end();
-    return start || end ? this.formatDates()([start ?? null, end ?? null]) : undefined;
+    return start || end
+      ? this.formatDates()([start ?? null, end ?? null])
+      : undefined;
   });
 
   public readonly dateChange = output<[T, T] | null>();

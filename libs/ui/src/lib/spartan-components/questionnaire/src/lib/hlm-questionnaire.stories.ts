@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmQuestionnaireImports } from '../index';
 import { HlmQuestionnaire } from './hlm-questionnaire';
 
@@ -30,12 +36,14 @@ Give <code>hlmQuestionnaireProgress</code> an <code>aria-label</code> when the d
   },
   argTypes: {
     shortcuts: {
-      description: 'Keyboard shortcuts for choices: letters (A, B, C…), numbers (1, 2, 3…) or disabled (null).',
+      description:
+        'Keyboard shortcuts for choices: letters (A, B, C…), numbers (1, 2, 3…) or disabled (null).',
       control: 'inline-radio',
       options: ['letters', 'numbers', null],
     },
     noValidate: {
-      description: 'Disables the browser native validation UI so the questionnaire can show its own error messages.',
+      description:
+        'Disables the browser native validation UI so the questionnaire can show its own error messages.',
       control: 'boolean',
     },
   },

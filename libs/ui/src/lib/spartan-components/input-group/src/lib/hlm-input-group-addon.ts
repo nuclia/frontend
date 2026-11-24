@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -7,11 +9,14 @@ const inputGroupAddonVariants = cva(
   {
     variants: {
       align: {
-        'inline-start': 'ps-2 has-[>button]:ms-[-0.3rem] has-[>kbd]:ms-[-0.15rem] order-first',
-        'inline-end': 'pe-2 has-[>button]:me-[-0.3rem] has-[>kbd]:me-[-0.15rem] order-last',
+        'inline-start':
+          'ps-2 has-[>button]:ms-[-0.3rem] has-[>kbd]:ms-[-0.15rem] order-first',
+        'inline-end':
+          'pe-2 has-[>button]:me-[-0.3rem] has-[>kbd]:me-[-0.15rem] order-last',
         'block-start':
           'px-2.5 pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2 order-first w-full justify-start',
-        'block-end': 'px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2 order-last w-full justify-start',
+        'block-end':
+          'px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2 order-last w-full justify-start',
       },
     },
     defaultVariants: {
@@ -32,7 +37,8 @@ type InputGroupAddonVariants = VariantProps<typeof inputGroupAddonVariants>;
   },
 })
 export class HlmInputGroupAddon {
-  public readonly align = input<InputGroupAddonVariants['align']>('inline-start');
+  public readonly align =
+    input<InputGroupAddonVariants['align']>('inline-start');
 
   constructor() {
     classes(() => inputGroupAddonVariants({ align: this.align() }));

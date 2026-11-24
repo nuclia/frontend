@@ -1,7 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { computed, Directive, input } from '@angular/core';
-import { toggleVariants, ToggleVariants } from '@progress/pdp-ui-spartan/toggle';
-import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnToggleGroupItem } from '@spartan-ng/brain/toggle-group';
+import {
+  toggleVariants,
+  ToggleVariants,
+} from '@progress/pdp-ui-spartan/toggle';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { injectHlmToggleGroup } from './hlm-toggle-group.token';
 
 @Directive({
@@ -27,8 +32,12 @@ export class HlmToggleGroupItem {
   public readonly variant = input<ToggleVariants['variant']>('default');
   public readonly size = input<ToggleVariants['size']>('default');
 
-  protected readonly _variant = computed(() => this._toggleGroup.variant() || this.variant());
-  protected readonly _size = computed(() => this._toggleGroup.size() || this.size());
+  protected readonly _variant = computed(
+    () => this._toggleGroup.variant() || this.variant(),
+  );
+  protected readonly _size = computed(
+    () => this._toggleGroup.size() || this.size(),
+  );
 
   constructor() {
     classes(() => [

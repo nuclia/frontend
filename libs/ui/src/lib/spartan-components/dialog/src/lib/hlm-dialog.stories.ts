@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmInput } from '../../../input/src/index';
 import { HlmLabel } from '../../../label/src/index';
@@ -18,7 +24,11 @@ const meta: Meta<DialogStoryArgs> = {
   title: 'Spartan/Dialog',
   component: HlmDialog,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [HlmButton, HlmInput, HlmLabel, ...HlmDialogImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [HlmButton, HlmInput, HlmLabel, ...HlmDialogImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -51,19 +61,23 @@ Always include a title so the dialog has an accessible name. For destructive con
       control: 'text',
     },
     showCloseButton: {
-      description: 'Shows the "X" close button in the top-right corner (<code>hlm-dialog-content</code> input).',
+      description:
+        'Shows the "X" close button in the top-right corner (<code>hlm-dialog-content</code> input).',
       control: 'boolean',
     },
     closeLabel: {
-      description: 'Accessible label of the close button (<code>hlm-dialog-content</code> input).',
+      description:
+        'Accessible label of the close button (<code>hlm-dialog-content</code> input).',
       control: 'text',
     },
     disableClose: {
-      description: 'Prevents closing the dialog with Escape or by clicking outside (<code>hlm-dialog</code> input).',
+      description:
+        'Prevents closing the dialog with Escape or by clicking outside (<code>hlm-dialog</code> input).',
       control: 'boolean',
     },
     closeOnOutsidePointerEvents: {
-      description: 'Closes the dialog when the backdrop is clicked (<code>hlm-dialog</code> input).',
+      description:
+        'Closes the dialog when the backdrop is clicked (<code>hlm-dialog</code> input).',
       control: 'boolean',
     },
   },
@@ -125,7 +139,8 @@ export const WithoutBuiltInCloseButton: Story = {
 export const NotDismissible: Story = {
   args: {
     title: 'Accept the updated terms',
-    description: 'You must accept the new terms of service to continue using the workspace.',
+    description:
+      'You must accept the new terms of service to continue using the workspace.',
     showCloseButton: false,
     disableClose: true,
   },

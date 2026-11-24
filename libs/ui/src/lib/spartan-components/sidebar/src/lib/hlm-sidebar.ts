@@ -1,5 +1,14 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
 import { HlmSheetImports } from '@progress/pdp-ui-spartan/sheet';
 import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
@@ -29,14 +38,16 @@ import { injectHlmSidebarConfig } from './hlm-sidebar.token';
       <hlm-sheet
         [side]="side()"
         [state]="_sidebarService.openMobile() ? 'open' : 'closed'"
-        (stateChanged)="_sidebarService.setOpenMobile($event === 'open')">
+        (stateChanged)="_sidebarService.setOpenMobile($event === 'open')"
+      >
         <hlm-sheet-content
           *hlmSheetPortal="let ctx"
           data-slot="sidebar"
           data-sidebar="sidebar"
           data-mobile="true"
           class="bg-sidebar text-sidebar-foreground h-svh w-(--sidebar-width) p-0 [&>button]:hidden"
-          [style.--sidebar-width]="sidebarWidthMobile()">
+          [style.--sidebar-width]="sidebarWidthMobile()"
+        >
           <hlm-sheet-header class="sr-only">
             <h2 hlmSheetTitle>{{ srOnlySheetTitle() }}</h2>
             <p hlmSheetDescription>{{ srOnlySheetDescription() }}</p>
@@ -48,17 +59,17 @@ import { injectHlmSidebarConfig } from './hlm-sidebar.token';
       </hlm-sheet>
     } @else {
       <!-- Sidebar gap on desktop -->
-      <div
-        data-slot="sidebar-gap"
-        [class]="_sidebarGapComputedClass()"></div>
+      <div data-slot="sidebar-gap" [class]="_sidebarGapComputedClass()"></div>
       <div
         data-slot="sidebar-container"
         [attr.data-side]="_dataSide()"
-        [class]="_sidebarContainerComputedClass()">
+        [class]="_sidebarContainerComputedClass()"
+      >
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          class="bg-sidebar group-data-[variant=floating]:ring-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 flex size-full flex-col">
+          class="bg-sidebar group-data-[variant=floating]:ring-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 flex size-full flex-col"
+        >
           <ng-container *ngTemplateOutlet="contentContainer" />
         </div>
       </div>
@@ -68,14 +79,22 @@ import { injectHlmSidebarConfig } from './hlm-sidebar.token';
 export class HlmSidebar {
   protected readonly _sidebarService = inject(HlmSidebarService);
   private readonly _config = injectHlmSidebarConfig();
-  public readonly sidebarWidthMobile = input<string>(this._config.sidebarWidthMobile);
+  public readonly sidebarWidthMobile = input<string>(
+    this._config.sidebarWidthMobile,
+  );
 
   public readonly side = input<'left' | 'right'>('left');
-  public readonly variant = input<SidebarVariant>(this._sidebarService.variant());
-  public readonly collapsible = input<'offcanvas' | 'icon' | 'none'>('offcanvas');
+  public readonly variant = input<SidebarVariant>(
+    this._sidebarService.variant(),
+  );
+  public readonly collapsible = input<'offcanvas' | 'icon' | 'none'>(
+    'offcanvas',
+  );
 
   public readonly srOnlySheetTitle = input<string>('Sidebar');
-  public readonly srOnlySheetDescription = input<string>('Displays the mobile sidebar.');
+  public readonly srOnlySheetDescription = input<string>(
+    'Displays the mobile sidebar.',
+  );
 
   protected readonly _sidebarGapComputedClass = computed(() =>
     hlm(
@@ -108,12 +127,16 @@ export class HlmSidebar {
   });
 
   protected readonly _dataState = computed(() => {
-    return this._collapsibleAndNonMobile() ? this._sidebarService.state() : undefined;
+    return this._collapsibleAndNonMobile()
+      ? this._sidebarService.state()
+      : undefined;
   });
 
   protected readonly _dataCollapsible = computed(() => {
     if (this._collapsibleAndNonMobile()) {
-      return this._sidebarService.state() === 'collapsed' ? this.collapsible() : '';
+      return this._sidebarService.state() === 'collapsed'
+        ? this.collapsible()
+        : '';
     }
     return undefined;
   });
@@ -134,7 +157,9 @@ export class HlmSidebar {
 
     classes(() => {
       if (this.collapsible() === 'none') {
-        return hlm('bg-sidebar text-sidebar-foreground flex h-svh w-(--sidebar-width) flex-col');
+        return hlm(
+          'bg-sidebar text-sidebar-foreground flex h-svh w-(--sidebar-width) flex-col',
+        );
       } else if (this._sidebarService.isMobile()) {
         return '';
       } else {

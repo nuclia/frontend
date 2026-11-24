@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmSkeletonImports } from '../index';
 import { HlmSkeleton } from './hlm-skeleton';
 
@@ -31,7 +37,8 @@ Skeletons are purely visual: mark them <code>aria-hidden="true"</code> and set <
   },
   argTypes: {
     width: {
-      description: 'Tailwind width class applied to the skeleton (not an input: the size is set through classes).',
+      description:
+        'Tailwind width class applied to the skeleton (not an input: the size is set through classes).',
       control: 'select',
       options: ['w-16', 'w-32', 'w-64', 'w-full'],
     },

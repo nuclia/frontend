@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { provideNativeDateAdapter } from '@spartan-ng/brain/date-time';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmDatePickerImports } from '../index';
 import { HlmDatePicker } from './hlm-date-picker';
@@ -47,7 +53,8 @@ Always associate a visible label with the control: <code>&lt;label hlmLabel for=
   },
   argTypes: {
     placeholder: {
-      description: 'Text displayed while no date is selected (story-only argument).',
+      description:
+        'Text displayed while no date is selected (story-only argument).',
       control: 'text',
     },
     align: {
@@ -56,7 +63,8 @@ Always associate a visible label with the control: <code>&lt;label hlmLabel for=
       options: ['start', 'center', 'end'],
     },
     captionLayout: {
-      description: 'Calendar header: a text label, or dropdowns to pick the month and/or the year.',
+      description:
+        'Calendar header: a text label, or dropdowns to pick the month and/or the year.',
       control: 'select',
       options: ['label', 'dropdown', 'dropdown-months', 'dropdown-years'],
     },
@@ -69,7 +77,8 @@ Always associate a visible label with the control: <code>&lt;label hlmLabel for=
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state (applied to the trigger or input).',
+      description:
+        'Forces the invalid style regardless of form validation state (applied to the trigger or input).',
       control: 'boolean',
     },
   },
@@ -135,7 +144,11 @@ export const WithMinAndMaxDates: Story = {
     placeholder: 'Select a delivery date',
   },
   render: (args) => ({
-    props: { ...args, minDate: new Date(2026, 5, 10), maxDate: new Date(2026, 5, 25) },
+    props: {
+      ...args,
+      minDate: new Date(2026, 5, 10),
+      maxDate: new Date(2026, 5, 25),
+    },
     template: `
       <hlm-date-picker
         [minDate]="minDate"

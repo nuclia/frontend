@@ -1,11 +1,23 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { toast } from '@spartan-ng/brain/sonner';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmToasterImports } from '../index';
 import { HlmToaster } from './hlm-toaster';
 
 interface ToasterStoryArgs {
-  position: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  position:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
   theme: 'light' | 'dark' | 'system';
   richColors: boolean;
   closeButton: boolean;
@@ -16,7 +28,7 @@ interface ToasterStoryArgs {
 }
 
 const meta: Meta<ToasterStoryArgs> = {
-  title: 'Spartan/Sonner (Toast)',
+  title: 'Spartan/Toaster (Sonner)',
   component: HlmToaster,
   tags: ['autodocs'],
   decorators: [moduleMetadata({ imports: [...HlmToasterImports, HlmButton] })],
@@ -45,7 +57,14 @@ The toaster inputs (<code>position</code>, <code>theme</code>, <code>richColors<
     position: {
       description: 'Screen corner or edge where toasts are displayed.',
       control: 'select',
-      options: ['top-left', 'top-center', 'top-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+      options: [
+        'top-left',
+        'top-center',
+        'top-right',
+        'bottom-left',
+        'bottom-center',
+        'bottom-right',
+      ],
     },
     theme: {
       description: 'Colour theme of the toasts.',
@@ -53,7 +72,8 @@ The toaster inputs (<code>position</code>, <code>theme</code>, <code>richColors<
       options: ['light', 'dark', 'system'],
     },
     richColors: {
-      description: 'Uses stronger background colours for success, error, info and warning toasts.',
+      description:
+        'Uses stronger background colours for success, error, info and warning toasts.',
       control: 'boolean',
     },
     closeButton: {
@@ -80,7 +100,10 @@ The toaster inputs (<code>position</code>, <code>theme</code>, <code>richColors<
   render: (args) => ({
     props: {
       ...args,
-      showToast: () => toast('Resource uploaded', { description: 'research-brief.pdf is now being processed.' }),
+      showToast: () =>
+        toast('Resource uploaded', {
+          description: 'research-brief.pdf is now being processed.',
+        }),
     },
     template: `
       <button hlmBtn type="button" variant="outline" (click)="showToast()">Show toast</button>
@@ -113,7 +136,10 @@ export const RichColors: Story = {
     props: {
       ...args,
       showSuccess: () => toast.success('Knowledge box created'),
-      showError: () => toast.error('Upload failed', { description: 'The file exceeds the size limit.' }),
+      showError: () =>
+        toast.error('Upload failed', {
+          description: 'The file exceeds the size limit.',
+        }),
       showInfo: () => toast.info('Processing can take a few minutes'),
       showWarning: () => toast.warning('Your quota is almost reached'),
     },
@@ -145,7 +171,10 @@ export const WithAction: Story = {
       showToast: () =>
         toast('Resource deleted', {
           description: 'research-brief.pdf was removed from the knowledge box.',
-          action: { label: 'Undo', onClick: () => toast.success('Resource restored') },
+          action: {
+            label: 'Undo',
+            onClick: () => toast.success('Resource restored'),
+          },
           cancel: { label: 'Dismiss' },
         }),
     },

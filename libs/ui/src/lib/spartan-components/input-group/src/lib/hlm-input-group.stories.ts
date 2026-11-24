@@ -1,11 +1,21 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matContentCopyRound, matSearchRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matContentCopyRound,
+  matSearchRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmInputGroupImports } from '../index';
 import { HlmInputGroup } from './hlm-input-group';
 
-type InputGroupAddonAlign = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
+type InputGroupAddonAlign =
+  'inline-start' | 'inline-end' | 'block-start' | 'block-end';
 
 interface InputGroupStoryArgs {
   addonAlign: InputGroupAddonAlign;

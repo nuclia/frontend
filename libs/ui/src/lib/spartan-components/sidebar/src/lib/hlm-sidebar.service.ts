@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { isPlatformServer } from '@angular/common';
 import {
   afterNextRender,
@@ -33,17 +35,22 @@ export class HlmSidebarService {
   public readonly isMobile: Signal<boolean> = this._isMobile.asReadonly();
   public readonly variant: Signal<SidebarVariant> = this._variant.asReadonly();
 
-  public readonly state = computed<'expanded' | 'collapsed'>(() => (this._open() ? 'expanded' : 'collapsed'));
+  public readonly state = computed<'expanded' | 'collapsed'>(() =>
+    this._open() ? 'expanded' : 'collapsed',
+  );
 
   constructor() {
     const destroyRef = inject(DestroyRef);
     this.restoreStateFromCookie();
 
     afterNextRender(() => {
-      if (!this._window || typeof this._window.matchMedia !== 'function') return;
+      if (!this._window || typeof this._window.matchMedia !== 'function')
+        return;
 
       // Initialize MediaQueryList
-      this._mediaQuery = this._window.matchMedia(`(max-width: ${this._config.mobileBreakpoint})`);
+      this._mediaQuery = this._window.matchMedia(
+        `(max-width: ${this._config.mobileBreakpoint})`,
+      );
       this._isMobile.set(this._mediaQuery.matches);
 
       // Add media query listener
@@ -56,7 +63,10 @@ export class HlmSidebarService {
 
       // Add keyboard shortcut listener
       const keydownHandler = (event: KeyboardEvent) => {
-        if (event.key === this._config.sidebarKeyboardShortcut && (event.ctrlKey || event.metaKey)) {
+        if (
+          event.key === this._config.sidebarKeyboardShortcut &&
+          (event.ctrlKey || event.metaKey)
+        ) {
           event.preventDefault();
           this.toggleSidebar();
         }
@@ -79,7 +89,8 @@ export class HlmSidebarService {
       destroyRef.onDestroy(() => {
         if (!this._window) return;
 
-        if (this._mediaQuery) this._mediaQuery.removeEventListener('change', mediaQueryHandler);
+        if (this._mediaQuery)
+          this._mediaQuery.removeEventListener('change', mediaQueryHandler);
         this._window.removeEventListener('keydown', keydownHandler);
         this._window.removeEventListener('resize', resizeHandler);
         if (resizeTimeout) this._window.clearTimeout(resizeTimeout);

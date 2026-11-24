@@ -1,5 +1,11 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BrnInputOtp } from '@spartan-ng/brain/input-otp';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmInputOtpImports } from '../index';
 import { HlmInputOtp } from './hlm-input-otp';
@@ -15,13 +21,18 @@ interface InputOtpStoryArgs {
 }
 
 /** Slot indexes for the given code length. */
-const slotsOf = (length: number): number[] => Array.from({ length: Math.max(0, length) }, (_, index) => index);
+const slotsOf = (length: number): number[] =>
+  Array.from({ length: Math.max(0, length) }, (_, index) => index);
 
 const meta: Meta<InputOtpStoryArgs> = {
   title: 'Spartan/Input OTP',
   component: HlmInputOtp,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [BrnInputOtp, ...HlmInputOtpImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [BrnInputOtp, ...HlmInputOtpImports, ...HlmLabelImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -42,7 +53,8 @@ Set <code>forceInvalid</code> on each slot to show the invalid style. Associate 
   },
   argTypes: {
     length: {
-      description: 'Number of characters of the code. The template renders one slot per character.',
+      description:
+        'Number of characters of the code. The template renders one slot per character.',
       control: { type: 'number', min: 1, max: 8 },
     },
     inputMode: {
@@ -55,7 +67,8 @@ Set <code>forceInvalid</code> on each slot to show the invalid style. Associate 
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style on every slot, e.g. after the server rejected the code.',
+      description:
+        'Forces the invalid style on every slot, e.g. after the server rejected the code.',
       control: 'boolean',
     },
     completed: {

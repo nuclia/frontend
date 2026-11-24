@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -53,7 +55,8 @@ export const HLM_NATIVE_SELECT_VALUE_ACCESSOR = {
       [value]="value()"
       [disabled]="_disabled()"
       (change)="_valueChanged($event)"
-      (blur)="_blur()">
+      (blur)="_blur()"
+    >
       <ng-content />
     </select>
 
@@ -61,7 +64,8 @@ export const HLM_NATIVE_SELECT_VALUE_ACCESSOR = {
       name="matKeyboardArrowDownRound"
       [class]="_computedSelectIconClass()"
       aria-hidden="true"
-      data-slot="native-select-icon" />
+      data-slot="native-select-icon"
+    />
   `,
 })
 export class HlmNativeSelect implements ControlValueAccessor {
@@ -69,7 +73,9 @@ export class HlmNativeSelect implements ControlValueAccessor {
 
   private static _id = 0;
 
-  public readonly selectId = input<string>(`hlm-native-select-${HlmNativeSelect._id++}`);
+  public readonly selectId = input<string>(
+    `hlm-native-select-${HlmNativeSelect._id++}`,
+  );
 
   public readonly selectClass = input<ClassValue>('');
 
@@ -91,22 +97,34 @@ export class HlmNativeSelect implements ControlValueAccessor {
 
   public readonly size = input<'sm' | 'default'>('default');
 
-  public readonly disabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly disabled = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   protected readonly _disabled = linkedSignal(this.disabled);
 
   /** Whether to force the input into an invalid state. */
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
-
-  /** Manual override for aria-invalid. When not set, auto-detects from the parent autocomplete error state. */
-  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(undefined, {
-    transform: (v: BooleanInput) => (v === '' || v === undefined ? undefined : booleanAttribute(v)),
-    alias: 'aria-invalid',
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
   });
 
-  protected readonly _ariaInvalid = computed(() => this.ariaInvalidInput() ?? this._invalid?.());
+  /** Manual override for aria-invalid. When not set, auto-detects from the parent autocomplete error state. */
+  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(
+    undefined,
+    {
+      transform: (v: BooleanInput) =>
+        v === '' || v === undefined ? undefined : booleanAttribute(v),
+      alias: 'aria-invalid',
+    },
+  );
 
-  public readonly valueInput = input<string | undefined | null>('', { alias: 'value' });
+  protected readonly _ariaInvalid = computed(
+    () => this.ariaInvalidInput() ?? this._invalid?.(),
+  );
+
+  public readonly valueInput = input<string | undefined | null>('', {
+    alias: 'value',
+  });
   public readonly value = linkedSignal(this.valueInput);
 
   public readonly valueChange = output<string | undefined | null>();
@@ -119,10 +137,15 @@ export class HlmNativeSelect implements ControlValueAccessor {
   protected readonly _invalid = this._fieldControl?.invalid;
   protected readonly _touched = this._fieldControl?.touched;
   protected readonly _dirty = this._fieldControl?.dirty;
-  protected readonly _spartanInvalid = computed(() => this.forceInvalid() || this._fieldControl?.spartanInvalid());
+  protected readonly _spartanInvalid = computed(
+    () => this.forceInvalid() || this._fieldControl?.spartanInvalid(),
+  );
 
   constructor() {
-    classes(() => 'group/native-select relative w-fit has-[select:disabled]:opacity-50');
+    classes(
+      () =>
+        'group/native-select relative w-fit has-[select:disabled]:opacity-50',
+    );
   }
 
   protected _valueChanged(event: Event): void {

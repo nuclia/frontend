@@ -1,10 +1,10 @@
-import type { StorybookConfig } from '@storybook/angular';
+import type { StorybookConfig } from '@storybook/angular-vite';
 
 const config: StorybookConfig = {
   stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
   addons: ['@storybook/addon-docs', '@storybook/addon-themes'],
   framework: {
-    name: '@storybook/angular',
+    name: '@storybook/angular-vite',
     options: {},
   },
   staticDirs: [{ from: '../assets', to: '/assets' }],

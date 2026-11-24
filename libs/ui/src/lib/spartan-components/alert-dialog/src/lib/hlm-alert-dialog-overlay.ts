@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, computed, effect, input, untracked } from '@angular/core';
-import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { BrnAlertDialogOverlay } from '@spartan-ng/brain/alert-dialog';
 import { injectCustomClassSettable } from '@spartan-ng/brain/core';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Directive({
@@ -10,7 +12,10 @@ import type { ClassValue } from 'clsx';
   hostDirectives: [BrnAlertDialogOverlay],
 })
 export class HlmAlertDialogOverlay {
-  private readonly _classSettable = injectCustomClassSettable({ optional: true, host: true });
+  private readonly _classSettable = injectCustomClassSettable({
+    optional: true,
+    host: true,
+  });
 
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
   protected readonly _computedClass = computed(() =>

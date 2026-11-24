@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmDrawerImports } from '../index';
 import { HlmDrawer } from './hlm-drawer';
@@ -36,7 +42,8 @@ Always include a title so the drawer has an accessible name.`,
   },
   argTypes: {
     direction: {
-      description: 'Edge of the screen the drawer slides in from (<code>hlm-drawer</code> input).',
+      description:
+        'Edge of the screen the drawer slides in from (<code>hlm-drawer</code> input).',
       control: 'inline-radio',
       options: ['bottom', 'top', 'left', 'right'],
     },

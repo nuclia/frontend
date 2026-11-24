@@ -1,12 +1,19 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
+import {
+  BrnSeparator,
+  provideBrnSeparatorConfig,
+} from '@spartan-ng/brain/separator';
 import { classes } from '@progress/pdp-ui-spartan/utils';
-import { BrnSeparator, provideBrnSeparatorConfig } from '@spartan-ng/brain/separator';
 
 @Directive({
   selector: '[hlmButtonGroupSeparator],hlm-button-group-separator',
   exportAs: 'hlmButtonGroupSeparator',
   providers: [provideBrnSeparatorConfig({ orientation: 'vertical' })],
-  hostDirectives: [{ directive: BrnSeparator, inputs: ['orientation', 'decorative'] }],
+  hostDirectives: [
+    { directive: BrnSeparator, inputs: ['orientation', 'decorative'] },
+  ],
   host: {
     'data-slot': 'button-group-separator',
   },

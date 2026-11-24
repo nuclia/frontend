@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
-import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnMessageScrollerItem } from '@spartan-ng/brain/message-scroller';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmMessageScrollerItem],hlm-message-scroller-item',
@@ -17,6 +19,9 @@ import { BrnMessageScrollerItem } from '@spartan-ng/brain/message-scroller';
 })
 export class HlmMessageScrollerItem {
   constructor() {
-    classes(() => 'min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]');
+    classes(
+      () =>
+        'min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]',
+    );
   }
 }

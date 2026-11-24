@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -22,7 +24,9 @@ const bubbleReactionsVariants = cva(
   },
 );
 
-export type BubbleReactionsVariants = VariantProps<typeof bubbleReactionsVariants>;
+export type BubbleReactionsVariants = VariantProps<
+  typeof bubbleReactionsVariants
+>;
 
 @Directive({
   selector: '[hlmBubbleReactions],hlm-bubble-reactions',
@@ -39,6 +43,8 @@ export class HlmBubbleReactions {
   public readonly align = input<BubbleReactionsVariants['align']>('end');
 
   constructor() {
-    classes(() => bubbleReactionsVariants({ side: this.side(), align: this.align() }));
+    classes(() =>
+      bubbleReactionsVariants({ side: this.side(), align: this.align() }),
+    );
   }
 }

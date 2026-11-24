@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmNativeSelectImports } from '../index';
 import { HlmNativeSelect } from './hlm-native-select';
@@ -13,7 +19,11 @@ const meta: Meta<NativeSelectStoryArgs> = {
   title: 'Spartan/Native Select',
   component: HlmNativeSelect,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmNativeSelectImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmNativeSelectImports, ...HlmLabelImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -37,7 +47,8 @@ The component is a form control: bind it with <code>ngModel</code> or reactive f
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state.',
+      description:
+        'Forces the invalid style regardless of form validation state.',
       control: 'boolean',
     },
   },

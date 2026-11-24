@@ -1,6 +1,15 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matFindInPageRound, matFolderOpenRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matFindInPageRound,
+  matFolderOpenRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmEmptyImports } from '../index';
 import { HlmEmpty } from './hlm-empty';
@@ -42,7 +51,8 @@ Each part also exists as an element selector (<code>hlm-empty</code>, <code>hlm-
   },
   argTypes: {
     mediaVariant: {
-      description: 'Variant of the media slot (<code>hlmEmptyMedia</code> input).',
+      description:
+        'Variant of the media slot (<code>hlmEmptyMedia</code> input).',
       control: 'inline-radio',
       options: ['default', 'icon'],
     },
@@ -117,7 +127,8 @@ export const NoSearchResults: Story = {
 export const Bordered: Story = {
   args: {
     title: 'No API keys',
-    description: 'Create a key to access your knowledge box from your own applications.',
+    description:
+      'Create a key to access your knowledge box from your own applications.',
     actionLabel: 'Create API key',
   },
   render: (args) => ({

@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matUnfoldMoreRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmCollapsibleImports } from '../index';
 import { HlmCollapsible } from './hlm-collapsible';
@@ -38,7 +44,8 @@ The trigger is a real button, so give icon-only triggers an <code>aria-label</co
     expanded: false,
     disabled: false,
     title: 'Project details',
-    content: 'The Atlas project brings product, design and engineering planning together in a single roadmap.',
+    content:
+      'The Atlas project brings product, design and engineering planning together in a single roadmap.',
   },
   argTypes: {
     expanded: {
@@ -50,7 +57,8 @@ The trigger is a real button, so give icon-only triggers an <code>aria-label</co
       control: 'boolean',
     },
     title: {
-      description: 'Heading displayed next to the trigger (story-only argument).',
+      description:
+        'Heading displayed next to the trigger (story-only argument).',
       control: 'text',
     },
     content: {
@@ -83,7 +91,8 @@ export const InitiallyExpanded: Story = {
   args: {
     expanded: true,
     title: 'Release notes',
-    content: 'Version 2.4 improves keyboard navigation and adds clearer empty states.',
+    content:
+      'Version 2.4 improves keyboard navigation and adds clearer empty states.',
   },
 };
 
@@ -91,7 +100,8 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     title: 'Advanced settings',
-    content: 'Advanced settings are available once the knowledge box has at least one resource.',
+    content:
+      'Advanced settings are available once the knowledge box has at least one resource.',
   },
 };
 

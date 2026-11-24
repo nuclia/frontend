@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowUpRound } from '@ng-icons/material-symbols/round';
@@ -11,9 +13,7 @@ import { BrnSelectScrollUp } from '@spartan-ng/brain/select';
   providers: [provideIcons({ matKeyboardArrowUpRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnSelectScrollUp],
-  template: `
-    <ng-icon name="matKeyboardArrowUpRound" />
-  `,
+  template: ` <ng-icon name="matKeyboardArrowUpRound" /> `,
 })
 export class HlmSelectScrollUp {
   constructor() {

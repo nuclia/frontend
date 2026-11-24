@@ -1,15 +1,37 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCloseRound, matSearchRound } from '@ng-icons/material-symbols/round';
-import { HlmInputGroup, HlmInputGroupImports } from '@progress/pdp-ui-spartan/input-group';
+import {
+  matCloseRound,
+  matSearchRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  HlmInputGroup,
+  HlmInputGroupImports,
+} from '@progress/pdp-ui-spartan/input-group';
 import { classes } from '@progress/pdp-ui-spartan/utils';
-import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } from '@spartan-ng/brain/autocomplete';
+import {
+  BrnAutocompleteAnchor,
+  BrnAutocompleteClear,
+  BrnAutocompleteInput,
+} from '@spartan-ng/brain/autocomplete';
 
 @Component({
   selector: 'hlm-autocomplete-input',
   exportAs: 'hlmAutocompleteInput',
-  imports: [HlmInputGroupImports, NgIcon, BrnAutocompleteClear, BrnAutocompleteInput],
+  imports: [
+    HlmInputGroupImports,
+    NgIcon,
+    BrnAutocompleteClear,
+    BrnAutocompleteInput,
+  ],
   providers: [provideIcons({ matSearchRound, matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnAutocompleteAnchor, HlmInputGroup],
@@ -22,13 +44,15 @@ import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } fro
       [placeholder]="placeholder()"
       [autocomplete]="autocomplete()"
       [aria-invalid]="ariaInvalidInput()"
-      [forceInvalid]="forceInvalid()" />
+      [forceInvalid]="forceInvalid()"
+    />
 
     @if (showSearch()) {
       <hlm-input-group-addon>
         <ng-icon
           name="matSearchRound"
-          [class.opacity-50]="autocompleteInput.disabled()" />
+          [class.opacity-50]="autocompleteInput.disabled()"
+        />
       </hlm-input-group-addon>
     }
 
@@ -40,7 +64,8 @@ import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } fro
           data-slot="autocomplete-clear"
           [disabled]="autocompleteInput.disabled()"
           size="icon-xs"
-          variant="ghost">
+          variant="ghost"
+        >
           <ng-icon name="matCloseRound" />
         </button>
       </hlm-input-group-addon>
@@ -51,23 +76,35 @@ import { BrnAutocompleteAnchor, BrnAutocompleteClear, BrnAutocompleteInput } fro
 export class HlmAutocompleteInput {
   private static _id = 0;
 
-  public readonly inputId = input<string>(`hlm-autocomplete-input-${HlmAutocompleteInput._id++}`);
+  public readonly inputId = input<string>(
+    `hlm-autocomplete-input-${HlmAutocompleteInput._id++}`,
+  );
 
   public readonly placeholder = input<string>('');
 
   public readonly autocomplete = input<string>('off');
 
-  public readonly showSearch = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
-  public readonly showClear = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly showSearch = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
+  public readonly showClear = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Forces the invalid state visually, regardless of form control state. */
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Manual override for aria-invalid. When not set, auto-detects from the parent autocomplete error state. */
-  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(undefined, {
-    transform: (v: BooleanInput) => (v === '' || v === undefined ? undefined : booleanAttribute(v)),
-    alias: 'aria-invalid',
-  });
+  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(
+    undefined,
+    {
+      transform: (v: BooleanInput) =>
+        v === '' || v === undefined ? undefined : booleanAttribute(v),
+      alias: 'aria-invalid',
+    },
+  );
 
   constructor() {
     classes(() => 'w-auto');

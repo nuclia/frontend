@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, Directive, inject, input } from '@angular/core';
 import { classes } from '@progress/pdp-ui-spartan/utils';
@@ -25,7 +27,9 @@ export class HlmSidebarMenuSubButton {
   );
 
   public readonly size = input<'sm' | 'md'>('md');
-  public readonly isActive = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly isActive = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   constructor() {
     classes(

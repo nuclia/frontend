@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmSheet } from './lib/hlm-sheet';
 import { HlmSheetClose } from './lib/hlm-sheet-close';
 import { HlmSheetContent } from './lib/hlm-sheet-content';

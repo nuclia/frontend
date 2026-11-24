@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmCheckboxImports } from '../index';
 import { HlmCheckbox } from './hlm-checkbox';
 
@@ -43,7 +49,8 @@ Always provide a visible label (wrap the checkbox in a <code>&lt;label&gt;</code
       control: 'boolean',
     },
     indeterminate: {
-      description: 'Shows the indeterminate state, e.g. for a "select all" checkbox when only some items are selected.',
+      description:
+        'Shows the indeterminate state, e.g. for a "select all" checkbox when only some items are selected.',
       control: 'boolean',
     },
     disabled: {
@@ -55,7 +62,8 @@ Always provide a visible label (wrap the checkbox in a <code>&lt;label&gt;</code
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state.',
+      description:
+        'Forces the invalid style regardless of form validation state.',
       control: 'boolean',
     },
   },

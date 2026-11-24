@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmProgressImports } from '../index';
 import { HlmProgress } from './hlm-progress';
 
@@ -26,7 +32,8 @@ The host has the <code>progressbar</code> role, so always provide an <code>aria-
   args: { value: 64, max: 100 },
   argTypes: {
     value: {
-      description: 'Current progress, from 0 to <code>max</code>. Use <code>null</code> for an indeterminate state.',
+      description:
+        'Current progress, from 0 to <code>max</code>. Use <code>null</code> for an indeterminate state.',
       control: { type: 'number', min: 0, max: 100 },
     },
     max: {
@@ -65,7 +72,8 @@ export const CustomMaximum: Story = {
     props: {
       value,
       max,
-      stepLabel: (current: number, total: number) => `Step ${current} of ${total}`,
+      stepLabel: (current: number, total: number) =>
+        `Step ${current} of ${total}`,
     },
     template: `
       <div class="grid w-80 gap-2">

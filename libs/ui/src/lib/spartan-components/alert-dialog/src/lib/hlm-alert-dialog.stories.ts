@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matDeleteRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmAlertDialogImports } from '../index';
 import { HlmAlertDialog } from './hlm-alert-dialog';
@@ -36,7 +42,8 @@ Use <code>#dialog="hlmAlertDialog"</code> and <code>dialog.close()</code> to clo
   args: {
     size: 'default',
     title: 'Are you absolutely sure?',
-    description: 'This action cannot be undone. This will permanently delete your account and remove your data.',
+    description:
+      'This action cannot be undone. This will permanently delete your account and remove your data.',
   },
   argTypes: {
     size: {

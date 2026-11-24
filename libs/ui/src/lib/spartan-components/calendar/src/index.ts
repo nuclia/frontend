@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmCalendar } from './lib/hlm-calendar';
 import { HlmCalendarMulti } from './lib/hlm-calendar-multi';
 import { HlmCalendarRange } from './lib/hlm-calendar-range';
@@ -8,4 +10,9 @@ export * from './lib/hlm-calendar-multi';
 export * from './lib/hlm-calendar-range';
 export * from './lib/hlm-month-year-calendar';
 
-export const HlmCalendarImports = [HlmCalendar, HlmCalendarMulti, HlmCalendarRange, HlmMonthYearCalendar] as const;
+export const HlmCalendarImports = [
+  HlmCalendar,
+  HlmCalendarMulti,
+  HlmCalendarRange,
+  HlmMonthYearCalendar,
+] as const;

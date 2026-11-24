@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCheckRound } from '@ng-icons/material-symbols/round';
@@ -10,9 +12,7 @@ import { classes } from '@progress/pdp-ui-spartan/utils';
   providers: [provideIcons({ matCheckRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-slot': 'dropdown-menu-radio-item-indicator' },
-  template: `
-    <ng-icon name="matCheckRound" />
-  `,
+  template: ` <ng-icon name="matCheckRound" /> `,
 })
 export class HlmDropdownMenuRadioIndicator {
   constructor() {
