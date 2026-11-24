@@ -192,7 +192,7 @@
     "vite": "8.2.2",
     "vite-plugin-dts": "~4.5.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vitest": "5.0.5"
+    "vitest": "5.1.0"
   },
   "resolutions": {
     "stylus": "0.59.0"
