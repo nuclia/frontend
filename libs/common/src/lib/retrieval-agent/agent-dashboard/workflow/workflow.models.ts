@@ -32,7 +32,6 @@ import {
   RephraseAgent,
   RephraseAgentCreation,
   SqlAgent,
-  SqlAgentCreation,
   TavilyAgent,
 } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
@@ -389,19 +388,10 @@ export function basicAskAgentToUi(agent: BasicAskAgent): BasicAskAgentUI {
     rules: rules || null,
   };
 }
-export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
-  const { prompt, ...agentConfig } = config;
-  return {
-    module: 'sql',
-    description: prompt,
-    ...agentConfig,
-  };
-}
 export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
-  const { description, retries, ...uiConfig } = agent;
+  const { retries, ...uiConfig } = agent;
   return {
     ...uiConfig,
-    prompt: description || '',
     retries: retries || 3,
     rules: agent.rules || null,
   };
@@ -516,9 +506,6 @@ export function getAgentFromConfig(
   switch (nodeType) {
     case 'rephrase':
       agent = rephraseUiToCreation(cleanConfig);
-      break;
-    case 'sql':
-      agent = sqlUiToCreation(cleanConfig);
       break;
     case 'ask':
       agent = askUiToCreation(cleanConfig);

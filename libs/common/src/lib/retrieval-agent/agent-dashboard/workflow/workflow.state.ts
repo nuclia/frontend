@@ -770,9 +770,10 @@ export function updateNode(
   }
 
   _syncRegisteredAgentOnSelf(node, partialNode);
-  _updateParentNodeConfig(node, nodeCategory);
 
   const updatedNode = { ...node, ...partialNode, isSaved: partialNode.isSaved || false };
+
+  _updateParentNodeConfig(updatedNode, nodeCategory);
 
   if (partialNode.nodeConfig) {
     _markChildLinksAsUnsaved(updatedNode);
