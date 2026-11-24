@@ -1,5 +1,14 @@
 import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MetricsService } from '@flaps/common';
 import { AccountService, FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
@@ -78,7 +87,8 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   nuaKeys: Observable<NUAClient[]> = this.loadPerZone((accountId, zoneSlug) =>
     this.sdk.nuclia.db.getNUAClientsForZone(accountId, zoneSlug),
   );
-  projects = this.loadPerZone((accountId, zoneSlug) => this.sdk.nuclia.db.getProjectsForZone(accountId, zoneSlug));
+  projects$ = this.loadPerZone((accountId, zoneSlug) => this.sdk.nuclia.db.getProjectsForZone(accountId, zoneSlug));
+  projects = toSignal(this.projects$);
   isNuaActivityEnabled = this.features.unstable.viewNuaActivity;
   isRagAccount = this.accountService.isRagAccount;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
@@ -116,20 +126,17 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
     startWith(undefined),
   );
 
-  projectItems$: Observable<UsageListItem[] | undefined> = this.projects.pipe(
-    map((projects) =>
-      projects.map(
-        (project): UsageListItem => ({
-          id: project.project_id,
-          title: project.name,
-          icon: 'account',
-          enabled: true,
-          onClick: () => this.goToProject(project),
-          zone: project.zone,
-        }),
-      ),
+  projectItems = computed(() =>
+    this.projects()?.map(
+      (project): UsageListItem => ({
+        id: project.project_id,
+        title: project.name,
+        icon: 'account',
+        enabled: true,
+        onClick: () => this.goToProject(project),
+        zone: project.zone,
+      }),
     ),
-    startWith(undefined),
   );
 
   ngOnInit() {
@@ -245,7 +252,7 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
             merge(...nuaKeys.map((nuaKey) => getUsageEntry(nuaKey.internal_id, undefined, nuaKey.internal_id))),
           ),
         );
-        const newProjectUsage$ = this.newItemsOnly(this.projects, (project) => project.project_id).pipe(
+        const newProjectUsage$ = this.newItemsOnly(this.projects$, (project) => project.project_id).pipe(
           mergeMap((projects) =>
             merge(
               ...projects.map((project) => getUsageEntry(project.project_id, undefined, undefined, project.project_id)),

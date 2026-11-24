@@ -55,7 +55,7 @@
   [usage]="usage"
   [kbs]="(kbs | async) || []"
   [nuaKeys]="(nuaKeys | async) || []"
-  [projects]="(projects | async) || []"
+  [projects]="projects() || []"
   [selectedPeriod]="selectedPeriod | async"
   (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
 
@@ -135,7 +135,7 @@
     </div>
   }
 
-  @if (projectItems$ | async; as projectItems) {
+  @if (projectItems(); as projectItems) {
     @if (projectItems.length > 0) {
       <div class="summary-section">
         <h3 class="title-m">{{ 'account.projects' | translate }}</h3>
