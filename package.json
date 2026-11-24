@@ -165,7 +165,7 @@
     "ng-packagr": "22.2.4",
     "nodemon": "3.1.14",
     "nx": "24.0.6",
-    "postcss": "^8.5.28",
+    "postcss": "^8.5.33",
     "postcss-import": "15.1.0",
     "postcss-preset-env": "9.3.0",
     "postcss-url": "10.1.3",
