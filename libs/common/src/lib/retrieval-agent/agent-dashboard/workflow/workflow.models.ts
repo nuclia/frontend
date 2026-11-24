@@ -32,7 +32,6 @@ import {
   RephraseAgent,
   RephraseAgentCreation,
   SqlAgent,
-  SqlAgentCreation,
   TavilyAgent,
 } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
@@ -85,6 +84,9 @@ const CATEGORY_LIST: Set<NodeCategory> = new Set(['preprocess', 'context', 'gene
 export function isCategory(x: any): x is NodeCategory {
   return CATEGORY_LIST.has(x);
 }
+
+export const SINGLE_LINKS = ['fallback', 'next_agent'];
+export const MULTIPLE_LINKS = ['then', 'else_', 'agents', 'registered_agents'];
 
 export interface ParentNode {
   nodeRef: ComponentRef<NodeDirective>;
@@ -359,7 +361,7 @@ export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
   const { sources, ...agentConfig } = config;
   return {
     module: 'ask',
-    sources: sources.split(','),
+    sources: Array.isArray(sources) ? sources : sources.split(','),
     ...agentConfig,
   };
 }
@@ -386,19 +388,10 @@ export function basicAskAgentToUi(agent: BasicAskAgent): BasicAskAgentUI {
     rules: rules || null,
   };
 }
-export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
-  const { prompt, ...agentConfig } = config;
-  return {
-    module: 'sql',
-    description: prompt,
-    ...agentConfig,
-  };
-}
 export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
-  const { description, retries, ...uiConfig } = agent;
+  const { retries, ...uiConfig } = agent;
   return {
     ...uiConfig,
-    prompt: description || '',
     retries: retries || 3,
     rules: agent.rules || null,
   };
@@ -502,31 +495,58 @@ export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
   id?: string,
+  recursive = false,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
   const configCopy = structuredClone(config ?? {});
   if (id && !configCopy.id) {
     configCopy.id = id;
   }
   const cleanConfig = cleanupConfig(configCopy);
+  let agent: PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation;
   switch (nodeType) {
     case 'rephrase':
-      return rephraseUiToCreation(cleanConfig);
-    case 'sql':
-      return sqlUiToCreation(cleanConfig);
+      agent = rephraseUiToCreation(cleanConfig);
+      break;
     case 'ask':
-      return askUiToCreation(cleanConfig);
+      agent = askUiToCreation(cleanConfig);
+      break;
     case 'basic_ask':
-      return basicAskUiToCreation(cleanConfig);
+      agent = basicAskUiToCreation(cleanConfig);
+      break;
     case 'external':
-      return externalUiToCreation(cleanConfig);
+      agent = externalUiToCreation(cleanConfig);
+      break;
     case 'smart':
-      return smartUiToCreation(cleanConfig);
+      agent = smartUiToCreation(cleanConfig);
+      break;
     case 'preprocess_alinia':
     case 'postprocess_alinia':
-      return guardrailsUiToCreation(cleanConfig);
+      agent = guardrailsUiToCreation(cleanConfig);
+      break;
     default:
-      return { module: nodeType, ...cleanConfig };
+      agent = { module: nodeType, ...cleanConfig };
+      break;
   }
+
+  if (recursive) {
+    SINGLE_LINKS.forEach((key) => {
+      const child = (agent as any)[key];
+      if (child) {
+        const nodeType = getNodeTypeFromAgent(child);
+        (agent as any)[key] = getAgentFromConfig(nodeType, child, undefined, true);
+      }
+    });
+    MULTIPLE_LINKS.forEach((key) => {
+      const children = (agent as any)[key];
+      if (Array.isArray(children)) {
+        (agent as any)[key] = children.map((item) => {
+          const nodeType = getNodeTypeFromAgent(item);
+          return getAgentFromConfig(nodeType, item, undefined, true);
+        });
+      }
+    });
+  }
+  return agent;
 }
 
 /**
