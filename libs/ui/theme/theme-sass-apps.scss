@@ -1,0 +1,14 @@
+@use './tailwind.css';
+@use './theme-spartan.css';
+@use './theme-tailwind.css';
+@use './fonts.css';
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-normal;
+  }
+}
