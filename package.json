@@ -152,7 +152,7 @@
     "dotenv": "10.0.0",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-import": "2.32.0",
     "eslint-plugin-svelte": "^2.30.0",
     "exitzero": "^1.0.1",
     "globals": "17.14.0",
