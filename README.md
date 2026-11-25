@@ -72,7 +72,8 @@ npm install -g nx
 yarn
 ```
 
-Pastanaga-angular installation must be done through [missdev](https://github.com/collective/mrs-developer) so `sistema-demo` can run:
+Pastanaga-angular installation must be done through [missdev](https://github.com/collective/mrs-developer) so `sistema-demo` (our old DS) can run.
+Our new Spartan design system is also installed in pdp-ui lib through missdev:
 
 ```
 yarn missdev
@@ -321,9 +322,42 @@ Sistema and Pastanaga are now entering simple maintenance mode as we will switch
 
 Our new design system is based on [Spartan](https://www.spartan.ng/documentation/introduction), an angular UI library based on ShadCN.
 
-It lives in `./libs/ui`.
+It is imported from `data-platform` UI lib into local `./libs/pdp-ui` through missdev.
 
-To start the storybook, run `nx run ui:storybook`.
+The storybook is deployed on https://storybook.stashify.cloud.
+
+Running the storybook locally is possible only from data-platform monorepo.
+
+It is possible to work on UI components that are integrated on any app from this monorepo. To do so, update the branch in `mrs-developer.json`. For example:
+
+```json
+  "pdp-ui": {
+    "url": "git@github.com:nuclia/data-platform.git",
+    "https": "https://github.com/nuclia/data-platform.git",
+    "path": "/frontend-angular/libs/ui",
+    "package": "@progress/pdp-ui",
+    "branch": "your-branch-name"
+  }
+```
+
+Then run missdev to load this branch:
+
+```sh
+yarn missdev
+```
+
+Do the modifications you need in `pdp-ui` lib and test them in the application. Then you can commit your changes directly in pdp-ui folder:
+
+```sh
+cd libs/pdp-ui
+git add .
+git commit -m "Your commit message"
+git push origin your-branch-name
+```
+
+From there, you can double check your changes by pulling your branch in data-platform and running unit tests and storybook before creating a PR.
+
+Don't forget to put back `"branch": "main"` in mrs-developer before creating a PR on `nuclia/frontend` (if needed).
 
 ## CI/CD Deployment
 
