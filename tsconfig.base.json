@@ -35,7 +35,204 @@
       "@nuclia/widget": ["./libs/search-widget/src/index.ts"],
       "@nuclia/test": ["./test/index.ts"],
       "libs": ["./libs/src/index.ts"],
-      "*": ["./*"]
+      "*": ["./*"],
+      "@progress/pdp-ui": ["./libs/pdp-ui/frontend-angular/libs/ui/src/lib/ui-components"],
+      "@progress/pdp-ui-spartan": ["./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/src/index.ts"],
+      "@progress/pdp-ui-spartan/stepper": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/stepper/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/accordion": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/accordion/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/alert": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/alert/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/alert-dialog": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/alert-dialog/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/aspect-ratio": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/aspect-ratio/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/attachment": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/attachment/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/autocomplete": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/autocomplete/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/avatar": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/avatar/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/badge": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/badge/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/breadcrumb": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/breadcrumb/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/bubble": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/bubble/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/button": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/button/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/button-group": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/button-group/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/calendar": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/calendar/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/card": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/card/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/carousel": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/carousel/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/chart": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/chart/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/checkbox": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/checkbox/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/collapsible": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/collapsible/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/combobox": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/combobox/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/command": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/command/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/context-menu": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/context-menu/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/date-picker": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/date-picker/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/dialog": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/dialog/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/drawer": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/drawer/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/dropdown-menu": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/dropdown-menu/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/empty": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/empty/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/field": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/field/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/hover-card": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/hover-card/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/input": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/input/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/input-group": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/input-group/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/input-otp": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/input-otp/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/item": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/item/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/kbd": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/kbd/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/label": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/label/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/marker": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/marker/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/menubar": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/menubar/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/message": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/message/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/message-scroller": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/message-scroller/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/native-select": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/native-select/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/navigation-menu": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/navigation-menu/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/pagination": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/pagination/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/popover": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/popover/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/progress": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/progress/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/questionnaire": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/questionnaire/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/radio-group": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/radio-group/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/resizable": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/resizable/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/scroll-area": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/scroll-area/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/select": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/select/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/separator": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/separator/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/sheet": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/sheet/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/sidebar": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/sidebar/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/skeleton": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/skeleton/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/slider": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/slider/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/sonner": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/sonner/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/spinner": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/spinner/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/switch": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/switch/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/table": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/table/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/tabs": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/tabs/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/textarea": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/textarea/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/toggle": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/toggle/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/toggle-group": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/toggle-group/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/tooltip": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/tooltip/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/typography": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/typography/src/index.ts"
+      ],
+      "@progress/pdp-ui-spartan/utils": [
+        "./libs/pdp-ui/frontend-angular/libs/ui/src/lib/spartan-components/utils/src/index.ts"
+      ]
     }
   },
   "angularCompilerOptions": {
