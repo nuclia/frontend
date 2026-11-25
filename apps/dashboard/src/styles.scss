@@ -1,8 +1,9 @@
 @use '../../../libs/sistema/styles/apps-common';
 @use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
 
-// uncomment this import to start using spartan components in the dashboard.
-// @use '../../../libs/ui/theme/theme-sass-apps';
+// uncomment these @use and @source to start using spartan components in the dashboard.
+// @use '../../../libs/pdp-ui/frontend-angular/libs/ui/theme/theme-sass-apps';
+// @source '../../../libs/pdp-ui/frontend-angular/libs/ui/src';
 
 :root {
   --app-background-color: $color-light-stronger;
