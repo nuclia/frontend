@@ -101,8 +101,8 @@ jobs:
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
 
       - name: Generate a token
-        id: app-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app-token-pdp
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
         with:
           client-id: ${{ vars.GHAPP_NUCLIA_SERVICE_BOT_ID }}
           private-key: ${{ secrets.GHAPP_NUCLIA_SERVICE_BOT_PK }}
@@ -111,7 +111,7 @@ jobs:
           permission-contents: read
       - name: Install project dependencies
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.app-token-pdp.outputs.token }}
           GIT_TERMINAL_PROMPT: '0'
         run: |-
           yarn install --immutable
@@ -229,7 +229,7 @@ jobs:
           aws s3 cp ./libs/sdk-core/docs s3://$S3_DOCS_STORAGE/js-sdk --recursive
 
       - name: Generate a token
-        id: app-token
+        id: app-token-tooling
         uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
         with:
           client-id: ${{ secrets.NUCLIA_EXTERNAL_GHAPP_ID }}
@@ -244,7 +244,7 @@ jobs:
           repository: nuclia/tooling
           ref: main
           path: tooling
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ steps.app-token-tooling.outputs.token }}
           persist-credentials: false
 
       - name: Push dashboard image to registries
