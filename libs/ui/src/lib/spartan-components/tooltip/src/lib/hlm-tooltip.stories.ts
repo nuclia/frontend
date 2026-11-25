@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matInfoRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmTooltipImports } from '../index';
 import { HlmTooltip } from './hlm-tooltip';
@@ -30,7 +36,7 @@ const meta: Meta<TooltipStoryArgs> = {
     docs: {
       description: {
         component: `Show short, non-interactive help when an element is hovered or focused.
-Import <code>HlmTooltipImports</code> from <code>@nuclia/ui-spartan/tooltip</code> and set the text on the host element with <code>hlmTooltip="..."</code>.
+Import <code>HlmTooltipImports</code> from <code>@progress/pdp-ui-spartan/tooltip</code> and set the text on the host element with <code>hlmTooltip="..."</code>.
 
 The tooltip opens on mouse hover and keyboard focus, never on a touch tap. Use a popover if touch users must be able to read the content.
 Give icon-only triggers an <code>aria-label</code>. Content wider than 36rem wraps onto several lines.`,
@@ -46,7 +52,8 @@ Give icon-only triggers an <code>aria-label</code>. Content wider than 36rem wra
   },
   argTypes: {
     text: {
-      description: 'Tooltip content, set through the <code>hlmTooltip</code> input.',
+      description:
+        'Tooltip content, set through the <code>hlmTooltip</code> input.',
       control: 'text',
     },
     position: {

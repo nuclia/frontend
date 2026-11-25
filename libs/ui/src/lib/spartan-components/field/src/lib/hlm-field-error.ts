@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -11,7 +13,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { BrnField, BrnFieldA11yService } from '@spartan-ng/brain/field';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-field-error',
@@ -33,7 +35,10 @@ export class HlmFieldError implements OnDestroy {
   private static _id = 0;
 
   private readonly _field = inject(BrnField, { optional: true });
-  private readonly _a11y = inject(BrnFieldA11yService, { optional: true, host: true });
+  private readonly _a11y = inject(BrnFieldA11yService, {
+    optional: true,
+    host: true,
+  });
 
   private _registeredId?: string | undefined;
 
@@ -49,9 +54,13 @@ export class HlmFieldError implements OnDestroy {
   public readonly validator = input<string>();
 
   /** Forces the error message to be visible regardless of the control's validation state. */
-  public readonly forceShow = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceShow = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
-  protected readonly _display = computed(() => !this._hasParentField || this.forceShow() || this._hasError());
+  protected readonly _display = computed(
+    () => !this._hasParentField || this.forceShow() || this._hasError(),
+  );
 
   protected readonly _hasError = computed(() => {
     const errors = this._field?.errors();

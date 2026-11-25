@@ -1,7 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCalendarTodayRound, matCloseRound } from '@ng-icons/material-symbols/round';
-import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
+import {
+  matCalendarTodayRound,
+  matCloseRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  HlmInputGroup,
+  HlmInputGroupImports,
+} from '@progress/pdp-ui-spartan/input-group';
 import {
   BrnDateInput,
   type BrnDatePickerTriggerBase,
@@ -14,7 +28,10 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
   selector: 'hlm-date-range-input',
   exportAs: 'hlmDateRangeInput',
   imports: [HlmInputGroupImports, NgIcon],
-  providers: [provideIcons({ matCalendarTodayRound, matCloseRound }), provideBrnDatePickerTrigger(HlmDateRangeInput)],
+  providers: [
+    provideIcons({ matCalendarTodayRound, matCloseRound }),
+    provideBrnDatePickerTrigger(HlmDateRangeInput),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [HlmInputGroup],
   template: `
@@ -36,7 +53,8 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
       (keydown.enter)="_handleEnter($event)"
       (input)="_handleInputChange($event)"
       (focus)="_handleFocus()"
-      (blur)="_handleBlur()" />
+      (blur)="_handleBlur()"
+    />
     <hlm-input-group-addon align="inline-end">
       @if (_showClearButton()) {
         <button
@@ -45,7 +63,8 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
           variant="ghost"
           [attr.aria-label]="clearAriaLabel()"
           (click)="_clear()"
-          [disabled]="_disabled()">
+          [disabled]="_disabled()"
+        >
           <ng-icon name="matCloseRound" />
         </button>
       }
@@ -54,22 +73,30 @@ import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
         size="icon-xs"
         [attr.aria-label]="calendarAriaLabel()"
         (click)="_popover().open()"
-        [disabled]="_disabled()">
+        [disabled]="_disabled()"
+      >
         <ng-icon name="matCalendarTodayRound" />
       </button>
     </hlm-input-group-addon>
   `,
 })
-export class HlmDateRangeInput<T> extends BrnDateInput<[T, T]> implements BrnDatePickerTriggerBase {
+export class HlmDateRangeInput<T>
+  extends BrnDateInput<[T, T]>
+  implements BrnDatePickerTriggerBase
+{
   private readonly _config = injectHlmDateRangePickerConfig<T>();
   private readonly _fieldControl = inject(BrnFieldControl, { optional: true });
 
   private readonly _invalid = this._fieldControl?.invalid;
-  protected readonly _spartanInvalid = computed(() => this.forceInvalid() || this._fieldControl?.spartanInvalid());
+  protected readonly _spartanInvalid = computed(
+    () => this.forceInvalid() || this._fieldControl?.spartanInvalid(),
+  );
   protected readonly _dirty = this._fieldControl?.dirty;
   protected readonly _touched = this._fieldControl?.touched;
 
-  protected readonly _ariaInvalid = computed(() => (this._invalid?.() ? 'true' : null));
+  protected readonly _ariaInvalid = computed(() =>
+    this._invalid?.() ? 'true' : null,
+  );
 
   /**
    * Parses input text into a date range. Return `null` for invalid
@@ -78,7 +105,9 @@ export class HlmDateRangeInput<T> extends BrnDateInput<[T, T]> implements BrnDat
    *
    * Defaults to `parseDate` from `HlmDateRangePickerConfig`.
    */
-  public readonly parseDate = input<(value: string) => [T, T] | null>(this._config.parseDate);
+  public readonly parseDate = input<(value: string) => [T, T] | null>(
+    this._config.parseDate,
+  );
 
   /**
    * Formats the current range into the input/edit format shown while the
@@ -86,7 +115,9 @@ export class HlmDateRangeInput<T> extends BrnDateInput<[T, T]> implements BrnDat
    *
    * Defaults to `formatInputDates` from `HlmDateRangePickerConfig`.
    */
-  public readonly formatInputDates = input<(dates: [T | null, T | null]) => string>(this._config.formatInputDates);
+  public readonly formatInputDates = input<
+    (dates: [T | null, T | null]) => string
+  >(this._config.formatInputDates);
 
   protected override parseValue(value: string): [T, T] | null {
     return this.parseDate()(value);

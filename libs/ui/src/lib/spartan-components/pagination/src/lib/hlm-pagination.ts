@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmPagination],hlm-pagination',
@@ -12,7 +14,9 @@ import { classes } from '@nuclia/ui-spartan/utils';
 })
 export class HlmPagination {
   /** The aria-label for the pagination component. */
-  public readonly ariaLabel = input<string>('pagination', { alias: 'aria-label' });
+  public readonly ariaLabel = input<string>('pagination', {
+    alias: 'aria-label',
+  });
 
   constructor() {
     classes(() => 'mx-auto flex w-full justify-center');

@@ -1,12 +1,17 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { BrnInput } from '@spartan-ng/brain/input';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmInput]',
   exportAs: 'hlmInput',
-  hostDirectives: [{ directive: BrnInput, inputs: ['id', 'forceInvalid'] }, BrnFieldControlDescribedBy],
+  hostDirectives: [
+    { directive: BrnInput, inputs: ['id', 'forceInvalid'] },
+    BrnFieldControlDescribedBy,
+  ],
   host: { 'data-slot': 'input' },
 })
 export class HlmInput {

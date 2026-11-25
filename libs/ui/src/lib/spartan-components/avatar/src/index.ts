@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmAvatar } from './lib/hlm-avatar';
 import { HlmAvatarBadge } from './lib/hlm-avatar-badge';
 import { HlmAvatarFallback } from './lib/hlm-avatar-fallback';

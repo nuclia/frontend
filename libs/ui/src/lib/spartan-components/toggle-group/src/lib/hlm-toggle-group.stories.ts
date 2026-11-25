@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmToggleGroupImports } from '../index';
 import { HlmToggleGroup } from './hlm-toggle-group';
 
@@ -25,7 +31,7 @@ const meta: Meta<ToggleGroupStoryArgs> = {
     docs: {
       description: {
         component: `A set of two-state buttons that can be toggled on or off.
-Import <code>HlmToggleGroupImports</code> from <code>@nuclia/ui-spartan/toggle-group</code> and compose <code>hlm-toggle-group</code> with <code>button[hlmToggleGroupItem]</code> children, each with a unique <code>value</code>.
+Import <code>HlmToggleGroupImports</code> from <code>@progress/pdp-ui-spartan/toggle-group</code> and compose <code>hlm-toggle-group</code> with <code>button[hlmToggleGroupItem]</code> children, each with a unique <code>value</code>.
 
 Use <code>type="single"</code> to allow one pressed item or <code>type="multiple"</code> for several. Listen to <code>valueChange</code> for updates.
 Variant, size, spacing, and orientation are set on the group and apply to every item. Icon-only items should include an <code>aria-label</code>.`,
@@ -58,7 +64,8 @@ Variant, size, spacing, and orientation are set on the group and apply to every 
       options: ['default', 'sm', 'lg'],
     },
     spacing: {
-      description: 'Gap between items, in spacing units. Use 0 for items joined together.',
+      description:
+        'Gap between items, in spacing units. Use 0 for items joined together.',
       control: 'number',
     },
     orientation: {
@@ -67,7 +74,8 @@ Variant, size, spacing, and orientation are set on the group and apply to every 
       options: ['horizontal', 'vertical'],
     },
     nullable: {
-      description: 'Whether the single-selection group allows having no pressed item.',
+      description:
+        'Whether the single-selection group allows having no pressed item.',
       control: 'boolean',
     },
     disabled: {

@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmTableImports } from '../index';
 
 const meta: Meta = {
@@ -10,7 +16,7 @@ const meta: Meta = {
     docs: {
       description: {
         component: `Organizes structured information into rows and columns for easy comparison. Use it for records, reports, or other data where users need to scan shared attributes across multiple entries.
-Import <code>HlmTableImports</code> from <code>@nuclia/ui-spartan/table</code>. The table is made of attribute directives applied to native elements: <code>div[hlmTableContainer]</code> (horizontal scroll wrapper), <code>table[hlmTable]</code>, <code>caption[hlmCaption]</code>, <code>thead[hlmTHead]</code>, <code>tbody[hlmTBody]</code>, <code>tfoot[hlmTFoot]</code>, <code>tr[hlmTr]</code>, <code>th[hlmTh]</code> and <code>td[hlmTd]</code>.
+Import <code>HlmTableImports</code> from <code>@progress/pdp-ui-spartan/table</code>. The table is made of attribute directives applied to native elements: <code>div[hlmTableContainer]</code> (horizontal scroll wrapper), <code>table[hlmTable]</code>, <code>caption[hlmCaption]</code>, <code>thead[hlmTHead]</code>, <code>tbody[hlmTBody]</code>, <code>tfoot[hlmTFoot]</code>, <code>tr[hlmTr]</code>, <code>th[hlmTh]</code> and <code>td[hlmTd]</code>.
 
 The directives only add styling and have no inputs, so keep the native table semantics for accessibility: use <code>&lt;th scope="col"&gt;</code> / <code>scope="row"</code> and a <code>&lt;caption&gt;</code> describing the data. Add <code>data-state="selected"</code> on a row to highlight it.`,
       },

@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmQuestionnaireImports } from '../index';
 import { HlmQuestionnaire } from './hlm-questionnaire';
 
@@ -16,7 +22,7 @@ const meta: Meta<QuestionnaireStoryArgs> = {
     docs: {
       description: {
         component: `Guides users through a series of questions with choices or freeform answers. Use it for onboarding, preference gathering, or guided requests where one question at a time keeps the task focused.
-Import <code>HlmQuestionnaireImports</code> from <code>@nuclia/ui-spartan/questionnaire</code> and put one <code>fieldset[hlmQuestionnaireItem]</code> per question inside a <code>form[hlmQuestionnaire]</code>. Only the active item is displayed; the others are hidden and inert.
+Import <code>HlmQuestionnaireImports</code> from <code>@progress/pdp-ui-spartan/questionnaire</code> and put one <code>fieldset[hlmQuestionnaireItem]</code> per question inside a <code>form[hlmQuestionnaire]</code>. Only the active item is displayed; the others are hidden and inert.
 
 Each item needs a unique <code>name</code> and is composed of a <code>legend[hlmQuestionnaireTitle]</code>, an optional <code>hlmQuestionnaireDescription</code>, and either <code>hlmQuestionnaireChoices</code> containing <code>label[hlmQuestionnaireChoice]</code> elements (radio by default, checkboxes with <code>multiple</code>) or an <code>input[hlmQuestionnaireInput]</code>. Mark an item <code>required</code> to block Next and hide Skip, and add <code>hlmQuestionnaireError</code> to show validation feedback.
 Navigation is built from <code>hlmQuestionnaireProgress</code> and an <code>hlmQuestionnaireActions</code> bar with <code>hlmQuestionnairePrevious</code>, <code>hlmQuestionnaireSkip</code>, <code>hlmQuestionnaireNext</code> and <code>hlmQuestionnaireSubmit</code>, which show up only when they apply. Bind <code>[(item)]</code> to track the active question and use <code>shortcuts</code> to enable keyboard answers.
@@ -30,12 +36,14 @@ Give <code>hlmQuestionnaireProgress</code> an <code>aria-label</code> when the d
   },
   argTypes: {
     shortcuts: {
-      description: 'Keyboard shortcuts for choices: letters (A, B, C…), numbers (1, 2, 3…) or disabled (null).',
+      description:
+        'Keyboard shortcuts for choices: letters (A, B, C…), numbers (1, 2, 3…) or disabled (null).',
       control: 'inline-radio',
       options: ['letters', 'numbers', null],
     },
     noValidate: {
-      description: 'Disables the browser native validation UI so the questionnaire can show its own error messages.',
+      description:
+        'Disables the browser native validation UI so the questionnaire can show its own error messages.',
       control: 'boolean',
     },
   },

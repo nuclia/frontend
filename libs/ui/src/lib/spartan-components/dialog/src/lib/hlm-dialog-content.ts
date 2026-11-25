@@ -1,13 +1,22 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import type { ComponentType } from '@angular/cdk/portal';
 import { NgComponentOutlet } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCloseRound } from '@ng-icons/material-symbols/round';
-import { HlmButton } from '@nuclia/ui-spartan/button';
+import { HlmButton } from '@progress/pdp-ui-spartan/button';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmDialogClose } from './hlm-dialog-close';
 
 type HlmDialogContentContext = {
@@ -40,7 +49,8 @@ type HlmDialogContentContext = {
         variant="ghost"
         size="icon-sm"
         class="absolute end-2 top-2"
-        hlmDialogClose>
+        hlmDialogClose
+      >
         <span class="sr-only">{{ closeLabel() }}</span>
         <ng-icon name="matCloseRound" />
       </button>
@@ -49,21 +59,28 @@ type HlmDialogContentContext = {
 })
 export class HlmDialogContent {
   private readonly _dialogRef = inject(BrnDialogRef);
-  private readonly _dialogContext = injectBrnDialogContext<HlmDialogContentContext | null>({ optional: true });
+  private readonly _dialogContext =
+    injectBrnDialogContext<HlmDialogContentContext | null>({ optional: true });
 
-  public readonly showCloseButton = input<boolean, BooleanInput>(this._dialogContext?.$showCloseButton ?? true, {
-    transform: booleanAttribute,
-  });
-  public readonly closeLabel = input<string>(this._dialogContext?.$closeLabel ?? 'Close');
+  public readonly showCloseButton = input<boolean, BooleanInput>(
+    this._dialogContext?.$showCloseButton ?? true,
+    {
+      transform: booleanAttribute,
+    },
+  );
+  public readonly closeLabel = input<string>(
+    this._dialogContext?.$closeLabel ?? 'Close',
+  );
 
   public readonly state = computed(() => this._dialogRef?.state() ?? 'closed');
 
   public readonly component = this._dialogContext?.$component;
-  private readonly _dynamicComponentClass = this._dialogContext?.$dynamicComponentClass;
+  private readonly _dynamicComponentClass =
+    this._dialogContext?.$dynamicComponentClass;
 
   constructor() {
     classes(() => [
-      'bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 grid max-w-[calc(100%-2rem)] gap-4 rounded-xl p-4 text-sm ring-1 duration-100 sm:max-w-sm relative mx-auto w-full outline-none sm:mx-0',
+      'bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 grid max-w-[calc(100%-2rem)] gap-4 rounded-xl p-4 text-sm ring-1 duration-100 sm:max-w-sm relative mx-auto w-[calc(100vw-2rem)] outline-none sm:mx-0',
       this._dynamicComponentClass,
     ]);
   }

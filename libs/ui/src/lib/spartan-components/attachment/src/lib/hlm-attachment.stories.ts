@@ -1,6 +1,15 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matDescriptionRound, matCloseRound } from '@ng-icons/material-symbols/round';
+import {
+  matCloseRound,
+  matDescriptionRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmAttachmentImports } from '../index';
 import { HlmAttachment, type AttachmentState } from './hlm-attachment';
 
@@ -26,7 +35,7 @@ const meta: Meta<AttachmentStoryArgs> = {
     docs: {
       description: {
         component: `Represents an attached file or image with a preview, file details, upload status, and related actions. Use it to help users recognize and manage files in messages or upload flows.
-Import <code>HlmAttachmentImports</code> from <code>@nuclia/ui-spartan/attachment</code> and compose <code>hlm-attachment</code> with <code>hlmAttachmentMedia</code> (icon or image preview), <code>hlmAttachmentContent</code> (<code>hlmAttachmentTitle</code> and <code>hlmAttachmentDescription</code>), and <code>hlmAttachmentActions</code> containing <code>button[hlmAttachmentAction]</code> buttons.
+Import <code>HlmAttachmentImports</code> from <code>@progress/pdp-ui-spartan/attachment</code> and compose <code>hlm-attachment</code> with <code>hlmAttachmentMedia</code> (icon or image preview), <code>hlmAttachmentContent</code> (<code>hlmAttachmentTitle</code> and <code>hlmAttachmentDescription</code>), and <code>hlmAttachmentActions</code> containing <code>button[hlmAttachmentAction]</code> buttons.
 
 Set <code>state</code>, <code>size</code> and <code>orientation</code> on the attachment. Error titles use the destructive color, and actions align to the top of the content. Add <code>hlmAttachmentTrigger</code> (a <code>button</code> or <code>a</code>) to make the whole card clickable, and wrap several attachments in <code>hlmAttachmentGroup</code> for a horizontally scrollable list.
 Icon-only triggers and actions need an <code>aria-label</code>.`,
@@ -42,7 +51,8 @@ Icon-only triggers and actions need an <code>aria-label</code>.`,
   },
   argTypes: {
     state: {
-      description: 'Upload lifecycle state. It drives the border, media and text styling.',
+      description:
+        'Upload lifecycle state. It drives the border, media and text styling.',
       control: 'select',
       options: ['idle', 'uploading', 'processing', 'error', 'done'],
     },
@@ -61,7 +71,8 @@ Icon-only triggers and actions need an <code>aria-label</code>.`,
       control: 'text',
     },
     description: {
-      description: 'Secondary text such as the file size or status, shown in <code>hlmAttachmentDescription</code>.',
+      description:
+        'Secondary text such as the file size or status, shown in <code>hlmAttachmentDescription</code>.',
       control: 'text',
     },
   },
@@ -108,7 +119,10 @@ export const Processing: Story = {
 };
 
 export const Error: Story = {
-  args: { state: 'error', description: 'Upload failed. Unsupported file format.' },
+  args: {
+    state: 'error',
+    description: 'Upload failed. Unsupported file format.',
+  },
 };
 
 export const Small: Story = {

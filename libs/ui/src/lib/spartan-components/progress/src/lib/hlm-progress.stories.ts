@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmProgressImports } from '../index';
 import { HlmProgress } from './hlm-progress';
 
@@ -16,7 +22,7 @@ const meta: Meta<ProgressStoryArgs> = {
     docs: {
       description: {
         component: `Shows how far a task has advanced toward completion. Use it for uploads, processing, or multi-step flows when users benefit from seeing progress rather than only a loading indicator.
-Import <code>HlmProgressImports</code> from <code>@nuclia/ui-spartan/progress</code> and place an <code>hlm-progress-indicator</code> inside <code>hlm-progress</code>; the indicator fills the track according to the parent.
+Import <code>HlmProgressImports</code> from <code>@progress/pdp-ui-spartan/progress</code> and place an <code>hlm-progress-indicator</code> inside <code>hlm-progress</code>; the indicator fills the track according to the parent.
 
 Set <code>value</code> between 0 and <code>max</code> (100 by default). A <code>null</code> value renders the indeterminate animation for tasks of unknown length. Use <code>getValueLabel</code> to customise the text announced to screen readers.
 The host has the <code>progressbar</code> role, so always provide an <code>aria-label</code> (or <code>aria-labelledby</code>) describing what is progressing.`,
@@ -26,7 +32,8 @@ The host has the <code>progressbar</code> role, so always provide an <code>aria-
   args: { value: 64, max: 100 },
   argTypes: {
     value: {
-      description: 'Current progress, from 0 to <code>max</code>. Use <code>null</code> for an indeterminate state.',
+      description:
+        'Current progress, from 0 to <code>max</code>. Use <code>null</code> for an indeterminate state.',
       control: { type: 'number', min: 0, max: 100 },
     },
     max: {
@@ -65,7 +72,8 @@ export const CustomMaximum: Story = {
     props: {
       value,
       max,
-      stepLabel: (current: number, total: number) => `Step ${current} of ${total}`,
+      stepLabel: (current: number, total: number) =>
+        `Step ${current} of ${total}`,
     },
     template: `
       <div class="grid w-80 gap-2">

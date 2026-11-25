@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { InputModalityDetector } from '@angular/cdk/a11y';
 import { CdkMenu, CdkMenuItem } from '@angular/cdk/menu';
 import { Directive, inject } from '@angular/core';
@@ -28,7 +30,10 @@ export class HlmDropdownMenuFocusOnHover {
   protected _focusOnHover(): void {
     // Only skip synthetic hovers from touch taps; every real hover (mouse, or keyboard-then-hover,
     // which leaves the modality as 'keyboard') should move focus to keep a single highlight.
-    if (this._inputModality.mostRecentModality === 'touch' || this._cdkMenuItem.disabled) {
+    if (
+      this._inputModality.mostRecentModality === 'touch' ||
+      this._cdkMenuItem.disabled
+    ) {
       return;
     }
     this._parentMenu?.setActiveMenuItem(this._cdkMenuItem);

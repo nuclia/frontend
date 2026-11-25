@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnSelectScrollDown } from '@spartan-ng/brain/select';
 
 @Component({
@@ -11,9 +13,7 @@ import { BrnSelectScrollDown } from '@spartan-ng/brain/select';
   providers: [provideIcons({ matKeyboardArrowDownRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnSelectScrollDown],
-  template: `
-    <ng-icon name="matKeyboardArrowDownRound" />
-  `,
+  template: ` <ng-icon name="matKeyboardArrowDownRound" /> `,
 })
 export class HlmSelectScrollDown {
   constructor() {

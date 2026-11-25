@@ -1,7 +1,13 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BrnInputOtp } from '@spartan-ng/brain/input-otp';
-import { HlmInputOtpImports } from '../index';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
+import { HlmInputOtpImports } from '../index';
 import { HlmInputOtp } from './hlm-input-otp';
 
 type OtpInputMode = 'text' | 'tel' | 'numeric' | 'decimal';
@@ -15,18 +21,23 @@ interface InputOtpStoryArgs {
 }
 
 /** Slot indexes for the given code length. */
-const slotsOf = (length: number): number[] => Array.from({ length: Math.max(0, length) }, (_, index) => index);
+const slotsOf = (length: number): number[] =>
+  Array.from({ length: Math.max(0, length) }, (_, index) => index);
 
 const meta: Meta<InputOtpStoryArgs> = {
   title: 'Spartan/Input OTP',
   component: HlmInputOtp,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [BrnInputOtp, ...HlmInputOtpImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [BrnInputOtp, ...HlmInputOtpImports, ...HlmLabelImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `A segmented field for entering a one-time password or verification code. Use it in authentication and confirmation flows where a short, fixed-length code is sent to the user.
-Import <code>HlmInputOtpImports</code> from <code>@nuclia/ui-spartan/input-otp</code> and also <code>BrnInputOtp</code> from <code>@spartan-ng/brain/input-otp</code>.
+Import <code>HlmInputOtpImports</code> from <code>@progress/pdp-ui-spartan/input-otp</code> and also <code>BrnInputOtp</code> from <code>@spartan-ng/brain/input-otp</code>.
 
 Use <code>&lt;brn-input-otp hlmInputOtp&gt;</code> with a <code>length</code> and an <code>inputId</code>, containing <code>hlm-input-otp-group</code> elements that hold one <code>hlm-input-otp-slot [index]</code> per character; <code>hlm-input-otp-separator</code> visually splits groups.
 It works with <code>ngModel</code> / reactive forms, or listen to <code>valueChange</code> and <code>completed</code> (emits the full code). Use <code>inputMode</code> to pick the mobile keyboard, <code>inputAutocomplete="one-time-code"</code> to let browsers suggest codes from SMS, and <code>transformPaste</code> to clean pasted text.
@@ -42,7 +53,8 @@ Set <code>forceInvalid</code> on each slot to show the invalid style. Associate 
   },
   argTypes: {
     length: {
-      description: 'Number of characters of the code. The template renders one slot per character.',
+      description:
+        'Number of characters of the code. The template renders one slot per character.',
       control: { type: 'number', min: 1, max: 8 },
     },
     inputMode: {
@@ -55,7 +67,8 @@ Set <code>forceInvalid</code> on each slot to show the invalid style. Associate 
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style on every slot, e.g. after the server rejected the code.',
+      description:
+        'Forces the invalid style on every slot, e.g. after the server rejected the code.',
       control: 'boolean',
     },
     completed: {

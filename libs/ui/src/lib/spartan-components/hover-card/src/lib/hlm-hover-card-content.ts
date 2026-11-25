@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, inject } from '@angular/core';
 import { BrnHoverCardContentService } from '@spartan-ng/brain/hover-card';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmHoverCardContent],hlm-hover-card-content',

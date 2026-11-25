@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { ChartTheme } from '@tanstack/charts';
 
 /** A TanStack Charts theme backed by Spartan's semantic color tokens. */
@@ -6,5 +8,11 @@ export const HLM_CHART_THEME = {
   muted: 'var(--muted-foreground)',
   grid: 'var(--muted-foreground)',
   background: 'transparent',
-  palette: ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)'],
+  palette: [
+    'var(--chart-1)',
+    'var(--chart-2)',
+    'var(--chart-3)',
+    'var(--chart-4)',
+    'var(--chart-5)',
+  ],
 } as const satisfies ChartTheme;

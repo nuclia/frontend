@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmAccordionImports } from '../index';
 import { HlmAccordion } from './hlm-accordion';
 
@@ -20,7 +26,7 @@ const meta: Meta<AccordionStoryArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `Import <code>HlmAccordionImports</code> from <code>@nuclia/ui-spartan/accordion</code> into your component's imports.
+        component: `Import <code>HlmAccordionImports</code> from <code>@progress/pdp-ui-spartan/accordion</code> into your component's imports.
 Compose <code>hlm-accordion</code> with <code>hlm-accordion-item</code>, <code>hlm-accordion-trigger</code>, and <code>hlm-accordion-content</code>.
 
 Use <code>type="single"</code> to open one item at a time or <code>type="multiple"</code> to open several items independently.
@@ -46,7 +52,8 @@ Triggers support keyboard navigation and expose their expanded state to assistiv
       control: 'boolean',
     },
     disabled: {
-      description: 'Disables the first item without affecting the remaining items.',
+      description:
+        'Disables the first item without affecting the remaining items.',
       control: 'boolean',
     },
   },

@@ -1,6 +1,15 @@
-import { Directive, effect, EffectRef, inject, input, OnDestroy } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  Directive,
+  effect,
+  EffectRef,
+  inject,
+  input,
+  OnDestroy,
+} from '@angular/core';
 import { BrnFieldA11yService } from '@spartan-ng/brain/field';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmFieldDescription],hlm-field-description',
@@ -13,9 +22,14 @@ import { classes } from '@nuclia/ui-spartan/utils';
 export class HlmFieldDescription implements OnDestroy {
   private static _id = 0;
 
-  private readonly _a11y = inject(BrnFieldA11yService, { optional: true, host: true });
+  private readonly _a11y = inject(BrnFieldA11yService, {
+    optional: true,
+    host: true,
+  });
 
-  public readonly id = input<string>(`hlm-field-description-${HlmFieldDescription._id++}`);
+  public readonly id = input<string>(
+    `hlm-field-description-${HlmFieldDescription._id++}`,
+  );
 
   private _registeredId?: string;
 

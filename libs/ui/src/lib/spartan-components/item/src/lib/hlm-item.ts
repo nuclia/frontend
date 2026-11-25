@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { injectHlmItemConfig } from './hlm-item-token';
 
@@ -38,7 +40,9 @@ export type ItemVariants = VariantProps<typeof itemVariants>;
 })
 export class HlmItem {
   private readonly _config = injectHlmItemConfig();
-  public readonly variant = input<ItemVariants['variant']>(this._config.variant);
+  public readonly variant = input<ItemVariants['variant']>(
+    this._config.variant,
+  );
   public readonly size = input<ItemVariants['size']>(this._config.size);
 
   constructor() {

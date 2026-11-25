@@ -1,7 +1,13 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnAutocompleteSearch } from '@spartan-ng/brain/autocomplete';
-import { BrnPopover, provideBrnPopoverConfig, provideBrnPopoverDefaultOptions } from '@spartan-ng/brain/popover';
-import { classes } from '@nuclia/ui-spartan/utils';
+import {
+  BrnPopover,
+  provideBrnPopoverConfig,
+  provideBrnPopoverDefaultOptions,
+} from '@spartan-ng/brain/popover';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmAutocompleteSearch],hlm-autocomplete-search',
@@ -21,7 +27,14 @@ import { classes } from '@nuclia/ui-spartan/utils';
     },
     {
       directive: BrnPopover,
-      inputs: ['align', 'closeOnOutsidePointerEvents', 'sideOffset', 'state', 'offsetX', 'scrollStrategy'],
+      inputs: [
+        'align',
+        'closeOnOutsidePointerEvents',
+        'sideOffset',
+        'state',
+        'offsetX',
+        'scrollStrategy',
+      ],
       outputs: ['stateChanged', 'closed'],
     },
   ],

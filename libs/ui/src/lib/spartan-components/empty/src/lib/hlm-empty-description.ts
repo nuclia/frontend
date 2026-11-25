@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmEmptyDescription]',
@@ -9,7 +11,8 @@ import { classes } from '@nuclia/ui-spartan/utils';
 export class HlmEmptyDescription {
   constructor() {
     classes(
-      () => 'text-sm/relaxed text-muted-foreground [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4',
+      () =>
+        'text-sm/relaxed text-muted-foreground [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4',
     );
   }
 }

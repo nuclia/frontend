@@ -1,6 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
-import { booleanAttribute, computed, Directive, effect, forwardRef, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  computed,
+  Directive,
+  effect,
+  forwardRef,
+  inject,
+  input,
+} from '@angular/core';
 import {
   createMenuPosition,
   MENU_SIDE,
@@ -8,13 +18,15 @@ import {
   type MenuSide,
   updateMenuPosition,
 } from '@spartan-ng/brain/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { injectHlmMenubarConfig } from './hlm-menubar-token';
 
 @Directive({
   selector: 'button[hlmMenubarTrigger]',
   exportAs: 'hlmMenubarTrigger',
-  providers: [{ provide: MENU_SIDE, useExisting: forwardRef(() => HlmMenubarTrigger) }],
+  providers: [
+    { provide: MENU_SIDE, useExisting: forwardRef(() => HlmMenubarTrigger) },
+  ],
   hostDirectives: [
     {
       directive: CdkMenuItem,
@@ -22,8 +34,14 @@ import { injectHlmMenubarConfig } from './hlm-menubar-token';
     },
     {
       directive: CdkMenuTrigger,
-      inputs: ['cdkMenuTriggerFor: hlmMenubarTrigger', 'cdkMenuTriggerData: hlmMenubarTriggerData'],
-      outputs: ['cdkMenuOpened: hlmDropdownMenuOpened', 'cdkMenuClosed: hlmDropdownMenuClosed'],
+      inputs: [
+        'cdkMenuTriggerFor: hlmMenubarTrigger',
+        'cdkMenuTriggerData: hlmMenubarTriggerData',
+      ],
+      outputs: [
+        'cdkMenuOpened: hlmDropdownMenuOpened',
+        'cdkMenuClosed: hlmDropdownMenuClosed',
+      ],
     },
   ],
   host: {
@@ -36,19 +54,25 @@ export class HlmMenubarTrigger {
   private readonly _cdkTrigger = inject(CdkMenuTrigger, { host: true });
   private readonly _config = injectHlmMenubarConfig();
 
-  public readonly disabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly disabled = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   public readonly align = input<MenuAlign>(this._config.align);
   public readonly side = input<MenuSide>(this._config.side);
 
-  private readonly _menuPosition = computed(() => createMenuPosition(this.align(), this.side()));
+  private readonly _menuPosition = computed(() =>
+    createMenuPosition(this.align(), this.side()),
+  );
 
   constructor() {
     // CDK sets transform-origin on the menu content (a shared hlm-dropdown-menu) from the resolved
     // position; the content reads it to animate from the anchored corner and to derive its data-side.
     // Cast tolerates @angular/cdk < 21.2 (we still support >=21.0), where the property is absent and
     // the assignment is a harmless no-op.
-    (this._cdkTrigger as { transformOriginSelector?: string }).transformOriginSelector = '[data-slot="dropdown-menu"]';
+    (
+      this._cdkTrigger as { transformOriginSelector?: string }
+    ).transformOriginSelector = '[data-slot="dropdown-menu"]';
 
     effect(() => {
       updateMenuPosition(this._cdkTrigger, this._menuPosition());

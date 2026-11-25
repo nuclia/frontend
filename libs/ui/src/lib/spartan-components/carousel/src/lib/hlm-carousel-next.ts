@@ -1,15 +1,31 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  untracked,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matArrowForwardRound } from '@ng-icons/material-symbols/round';
-import { HlmButton, provideBrnButtonConfig } from '@nuclia/ui-spartan/button';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import {
+  HlmButton,
+  provideBrnButtonConfig,
+} from '@progress/pdp-ui-spartan/button';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { HlmCarousel } from './hlm-carousel';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- Intentionally targets a native button.
   selector: 'button[hlm-carousel-next], button[hlmCarouselNext]',
   exportAs: 'hlmCarouselNext',
   imports: [NgIcon],
-  providers: [provideIcons({ matArrowForwardRound }), provideBrnButtonConfig({ variant: 'outline', size: 'icon-sm' })],
+  providers: [
+    provideIcons({ matArrowForwardRound }),
+    provideBrnButtonConfig({ variant: 'outline', size: 'icon-sm' }),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [{ directive: HlmButton, inputs: ['variant', 'size'] }],
   host: {
@@ -18,9 +34,7 @@ import { HlmCarousel } from './hlm-carousel';
     '(click)': '_carousel.scrollNext()',
   },
   template: `
-    <ng-icon
-      name="matArrowForwardRound"
-      class="rtl:rotate-180" />
+    <ng-icon name="matArrowForwardRound" class="rtl:rotate-180" />
     <span class="sr-only">Next slide</span>
   `,
 })

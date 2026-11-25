@@ -1,7 +1,15 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { BrnSelectContent, BrnSelectList } from '@spartan-ng/brain/select';
-import { classes, hlm } from '@nuclia/ui-spartan/utils';
+import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
 import { HlmSelectScrollDown } from './hlm-select-scroll-down';
 import { HlmSelectScrollUp } from './hlm-select-scroll-up';
 
@@ -16,9 +24,7 @@ import { HlmSelectScrollUp } from './hlm-select-scroll-up';
       <hlm-select-scroll-up />
     }
 
-    <div
-      brnSelectList
-      [class]="_computedListboxClasses()">
+    <div brnSelectList [class]="_computedListboxClasses()">
       <ng-content />
     </div>
 
@@ -28,9 +34,13 @@ import { HlmSelectScrollUp } from './hlm-select-scroll-up';
   `,
 })
 export class HlmSelectContent {
-  protected readonly _computedListboxClasses = computed(() => hlm('flex flex-col'));
+  protected readonly _computedListboxClasses = computed(() =>
+    hlm('flex flex-col'),
+  );
 
-  public readonly showScroll = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly showScroll = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   constructor() {
     classes(

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -12,7 +14,7 @@ import {
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
 import { BrnSwitch, type BrnSwitchSize } from '@spartan-ng/brain/switch';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 import { HlmSwitchThumb } from './hlm-switch-thumb';
 
@@ -47,7 +49,8 @@ export const HLM_SWITCH_VALUE_ACCESSOR = {
       [aria-labelledby]="ariaLabelledby()"
       [aria-describedby]="ariaDescribedby()"
       (checkedChange)="handleChange($event)"
-      (touched)="_onTouched?.()">
+      (touched)="_onTouched?.()"
+    >
       <hlm-switch-thumb />
     </brn-switch>
   `,
@@ -62,7 +65,10 @@ export class HlmSwitch implements ControlValueAccessor {
   );
 
   /** The checked state of the switch. */
-  public readonly checkedInput = input<boolean, BooleanInput>(false, { alias: 'checked', transform: booleanAttribute });
+  public readonly checkedInput = input<boolean, BooleanInput>(false, {
+    alias: 'checked',
+    transform: booleanAttribute,
+  });
   public readonly checked = linkedSignal(this.checkedInput);
 
   /** Emits when the checked state of the switch changes. */
@@ -80,16 +86,24 @@ export class HlmSwitch implements ControlValueAccessor {
   public readonly inputId = input<string | null>(null);
 
   /** Whether to force the input into an invalid state. */
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Used to set the aria-label attribute on the underlying brn element. */
-  public readonly ariaLabel = input<string | null>(null, { alias: 'aria-label' });
+  public readonly ariaLabel = input<string | null>(null, {
+    alias: 'aria-label',
+  });
 
   /** Used to set the aria-labelledby attribute on the underlying brn element. */
-  public readonly ariaLabelledby = input<string | null>(null, { alias: 'aria-labelledby' });
+  public readonly ariaLabelledby = input<string | null>(null, {
+    alias: 'aria-labelledby',
+  });
 
   /** Used to set the aria-describedby attribute on the underlying brn element. */
-  public readonly ariaDescribedby = input<string | null>(null, { alias: 'aria-describedby' });
+  public readonly ariaDescribedby = input<string | null>(null, {
+    alias: 'aria-describedby',
+  });
 
   protected readonly _disabled = linkedSignal(this.disabled);
 

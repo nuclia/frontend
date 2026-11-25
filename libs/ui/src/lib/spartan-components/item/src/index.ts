@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmItem } from './lib/hlm-item';
 import { HlmItemActions } from './lib/hlm-item-actions';
 import { HlmItemContent } from './lib/hlm-item-content';

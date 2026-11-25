@@ -1,25 +1,25 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, inject, Injector, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SisToastService } from '@nuclia/sistema';
-import { SpartanStepper, SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
-import { StepComposeComponent } from './step-compose/step-compose.component';
-import { ComposeService } from './step-compose/compose.service';
+import { UiStepper, UiStepperImports } from '@progress/pdp-ui';
 import { EmailWizardService } from './email-wizard.service';
-import { StepRecipientsComponent } from './step-recipients/step-recipients.component';
+import { ComposeService } from './step-compose/compose.service';
+import { StepComposeComponent } from './step-compose/step-compose.component';
 import { RecipientsService } from './step-recipients/recipients.service';
+import { StepRecipientsComponent } from './step-recipients/step-recipients.component';
 import { StepReviewComponent } from './step-review/step-review.component';
 
 @Component({
   selector: 'nma-manage-emails',
   templateUrl: './manage-emails.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StepComposeComponent, StepRecipientsComponent, StepReviewComponent, SpartanStepperImports],
+  imports: [StepComposeComponent, StepRecipientsComponent, StepReviewComponent, UiStepperImports],
   providers: [RecipientsService, ComposeService, EmailWizardService],
 })
 export class ManageEmailsComponent {
   private toast = inject(SisToastService);
   private injector = inject(Injector);
-  private stepper = viewChild(SpartanStepper);
+  private stepper = viewChild(UiStepper);
 
   protected wizard = inject(EmailWizardService);
 

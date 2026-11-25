@@ -1,12 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BrnResizableHandle } from '@spartan-ng/brain/resizable';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-resizable-handle',
   exportAs: 'hlmResizableHandle',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  hostDirectives: [{ directive: BrnResizableHandle, inputs: ['withHandle', 'disabled'] }],
+  hostDirectives: [
+    { directive: BrnResizableHandle, inputs: ['withHandle', 'disabled'] },
+  ],
   host: {
     'data-slot': 'resizable-handle',
   },

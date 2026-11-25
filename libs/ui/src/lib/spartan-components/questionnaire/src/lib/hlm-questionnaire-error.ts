@@ -1,6 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import { BrnQuestionnaireError } from '@spartan-ng/brain/questionnaire';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector -- attribute selector matching brain API
@@ -16,9 +23,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
   host: {
     'data-slot': 'questionnaire-error',
   },
-  template: `
-    {{ message() ?? _error.defaultMessage() }}
-  `,
+  template: ` {{ message() ?? _error.defaultMessage() }} `,
 })
 export class HlmQuestionnaireError {
   protected readonly _error = inject(BrnQuestionnaireError);

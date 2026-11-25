@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmFieldImports } from '../../../field/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmSelectImports } from '../index';
@@ -15,12 +21,16 @@ const meta: Meta<SelectStoryArgs> = {
   title: 'Spartan/Select',
   component: HlmSelect,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmSelectImports, ...HlmFieldImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmSelectImports, ...HlmFieldImports, ...HlmLabelImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `Presents a list of predefined options in a dropdown opened from a field. Use it to keep forms compact when users can choose a value without needing to type a search.
-Import <code>HlmSelectImports</code> from <code>@nuclia/ui-spartan/select</code>. Compose <code>hlm-select</code> with an <code>hlm-select-trigger</code> (containing <code>hlm-select-value</code>) and an <code>hlm-select-content</code> rendered through <code>*hlmSelectPortal</code>, holding <code>hlm-select-item</code> elements (optionally grouped with <code>hlm-select-group</code>, <code>hlm-select-label</code> and <code>hlm-select-separator</code>).
+Import <code>HlmSelectImports</code> from <code>@progress/pdp-ui-spartan/select</code>. Compose <code>hlm-select</code> with an <code>hlm-select-trigger</code> (containing <code>hlm-select-value</code>) and an <code>hlm-select-content</code> rendered through <code>*hlmSelectPortal</code>, holding <code>hlm-select-item</code> elements (optionally grouped with <code>hlm-select-group</code>, <code>hlm-select-label</code> and <code>hlm-select-separator</code>).
 
 <code>hlm-select</code> accepts <code>value</code> and <code>disabled</code>, emits <code>valueChange</code> and works with Angular forms; use <code>hlm-select-multiple</code> for several values. The trigger takes <code>size</code> (<code>default</code> or <code>sm</code>), <code>buttonId</code> and <code>forceInvalid</code>, and each item takes a <code>value</code> and can be <code>disabled</code>.
 Associate a visible label with the trigger through <code>buttonId</code> and <code>for</code> (for instance with <code>hlmFieldLabel</code>) so the control has an accessible name.`,
@@ -35,7 +45,8 @@ Associate a visible label with the trigger through <code>buttonId</code> and <co
   },
   argTypes: {
     disabled: {
-      description: 'Disables the select and prevents the dropdown from opening.',
+      description:
+        'Disables the select and prevents the dropdown from opening.',
       control: 'boolean',
     },
     size: {
@@ -44,7 +55,8 @@ Associate a visible label with the trigger through <code>buttonId</code> and <co
       options: ['default', 'sm'],
     },
     forceInvalid: {
-      description: 'Forces the trigger into the invalid state, useful outside of Angular forms.',
+      description:
+        'Forces the trigger into the invalid state, useful outside of Angular forms.',
       control: 'boolean',
     },
     placeholder: {

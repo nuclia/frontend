@@ -1,6 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronRightRound, matDescriptionRound, matMusicNoteRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matChevronRightRound,
+  matDescriptionRound,
+  matMusicNoteRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmItemImports } from '../index';
 import { HlmItem } from './hlm-item';
@@ -19,14 +29,20 @@ const meta: Meta<ItemStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [...HlmItemImports, HlmButton, NgIcon],
-      providers: [provideIcons({ matChevronRightRound, matDescriptionRound, matMusicNoteRound })],
+      providers: [
+        provideIcons({
+          matChevronRightRound,
+          matDescriptionRound,
+          matMusicNoteRound,
+        }),
+      ],
     }),
   ],
   parameters: {
     docs: {
       description: {
         component: `Presents a single entry with optional media, a title, supporting text, and actions. Use it for consistent rows in lists of people, files, settings, or other related content.
-Import <code>HlmItemImports</code> from <code>@nuclia/ui-spartan/item</code>.
+Import <code>HlmItemImports</code> from <code>@progress/pdp-ui-spartan/item</code>.
 
 Compose <code>hlmItem</code> with <code>hlmItemMedia</code> (<code>variant</code>: <code>default</code>, <code>icon</code> or <code>image</code>), <code>hlmItemContent</code> holding <code>hlmItemTitle</code> and <code>hlmItemDescription</code>, and <code>hlmItemActions</code>. <code>hlmItemHeader</code> and <code>hlmItemFooter</code> add full-width rows above and below.
 Stack several items in <code>hlmItemGroup</code>, optionally separated by <code>hlmItemSeparator</code>. <code>variant</code> (<code>default</code>, <code>outline</code>, <code>muted</code>) and <code>size</code> (<code>default</code>, <code>sm</code>, <code>xs</code>) are set on the item; defaults can be provided with <code>provideHlmItemConfig</code>.

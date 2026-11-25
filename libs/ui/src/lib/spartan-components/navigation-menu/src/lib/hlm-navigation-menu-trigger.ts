@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnNavigationMenuTrigger } from '@spartan-ng/brain/navigation-menu';
 
 @Component({
@@ -17,7 +19,8 @@ import { BrnNavigationMenuTrigger } from '@spartan-ng/brain/navigation-menu';
     <ng-content />
     <ng-icon
       name="matKeyboardArrowDownRound"
-      class="relative top-px ml-1 size-3 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180" />
+      class="relative top-px ml-1 size-3 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180"
+    />
   `,
 })
 export class HlmNavigationMenuTrigger {

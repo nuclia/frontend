@@ -1,11 +1,17 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matCalendarTodayRound,
   matDescriptionRound,
-  matSettingsRound,
   matGroupRound,
+  matSettingsRound,
 } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmCommandImports } from '../index';
 import { HlmCommand } from './hlm-command';
@@ -23,14 +29,21 @@ const meta: Meta<CommandStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmCommandImports],
-      providers: [provideIcons({ matCalendarTodayRound, matDescriptionRound, matSettingsRound, matGroupRound })],
+      providers: [
+        provideIcons({
+          matCalendarTodayRound,
+          matDescriptionRound,
+          matSettingsRound,
+          matGroupRound,
+        }),
+      ],
     }),
   ],
   parameters: {
     docs: {
       description: {
         component: `A searchable list of commands or destinations that users can navigate with the keyboard. Use it for command palettes and quick-action menus that help users find and perform tasks efficiently.
-Import <code>HlmCommandImports</code> from <code>@nuclia/ui-spartan/command</code>.
+Import <code>HlmCommandImports</code> from <code>@progress/pdp-ui-spartan/command</code>.
 
 Compose <code>hlmCommand</code> with <code>hlm-command-input</code> and an <code>hlm-command-list</code> holding one or more <code>hlmCommandGroup</code> (with <code>hlmCommandGroupLabel</code>) of <code>button[hlmCommandItem]</code>, separated by <code>hlmCommandSeparator</code>.
 Each item needs a <code>value</code> (used for filtering) and emits <code>selected</code>; <code>hlmCommandShortcut</code> shows a keyboard hint inside an item.
@@ -47,7 +60,8 @@ To show the palette in a modal, wrap it in <code>hlm-command-dialog</code> (inpu
   },
   argTypes: {
     placeholder: {
-      description: 'Placeholder of the search input (<code>hlm-command-input</code> input).',
+      description:
+        'Placeholder of the search input (<code>hlm-command-input</code> input).',
       control: 'text',
     },
     disabled: {
@@ -55,7 +69,8 @@ To show the palette in a modal, wrap it in <code>hlm-command-dialog</code> (inpu
       control: 'boolean',
     },
     search: {
-      description: 'Current search query. Supports two-way binding with <code>[(search)]</code>.',
+      description:
+        'Current search query. Supports two-way binding with <code>[(search)]</code>.',
       control: 'text',
     },
   },

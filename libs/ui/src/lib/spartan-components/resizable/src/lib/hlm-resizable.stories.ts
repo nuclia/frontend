@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmResizableImports } from '../index';
 import { HlmResizableGroup } from './hlm-resizable-group';
 
@@ -19,7 +25,7 @@ const meta: Meta<ResizableStoryArgs> = {
     docs: {
       description: {
         component: `Divides a layout into panels whose sizes users can adjust. Use it for workspaces, editors, or split views where users need to give more room to the content they are working with.
-Import <code>HlmResizableImports</code> from <code>@nuclia/ui-spartan/resizable</code>. Put two or more <code>hlmResizablePanel</code> elements in an <code>hlmResizableGroup</code> and separate each pair with an <code>hlm-resizable-handle</code>. The group needs a bounded width or height.
+Import <code>HlmResizableImports</code> from <code>@progress/pdp-ui-spartan/resizable</code>. Put two or more <code>hlmResizablePanel</code> elements in an <code>hlmResizableGroup</code> and separate each pair with an <code>hlm-resizable-handle</code>. The group needs a bounded width or height.
 
 The group takes <code>direction</code> (horizontal or vertical) and a two-way <code>layout</code> with the panel sizes in percent, and emits <code>dragStart</code>, <code>dragEnd</code> and <code>layoutChange</code>. Panels accept <code>defaultSize</code>, <code>minSize</code>, <code>maxSize</code> and <code>collapsible</code>; handles accept <code>withHandle</code> to show a grip and <code>disabled</code> to lock the split.
 Handles are keyboard focusable and can be moved with the arrow keys; panels with meaningful content should expose a heading.`,
@@ -44,7 +50,8 @@ Handles are keyboard focusable and can be moved with the arrow keys; panels with
       control: 'boolean',
     },
     disabled: {
-      description: 'Prevents the handle from being dragged or moved with the keyboard.',
+      description:
+        'Prevents the handle from being dragged or moved with the keyboard.',
       control: 'boolean',
     },
     minSize: {
@@ -52,7 +59,8 @@ Handles are keyboard focusable and can be moved with the arrow keys; panels with
       control: { type: 'number', min: 0, max: 50 },
     },
     collapsible: {
-      description: 'Allows the panel to collapse when dragged below its minimum size.',
+      description:
+        'Allows the panel to collapse when dragged below its minimum size.',
       control: 'boolean',
     },
   },

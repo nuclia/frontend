@@ -1,7 +1,14 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { HlmSkeletonImports } from '@nuclia/ui-spartan/skeleton';
-import { classes } from '@nuclia/ui-spartan/utils';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+} from '@angular/core';
+import { HlmSkeletonImports } from '@progress/pdp-ui-spartan/skeleton';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-sidebar-menu-skeleton,div[hlmSidebarMenuSkeleton]',
@@ -16,17 +23,21 @@ import { classes } from '@nuclia/ui-spartan/utils';
     @if (showIcon()) {
       <hlm-skeleton
         data-sidebar="menu-skeleton-icon"
-        class="size-4 rounded-md" />
+        class="size-4 rounded-md"
+      />
     } @else {
       <hlm-skeleton
         data-sidebar="menu-skeleton-text"
         class="h-4 max-w-(--skeleton-width) flex-1"
-        [style.--skeleton-width]="_width" />
+        [style.--skeleton-width]="_width"
+      />
     }
   `,
 })
 export class HlmSidebarMenuSkeleton {
-  public readonly showIcon = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly showIcon = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
   protected readonly _width = `${Math.floor(Math.random() * 40) + 50}%`;
 
   constructor() {

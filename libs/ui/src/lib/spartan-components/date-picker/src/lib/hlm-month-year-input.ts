@@ -1,7 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCalendarTodayRound, matCloseRound } from '@ng-icons/material-symbols/round';
-import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
+import {
+  matCalendarTodayRound,
+  matCloseRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  HlmInputGroup,
+  HlmInputGroupImports,
+} from '@progress/pdp-ui-spartan/input-group';
 import {
   BrnDateInput,
   type BrnDatePickerTriggerBase,
@@ -14,7 +28,10 @@ import { injectHlmMonthYearPickerConfig } from './hlm-month-year-picker.token';
   selector: 'hlm-month-year-input',
   exportAs: 'hlmMonthYearInput',
   imports: [HlmInputGroupImports, NgIcon],
-  providers: [provideIcons({ matCalendarTodayRound, matCloseRound }), provideBrnDatePickerTrigger(HlmMonthYearInput)],
+  providers: [
+    provideIcons({ matCalendarTodayRound, matCloseRound }),
+    provideBrnDatePickerTrigger(HlmMonthYearInput),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [HlmInputGroup],
   template: `
@@ -36,7 +53,8 @@ import { injectHlmMonthYearPickerConfig } from './hlm-month-year-picker.token';
       (keydown.enter)="_handleEnter($event)"
       (input)="_handleInputChange($event)"
       (focus)="_handleFocus()"
-      (blur)="_handleBlur()" />
+      (blur)="_handleBlur()"
+    />
     <hlm-input-group-addon align="inline-end">
       @if (_showClearButton()) {
         <button
@@ -45,7 +63,8 @@ import { injectHlmMonthYearPickerConfig } from './hlm-month-year-picker.token';
           variant="ghost"
           [attr.aria-label]="clearAriaLabel()"
           (click)="_clear()"
-          [disabled]="_disabled()">
+          [disabled]="_disabled()"
+        >
           <ng-icon name="matCloseRound" />
         </button>
       }
@@ -54,22 +73,30 @@ import { injectHlmMonthYearPickerConfig } from './hlm-month-year-picker.token';
         size="icon-xs"
         [attr.aria-label]="calendarAriaLabel()"
         (click)="_popover().open()"
-        [disabled]="_disabled()">
+        [disabled]="_disabled()"
+      >
         <ng-icon name="matCalendarTodayRound" />
       </button>
     </hlm-input-group-addon>
   `,
 })
-export class HlmMonthYearInput<T> extends BrnDateInput<T> implements BrnDatePickerTriggerBase {
+export class HlmMonthYearInput<T>
+  extends BrnDateInput<T>
+  implements BrnDatePickerTriggerBase
+{
   private readonly _config = injectHlmMonthYearPickerConfig<T>();
   private readonly _fieldControl = inject(BrnFieldControl, { optional: true });
 
   private readonly _invalid = this._fieldControl?.invalid;
-  protected readonly _spartanInvalid = computed(() => this.forceInvalid() || this._fieldControl?.spartanInvalid());
+  protected readonly _spartanInvalid = computed(
+    () => this.forceInvalid() || this._fieldControl?.spartanInvalid(),
+  );
   protected readonly _dirty = this._fieldControl?.dirty;
   protected readonly _touched = this._fieldControl?.touched;
 
-  protected readonly _ariaInvalid = computed(() => (this._invalid?.() ? 'true' : null));
+  protected readonly _ariaInvalid = computed(() =>
+    this._invalid?.() ? 'true' : null,
+  );
 
   /**
    * Parses input text into a date value. Return `null` for invalid
@@ -78,7 +105,9 @@ export class HlmMonthYearInput<T> extends BrnDateInput<T> implements BrnDatePick
    *
    * Defaults to `parseDate` from `HlmMonthYearPickerConfig`.
    */
-  public readonly parseDate = input<(value: string) => T | null>(this._config.parseDate);
+  public readonly parseDate = input<(value: string) => T | null>(
+    this._config.parseDate,
+  );
 
   /**
    * Formats the current date into the input/edit format shown while the
@@ -86,7 +115,9 @@ export class HlmMonthYearInput<T> extends BrnDateInput<T> implements BrnDatePick
    *
    * Defaults to `formatInputDate` from `HlmMonthYearPickerConfig`.
    */
-  public readonly formatInputDate = input<(date: T) => string>(this._config.formatInputDate);
+  public readonly formatInputDate = input<(date: T) => string>(
+    this._config.formatInputDate,
+  );
 
   protected override parseValue(value: string): T | null {
     return this.parseDate()(value);

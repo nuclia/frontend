@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmFieldContent],hlm-field-content',
@@ -8,6 +10,8 @@ import { classes } from '@nuclia/ui-spartan/utils';
 })
 export class HlmFieldContent {
   constructor() {
-    classes(() => 'gap-0.5 group/field-content flex flex-1 flex-col leading-snug');
+    classes(
+      () => 'gap-0.5 group/field-content flex flex-1 flex-col leading-snug',
+    );
   }
 }

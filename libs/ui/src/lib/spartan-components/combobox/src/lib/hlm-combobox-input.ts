@@ -1,15 +1,37 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matCloseRound, matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { HlmInputGroup, HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
-import { classes } from '@nuclia/ui-spartan/utils';
-import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from '@spartan-ng/brain/combobox';
+import {
+  matCloseRound,
+  matKeyboardArrowDownRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  HlmInputGroup,
+  HlmInputGroupImports,
+} from '@progress/pdp-ui-spartan/input-group';
+import { classes } from '@progress/pdp-ui-spartan/utils';
+import {
+  BrnComboboxAnchor,
+  BrnComboboxImports,
+  BrnComboboxPopoverTrigger,
+} from '@spartan-ng/brain/combobox';
 
 @Component({
   selector: 'hlm-combobox-input',
   exportAs: 'hlmComboboxInput',
-  imports: [HlmInputGroupImports, NgIcon, BrnComboboxImports, BrnComboboxPopoverTrigger],
+  imports: [
+    HlmInputGroupImports,
+    NgIcon,
+    BrnComboboxImports,
+    BrnComboboxPopoverTrigger,
+  ],
   providers: [provideIcons({ matKeyboardArrowDownRound, matCloseRound })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnComboboxAnchor, HlmInputGroup],
@@ -23,7 +45,8 @@ import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from
       [id]="inputId()"
       [placeholder]="placeholder()"
       [forceInvalid]="forceInvalid()"
-      [aria-invalid]="ariaInvalidInput()" />
+      [aria-invalid]="ariaInvalidInput()"
+    />
 
     <hlm-input-group-addon align="inline-end">
       @if (showTrigger()) {
@@ -35,7 +58,8 @@ import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from
           [attr.aria-label]="triggerAriaLabel()"
           size="icon-xs"
           variant="ghost"
-          class="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent">
+          class="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
+        >
           <ng-icon name="matKeyboardArrowDownRound" />
         </button>
       }
@@ -48,7 +72,8 @@ import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from
           [disabled]="comboboxInput.disabled()"
           [attr.aria-label]="clearAriaLabel()"
           size="icon-xs"
-          variant="ghost">
+          variant="ghost"
+        >
           <ng-icon name="matCloseRound" />
         </button>
       }
@@ -60,12 +85,20 @@ import { BrnComboboxAnchor, BrnComboboxImports, BrnComboboxPopoverTrigger } from
 export class HlmComboboxInput {
   private static _id = 0;
 
-  public readonly inputId = input<string>(`hlm-combobox-input-${HlmComboboxInput._id++}`);
+  public readonly inputId = input<string>(
+    `hlm-combobox-input-${HlmComboboxInput._id++}`,
+  );
   public readonly placeholder = input<string>('');
 
-  public readonly showTrigger = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
-  public readonly showClear = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly showTrigger = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
+  public readonly showClear = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Accessible name for the icon-only popover trigger button. */
   public readonly triggerAriaLabel = input<string>('Toggle options');
@@ -74,10 +107,14 @@ export class HlmComboboxInput {
   public readonly clearAriaLabel = input<string>('Clear selection');
 
   /** Manual override for aria-invalid. When not set, auto-detects from the parent combobox error state. */
-  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(undefined, {
-    transform: (v: BooleanInput) => (v === '' || v === undefined ? undefined : booleanAttribute(v)),
-    alias: 'aria-invalid',
-  });
+  public readonly ariaInvalidInput = input<boolean | undefined, BooleanInput>(
+    undefined,
+    {
+      transform: (v: BooleanInput) =>
+        v === '' || v === undefined ? undefined : booleanAttribute(v),
+      alias: 'aria-invalid',
+    },
+  );
 
   constructor() {
     classes(() => 'w-auto');

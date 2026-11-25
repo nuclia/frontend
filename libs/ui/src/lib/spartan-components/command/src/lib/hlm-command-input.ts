@@ -1,8 +1,10 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matSearchRound } from '@ng-icons/material-symbols/round';
-import { HlmInputGroupImports } from '@nuclia/ui-spartan/input-group';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { HlmInputGroupImports } from '@progress/pdp-ui-spartan/input-group';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnCommandInput } from '@spartan-ng/brain/command';
 
 @Component({
@@ -16,18 +18,21 @@ import { BrnCommandInput } from '@spartan-ng/brain/command';
   },
   template: `
     <hlm-input-group
-      class="bg-input/30 border-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:ps-2!">
+      class="bg-input/30 border-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:ps-2!"
+    >
       <input
         brnCommandInput
         data-slot="command-input"
         class="w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
         [id]="inputId()"
-        [placeholder]="placeholder()" />
+        [placeholder]="placeholder()"
+      />
 
       <hlm-input-group-addon>
         <ng-icon
           name="matSearchRound"
-          class="shrink-0 text-[length:--spacing(4)] opacity-50" />
+          class="shrink-0 text-[length:--spacing(4)] opacity-50"
+        />
       </hlm-input-group-addon>
     </hlm-input-group>
   `,

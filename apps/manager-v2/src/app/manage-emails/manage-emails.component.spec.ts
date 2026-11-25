@@ -1,8 +1,8 @@
-import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SisToastService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import type { Mock } from 'vitest';
 import { GlobalAccountService } from '../manage-accounts/global-account.service';
 import { UserSummary } from '../manage-users/user.models';
 import { UserService } from '../manage-users/user.service';
@@ -68,10 +68,10 @@ describe('ManageEmailsComponent', () => {
 
   it('should only mark a step as done once it is completed and left', () => {
     const done = () =>
-      Array.from(el().querySelectorAll('spartan-step-header')).map((header) => !!header.querySelector('ng-icon'));
+      Array.from(el().querySelectorAll('ui-step-header')).map((header) => !!header.querySelector('ng-icon'));
     expect(done()).toEqual([false, false, false]);
 
-    click('[spartanStepperNext]');
+    click('[uiStepperNext]');
     expect(done()).toEqual([true, false, false]);
   });
 
@@ -91,10 +91,10 @@ describe('ManageEmailsComponent', () => {
   it('should show a success toast and go back to the first step after sending', () => {
     const result$ = new Subject<BroadcastProgress>();
     sendToUsers.mockReturnValue(result$);
-    click('[spartanStepperNext]');
+    click('[uiStepperNext]');
     type('#email-subject', 'Hello');
     type('#email-body', 'Body');
-    click('[spartanStepperNext]');
+    click('[uiStepperNext]');
     expect(tab()).toContain('Review & send');
 
     // The confirm dialog renders in a portal, so the wizard is driven directly like its "Send" button does

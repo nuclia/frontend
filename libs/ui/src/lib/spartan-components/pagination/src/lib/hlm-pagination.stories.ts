@@ -1,5 +1,12 @@
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { provideRouter } from '@angular/router';
+import {
+  applicationConfig,
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmPaginationImports } from '../index';
 import { HlmPagination } from './hlm-pagination';
 
@@ -24,7 +31,7 @@ const meta: Meta<PaginationStoryArgs> = {
     docs: {
       description: {
         component: `Divides a large collection into pages and provides controls to move between them. Use it for search results, tables, and lists where users need a manageable view and a clear sense of their position.
-Import <code>HlmPaginationImports</code> from <code>@nuclia/ui-spartan/pagination</code>. For client-side or server-side paging, use <code>hlm-numbered-pagination</code> with <code>[(currentPage)]</code>, <code>[(itemsPerPage)]</code> and <code>totalItems</code>; it renders the page links, ellipses, previous/next buttons and a page-size selector. Tune it with <code>maxSize</code>, <code>showEdges</code> and <code>pageSizes</code>.
+Import <code>HlmPaginationImports</code> from <code>@progress/pdp-ui-spartan/pagination</code>. For client-side or server-side paging, use <code>hlm-numbered-pagination</code> with <code>[(currentPage)]</code>, <code>[(itemsPerPage)]</code> and <code>totalItems</code>; it renders the page links, ellipses, previous/next buttons and a page-size selector. Tune it with <code>maxSize</code>, <code>showEdges</code> and <code>pageSizes</code>.
 
 To drive paging from the URL, use <code>hlm-numbered-pagination-query-params</code>, which links to the <code>page</code> query parameter (set <code>link</code> to the target route).
 For full control, compose <code>nav[hlmPagination]</code> &gt; <code>ul[hlmPaginationContent]</code> &gt; <code>li[hlmPaginationItem]</code> with <code>a[hlmPaginationLink]</code> (<code>isActive</code> marks the current page with <code>aria-current</code>), <code>hlm-pagination-previous</code>, <code>hlm-pagination-next</code> and <code>hlm-pagination-ellipsis</code>.
@@ -46,11 +53,13 @@ Links rely on the Angular router, so provide it in the application. Set an <code
       control: { type: 'number', min: 0 },
     },
     currentPage: {
-      description: 'Active page (1-based). Two-way bindable with <code>[(currentPage)]</code>.',
+      description:
+        'Active page (1-based). Two-way bindable with <code>[(currentPage)]</code>.',
       control: { type: 'number', min: 1 },
     },
     itemsPerPage: {
-      description: 'Number of items on each page. Two-way bindable with <code>[(itemsPerPage)]</code>.',
+      description:
+        'Number of items on each page. Two-way bindable with <code>[(itemsPerPage)]</code>.',
       control: { type: 'number', min: 1 },
     },
     maxSize: {
@@ -66,8 +75,22 @@ Links rely on the Angular router, so provide it in the application. Set an <code
       control: 'object',
     },
   },
-  render: ({ totalItems, currentPage, itemsPerPage, maxSize, showEdges, pageSizes }) => ({
-    props: { totalItems, currentPage, itemsPerPage, maxSize, showEdges, pageSizes },
+  render: ({
+    totalItems,
+    currentPage,
+    itemsPerPage,
+    maxSize,
+    showEdges,
+    pageSizes,
+  }) => ({
+    props: {
+      totalItems,
+      currentPage,
+      itemsPerPage,
+      maxSize,
+      showEdges,
+      pageSizes,
+    },
     template: `
       <hlm-numbered-pagination
         [totalItems]="totalItems"

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directionality } from '@angular/cdk/bidi';
 import {
   ChangeDetectionStrategy,
@@ -10,8 +12,12 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
-import type { EmblaEventType, EmblaOptionsType, EmblaPluginType } from 'embla-carousel';
+import { classes } from '@progress/pdp-ui-spartan/utils';
+import type {
+  EmblaEventType,
+  EmblaOptionsType,
+  EmblaPluginType,
+} from 'embla-carousel';
 import { EmblaCarouselDirective } from 'embla-carousel-angular';
 
 @Component({
@@ -32,20 +38,26 @@ import { EmblaCarouselDirective } from 'embla-carousel-angular';
       [plugins]="plugins()"
       [options]="_emblaOptions()"
       [subscribeToEvents]="['init', 'select', 'reInit']"
-      (emblaChange)="onEmblaEvent($event)">
+      (emblaChange)="onEmblaEvent($event)"
+    >
       <ng-content select="[hlmCarouselContent],hlm-carousel-content" />
     </div>
     <ng-content />
   `,
 })
 export class HlmCarousel {
-  protected readonly _emblaCarousel = viewChild.required(EmblaCarouselDirective);
+  protected readonly _emblaCarousel = viewChild.required(
+    EmblaCarouselDirective,
+  );
   private readonly _dir = inject(Directionality);
 
   public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
-  public readonly options: InputSignal<Omit<EmblaOptionsType, 'axis'> | undefined> =
-    input<Omit<EmblaOptionsType, 'axis'>>();
-  public readonly plugins: InputSignal<EmblaPluginType[]> = input<EmblaPluginType[]>([]);
+  public readonly options: InputSignal<
+    Omit<EmblaOptionsType, 'axis'> | undefined
+  > = input<Omit<EmblaOptionsType, 'axis'>>();
+  public readonly plugins: InputSignal<EmblaPluginType[]> = input<
+    EmblaPluginType[]
+  >([]);
 
   protected readonly _emblaOptions: Signal<EmblaOptionsType> = computed(() => ({
     // Default embla's direction to the ambient layout direction so the carousel scrolls RTL

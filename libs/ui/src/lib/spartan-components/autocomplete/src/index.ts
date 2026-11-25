@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmAutocomplete } from './lib/hlm-autocomplete';
 import { HlmAutocompleteContent } from './lib/hlm-autocomplete-content';
 import { HlmAutocompleteEmpty } from './lib/hlm-autocomplete-empty';

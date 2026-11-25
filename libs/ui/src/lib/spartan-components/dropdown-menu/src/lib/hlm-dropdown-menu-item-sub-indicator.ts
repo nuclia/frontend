@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matChevronRightRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-dropdown-menu-item-sub-indicator',
@@ -12,7 +14,8 @@ import { classes } from '@nuclia/ui-spartan/utils';
   template: `
     <ng-icon
       name="matChevronRightRound"
-      class="text-[length:--spacing(4)] rtl:rotate-180" />
+      class="text-[length:--spacing(4)] rtl:rotate-180"
+    />
   `,
 })
 export class HlmDropdownMenuItemSubIndicator {

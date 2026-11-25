@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmNumberedPagination } from './lib/hlm-numbered-pagination';
 import { HlmNumberedPaginationQueryParams } from './lib/hlm-numbered-pagination-query-params';
 import { HlmPagination } from './lib/hlm-pagination';

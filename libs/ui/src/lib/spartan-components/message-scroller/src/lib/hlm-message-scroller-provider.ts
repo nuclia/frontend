@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnMessageScrollerProvider } from '@spartan-ng/brain/message-scroller';
 
@@ -7,7 +9,13 @@ import { BrnMessageScrollerProvider } from '@spartan-ng/brain/message-scroller';
   hostDirectives: [
     {
       directive: BrnMessageScrollerProvider,
-      inputs: ['autoScroll', 'defaultScrollPosition', 'scrollEdgeThreshold', 'scrollPreviousItemPeek', 'scrollMargin'],
+      inputs: [
+        'autoScroll',
+        'defaultScrollPosition',
+        'scrollEdgeThreshold',
+        'scrollPreviousItemPeek',
+        'scrollMargin',
+      ],
     },
   ],
   host: {

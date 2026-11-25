@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmField, HlmFieldLabel } from '../../../field/src/index';
 import { HlmAutocompleteImports } from '../index';
 import { HlmAutocomplete } from './hlm-autocomplete';
@@ -16,12 +22,16 @@ const meta: Meta<AutocompleteStoryArgs> = {
   title: 'Spartan/Autocomplete',
   component: HlmAutocomplete,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmAutocompleteImports, HlmField, HlmFieldLabel] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmAutocompleteImports, HlmField, HlmFieldLabel],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `Suggests matching options as users type into a text field. Use it for search suggestions or assisted text entry to reduce typing and help users discover relevant values.
-Import <code>HlmAutocompleteImports</code> from <code>@nuclia/ui-spartan/autocomplete</code> and compose <code>hlm-autocomplete</code> with an <code>hlm-autocomplete-input</code> and an <code>hlm-autocomplete-content</code> rendered through <code>*hlmAutocompletePortal</code>.
+Import <code>HlmAutocompleteImports</code> from <code>@progress/pdp-ui-spartan/autocomplete</code> and compose <code>hlm-autocomplete</code> with an <code>hlm-autocomplete-input</code> and an <code>hlm-autocomplete-content</code> rendered through <code>*hlmAutocompletePortal</code>.
 Inside the content, use <code>hlmAutocompleteList</code> (with an <code>aria-label</code>) holding <code>hlm-autocomplete-item</code> elements with a <code>value</code>, plus optional <code>hlm-autocomplete-empty</code>, <code>hlmAutocompleteGroup</code>/<code>hlmAutocompleteLabel</code>, <code>hlmAutocompleteSeparator</code> and <code>hlm-autocomplete-status</code>.
 
 Items are filtered by what the user types. Use <code>[(value)]</code> and <code>[(search)]</code> (or forms) to read the selected value and the typed text; for server-side suggestions use <code>hlm-autocomplete-search</code> instead.
@@ -39,7 +49,8 @@ Wrap the label and input in <code>hlmField</code> for standard field spacing, an
   },
   argTypes: {
     placeholder: {
-      description: 'Placeholder of the text input (<code>hlm-autocomplete-input</code>).',
+      description:
+        'Placeholder of the text input (<code>hlm-autocomplete-input</code>).',
       control: 'text',
     },
     showSearch: {
@@ -51,7 +62,8 @@ Wrap the label and input in <code>hlmField</code> for standard field spacing, an
       control: 'boolean',
     },
     autoHighlight: {
-      description: 'Automatically highlights the first matching item while typing.',
+      description:
+        'Automatically highlights the first matching item while typing.',
       control: 'boolean',
     },
     disabled: {
@@ -59,7 +71,8 @@ Wrap the label and input in <code>hlmField</code> for standard field spacing, an
       control: 'boolean',
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state.',
+      description:
+        'Forces the invalid style regardless of form validation state.',
       control: 'boolean',
     },
   },

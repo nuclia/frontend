@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
-import { BrnTooltip, BrnTooltipPosition, provideBrnTooltipDefaultOptions } from '@spartan-ng/brain/tooltip';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import {
+  BrnTooltip,
+  BrnTooltipPosition,
+  provideBrnTooltipDefaultOptions,
+} from '@spartan-ng/brain/tooltip';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import { cva } from 'class-variance-authority';
 
 export const DEFAULT_TOOLTIP_SVG_CLASS =
@@ -16,7 +22,8 @@ export const tooltipPositionVariants = cva('absolute', {
       top: 'bottom-0 left-[calc(50%-5px)] translate-y-full',
       bottom: '-top-2.5 left-[calc(50%-5px)] translate-y-0 rotate-180',
       left: '-end-2.5 top-[calc(50%-5px)] translate-y-0 rotate-270 rtl:-rotate-270',
-      right: '-start-2.5 top-[calc(50%-5px)] translate-y-0 rotate-90 rtl:-rotate-90',
+      right:
+        '-start-2.5 top-[calc(50%-5px)] translate-y-0 rotate-90 rtl:-rotate-90',
     },
   },
 });
@@ -28,13 +35,21 @@ export const tooltipPositionVariants = cva('absolute', {
     provideBrnTooltipDefaultOptions({
       svgClasses: DEFAULT_TOOLTIP_SVG_CLASS,
       tooltipContentClasses: DEFAULT_TOOLTIP_CONTENT_CLASSES,
-      arrowClasses: (position: BrnTooltipPosition) => hlm(tooltipPositionVariants({ position })),
+      arrowClasses: (position: BrnTooltipPosition) =>
+        hlm(tooltipPositionVariants({ position })),
     }),
   ],
   hostDirectives: [
     {
       directive: BrnTooltip,
-      inputs: ['brnTooltip: hlmTooltip', 'position', 'hideDelay', 'showDelay', 'sideOffset', 'tooltipDisabled'],
+      inputs: [
+        'brnTooltip: hlmTooltip',
+        'position',
+        'hideDelay',
+        'showDelay',
+        'sideOffset',
+        'tooltipDisabled',
+      ],
     },
   ],
 })

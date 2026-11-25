@@ -1,10 +1,23 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmAvatarImports } from '../../../avatar/src';
 import { HlmBubbleImports } from '../../../bubble/src';
 import { HlmMessageImports } from '../index';
 import { HlmMessage } from './hlm-message';
 
-type BubbleVariant = 'default' | 'secondary' | 'muted' | 'tinted' | 'outline' | 'ghost' | 'destructive';
+type BubbleVariant =
+  | 'default'
+  | 'secondary'
+  | 'muted'
+  | 'tinted'
+  | 'outline'
+  | 'ghost'
+  | 'destructive';
 
 interface MessageStoryArgs {
   align: 'start' | 'end';
@@ -18,14 +31,18 @@ const meta: Meta<MessageStoryArgs> = {
   title: 'Spartan/Message',
   component: HlmMessage,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmMessageImports, ...HlmAvatarImports, ...HlmBubbleImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmMessageImports, ...HlmAvatarImports, ...HlmBubbleImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `Organizes a message within a conversation, combining its content with optional avatar, sender details, timestamp, and actions. Use it to make authorship and message grouping clear in chat interfaces.
-Import <code>HlmMessageImports</code> from <code>@nuclia/ui-spartan/message</code>. The examples also use the avatar and bubble components.
+Import <code>HlmMessageImports</code> from <code>@progress/pdp-ui-spartan/message</code>. The examples also use the avatar and bubble components.
 
-Compose <code>hlmMessage</code> with an optional <code>hlmMessageAvatar</code> and an <code>hlmMessageContent</code> column made of <code>hlmMessageHeader</code> (sender name), a bubble (<code>hlmBubble</code> from <code>@nuclia/ui-spartan/bubble</code>) and <code>hlmMessageFooter</code> (time, status). Wrap consecutive messages in <code>hlmMessageGroup</code>.
+Compose <code>hlmMessage</code> with an optional <code>hlmMessageAvatar</code> and an <code>hlmMessageContent</code> column made of <code>hlmMessageHeader</code> (sender name), a bubble (<code>hlmBubble</code> from <code>@progress/pdp-ui-spartan/bubble</code>) and <code>hlmMessageFooter</code> (time, status). Wrap consecutive messages in <code>hlmMessageGroup</code>.
 The <code>align</code> input is <code>start</code> (incoming, default) or <code>end</code> (outgoing, mirrors the row). Use semantic elements such as <code>article</code> for each message, and mark purely decorative avatars with <code>aria-hidden="true"</code> since the sender is already named in the header.`,
       },
     },
@@ -47,7 +64,15 @@ The <code>align</code> input is <code>start</code> (incoming, default) or <code>
     bubbleVariant: {
       description: 'Variant of the <code>hlmBubble</code> wrapping the text.',
       control: 'select',
-      options: ['default', 'secondary', 'muted', 'tinted', 'outline', 'ghost', 'destructive'],
+      options: [
+        'default',
+        'secondary',
+        'muted',
+        'tinted',
+        'outline',
+        'ghost',
+        'destructive',
+      ],
     },
     sender: {
       description: 'Sender name displayed in the message header.',

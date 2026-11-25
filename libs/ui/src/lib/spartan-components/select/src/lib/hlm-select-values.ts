@@ -1,5 +1,11 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnSelectValues } from '@spartan-ng/brain/select';
 
-@Directive({ selector: '[hlmSelectValues]', exportAs: 'hlmSelectValues', hostDirectives: [BrnSelectValues] })
+@Directive({
+  selector: '[hlmSelectValues]',
+  exportAs: 'hlmSelectValues',
+  hostDirectives: [BrnSelectValues],
+})
 export class HlmSelectValues {}

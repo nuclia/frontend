@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, inject } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmCarousel } from './hlm-carousel';
 
 @Directive({
@@ -13,6 +15,9 @@ export class HlmCarouselContent {
   private readonly _orientation = inject(HlmCarousel).orientation;
 
   constructor() {
-    classes(() => ['flex', this._orientation() === 'horizontal' ? '-ml-4' : '-mt-4 flex-col']);
+    classes(() => [
+      'flex',
+      this._orientation() === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
+    ]);
   }
 }

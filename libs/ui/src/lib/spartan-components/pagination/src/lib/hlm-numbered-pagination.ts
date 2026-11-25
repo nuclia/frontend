@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
   ChangeDetectionStrategy,
@@ -9,7 +11,7 @@ import {
   numberAttribute,
   untracked,
 } from '@angular/core';
-import { HlmSelectImports } from '@nuclia/ui-spartan/select';
+import { HlmSelectImports } from '@progress/pdp-ui-spartan/select';
 import { HlmPagination } from './hlm-pagination';
 import { HlmPaginationContent } from './hlm-pagination-content';
 import { HlmPaginationEllipsis } from './hlm-pagination-ellipsis';
@@ -35,7 +37,9 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-center justify-between gap-2 px-4 py-2">
-      <div class="text-muted-foreground flex items-center gap-1 text-sm text-nowrap">
+      <div
+        class="text-muted-foreground flex items-center gap-1 text-sm text-nowrap"
+      >
         <b>{{ totalItems() }}</b>
         {{ totalItemsLabel() }} |
         <b>{{ _lastPageNumber() }}</b>
@@ -45,12 +49,11 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
       <nav hlmPagination>
         <ul hlmPaginationContent>
           @if (showEdges() && !_isFirstPageActive()) {
-            <li
-              hlmPaginationItem
-              (click)="goToPrevious()">
+            <li hlmPaginationItem (click)="goToPrevious()">
               <hlm-pagination-previous
                 [aria-label]="previousAriaLabel()"
-                [text]="previousLabel()" />
+                [text]="previousLabel()"
+              />
             </li>
           }
 
@@ -62,7 +65,8 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
                 <a
                   hlmPaginationLink
                   [isActive]="currentPage() === page"
-                  (click)="currentPage.set(page)">
+                  (click)="currentPage.set(page)"
+                >
                   {{ page }}
                 </a>
               }
@@ -70,28 +74,27 @@ import { injectHlmPaginationConfig } from './hlm-pagination.token';
           }
 
           @if (showEdges() && !_isLastPageActive()) {
-            <li
-              hlmPaginationItem
-              (click)="goToNext()">
+            <li hlmPaginationItem (click)="goToNext()">
               <hlm-pagination-next
                 [aria-label]="nextAriaLabel()"
-                [text]="nextLabel()" />
+                [text]="nextLabel()"
+              />
             </li>
           }
         </ul>
       </nav>
 
       <!-- Show Page Size selector -->
-      <hlm-select
-        [(value)]="itemsPerPage"
-        class="ml-auto">
+      <hlm-select [(value)]="itemsPerPage" class="ml-auto">
         <hlm-select-trigger class="w-fit">
           <hlm-select-value />
         </hlm-select-trigger>
         <hlm-select-content *hlmSelectPortal>
           <hlm-select-group>
             @for (pageSize of _pageSizesWithCurrent(); track pageSize) {
-              <hlm-select-item [value]="pageSize">{{ pageSize }}</hlm-select-item>
+              <hlm-select-item [value]="pageSize">{{
+                pageSize
+              }}</hlm-select-item>
             }
           </hlm-select-group>
         </hlm-select-content>
@@ -175,7 +178,9 @@ export class HlmNumberedPagination {
    * The aria-label to show on the previous button
    * Defaults to config's previousAriaLabel
    */
-  public readonly previousAriaLabel = input<string>(this._config.previousAriaLabel);
+  public readonly previousAriaLabel = input<string>(
+    this._config.previousAriaLabel,
+  );
 
   protected readonly _pageSizesWithCurrent = computed(() => {
     const pageSizes = this.pageSizes();
@@ -184,8 +189,12 @@ export class HlmNumberedPagination {
       : [...pageSizes, this.itemsPerPage()].sort((a, b) => a - b); // otherwise, add current page size and sort the array
   });
 
-  protected readonly _isFirstPageActive = computed(() => this.currentPage() === 1);
-  protected readonly _isLastPageActive = computed(() => this.currentPage() === this._lastPageNumber());
+  protected readonly _isFirstPageActive = computed(
+    () => this.currentPage() === 1,
+  );
+  protected readonly _isLastPageActive = computed(
+    () => this.currentPage() === this._lastPageNumber(),
+  );
 
   protected readonly _lastPageNumber = computed(() => {
     if (this.totalItems() < 1) {
@@ -197,14 +206,23 @@ export class HlmNumberedPagination {
   });
 
   protected readonly _pages = computed(() => {
-    const correctedCurrentPage = outOfBoundCorrection(this.totalItems(), this.itemsPerPage(), this.currentPage());
+    const correctedCurrentPage = outOfBoundCorrection(
+      this.totalItems(),
+      this.itemsPerPage(),
+      this.currentPage(),
+    );
 
     if (correctedCurrentPage !== this.currentPage()) {
       // update the current page
       untracked(() => this.currentPage.set(correctedCurrentPage));
     }
 
-    return createPageArray(correctedCurrentPage, this.itemsPerPage(), this.totalItems(), this.maxSize());
+    return createPageArray(
+      correctedCurrentPage,
+      this.itemsPerPage(),
+      this.totalItems(),
+      this.maxSize(),
+    );
   });
 
   protected goToPrevious(): void {
@@ -232,7 +250,11 @@ type Page = number | '...';
  *
  * Copied from 'ngx-pagination' package
  */
-export function outOfBoundCorrection(totalItems: number, itemsPerPage: number, currentPage: number): number {
+export function outOfBoundCorrection(
+  totalItems: number,
+  itemsPerPage: number,
+  currentPage: number,
+): number {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   if (totalPages < currentPage && 0 < totalPages) {
     return totalPages;
@@ -274,9 +296,15 @@ export function createPageArray(
 
   while (i <= totalPages && i <= paginationRange) {
     let label: number | '...';
-    const pageNumber = calculatePageNumber(i, currentPage, paginationRange, totalPages);
+    const pageNumber = calculatePageNumber(
+      i,
+      currentPage,
+      paginationRange,
+      totalPages,
+    );
     const openingEllipsesNeeded = i === 2 && (isMiddle || isEnd);
-    const closingEllipsesNeeded = i === paginationRange - 1 && (isMiddle || isStart);
+    const closingEllipsesNeeded =
+      i === paginationRange - 1 && (isMiddle || isStart);
     if (ellipsesNeeded && (openingEllipsesNeeded || closingEllipsesNeeded)) {
       label = '...';
     } else {
@@ -295,7 +323,12 @@ export function createPageArray(
  *
  * Copied from 'ngx-pagination' package
  */
-function calculatePageNumber(i: number, currentPage: number, paginationRange: number, totalPages: number) {
+function calculatePageNumber(
+  i: number,
+  currentPage: number,
+  paginationRange: number,
+  totalPages: number,
+) {
   const halfWay = Math.ceil(paginationRange / 2);
   if (i === paginationRange) {
     return totalPages;

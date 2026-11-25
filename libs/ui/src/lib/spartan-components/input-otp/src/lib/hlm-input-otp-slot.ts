@@ -1,7 +1,15 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, input, numberAttribute } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  numberAttribute,
+} from '@angular/core';
 import { BrnInputOtpSlot } from '@spartan-ng/brain/input-otp';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmInputOtpFakeCaret } from './hlm-input-otp-fake-caret';
 
 @Component({
@@ -11,19 +19,21 @@ import { HlmInputOtpFakeCaret } from './hlm-input-otp-fake-caret';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-slot': 'input-otp-slot' },
   template: `
-    <brn-input-otp-slot
-      [index]="index()"
-      [forceInvalid]="forceInvalid()">
+    <brn-input-otp-slot [index]="index()" [forceInvalid]="forceInvalid()">
       <hlm-input-otp-fake-caret />
     </brn-input-otp-slot>
   `,
 })
 export class HlmInputOtpSlot {
   /** The index of the slot to render the char or a fake caret */
-  public readonly index = input.required<number, NumberInput>({ transform: numberAttribute });
+  public readonly index = input.required<number, NumberInput>({
+    transform: numberAttribute,
+  });
 
   /** Whether to force the input into an invalid state. */
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   constructor() {
     classes(

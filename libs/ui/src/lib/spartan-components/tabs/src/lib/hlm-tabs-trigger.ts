@@ -1,17 +1,26 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
 import { BrnTabsTrigger } from '@spartan-ng/brain/tabs';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmTabsTrigger]',
   exportAs: 'hlmTabsTrigger',
-  hostDirectives: [{ directive: BrnTabsTrigger, inputs: ['brnTabsTrigger: hlmTabsTrigger', 'disabled'] }],
+  hostDirectives: [
+    {
+      directive: BrnTabsTrigger,
+      inputs: ['brnTabsTrigger: hlmTabsTrigger', 'disabled'],
+    },
+  ],
   host: {
     'data-slot': 'tabs-trigger',
   },
 })
 export class HlmTabsTrigger {
-  public readonly triggerFor = input.required<string>({ alias: 'hlmTabsTrigger' });
+  public readonly triggerFor = input.required<string>({
+    alias: 'hlmTabsTrigger',
+  });
   constructor() {
     classes(() => [
       `gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(4)] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring text-foreground/60 hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center whitespace-nowrap transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_ng-icon]:pointer-events-none [&_ng-icon]:shrink-0`,

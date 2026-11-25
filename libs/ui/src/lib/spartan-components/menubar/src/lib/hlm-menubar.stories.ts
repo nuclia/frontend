@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmDropdownMenuImports } from '../../../dropdown-menu/src/index';
 import { HlmMenubarImports } from '../index';
 import { HlmMenubar } from './hlm-menubar';
@@ -13,12 +19,16 @@ const meta: Meta<MenubarStoryArgs> = {
   title: 'Spartan/Menubar',
   component: HlmMenubar,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmMenubarImports, ...HlmDropdownMenuImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [...HlmMenubarImports, ...HlmDropdownMenuImports],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `A horizontal set of menus that organizes application commands into familiar categories. Use it for desktop-style interfaces with groups of actions such as File, Edit, and View.
-Import <code>HlmMenubarImports</code> from <code>@nuclia/ui-spartan/menubar</code>, plus <code>HlmDropdownMenuImports</code> from <code>@nuclia/ui-spartan/dropdown-menu</code> for the menu content.
+Import <code>HlmMenubarImports</code> from <code>@progress/pdp-ui-spartan/menubar</code>, plus <code>HlmDropdownMenuImports</code> from <code>@progress/pdp-ui-spartan/dropdown-menu</code> for the menu content.
 
 Put <code>hlmMenubar</code> on the container and one <code>button[hlmMenubarTrigger]</code> per menu, bound to an <code>ng-template</code> (<code>[hlmMenubarTrigger]="template"</code>) that contains a <code>hlmDropdownMenu</code> with <code>hlmDropdownMenuItem</code>, <code>hlmDropdownMenuSeparator</code>, <code>hlmDropdownMenuShortcut</code>… elements.
 Each trigger has <code>disabled</code>, <code>align</code> (<code>start</code>, <code>center</code>, <code>end</code>) and <code>side</code> (<code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>) inputs; defaults can be set with <code>provideHlmMenubarConfig</code>. Menu open/close events are available as <code>hlmDropdownMenuOpened</code> and <code>hlmDropdownMenuClosed</code>.

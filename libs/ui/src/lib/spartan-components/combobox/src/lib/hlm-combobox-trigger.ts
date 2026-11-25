@@ -1,10 +1,22 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { ButtonVariants, HlmButton } from '@nuclia/ui-spartan/button';
-import { hlm } from '@nuclia/ui-spartan/utils';
-import { BrnComboboxAnchor, BrnComboboxPopoverTrigger, BrnComboboxTrigger } from '@spartan-ng/brain/combobox';
+import { ButtonVariants, HlmButton } from '@progress/pdp-ui-spartan/button';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
+import {
+  BrnComboboxAnchor,
+  BrnComboboxPopoverTrigger,
+  BrnComboboxTrigger,
+} from '@spartan-ng/brain/combobox';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import type { ClassValue } from 'clsx';
 
@@ -32,11 +44,13 @@ import type { ClassValue } from 'clsx';
       [id]="buttonId()"
       [class]="_computedClass()"
       [variant]="variant()"
-      [forceInvalid]="forceInvalid()">
+      [forceInvalid]="forceInvalid()"
+    >
       <ng-content />
       <ng-icon
         name="matKeyboardArrowDownRound"
-        class="text-muted-foreground text-[length:--spacing(4)]" />
+        class="text-muted-foreground text-[length:--spacing(4)]"
+      />
     </button>
   `,
 })
@@ -46,11 +60,17 @@ export class HlmComboboxTrigger {
   public readonly userClass = input<ClassValue>('', {
     alias: 'class',
   });
-  protected readonly _computedClass = computed(() => hlm('data-placeholder:text-muted-foreground', this.userClass()));
+  protected readonly _computedClass = computed(() =>
+    hlm('data-placeholder:text-muted-foreground', this.userClass()),
+  );
 
-  public readonly buttonId = input<string>(`hlm-combobox-trigger-${HlmComboboxTrigger._id++}`);
+  public readonly buttonId = input<string>(
+    `hlm-combobox-trigger-${HlmComboboxTrigger._id++}`,
+  );
 
   public readonly variant = input<ButtonVariants['variant']>('outline');
 
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 }

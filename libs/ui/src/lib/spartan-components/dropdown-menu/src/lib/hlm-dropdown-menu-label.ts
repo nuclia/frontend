@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmDropdownMenuLabel],hlm-dropdown-menu-label',
@@ -16,6 +18,9 @@ export class HlmDropdownMenuLabel {
   });
 
   constructor() {
-    classes(() => 'text-muted-foreground px-1.5 py-1 text-xs font-medium data-inset:ps-7 block');
+    classes(
+      () =>
+        'text-muted-foreground px-1.5 py-1 text-xs font-medium data-inset:ps-7 block',
+    );
   }
 }

@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type NumberInput } from '@angular/cdk/coercion';
 import { Directive, input, numberAttribute } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmNavigationMenuContent],hlm-navigation-menu-content',
@@ -11,7 +13,9 @@ import { classes } from '@nuclia/ui-spartan/utils';
   },
 })
 export class HlmNavigationMenuContent {
-  public readonly navOffset = input<number, NumberInput>(1.5, { transform: numberAttribute });
+  public readonly navOffset = input<number, NumberInput>(1.5, {
+    transform: numberAttribute,
+  });
 
   constructor() {
     classes(() => [

@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
@@ -16,12 +22,21 @@ const meta: Meta<SheetStoryArgs> = {
   title: 'Spartan/Sheet',
   component: HlmSheet,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [HlmButton, ...HlmInputImports, ...HlmLabelImports, ...HlmSheetImports] })],
+  decorators: [
+    moduleMetadata({
+      imports: [
+        HlmButton,
+        ...HlmInputImports,
+        ...HlmLabelImports,
+        ...HlmSheetImports,
+      ],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `A dialog that slides in from an edge of the screen to display content alongside the main view. Use it for details, filters, or editing tasks that benefit from a larger contextual panel.
-Import <code>HlmSheetImports</code> from <code>@nuclia/ui-spartan/sheet</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the trigger).
+Import <code>HlmSheetImports</code> from <code>@progress/pdp-ui-spartan/sheet</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the trigger).
 
 Compose <code>hlm-sheet</code> (set <code>side</code> to <code>top</code>, <code>right</code>, <code>bottom</code> or <code>left</code>) with a <code>button[hlmSheetTrigger]</code> and an <code>hlm-sheet-content</code> rendered through <code>*hlmSheetPortal</code>.
 Inside, use <code>hlmSheetHeader</code> (<code>hlmSheetTitle</code>, <code>hlmSheetDescription</code>) and <code>hlmSheetFooter</code>, and <code>button[hlmSheetClose]</code> to close it. The content shows a close button by default, hide it with <code>[showCloseButton]="false"</code>.
@@ -37,12 +52,14 @@ The sheet is a modal dialog: focus is trapped, <code>Esc</code> closes it, and t
   },
   argTypes: {
     side: {
-      description: 'Edge of the screen from which the sheet slides in, set on <code>hlm-sheet</code>.',
+      description:
+        'Edge of the screen from which the sheet slides in, set on <code>hlm-sheet</code>.',
       control: 'inline-radio',
       options: ['top', 'right', 'bottom', 'left'],
     },
     showCloseButton: {
-      description: 'Shows the close button in the corner of the content, set on <code>hlm-sheet-content</code>.',
+      description:
+        'Shows the close button in the corner of the content, set on <code>hlm-sheet-content</code>.',
       control: 'boolean',
     },
     title: {

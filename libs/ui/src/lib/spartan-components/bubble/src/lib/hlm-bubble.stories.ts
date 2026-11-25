@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmBubbleImports } from '../index';
 import { HlmBubble, type BubbleAlign, type BubbleVariants } from './hlm-bubble';
 
@@ -18,7 +24,7 @@ const meta: Meta<BubbleStoryArgs> = {
     docs: {
       description: {
         component: `Displays conversational content inside a message bubble, with visual treatments for different speakers and grouped messages. Use it as the content surface within a conversation, with optional reactions or expandable details.
-Import <code>HlmBubbleImports</code> from <code>@nuclia/ui-spartan/bubble</code> and place a <code>hlmBubbleContent</code> element inside <code>hlm-bubble</code>; wrap several bubbles in <code>hlmBubbleGroup</code> to stack them.
+Import <code>HlmBubbleImports</code> from <code>@progress/pdp-ui-spartan/bubble</code> and place a <code>hlmBubbleContent</code> element inside <code>hlm-bubble</code>; wrap several bubbles in <code>hlmBubbleGroup</code> to stack them.
 Set <code>variant</code> for the colour treatment and <code>align</code> (<code>start</code> or <code>end</code>) for the speaker side. Add <code>hlmBubbleReactions</code> (inputs <code>side</code> and <code>align</code>) for reactions that overlap the bubble edge.
 
 <code>hlmBubbleContent</code> can also be a <code>button</code> or <code>a</code> to make the bubble interactive. Reactions should have an <code>aria-label</code> describing them.`,
@@ -35,7 +41,15 @@ Set <code>variant</code> for the colour treatment and <code>align</code> (<code>
     variant: {
       description: 'Colour treatment of the bubble content.',
       control: 'select',
-      options: ['default', 'secondary', 'muted', 'tinted', 'outline', 'ghost', 'destructive'],
+      options: [
+        'default',
+        'secondary',
+        'muted',
+        'tinted',
+        'outline',
+        'ghost',
+        'destructive',
+      ],
     },
     align: {
       description: 'Side of the conversation the bubble sticks to.',
@@ -47,7 +61,8 @@ Set <code>variant</code> for the colour treatment and <code>align</code> (<code>
       control: 'text',
     },
     showReactions: {
-      description: 'Shows an <code>hlmBubbleReactions</code> badge attached to the bubble.',
+      description:
+        'Shows an <code>hlmBubbleReactions</code> badge attached to the bubble.',
       control: 'boolean',
     },
   },
@@ -76,7 +91,8 @@ export const Outgoing: Story = {
   args: {
     align: 'end',
     variant: 'secondary',
-    message: 'The team completed the migration and is preparing the release notes.',
+    message:
+      'The team completed the migration and is preparing the release notes.',
   },
 };
 

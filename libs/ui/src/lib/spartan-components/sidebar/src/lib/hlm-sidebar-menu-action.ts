@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: 'button[hlmSidebarMenuAction]',
@@ -11,7 +13,9 @@ import { classes } from '@nuclia/ui-spartan/utils';
   },
 })
 export class HlmSidebarMenuAction {
-  public readonly showOnHover = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly showOnHover = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   constructor() {
     classes(() => [

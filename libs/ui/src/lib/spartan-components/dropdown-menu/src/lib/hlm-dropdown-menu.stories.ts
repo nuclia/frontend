@@ -1,12 +1,18 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matContentCopyRound,
-  matLogoutRound,
-  matEditRound,
   matDeleteRound,
+  matEditRound,
+  matLogoutRound,
   matPersonRound,
 } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmDropdownMenuImports } from '../index';
 import { HlmDropdownMenu } from './hlm-dropdown-menu';
@@ -25,7 +31,15 @@ const meta: Meta<DropdownMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [HlmButton, NgIcon, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ matContentCopyRound, matLogoutRound, matEditRound, matDeleteRound, matPersonRound })],
+      providers: [
+        provideIcons({
+          matContentCopyRound,
+          matLogoutRound,
+          matEditRound,
+          matDeleteRound,
+          matPersonRound,
+        }),
+      ],
     }),
   ],
   parameters: {
@@ -33,7 +47,7 @@ const meta: Meta<DropdownMenuStoryArgs> = {
     docs: {
       description: {
         component: `Open a menu of actions or options from a button. Use it to keep secondary commands, account actions or related choices available without displaying them all on the page.
-Import <code>HlmDropdownMenuImports</code> from <code>@nuclia/ui-spartan/dropdown-menu</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for the trigger).
+Import <code>HlmDropdownMenuImports</code> from <code>@progress/pdp-ui-spartan/dropdown-menu</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for the trigger).
 
 Define the menu in an <code>&lt;ng-template #menu&gt;</code> whose root is <code>hlmDropdownMenu</code> (set an <code>aria-label</code>), then bind it on the trigger with <code>[hlmDropdownMenuTrigger]="menu"</code>. The trigger accepts <code>side</code> and <code>align</code>.
 Inside the menu use <code>button[hlmDropdownMenuItem]</code> (inputs <code>disabled</code>, <code>variant="destructive"</code>, <code>inset</code>; output <code>triggered</code>), <code>hlmDropdownMenuLabel</code>, <code>hlmDropdownMenuSeparator</code>, <code>hlmDropdownMenuShortcut</code> and <code>hlmDropdownMenuGroup</code>.
@@ -50,17 +64,20 @@ Keyboard navigation (arrows, Home/End, Enter, Escape) is provided by the CDK men
   },
   argTypes: {
     side: {
-      description: 'Side of the trigger where the menu opens (<code>hlmDropdownMenuTrigger</code> input).',
+      description:
+        'Side of the trigger where the menu opens (<code>hlmDropdownMenuTrigger</code> input).',
       control: 'inline-radio',
       options: ['top', 'bottom', 'left', 'right'],
     },
     align: {
-      description: 'Alignment of the menu relative to the trigger (<code>hlmDropdownMenuTrigger</code> input).',
+      description:
+        'Alignment of the menu relative to the trigger (<code>hlmDropdownMenuTrigger</code> input).',
       control: 'inline-radio',
       options: ['start', 'center', 'end'],
     },
     sideOffset: {
-      description: 'Distance in pixels between the trigger and the menu (<code>hlmDropdownMenu</code> input).',
+      description:
+        'Distance in pixels between the trigger and the menu (<code>hlmDropdownMenu</code> input).',
       control: 'number',
     },
     triggerLabel: {

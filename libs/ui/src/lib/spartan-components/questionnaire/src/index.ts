@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmQuestionnaire } from './lib/hlm-questionnaire';
 import { HlmQuestionnaireActions } from './lib/hlm-questionnaire-actions';
 import { HlmQuestionnaireChoice } from './lib/hlm-questionnaire-choice';

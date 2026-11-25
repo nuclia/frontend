@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
@@ -13,13 +15,17 @@ import {
   viewChild,
 } from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { type BrnDatePickerBase, BrnDatePickerTriggerToken, provideBrnDatePicker } from '@spartan-ng/brain/date-picker';
+import {
+  type BrnDatePickerBase,
+  BrnDatePickerTriggerToken,
+  provideBrnDatePicker,
+} from '@spartan-ng/brain/date-picker';
 import { BrnFieldControl, provideBrnLabelable } from '@spartan-ng/brain/field';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
 import type { BrnOverlayState } from '@spartan-ng/brain/overlay';
 import { BrnPopover, type BrnPopoverAlign } from '@spartan-ng/brain/popover';
-import { HlmCalendarImports } from '@nuclia/ui-spartan/calendar';
-import { HlmPopoverImports } from '@nuclia/ui-spartan/popover';
+import { HlmCalendarImports } from '@progress/pdp-ui-spartan/calendar';
+import { HlmPopoverImports } from '@progress/pdp-ui-spartan/popover';
 import { injectHlmMonthYearPickerConfig } from './hlm-month-year-picker.token';
 
 export const HLM_MONTH_YEAR_PICKER_VALUE_ACCESSOR = {
@@ -44,12 +50,11 @@ export const HLM_MONTH_YEAR_PICKER_VALUE_ACCESSOR = {
       [align]="align()"
       sideOffset="5"
       [state]="_popoverState()"
-      (stateChanged)="_onStateChange($event)">
+      (stateChanged)="_onStateChange($event)"
+    >
       <ng-content />
 
-      <hlm-popover-content
-        class="w-fit p-0"
-        *hlmPopoverPortal="let ctx">
+      <hlm-popover-content class="w-fit p-0" *hlmPopoverPortal="let ctx">
         <ng-content select="[hlmDatePickerHeader]" />
         <hlm-month-year-calendar
           class="rounded-none border-0"
@@ -58,13 +63,16 @@ export const HLM_MONTH_YEAR_PICKER_VALUE_ACCESSOR = {
           [min]="minDate()"
           [max]="maxDate()"
           [disabled]="_disabled()"
-          (dateChange)="_handleChange($event)" />
+          (dateChange)="_handleChange($event)"
+        />
         <ng-content select="[hlmDatePickerFooter]" />
       </hlm-popover-content>
     </hlm-popover>
   `,
 })
-export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T>, ControlValueAccessor {
+export class HlmMonthYearPicker<T>
+  implements BrnDatePickerBase<T>, ControlValueAccessor
+{
   private readonly _config = injectHlmMonthYearPickerConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
@@ -93,15 +101,22 @@ export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T>, ControlValue
   protected readonly _mutableDate = linkedSignal(this.date);
 
   /** If true, the date picker will close when a date is selected. */
-  public readonly autoCloseOnSelect = input<boolean, BooleanInput>(this._config.autoCloseOnSelect, {
-    transform: booleanAttribute,
-  });
+  public readonly autoCloseOnSelect = input<boolean, BooleanInput>(
+    this._config.autoCloseOnSelect,
+    {
+      transform: booleanAttribute,
+    },
+  );
 
   /** Defines how the date should be displayed in the UI.  */
-  public readonly formatDate = input<(date: T) => string>(this._config.formatDate);
+  public readonly formatDate = input<(date: T) => string>(
+    this._config.formatDate,
+  );
 
   /** Defines how the date should be transformed before saving to model/form. */
-  public readonly transformDate = input<(date: T) => T>(this._config.transformDate);
+  public readonly transformDate = input<(date: T) => T>(
+    this._config.transformDate,
+  );
 
   protected readonly _popoverState = signal<BrnOverlayState | null>(null);
 
@@ -149,7 +164,8 @@ export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T>, ControlValue
    */
   public updateDate(value: T | null) {
     if (this._disabled()) return;
-    const transformedDate = value != null ? this.transformDate()(value) : undefined;
+    const transformedDate =
+      value != null ? this.transformDate()(value) : undefined;
 
     this._mutableDate.set(transformedDate);
     this._onChange?.(transformedDate ?? null);

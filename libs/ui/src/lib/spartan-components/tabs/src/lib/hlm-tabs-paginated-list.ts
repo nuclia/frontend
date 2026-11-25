@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { CdkObserveContent } from '@angular/cdk/observers';
 import {
   ChangeDetectionStrategy,
@@ -10,10 +12,17 @@ import {
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-symbols/round';
-import { buttonVariants } from '@nuclia/ui-spartan/button';
-import { classes, hlm } from '@nuclia/ui-spartan/utils';
-import { type BrnPaginatedTabHeaderItem, BrnTabsPaginatedList, BrnTabsTrigger } from '@spartan-ng/brain/tabs';
+import {
+  matChevronLeftRound,
+  matChevronRightRound,
+} from '@ng-icons/material-symbols/round';
+import { buttonVariants } from '@progress/pdp-ui-spartan/button';
+import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
+import {
+  type BrnPaginatedTabHeaderItem,
+  BrnTabsPaginatedList,
+  BrnTabsTrigger,
+} from '@spartan-ng/brain/tabs';
 import type { ClassValue } from 'clsx';
 import type { Observable } from 'rxjs';
 import { listVariants } from './hlm-tabs-list';
@@ -38,22 +47,23 @@ import { listVariants } from './hlm-tabs-list';
       [disabled]="disableScrollBefore || null"
       (click)="_handlePaginatorClick('before')"
       (mousedown)="_handlePaginatorPress('before', $event)"
-      (touchend)="_stopInterval()">
+      (touchend)="_stopInterval()"
+    >
       <ng-icon name="matChevronLeftRound" />
     </button>
 
     <div
       #tabListContainer
       class="z-[1] flex grow overflow-hidden"
-      (keydown)="_handleKeydown($event)">
+      (keydown)="_handleKeydown($event)"
+    >
       <div
         class="relative grow transition-transform"
         #tabList
         role="tablist"
-        (cdkObserveContent)="_onContentChanges()">
-        <div
-          #tabListInner
-          [class]="_tabListClass()">
+        (cdkObserveContent)="_onContentChanges()"
+      >
+        <div #tabListInner [class]="_tabListClass()">
           <ng-content />
         </div>
       </div>
@@ -69,7 +79,8 @@ import { listVariants } from './hlm-tabs-list';
       [disabled]="disableScrollAfter || null"
       (click)="_handlePaginatorClick('after')"
       (mousedown)="_handlePaginatorPress('after', $event)"
-      (touchend)="_stopInterval()">
+      (touchend)="_stopInterval()"
+    >
       <ng-icon name="matChevronRightRound" />
     </button>
   `,
@@ -77,21 +88,36 @@ import { listVariants } from './hlm-tabs-list';
 export class HlmTabsPaginatedList extends BrnTabsPaginatedList {
   constructor() {
     super();
-    classes(() => 'relative flex flex-shrink-0 items-center gap-1 overflow-hidden');
+    classes(
+      () => 'relative flex flex-shrink-0 items-center gap-1 overflow-hidden',
+    );
   }
 
-  public readonly items = contentChildren(BrnTabsTrigger, { descendants: false });
+  public readonly items = contentChildren(BrnTabsTrigger, {
+    descendants: false,
+  });
   /** Explicitly annotating type to avoid non-portable inferred type */
-  public readonly itemsChanges: Observable<ReadonlyArray<BrnPaginatedTabHeaderItem>> = toObservable(this.items);
+  public readonly itemsChanges: Observable<
+    ReadonlyArray<BrnPaginatedTabHeaderItem>
+  > = toObservable(this.items);
 
-  public readonly tabListContainer = viewChild.required<ElementRef<HTMLElement>>('tabListContainer');
-  public readonly tabList = viewChild.required<ElementRef<HTMLElement>>('tabList');
-  public readonly tabListInner = viewChild.required<ElementRef<HTMLElement>>('tabListInner');
-  public readonly nextPaginator = viewChild.required<ElementRef<HTMLElement>>('nextPaginator');
-  public readonly previousPaginator = viewChild.required<ElementRef<HTMLElement>>('previousPaginator');
+  public readonly tabListContainer =
+    viewChild.required<ElementRef<HTMLElement>>('tabListContainer');
+  public readonly tabList =
+    viewChild.required<ElementRef<HTMLElement>>('tabList');
+  public readonly tabListInner =
+    viewChild.required<ElementRef<HTMLElement>>('tabListInner');
+  public readonly nextPaginator =
+    viewChild.required<ElementRef<HTMLElement>>('nextPaginator');
+  public readonly previousPaginator =
+    viewChild.required<ElementRef<HTMLElement>>('previousPaginator');
 
-  public readonly tabListClass = input<ClassValue>('', { alias: 'tabListClass' });
-  protected readonly _tabListClass = computed(() => hlm(listVariants(), this.tabListClass()));
+  public readonly tabListClass = input<ClassValue>('', {
+    alias: 'tabListClass',
+  });
+  protected readonly _tabListClass = computed(() =>
+    hlm(listVariants(), this.tabListClass()),
+  );
 
   public readonly paginationButtonClass = input<ClassValue>('');
   protected readonly _paginationButtonClass = computed(() =>

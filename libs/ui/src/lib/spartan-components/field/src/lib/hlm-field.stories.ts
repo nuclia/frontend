@@ -1,8 +1,14 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmCheckboxImports } from '../../../checkbox/src/index';
-import { HlmFieldImports } from '../index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
+import { HlmFieldImports } from '../index';
 import { HlmField } from './hlm-field';
 
 type FieldOrientation = 'vertical' | 'horizontal' | 'responsive';
@@ -22,14 +28,19 @@ const meta: Meta<FieldStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     moduleMetadata({
-      imports: [...HlmFieldImports, ...HlmInputImports, ...HlmLabelImports, ...HlmCheckboxImports],
+      imports: [
+        ...HlmFieldImports,
+        ...HlmInputImports,
+        ...HlmLabelImports,
+        ...HlmCheckboxImports,
+      ],
     }),
   ],
   parameters: {
     docs: {
       description: {
         component: `Organizes a form control with its label, help text, and validation feedback. Use fields and field groups to give forms a consistent structure and make requirements and errors easy to understand.
-Import <code>HlmFieldImports</code> from <code>@nuclia/ui-spartan/field</code>.
+Import <code>HlmFieldImports</code> from <code>@progress/pdp-ui-spartan/field</code>.
 
 Wrap a control in <code>hlmField</code> and add <code>hlmFieldLabel</code> (linked to the control with <code>for</code>/<code>id</code>), <code>hlm-field-description</code> and <code>hlm-field-error</code>.
 The <code>orientation</code> input of <code>hlmField</code> is <code>vertical</code> (default), <code>horizontal</code> or <code>responsive</code> (switches to a row inside a <code>hlmFieldGroup</code> container that is wide enough).
@@ -53,20 +64,24 @@ Description and error ids are linked to the control through <code>aria-described
       control: 'text',
     },
     description: {
-      description: 'Help text shown below the control (<code>hlm-field-description</code>).',
+      description:
+        'Help text shown below the control (<code>hlm-field-description</code>).',
       control: 'text',
     },
     errorMessage: {
-      description: 'Validation message (<code>hlm-field-error</code>), displayed when the field is invalid.',
+      description:
+        'Validation message (<code>hlm-field-error</code>), displayed when the field is invalid.',
       control: 'text',
     },
     orientation: {
-      description: 'Layout of the field children: stacked, in a row, or responsive to the field group width.',
+      description:
+        'Layout of the field children: stacked, in a row, or responsive to the field group width.',
       control: 'inline-radio',
       options: ['vertical', 'horizontal', 'responsive'],
     },
     invalid: {
-      description: 'Forces the invalid style on the field and the input, and shows the error message.',
+      description:
+        'Forces the invalid style on the field and the input, and shows the error message.',
       control: 'boolean',
     },
     disabled: {

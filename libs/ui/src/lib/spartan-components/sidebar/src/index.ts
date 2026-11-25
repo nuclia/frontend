@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmSidebar } from './lib/hlm-sidebar';
 import { HlmSidebarContent } from './lib/hlm-sidebar-content';
 import { HlmSidebarFooter } from './lib/hlm-sidebar-footer';

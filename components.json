@@ -2,6 +2,6 @@
   "componentsPath": "libs/ui/src/lib/spartan-components",
   "buildable": false,
   "generateAs": "entrypoint",
-  "importAlias": "@nuclia/ui-spartan",
+  "importAlias": "@progress/pdp-ui-spartan",
   "style": "nova"
 }

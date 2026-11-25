@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmSwitchImports } from '../index';
 import { HlmSwitch } from './hlm-switch';
@@ -14,19 +20,26 @@ const meta: Meta<SwitchStoryArgs> = {
   title: 'Spartan/Switch',
   component: HlmSwitch,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmSwitchImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({ imports: [...HlmSwitchImports, ...HlmLabelImports] }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `Turns a setting on or off, usually with an immediate effect. Use it for binary preferences such as enabling notifications, rather than selecting items to submit as a group.
-Import <code>HlmSwitchImports</code> from <code>@nuclia/ui-spartan/switch</code> and use <code>&lt;hlm-switch /&gt;</code>; the thumb (<code>hlm-switch-thumb</code>) is rendered internally.
+Import <code>HlmSwitchImports</code> from <code>@progress/pdp-ui-spartan/switch</code> and use <code>&lt;hlm-switch /&gt;</code>; the thumb (<code>hlm-switch-thumb</code>) is rendered internally.
 
 Listen to <code>checkedChange</code> for the new value, or bind it with <code>ngModel</code> / reactive forms. Set <code>inputId</code> to link an external <code>&lt;label for&gt;</code>, or pass <code>aria-label</code> / <code>aria-labelledby</code> when there is no visible label.
 Use <code>size</code> for the default or compact variant and <code>forceInvalid</code> to display the invalid style.`,
       },
     },
   },
-  args: { checked: false, disabled: false, size: 'default', forceInvalid: false },
+  args: {
+    checked: false,
+    disabled: false,
+    size: 'default',
+    forceInvalid: false,
+  },
   argTypes: {
     checked: {
       description: 'Checked (on) state of the switch.',
@@ -42,7 +55,8 @@ Use <code>size</code> for the default or compact variant and <code>forceInvalid<
       options: ['default', 'sm'],
     },
     forceInvalid: {
-      description: 'Forces the invalid style regardless of form validation state.',
+      description:
+        'Forces the invalid style regardless of form validation state.',
       control: 'boolean',
     },
   },
@@ -75,7 +89,9 @@ export const Small: Story = { args: { size: 'sm', checked: true } };
 
 export const Disabled: Story = { args: { disabled: true } };
 
-export const DisabledChecked: Story = { args: { disabled: true, checked: true } };
+export const DisabledChecked: Story = {
+  args: { disabled: true, checked: true },
+};
 
 export const Invalid: Story = { args: { forceInvalid: true } };
 

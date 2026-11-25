@@ -1,23 +1,46 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matKeyboardArrowDownRound } from '@ng-icons/material-symbols/round';
-import { ButtonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { HlmPopoverTrigger } from '@nuclia/ui-spartan/popover';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import {
+  ButtonVariants,
+  HlmButtonImports,
+} from '@progress/pdp-ui-spartan/button';
+import { HlmPopoverTrigger } from '@progress/pdp-ui-spartan/popover';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import {
   type BrnDatePickerTriggerBase,
   injectBrnDatePicker,
   provideBrnDatePickerTrigger,
 } from '@spartan-ng/brain/date-picker';
-import { BrnFieldControl, BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
+import {
+  BrnFieldControl,
+  BrnFieldControlDescribedBy,
+} from '@spartan-ng/brain/field';
 import { ClassValue } from 'clsx';
 
 @Component({
   selector: 'hlm-date-picker-trigger',
   exportAs: 'hlmDatePickerTrigger',
-  imports: [HlmButtonImports, HlmPopoverTrigger, NgIcon, BrnFieldControlDescribedBy],
-  providers: [provideIcons({ matKeyboardArrowDownRound }), provideBrnDatePickerTrigger(HlmDatePickerTrigger)],
+  imports: [
+    HlmButtonImports,
+    HlmPopoverTrigger,
+    NgIcon,
+    BrnFieldControlDescribedBy,
+  ],
+  providers: [
+    provideIcons({ matKeyboardArrowDownRound }),
+    provideBrnDatePickerTrigger(HlmDatePickerTrigger),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-slot': 'date-picker-trigger' },
   template: `
@@ -36,7 +59,8 @@ import { ClassValue } from 'clsx';
       hlmPopoverTrigger
       [hlmPopoverTriggerFor]="_popover()"
       brnFieldControlDescribedBy
-      [attr.data-placeholder]="_isPlaceholder() ? '' : null">
+      [attr.data-placeholder]="_isPlaceholder() ? '' : null"
+    >
       <span class="truncate">
         @if (_formattedDate(); as formattedDate) {
           {{ formattedDate }}
@@ -58,31 +82,46 @@ export class HlmDatePickerTrigger implements BrnDatePickerTriggerBase {
   private readonly _datePicker = injectBrnDatePicker();
 
   private readonly _invalid = this._fieldControl?.invalid;
-  protected readonly _spartanInvalid = computed(() => this.forceInvalid() || this._fieldControl?.spartanInvalid());
+  protected readonly _spartanInvalid = computed(
+    () => this.forceInvalid() || this._fieldControl?.spartanInvalid(),
+  );
   protected readonly _dirty = this._fieldControl?.dirty;
   protected readonly _touched = this._fieldControl?.touched;
 
-  protected readonly _ariaInvalid = computed(() => (this._invalid?.() ? 'true' : null));
+  protected readonly _ariaInvalid = computed(() =>
+    this._invalid?.() ? 'true' : null,
+  );
 
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
   protected readonly _computedClass = computed(() =>
-    hlm('data-placeholder:text-muted-foreground justify-between', this.userClass()),
+    hlm(
+      'data-placeholder:text-muted-foreground justify-between',
+      this.userClass(),
+    ),
   );
 
-  protected readonly _isPlaceholder = computed(() => !this._datePicker.hasDate());
+  protected readonly _isPlaceholder = computed(
+    () => !this._datePicker.hasDate(),
+  );
 
   /** The id of the button that opens the date picker. */
-  public readonly buttonId = input<string>(`hlm-date-picker-${++HlmDatePickerTrigger._nextId}`);
+  public readonly buttonId = input<string>(
+    `hlm-date-picker-${++HlmDatePickerTrigger._nextId}`,
+  );
 
   /** @internal The id of the button that opens the date picker, used for labeling. */
   public readonly triggerId = this.buttonId;
 
   /** Forces the invalid state visually, regardless of form control state. */
-  public readonly forceInvalid = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly forceInvalid = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   public readonly variant = input<ButtonVariants['variant']>('outline');
 
-  public readonly showTrigger = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
+  public readonly showTrigger = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
 
   protected readonly _popover = this._datePicker.popover;
   protected readonly _disabled = this._datePicker.disabledState;

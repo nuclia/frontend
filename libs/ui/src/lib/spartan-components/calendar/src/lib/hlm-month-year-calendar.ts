@@ -1,9 +1,26 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matChevronLeftRound, matChevronRightRound } from '@ng-icons/material-symbols/round';
-import { buttonVariants, HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { classes, hlm } from '@nuclia/ui-spartan/utils';
-import { BrnCalendarImports, BrnMonthYearCalendar, injectBrnCalendarI18n } from '@spartan-ng/brain/calendar';
+import {
+  matChevronLeftRound,
+  matChevronRightRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  buttonVariants,
+  HlmButtonImports,
+} from '@progress/pdp-ui-spartan/button';
+import { classes, hlm } from '@progress/pdp-ui-spartan/utils';
+import {
+  BrnCalendarImports,
+  BrnMonthYearCalendar,
+  injectBrnCalendarI18n,
+} from '@spartan-ng/brain/calendar';
 import { injectDateAdapter } from '@spartan-ng/brain/date-time';
 
 @Component({
@@ -28,17 +45,17 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
           brnMonthYearCalendarPreviousButton
           hlmBtn
           variant="ghost"
-          class="order-first size-(--cell-size) p-0 select-none aria-disabled:opacity-50">
-          <ng-icon
-            name="matChevronLeftRound"
-            class="rtl:rotate-180" />
+          class="order-first size-(--cell-size) p-0 select-none aria-disabled:opacity-50"
+        >
+          <ng-icon name="matChevronLeftRound" class="rtl:rotate-180" />
         </button>
 
         <button
           hlmBtn
           variant="ghost"
           class="h-(--cell-size) py-0 select-none aria-disabled:opacity-50"
-          brnMonthYearCalendarHeader>
+          brnMonthYearCalendarHeader
+        >
           {{ _heading() }}
         </button>
 
@@ -46,38 +63,38 @@ import { injectDateAdapter } from '@spartan-ng/brain/date-time';
           brnMonthYearCalendarNextButton
           hlmBtn
           variant="ghost"
-          class="order-last size-(--cell-size) p-0 select-none aria-disabled:opacity-50">
-          <ng-icon
-            name="matChevronRightRound"
-            class="rtl:rotate-180" />
+          class="order-last size-(--cell-size) p-0 select-none aria-disabled:opacity-50"
+        >
+          <ng-icon name="matChevronRightRound" class="rtl:rotate-180" />
         </button>
       </div>
 
       <!-- Grid -->
       @switch (_picker.view()) {
         @case ('year') {
-          <div
-            brnMonthYearCalendarGrid
-            class="grid grid-cols-4 gap-2">
+          <div brnMonthYearCalendarGrid class="grid grid-cols-4 gap-2">
             @for (year of _picker.years(); track _dateAdapter.getYear(year)) {
               <button
                 brnMonthYearCalendarYearButton
                 [date]="year"
-                [class]="_btnClass">
+                [class]="_btnClass"
+              >
                 {{ _i18n.config().formatYear(_dateAdapter.getYear(year)) }}
               </button>
             }
           </div>
         }
         @case ('month') {
-          <div
-            brnMonthYearCalendarGrid
-            class="grid grid-cols-4 gap-2">
-            @for (month of _picker.months(); track _dateAdapter.getMonth(month)) {
+          <div brnMonthYearCalendarGrid class="grid grid-cols-4 gap-2">
+            @for (
+              month of _picker.months();
+              track _dateAdapter.getMonth(month)
+            ) {
               <button
                 brnMonthYearCalendarMonthButton
                 [date]="month"
-                [class]="_btnClass">
+                [class]="_btnClass"
+              >
                 {{ _i18n.config().months()[_dateAdapter.getMonth(month)] }}
               </button>
             }
@@ -102,7 +119,9 @@ export class HlmMonthYearCalendar<T> {
     const config = this._i18n.config();
 
     if (this._picker.view() === 'month') {
-      return config.formatYear(this._dateAdapter.getYear(this._picker.focusedDate()));
+      return config.formatYear(
+        this._dateAdapter.getYear(this._picker.focusedDate()),
+      );
     }
 
     const { start, end } = this._picker.yearRange();

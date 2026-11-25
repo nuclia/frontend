@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnSeparator } from '@spartan-ng/brain/separator';
-import { hlmSeparatorClass } from '@nuclia/ui-spartan/separator';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { hlmSeparatorClass } from '@progress/pdp-ui-spartan/separator';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmItemSeparator],hlm-item-separator',

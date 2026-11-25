@@ -1,6 +1,16 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matContentCopyRound, matEditRound, matDeleteRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  matContentCopyRound,
+  matDeleteRound,
+  matEditRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmDropdownMenuImports } from '../../../dropdown-menu/src/index';
 import { HlmContextMenuImports } from '../index';
 import { HlmContextMenuTrigger } from './hlm-context-menu-trigger';
@@ -19,14 +29,20 @@ const meta: Meta<ContextMenuStoryArgs> = {
   decorators: [
     moduleMetadata({
       imports: [NgIcon, ...HlmContextMenuImports, ...HlmDropdownMenuImports],
-      providers: [provideIcons({ matContentCopyRound, matEditRound, matDeleteRound })],
+      providers: [
+        provideIcons({
+          matContentCopyRound,
+          matEditRound,
+          matDeleteRound,
+        }),
+      ],
     }),
   ],
   parameters: {
     docs: {
       description: {
         component: `Show actions relevant to a particular item or area when users open its context menu, typically with a right-click. Use it as a shortcut to contextual actions, never as their only point of access.
-Import <code>HlmContextMenuImports</code> from <code>@nuclia/ui-spartan/context-menu</code>. The menu content reuses the dropdown menu parts, so also import <code>HlmDropdownMenuImports</code> from <code>@nuclia/ui-spartan/dropdown-menu</code>.
+Import <code>HlmContextMenuImports</code> from <code>@progress/pdp-ui-spartan/context-menu</code>. The menu content reuses the dropdown menu parts, so also import <code>HlmDropdownMenuImports</code> from <code>@progress/pdp-ui-spartan/dropdown-menu</code>.
 
 Define the menu in an <code>&lt;ng-template #menu&gt;</code> whose root is <code>hlmDropdownMenu</code> (set an <code>aria-label</code>) and bind it on the target area with <code>[hlmContextMenuTrigger]="menu"</code>.
 The trigger accepts <code>disabled</code>, <code>side</code> and <code>align</code>, <code>[hlmContextMenuTriggerData]</code> to pass context to the template, and emits <code>hlmContextMenuOpened</code> / <code>hlmContextMenuClosed</code>.
@@ -42,7 +58,8 @@ Fill the menu with <code>hlmDropdownMenuItem</code>, <code>hlmDropdownMenuLabel<
   },
   argTypes: {
     disabled: {
-      description: 'Disables the context menu so the browser menu is shown instead.',
+      description:
+        'Disables the context menu so the browser menu is shown instead.',
       control: 'boolean',
     },
     side: {

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmSelect } from './lib/hlm-select';
 import { HlmSelectContent } from './lib/hlm-select-content';
 import { HlmSelectGroup } from './lib/hlm-select-group';

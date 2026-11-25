@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { computed, Directive, inject, input } from '@angular/core';
 import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { BrnRadioGroup } from '@spartan-ng/brain/radio-group';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Directive({
@@ -26,14 +28,26 @@ import type { ClassValue } from 'clsx';
 export class HlmRadioGroup {
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
   private readonly _brnRadioGroup = inject(BrnRadioGroup);
-  protected readonly _ariaInvalid = computed(() => this._brnRadioGroup.controlState?.()?.invalid);
+  protected readonly _ariaInvalid = computed(
+    () => this._brnRadioGroup.controlState?.()?.invalid,
+  );
 
-  protected readonly _touched = computed(() => this._brnRadioGroup.controlState?.()?.touched);
-  protected readonly _dirty = computed(() => this._brnRadioGroup.controlState?.()?.dirty);
+  protected readonly _touched = computed(
+    () => this._brnRadioGroup.controlState?.()?.touched,
+  );
+  protected readonly _dirty = computed(
+    () => this._brnRadioGroup.controlState?.()?.dirty,
+  );
 
-  protected readonly _errorState = computed(() => this._brnRadioGroup.controlState?.()?.spartanInvalid);
+  protected readonly _errorState = computed(
+    () => this._brnRadioGroup.controlState?.()?.spartanInvalid,
+  );
 
   constructor() {
-    classes(() => ['grid gap-2', this.userClass(), this._errorState() ? 'data-[invalid=true]:text-destructive' : '']);
+    classes(() => [
+      'grid gap-2',
+      this.userClass(),
+      this._errorState() ? 'data-[invalid=true]:text-destructive' : '',
+    ]);
   }
 }

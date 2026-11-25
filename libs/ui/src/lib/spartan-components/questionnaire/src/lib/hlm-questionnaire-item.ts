@@ -1,6 +1,8 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive } from '@angular/core';
 import { BrnQuestionnaireItem } from '@spartan-ng/brain/questionnaire';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: 'fieldset[hlmQuestionnaireItem]',
@@ -8,7 +10,15 @@ import { classes } from '@nuclia/ui-spartan/utils';
   hostDirectives: [
     {
       directive: BrnQuestionnaireItem,
-      inputs: ['name', 'multiple', 'required', 'disabled', 'itemInvalid', 'aria-describedby', 'aria-keyshortcuts'],
+      inputs: [
+        'name',
+        'multiple',
+        'required',
+        'disabled',
+        'itemInvalid',
+        'aria-describedby',
+        'aria-keyshortcuts',
+      ],
       outputs: ['statusChange'],
     },
   ],

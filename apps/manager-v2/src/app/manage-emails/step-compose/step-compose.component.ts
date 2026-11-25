@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matInfoRound } from '@ng-icons/material-symbols/round';
-import { HlmButtonImports } from '@nuclia/ui-spartan/button';
-import { HlmInputImports } from '@nuclia/ui-spartan/input';
-import { HlmLabelImports } from '@nuclia/ui-spartan/label';
-import { SpartanStepperImports } from '@nuclia/ui-spartan/stepper';
-import { HlmTextareaImports } from '@nuclia/ui-spartan/textarea';
-import { HlmTooltipImports } from '@nuclia/ui-spartan/tooltip';
+import { UiStepperImports } from '@progress/pdp-ui';
+import { HlmButtonImports } from '@progress/pdp-ui-spartan/button';
+import { HlmInputImports } from '@progress/pdp-ui-spartan/input';
+import { HlmLabelImports } from '@progress/pdp-ui-spartan/label';
+import { HlmTextareaImports } from '@progress/pdp-ui-spartan/textarea';
+import { HlmTooltipImports } from '@progress/pdp-ui-spartan/tooltip';
 import { EmailWizardService } from '../email-wizard.service';
 import { ComposeService } from './compose.service';
 import { PersonalizationHelpComponent } from './personalization-help/personalization-help.component';
@@ -26,7 +26,7 @@ import { SENDER_NAME_MAX_LENGTH } from './sender-name.utils';
     HlmTooltipImports,
     NgIcon,
     PersonalizationHelpComponent,
-    SpartanStepperImports,
+    UiStepperImports,
   ],
   providers: [provideIcons({ matInfoRound })],
 })

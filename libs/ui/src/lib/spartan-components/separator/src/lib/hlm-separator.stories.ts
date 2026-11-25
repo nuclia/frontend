@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmSeparatorImports } from '../index';
 import { HlmSeparator } from './hlm-separator';
 
@@ -16,7 +22,7 @@ const meta: Meta<SeparatorStoryArgs> = {
     docs: {
       description: {
         component: `A horizontal or vertical divider that separates groups of content. Use it to clarify structure without adding another container.
-Import <code>HlmSeparatorImports</code> from <code>@nuclia/ui-spartan/separator</code> and apply <code>hlmSeparator</code> to an element (or use <code>&lt;hlm-separator&gt;</code>).
+Import <code>HlmSeparatorImports</code> from <code>@progress/pdp-ui-spartan/separator</code> and apply <code>hlmSeparator</code> to an element (or use <code>&lt;hlm-separator&gt;</code>).
 
 Set <code>orientation</code> to <code>horizontal</code> (default) or <code>vertical</code>. A vertical separator stretches to the height of its flex parent, so give the parent a height.
 By default the separator is exposed to assistive technology with <code>role="separator"</code>; set <code>decorative</code> when it is purely visual so it is hidden from them (<code>role="none"</code>).`,
@@ -34,7 +40,8 @@ By default the separator is exposed to assistive technology with <code>role="sep
       options: ['horizontal', 'vertical'],
     },
     decorative: {
-      description: 'When true the separator is purely visual and is hidden from assistive technology.',
+      description:
+        'When true the separator is purely visual and is hidden from assistive technology.',
       control: 'boolean',
     },
   },

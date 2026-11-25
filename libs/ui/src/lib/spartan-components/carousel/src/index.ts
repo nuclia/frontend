@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmCarousel } from './lib/hlm-carousel';
 import { HlmCarouselContent } from './lib/hlm-carousel-content';
 import { HlmCarouselItem } from './lib/hlm-carousel-item';

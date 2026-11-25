@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmAccordion } from './lib/hlm-accordion';
 import { HlmAccordionContent } from './lib/hlm-accordion-content';
 import { HlmAccordionContentLazy } from './lib/hlm-accordion-content-lazy';

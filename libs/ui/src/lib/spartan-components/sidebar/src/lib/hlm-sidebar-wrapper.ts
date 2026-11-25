@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { injectHlmSidebarConfig } from './hlm-sidebar.token';
 
 @Directive({
@@ -15,9 +17,14 @@ export class HlmSidebarWrapper {
   private readonly _config = injectHlmSidebarConfig();
 
   public readonly sidebarWidth = input<string>(this._config.sidebarWidth);
-  public readonly sidebarWidthIcon = input<string>(this._config.sidebarWidthIcon);
+  public readonly sidebarWidthIcon = input<string>(
+    this._config.sidebarWidthIcon,
+  );
 
   constructor() {
-    classes(() => 'group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full');
+    classes(
+      () =>
+        'group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full',
+    );
   }
 }

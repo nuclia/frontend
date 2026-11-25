@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmCombobox } from './lib/hlm-combobox';
 import { HlmComboboxChip } from './lib/hlm-combobox-chip';
 import { HlmComboboxChipInput } from './lib/hlm-combobox-chip-input';

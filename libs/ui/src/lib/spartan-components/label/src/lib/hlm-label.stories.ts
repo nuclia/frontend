@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmCheckboxImports } from '../../../checkbox/src/index';
 import { HlmInputImports } from '../../../input/src/index';
 import { HlmLabelImports } from '../index';
@@ -22,7 +28,7 @@ const meta: Meta<LabelStoryArgs> = {
     docs: {
       description: {
         component: `Render an accessible label for a form control.
-Import <code>HlmLabelImports</code> from <code>@nuclia/ui-spartan/label</code> and apply <code>hlmLabel</code> to a native <code>&lt;label&gt;</code>.
+Import <code>HlmLabelImports</code> from <code>@progress/pdp-ui-spartan/label</code> and apply <code>hlmLabel</code> to a native <code>&lt;label&gt;</code>.
 
 Associate the label with a control by setting <code>for</code> to the control's <code>id</code> (use <code>inputId</code> on <code>hlm-checkbox</code>).`,
       },

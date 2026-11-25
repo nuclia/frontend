@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-input-otp-fake-caret',
@@ -11,6 +13,9 @@ import { classes } from '@nuclia/ui-spartan/utils';
 })
 export class HlmInputOtpFakeCaret {
   constructor() {
-    classes(() => 'pointer-events-none absolute inset-0 flex items-center justify-center');
+    classes(
+      () =>
+        'pointer-events-none absolute inset-0 flex items-center justify-center',
+    );
   }
 }

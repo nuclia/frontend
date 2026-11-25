@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { InjectionToken, type ValueProvider, inject } from '@angular/core';
 import type { ButtonVariants } from './hlm-button';
 
@@ -11,10 +13,17 @@ const defaultConfig: BrnButtonConfig = {
   size: 'default',
 };
 
-const BrnButtonConfigToken = new InjectionToken<BrnButtonConfig>('BrnButtonConfig');
+const BrnButtonConfigToken = new InjectionToken<BrnButtonConfig>(
+  'BrnButtonConfig',
+);
 
-export function provideBrnButtonConfig(config: Partial<BrnButtonConfig>): ValueProvider {
-  return { provide: BrnButtonConfigToken, useValue: { ...defaultConfig, ...config } };
+export function provideBrnButtonConfig(
+  config: Partial<BrnButtonConfig>,
+): ValueProvider {
+  return {
+    provide: BrnButtonConfigToken,
+    useValue: { ...defaultConfig, ...config },
+  };
 }
 
 export function injectBrnButtonConfig(): BrnButtonConfig {

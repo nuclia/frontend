@@ -1,7 +1,13 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
-import { CdkMenuItem, CdkMenuItemRadio, CdkMenuItemSelectable } from '@angular/cdk/menu';
+import {
+  CdkMenuItem,
+  CdkMenuItemRadio,
+  CdkMenuItemSelectable,
+} from '@angular/cdk/menu';
 import { Directive, booleanAttribute, inject, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { HlmDropdownMenuFocusOnHover } from './hlm-dropdown-menu-focus-on-hover';
 
 /** @internal. Use HlmDropdownMenuRadio instead. */
@@ -15,7 +21,9 @@ import { HlmDropdownMenuFocusOnHover } from './hlm-dropdown-menu-focus-on-hover'
   ],
 })
 export class HlmDropdownMenuRadioCdk extends CdkMenuItemRadio {
-  public readonly keepOpen = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
+  public readonly keepOpen = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
 
   public override trigger(options?: { keepOpen: boolean }) {
     super.trigger({ ...options, keepOpen: this.keepOpen() });
@@ -28,7 +36,11 @@ export class HlmDropdownMenuRadioCdk extends CdkMenuItemRadio {
   hostDirectives: [
     {
       directive: HlmDropdownMenuRadioCdk,
-      inputs: ['cdkMenuItemDisabled: disabled', 'cdkMenuItemChecked: checked', 'keepOpen'],
+      inputs: [
+        'cdkMenuItemDisabled: disabled',
+        'cdkMenuItemChecked: checked',
+        'keepOpen',
+      ],
       outputs: ['cdkMenuItemTriggered: triggered'],
     },
     HlmDropdownMenuFocusOnHover,

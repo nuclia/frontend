@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
-import { HlmButton } from '@nuclia/ui-spartan/button';
+import { HlmButton } from '@progress/pdp-ui-spartan/button';
 
 @Directive({
   selector: 'button[hlmAlertDialogAction]',

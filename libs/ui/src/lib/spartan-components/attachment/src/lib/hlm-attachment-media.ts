@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, input } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const attachmentMediaVariants = cva(
@@ -18,7 +20,9 @@ const attachmentMediaVariants = cva(
   },
 );
 
-export type AttachmentMediaVariants = VariantProps<typeof attachmentMediaVariants>;
+export type AttachmentMediaVariants = VariantProps<
+  typeof attachmentMediaVariants
+>;
 
 @Directive({
   selector: '[hlmAttachmentMedia],hlm-attachment-media',

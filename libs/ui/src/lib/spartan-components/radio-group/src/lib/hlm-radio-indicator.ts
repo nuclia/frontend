@@ -1,5 +1,7 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-radio-indicator',
@@ -9,7 +11,9 @@ import { classes } from '@nuclia/ui-spartan/utils';
     'data-slot': 'radio-group-indicator',
   },
   template: `
-    <div class="group-data-[checked=true]:bg-primary size-2 rounded-full bg-transparent"></div>
+    <div
+      class="group-data-[checked=true]:bg-primary size-2 rounded-full bg-transparent"
+    ></div>
   `,
 })
 export class HlmRadioIndicator {

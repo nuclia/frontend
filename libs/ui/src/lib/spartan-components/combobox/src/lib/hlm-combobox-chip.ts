@@ -1,8 +1,15 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
-import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+} from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matCloseRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 import { BrnComboboxChip } from '@spartan-ng/brain/combobox';
 import { HlmComboboxChipRemove } from './hlm-combobox-chip-remove';
 
@@ -25,7 +32,9 @@ import { HlmComboboxChipRemove } from './hlm-combobox-chip-remove';
   `,
 })
 export class HlmComboboxChip {
-  public readonly showRemove = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
+  public readonly showRemove = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
 
   constructor() {
     classes(

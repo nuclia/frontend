@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmComboboxImports } from '../index';
 import { HlmCombobox } from './hlm-combobox';
@@ -18,12 +24,14 @@ const meta: Meta<ComboboxStoryArgs> = {
   title: 'Spartan/Combobox',
   component: HlmCombobox,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmComboboxImports, ...HlmLabelImports] })],
+  decorators: [
+    moduleMetadata({ imports: [...HlmComboboxImports, ...HlmLabelImports] }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `Combine a text input with a list of predefined options to select from. Use it when users need to search a long list of choices rather than browse a simple select menu.
-Import <code>HlmComboboxImports</code> from <code>@nuclia/ui-spartan/combobox</code> (and <code>HlmLabelImports</code> from <code>@nuclia/ui-spartan/label</code> for the label).
+Import <code>HlmComboboxImports</code> from <code>@progress/pdp-ui-spartan/combobox</code> (and <code>HlmLabelImports</code> from <code>@progress/pdp-ui-spartan/label</code> for the label).
 
 Compose <code>hlm-combobox</code> with an <code>hlm-combobox-input</code> and an <code>hlm-combobox-content</code> rendered through <code>*hlmComboboxPortal</code>, containing a <code>div[hlmComboboxList]</code> of <code>hlm-combobox-item</code> (each with a <code>value</code>) and an optional <code>hlm-combobox-empty</code>.
 Group options with <code>hlmComboboxGroup</code>, <code>hlmComboboxLabel</code> and <code>hlmComboboxSeparator</code>.
@@ -45,11 +53,13 @@ Use <code>hlm-combobox-multiple</code> with <code>hlm-combobox-chips</code> for 
   },
   argTypes: {
     placeholder: {
-      description: 'Placeholder of the input (<code>hlm-combobox-input</code> input).',
+      description:
+        'Placeholder of the input (<code>hlm-combobox-input</code> input).',
       control: 'text',
     },
     value: {
-      description: 'Selected value (<code>hlm-combobox</code> input). Empty means nothing selected.',
+      description:
+        'Selected value (<code>hlm-combobox</code> input). Empty means nothing selected.',
       control: 'select',
       options: ['', 'design', 'engineering', 'research'],
     },
@@ -63,15 +73,18 @@ Use <code>hlm-combobox-multiple</code> with <code>hlm-combobox-chips</code> for 
       control: 'boolean',
     },
     showClear: {
-      description: 'Shows a button to clear the selection (<code>hlm-combobox-input</code> input).',
+      description:
+        'Shows a button to clear the selection (<code>hlm-combobox-input</code> input).',
       control: 'boolean',
     },
     showTrigger: {
-      description: 'Shows the chevron button that toggles the options (<code>hlm-combobox-input</code> input).',
+      description:
+        'Shows the chevron button that toggles the options (<code>hlm-combobox-input</code> input).',
       control: 'boolean',
     },
     autoHighlight: {
-      description: 'Automatically highlights the first matching option while searching.',
+      description:
+        'Automatically highlights the first matching option while searching.',
       control: 'boolean',
     },
     closeOnSelect: {

@@ -1,5 +1,11 @@
-import { hlm } from '@nuclia/ui-spartan/utils';
-import type { ChartTooltipInput, ChartTooltipOptions, ChartValue } from '@tanstack/charts';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import { hlm } from '@progress/pdp-ui-spartan/utils';
+import type {
+  ChartTooltipInput,
+  ChartTooltipOptions,
+  ChartValue,
+} from '@tanstack/charts';
 import { tooltip } from '@tanstack/charts/tooltip';
 
 /** Enables TanStack's DOM tooltip with Spartan styling. */
@@ -7,7 +13,9 @@ export function hlmChartTooltip<
   TDatum = unknown,
   TXValue extends ChartValue = ChartValue,
   TYValue extends ChartValue = ChartValue,
->(options: ChartTooltipOptions<TDatum, TXValue, TYValue> = {}): ChartTooltipInput<TDatum, TXValue, TYValue, 'dom'> {
+>(
+  options: ChartTooltipOptions<TDatum, TXValue, TYValue> = {},
+): ChartTooltipInput<TDatum, TXValue, TYValue, 'dom'> {
   return {
     use: tooltip,
     ...options,

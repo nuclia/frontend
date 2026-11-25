@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { Directive, computed, effect, input, untracked } from '@angular/core';
 import { injectCustomClassSettable } from '@spartan-ng/brain/core';
 import { BrnSheetOverlay } from '@spartan-ng/brain/sheet';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Directive({
@@ -10,7 +12,10 @@ import type { ClassValue } from 'clsx';
   hostDirectives: [BrnSheetOverlay],
 })
 export class HlmSheetOverlay {
-  private readonly _classSettable = injectCustomClassSettable({ optional: true, host: true });
+  private readonly _classSettable = injectCustomClassSettable({
+    optional: true,
+    host: true,
+  });
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
   protected readonly _computedClass = computed(() =>
     hlm(

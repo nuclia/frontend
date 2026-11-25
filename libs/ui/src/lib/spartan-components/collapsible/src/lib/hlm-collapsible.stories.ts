@@ -1,6 +1,12 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matUnfoldMoreRound } from '@ng-icons/material-symbols/round';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmButton } from '../../../button/src/index';
 import { HlmCollapsibleImports } from '../index';
 import { HlmCollapsible } from './hlm-collapsible';
@@ -26,7 +32,7 @@ const meta: Meta<CollapsibleStoryArgs> = {
     docs: {
       description: {
         component: `Reveal or hide a single section of content. Use it for optional details or advanced settings that should remain available without taking up space by default.
-Import <code>HlmCollapsibleImports</code> from <code>@nuclia/ui-spartan/collapsible</code> (and <code>HlmButton</code> from <code>@nuclia/ui-spartan/button</code> for a styled trigger).
+Import <code>HlmCollapsibleImports</code> from <code>@progress/pdp-ui-spartan/collapsible</code> (and <code>HlmButton</code> from <code>@progress/pdp-ui-spartan/button</code> for a styled trigger).
 
 Put <code>hlmCollapsible</code> on a wrapper, a <code>button[hlmCollapsibleTrigger]</code> inside it to toggle, and <code>hlmCollapsibleContent</code> on the section to show or hide.
 Use <code>expanded</code> to set the initial state (it supports two-way binding with <code>[(expanded)]</code>), <code>expandedChange</code> to react to changes and <code>disabled</code> to lock the section.
@@ -38,7 +44,8 @@ The trigger is a real button, so give icon-only triggers an <code>aria-label</co
     expanded: false,
     disabled: false,
     title: 'Project details',
-    content: 'The Atlas project brings product, design and engineering planning together in a single roadmap.',
+    content:
+      'The Atlas project brings product, design and engineering planning together in a single roadmap.',
   },
   argTypes: {
     expanded: {
@@ -50,7 +57,8 @@ The trigger is a real button, so give icon-only triggers an <code>aria-label</co
       control: 'boolean',
     },
     title: {
-      description: 'Heading displayed next to the trigger (story-only argument).',
+      description:
+        'Heading displayed next to the trigger (story-only argument).',
       control: 'text',
     },
     content: {
@@ -83,7 +91,8 @@ export const InitiallyExpanded: Story = {
   args: {
     expanded: true,
     title: 'Release notes',
-    content: 'Version 2.4 improves keyboard navigation and adds clearer empty states.',
+    content:
+      'Version 2.4 improves keyboard navigation and adds clearer empty states.',
   },
 };
 
@@ -91,7 +100,8 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     title: 'Advanced settings',
-    content: 'Advanced settings are available once the knowledge box has at least one resource.',
+    content:
+      'Advanced settings are available once the knowledge box has at least one resource.',
   },
 };
 

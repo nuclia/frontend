@@ -2,50 +2,22 @@
   "name": "ui",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/ui/src",
-  "prefix": "lib",
+  "prefix": "ui",
   "projectType": "library",
-  "tags": [],
+  "tags": ["type:ui", "scope:shared"],
   "targets": {
-    "test-build": {
-      "executor": "@angular/build:application",
-      "options": {
-        "tsConfig": "libs/ui/tsconfig.spec.json",
-        "outputPath": "dist/test-build/ui",
-        "polyfills": [],
-        "styles": [],
-        "assets": [],
-        "aot": false,
-        "stylePreprocessorOptions": {
-          "includePaths": ["."]
-        }
-      }
-    },
     "test": {
-      "executor": "@angular/build:unit-test",
-      "outputs": ["{workspaceRoot}/coverage/libs/ui"],
+      "outputs": ["{projectRoot}/{options.coverage.reportsDirectory}", "{workspaceRoot}/coverage/libs/ui"],
       "options": {
-        "buildTarget": "ui:test-build",
-        "tsConfig": "libs/ui/tsconfig.spec.json",
-        "runnerConfig": true,
-        "watch": false
-      },
-      "configurations": {
-        "ci": {
-          "coverage": true
-        },
-        "watch": {
-          "watch": true
-        }
+        "coverage.reportsDirectory": "../../coverage/libs/ui"
       }
     },
     "storybook": {
-      "executor": "@storybook/angular:start-storybook",
+      "executor": "@storybook/angular-vite:start-storybook",
       "continuous": true,
       "options": {
         "port": 4400,
         "configDir": "libs/ui/.storybook",
-        "browserTarget": "ui:build-storybook",
-        "compodoc": false,
         "styles": ["libs/ui/.storybook/storybook-styles.css"]
       },
       "configurations": {
@@ -59,13 +31,11 @@
       }
     },
     "build-storybook": {
-      "executor": "@storybook/angular:build-storybook",
+      "executor": "@storybook/angular-vite:build-storybook",
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/ui",
         "configDir": "libs/ui/.storybook",
-        "browserTarget": "ui:build-storybook",
-        "compodoc": false,
         "styles": ["libs/ui/.storybook/storybook-styles.css"]
       },
       "configurations": {

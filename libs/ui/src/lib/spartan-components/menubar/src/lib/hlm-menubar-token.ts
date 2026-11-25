@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { InjectionToken, type ValueProvider, inject } from '@angular/core';
 import { type MenuAlign, type MenuSide } from '@spartan-ng/brain/core';
 
@@ -11,10 +13,17 @@ const defaultConfig: HlmMenubarConfig = {
   side: 'bottom',
 };
 
-const HlmMenubarConfigToken = new InjectionToken<HlmMenubarConfig>('HlmMenubarConfig');
+const HlmMenubarConfigToken = new InjectionToken<HlmMenubarConfig>(
+  'HlmMenubarConfig',
+);
 
-export function provideHlmMenubarConfig(config: Partial<HlmMenubarConfig>): ValueProvider {
-  return { provide: HlmMenubarConfigToken, useValue: { ...defaultConfig, ...config } };
+export function provideHlmMenubarConfig(
+  config: Partial<HlmMenubarConfig>,
+): ValueProvider {
+  return {
+    provide: HlmMenubarConfigToken,
+    useValue: { ...defaultConfig, ...config },
+  };
 }
 
 export function injectHlmMenubarConfig(): HlmMenubarConfig {

@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmPopover } from './lib/hlm-popover';
 import { HlmPopoverContent } from './lib/hlm-popover-content';
 import { HlmPopoverDescription } from './lib/hlm-popover-description';

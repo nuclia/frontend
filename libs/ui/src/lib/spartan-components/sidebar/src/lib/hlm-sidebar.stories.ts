@@ -1,6 +1,18 @@
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { matViewKanbanRound, matHomeRound, matAddRound, matGroupRound } from '@ng-icons/material-symbols/round';
+import {
+  matAddRound,
+  matGroupRound,
+  matHomeRound,
+  matViewKanbanRound,
+} from '@ng-icons/material-symbols/round';
+import {
+  applicationConfig,
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmSidebarImports } from '../index';
 import { HlmSidebar } from './hlm-sidebar';
 
@@ -17,7 +29,14 @@ const meta: Meta<SidebarStoryArgs> = {
   tags: ['autodocs'],
   decorators: [
     applicationConfig({
-      providers: [provideIcons({ matViewKanbanRound, matHomeRound, matAddRound, matGroupRound })],
+      providers: [
+        provideIcons({
+          matViewKanbanRound,
+          matHomeRound,
+          matAddRound,
+          matGroupRound,
+        }),
+      ],
     }),
     moduleMetadata({ imports: [...HlmSidebarImports, NgIcon] }),
   ],
@@ -27,7 +46,7 @@ const meta: Meta<SidebarStoryArgs> = {
       story: { inline: false, iframeHeight: 520 },
       description: {
         component: `A side panel that organizes navigation and supporting actions alongside the main content. Use it for application sections, nested destinations, and workspace controls, with collapsible layouts to leave more room for the current task.
-Import <code>HlmSidebarImports</code> from <code>@nuclia/ui-spartan/sidebar</code> and wrap the page in <code>hlmSidebarWrapper</code> containing <code>hlm-sidebar</code> and a <code>main[hlmSidebarInset]</code>.
+Import <code>HlmSidebarImports</code> from <code>@progress/pdp-ui-spartan/sidebar</code> and wrap the page in <code>hlmSidebarWrapper</code> containing <code>hlm-sidebar</code> and a <code>main[hlmSidebarInset]</code>.
 
 Inside <code>hlm-sidebar</code> compose <code>hlmSidebarHeader</code>, <code>hlmSidebarContent</code> (with <code>hlmSidebarGroup</code>, <code>hlmSidebarGroupLabel</code>, <code>hlmSidebarGroupContent</code>), <code>hlmSidebarMenu</code> / <code>hlmSidebarMenuItem</code> / <code>hlmSidebarMenuButton</code> (<code>isActive</code>, <code>size</code>, <code>variant</code>, <code>tooltip</code>), optional <code>hlmSidebarMenuBadge</code>, <code>hlmSidebarMenuSub</code> and <code>hlmSidebarFooter</code>.
 Configure <code>side</code>, <code>variant</code> (<code>sidebar</code>, <code>floating</code>, <code>inset</code>) and <code>collapsible</code> (<code>offcanvas</code>, <code>icon</code>, <code>none</code>) on <code>hlm-sidebar</code>. Add <code>button[hlmSidebarTrigger]</code> (or <code>hlmSidebarRail</code>) to toggle it; <code>Ctrl/Cmd + B</code> works too. On narrow screens the sidebar opens as a sheet; <code>srOnlySheetTitle</code> and <code>srOnlySheetDescription</code> label it for screen readers.
@@ -48,7 +67,8 @@ Open and collapsed state is shared through <code>HlmSidebarService</code> (persi
       options: ['left', 'right'],
     },
     variant: {
-      description: 'Visual style of the sidebar: attached to the edge, floating card, or inset content area.',
+      description:
+        'Visual style of the sidebar: attached to the edge, floating card, or inset content area.',
       control: 'inline-radio',
       options: ['sidebar', 'floating', 'inset'],
     },

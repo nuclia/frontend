@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmTabs } from './lib/hlm-tabs';
 import { HlmTabsContent } from './lib/hlm-tabs-content';
 import { HlmTabsContentLazy } from './lib/hlm-tabs-content-lazy';

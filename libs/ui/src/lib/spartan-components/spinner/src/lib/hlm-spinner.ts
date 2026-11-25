@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matDataUsageRound } from '@ng-icons/material-symbols/round';
-import { classes } from '@nuclia/ui-spartan/utils';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Component({
   selector: 'hlm-spinner',
@@ -14,9 +16,7 @@ import { classes } from '@nuclia/ui-spartan/utils';
     role: 'status',
     '[attr.aria-label]': 'ariaLabel()',
   },
-  template: `
-    <ng-icon [name]="icon()" />
-  `,
+  template: ` <ng-icon [name]="icon()" /> `,
 })
 export class HlmSpinner {
   /**
@@ -29,6 +29,8 @@ export class HlmSpinner {
   public readonly ariaLabel = input<string>('Loading', { alias: 'aria-label' });
 
   constructor() {
-    classes(() => 'inline-flex text-[length:--spacing(4)] motion-safe:animate-spin');
+    classes(
+      () => 'inline-flex text-[length:--spacing(4)] motion-safe:animate-spin',
+    );
   }
 }

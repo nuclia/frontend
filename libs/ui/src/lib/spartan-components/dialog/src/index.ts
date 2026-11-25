@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmDialog } from './lib/hlm-dialog';
 import { HlmDialogClose } from './lib/hlm-dialog-close';
 import { HlmDialogContent } from './lib/hlm-dialog-content';

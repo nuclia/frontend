@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmKbdImports } from '../index';
 import { HlmKbd } from './hlm-kbd';
 
@@ -13,7 +19,7 @@ const meta: Meta = {
     docs: {
       description: {
         component: `Displays a keyboard key or key combination as a visual hint. Use it in menus, tooltips, and instructions to help users discover available keyboard shortcuts.
-Import <code>HlmKbdImports</code> from <code>@nuclia/ui-spartan/kbd</code>.
+Import <code>HlmKbdImports</code> from <code>@progress/pdp-ui-spartan/kbd</code>.
 
 Put <code>hlmKbd</code> on a native <code>&lt;kbd&gt;</code> element for each key, and wrap several keys in <code>&lt;kbd hlmKbdGroup&gt;</code> to lay out a combination. Neither directive has inputs.
 Keys are purely visual (non-interactive). For a combination, give the group an <code>aria-label</code> that spells the shortcut out (for example "Press Command and K") and hide the individual keys with <code>aria-hidden="true"</code> so screen readers do not read the symbols one by one.`,

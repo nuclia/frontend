@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmInputGroup } from './lib/hlm-input-group';
 import { HlmInputGroupAddon } from './lib/hlm-input-group-addon';
 import { HlmInputGroupButton } from './lib/hlm-input-group-button';

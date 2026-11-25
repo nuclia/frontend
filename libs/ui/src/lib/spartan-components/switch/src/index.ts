@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmSwitch } from './lib/hlm-switch';
 import { HlmSwitchThumb } from './lib/hlm-switch-thumb';
 

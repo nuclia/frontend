@@ -1,3 +1,5 @@
+/* Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved. */
+
 /* Setup spartan CSS variables in Tailwind */
 @theme inline {
   --color-background: var(--background);
@@ -69,10 +71,9 @@
   --radius-4xl: 2rem;
 
   --font-sans:
-    'Progress Sans Text', 'ProgressSansText', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', 'Noto Sans',
-    'Liberation Sans', Arial, sans-serif;
-  --font-display: 'Progress Sans Display', sans-serif;
-  --font-mono: 'Roboto Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+    'Progress UI', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial,
+    sans-serif;
+  --font-mono: 'Source Code Pro', 'Roboto Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;

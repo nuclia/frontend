@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmKbd } from './lib/hlm-kbd';
 import { HlmKbdGroup } from './lib/hlm-kbd-group';
 

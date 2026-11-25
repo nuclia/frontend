@@ -1,5 +1,10 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
-import { type EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
+import {
+  type EnvironmentProviders,
+  makeEnvironmentProviders,
+} from '@angular/core';
 
 /**
  * Provides default configuration for Spartan Helm components.

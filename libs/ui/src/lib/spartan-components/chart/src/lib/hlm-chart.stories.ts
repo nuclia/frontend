@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { barY, defineChart, lineY } from '@tanstack/charts';
 import { scaleBand } from '@tanstack/charts/scales/band';
 import { scaleLinear } from '@tanstack/charts/scales/linear';
@@ -18,17 +24,32 @@ const monthlyResources = [
 const barChartOptions = {
   definition: defineChart(
     {
-      marks: [barY(monthlyResources, { x: 'month', y: 'resources', fill: 'var(--chart-1)' })],
+      marks: [
+        barY(monthlyResources, {
+          x: 'month',
+          y: 'resources',
+          fill: 'var(--chart-1)',
+        }),
+      ],
       scales: {
-        x: { scale: () => scaleBand<string>().paddingInner(0.2).paddingOuter(0.1), axis: { line: false } },
-        y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Resources' } },
+        x: {
+          scale: () => scaleBand<string>().paddingInner(0.2).paddingOuter(0.1),
+          axis: { line: false },
+        },
+        y: {
+          scale: scaleLinear,
+          nice: true,
+          grid: true,
+          axis: { label: 'Resources' },
+        },
       },
       theme: HLM_CHART_THEME,
     },
     { focus: 'group-x', tooltip: hlmChartTooltip() },
   ),
   ariaLabel: 'Resources added by month',
-  ariaDescription: 'Bar chart showing resources added from January through June.',
+  ariaDescription:
+    'Bar chart showing resources added from January through June.',
   height: 250,
 };
 
@@ -45,15 +66,24 @@ const lineChartOptions = {
         }),
       ],
       scales: {
-        x: { scale: () => scalePoint<string>().padding(0.2), axis: { label: 'Month' } },
-        y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Resources' } },
+        x: {
+          scale: () => scalePoint<string>().padding(0.2),
+          axis: { label: 'Month' },
+        },
+        y: {
+          scale: scaleLinear,
+          nice: true,
+          grid: true,
+          axis: { label: 'Resources' },
+        },
       },
       theme: HLM_CHART_THEME,
     },
     { focus: 'nearest-x', tooltip: hlmChartTooltip() },
   ),
   ariaLabel: 'Resources added by month',
-  ariaDescription: 'Line chart showing resources added from January through June.',
+  ariaDescription:
+    'Line chart showing resources added from January through June.',
   aspectRatio: 16 / 9,
 };
 
@@ -66,7 +96,7 @@ const meta: Meta = {
     docs: {
       description: {
         component: `Visualize data to make comparisons, trends and relationships easier to understand. Use charts in reports and dashboards, with consistent colors, labels and tooltips.
-Import <code>HlmChartImports</code> from <code>@nuclia/ui-spartan/chart</code> and add the <code>hlmChart</code> directive to a <code>&lt;tanstack-chart&gt;</code> element (TanStack Charts for Angular).
+Import <code>HlmChartImports</code> from <code>@progress/pdp-ui-spartan/chart</code> and add the <code>hlmChart</code> directive to a <code>&lt;tanstack-chart&gt;</code> element (TanStack Charts for Angular).
 
 <code>hlmChart</code> only applies the Spartan theme (the <code>--chart-1</code>…<code>--chart-5</code> palette, tooltip colors). The chart itself is configured through the <code>options</code> input of <code>tanstack-chart</code>:
 build a <code>definition</code> with <code>defineChart</code>, pass <code>HLM_CHART_THEME</code> as <code>theme</code> and <code>hlmChartTooltip()</code> as tooltip, then set <code>height</code> or <code>aspectRatio</code>.

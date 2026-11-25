@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { inject, InjectionToken, type ValueProvider } from '@angular/core';
 
 export interface HlmMonthYearPickerConfig<T> {
@@ -73,13 +75,26 @@ function getDefaultConfig<T>(): HlmMonthYearPickerConfig<T> {
   };
 }
 
-const HlmMonthYearPickerConfigToken = new InjectionToken<HlmMonthYearPickerConfig<unknown>>('HlmMonthYearPickerConfig');
+const HlmMonthYearPickerConfigToken = new InjectionToken<
+  HlmMonthYearPickerConfig<unknown>
+>('HlmMonthYearPickerConfig');
 
-export function provideHlmMonthYearPickerConfig<T>(config: Partial<HlmMonthYearPickerConfig<T>>): ValueProvider {
-  return { provide: HlmMonthYearPickerConfigToken, useValue: { ...getDefaultConfig(), ...config } };
+export function provideHlmMonthYearPickerConfig<T>(
+  config: Partial<HlmMonthYearPickerConfig<T>>,
+): ValueProvider {
+  return {
+    provide: HlmMonthYearPickerConfigToken,
+    useValue: { ...getDefaultConfig(), ...config },
+  };
 }
 
-export function injectHlmMonthYearPickerConfig<T>(): HlmMonthYearPickerConfig<T> {
-  const injectedConfig = inject(HlmMonthYearPickerConfigToken, { optional: true });
-  return injectedConfig ? (injectedConfig as HlmMonthYearPickerConfig<T>) : getDefaultConfig();
+export function injectHlmMonthYearPickerConfig<
+  T,
+>(): HlmMonthYearPickerConfig<T> {
+  const injectedConfig = inject(HlmMonthYearPickerConfigToken, {
+    optional: true,
+  });
+  return injectedConfig
+    ? (injectedConfig as HlmMonthYearPickerConfig<T>)
+    : getDefaultConfig();
 }

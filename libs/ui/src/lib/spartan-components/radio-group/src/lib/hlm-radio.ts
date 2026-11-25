@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { isPlatformBrowser } from '@angular/common';
 import {
@@ -14,8 +16,12 @@ import {
   PLATFORM_ID,
   Renderer2,
 } from '@angular/core';
-import { BrnRadio, BrnRadioGroup, type BrnRadioChange } from '@spartan-ng/brain/radio-group';
-import { hlm } from '@nuclia/ui-spartan/utils';
+import {
+  BrnRadio,
+  BrnRadioGroup,
+  type BrnRadioChange,
+} from '@spartan-ng/brain/radio-group';
+import { hlm } from '@progress/pdp-ui-spartan/utils';
 import type { ClassValue } from 'clsx';
 
 @Component({
@@ -41,14 +47,15 @@ import type { ClassValue } from 'clsx';
       [attr.data-invalid]="_ariaInvalid() ? 'true' : null"
       [attr.data-dirty]="_dirty() ? 'true' : null"
       [attr.data-touched]="_touched() ? 'true' : null"
-      [attr.data-matches-spartan-invalid]="_groupSpartanInvalid() ? 'true' : null"
+      [attr.data-matches-spartan-invalid]="
+        _groupSpartanInvalid() ? 'true' : null
+      "
       [aria-label]="ariaLabel()"
       [aria-labelledby]="ariaLabelledby()"
       [aria-describedby]="ariaDescribedby()"
-      (change)="change.emit($event)">
-      <ng-content
-        select="[target],[indicator],hlm-radio-indicator"
-        indicator />
+      (change)="change.emit($event)"
+    >
+      <ng-content select="[target],[indicator],hlm-radio-indicator" indicator />
       <ng-content />
     </brn-radio>
   `,
@@ -60,13 +67,23 @@ export class HlmRadio<T = unknown> {
   private readonly _isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly _radioGroup = inject(BrnRadioGroup, { optional: true });
 
-  protected readonly _ariaInvalid = computed(() => this._radioGroup?.controlState?.()?.invalid);
+  protected readonly _ariaInvalid = computed(
+    () => this._radioGroup?.controlState?.()?.invalid,
+  );
 
-  protected readonly _touched = computed(() => this._radioGroup?.controlState?.()?.touched);
-  protected readonly _dirty = computed(() => this._radioGroup?.controlState?.()?.dirty);
-  protected readonly _groupSpartanInvalid = computed(() => this._radioGroup?.controlState?.()?.spartanInvalid);
+  protected readonly _touched = computed(
+    () => this._radioGroup?.controlState?.()?.touched,
+  );
+  protected readonly _dirty = computed(
+    () => this._radioGroup?.controlState?.()?.dirty,
+  );
+  protected readonly _groupSpartanInvalid = computed(
+    () => this._radioGroup?.controlState?.()?.spartanInvalid,
+  );
 
-  protected readonly _errorStateClass = computed(() => (this._groupSpartanInvalid() ? 'text-destructive' : ''));
+  protected readonly _errorStateClass = computed(() =>
+    this._groupSpartanInvalid() ? 'text-destructive' : '',
+  );
 
   public readonly userClass = input<ClassValue>('', { alias: 'class' });
   protected readonly _computedClass = computed(() =>
@@ -82,13 +99,19 @@ export class HlmRadio<T = unknown> {
   public readonly inputId = input<string | undefined>(undefined);
 
   /** Used to set the aria-label attribute on the underlying brn element. */
-  public readonly ariaLabel = input<string | undefined>(undefined, { alias: 'aria-label' });
+  public readonly ariaLabel = input<string | undefined>(undefined, {
+    alias: 'aria-label',
+  });
 
   /** Used to set the aria-labelledby attribute on the underlying brn element. */
-  public readonly ariaLabelledby = input<string | undefined>(undefined, { alias: 'aria-labelledby' });
+  public readonly ariaLabelledby = input<string | undefined>(undefined, {
+    alias: 'aria-labelledby',
+  });
 
   /** Used to set the aria-describedby attribute on the underlying brn element. */
-  public readonly ariaDescribedby = input<string | undefined>(undefined, { alias: 'aria-describedby' });
+  public readonly ariaDescribedby = input<string | undefined>(undefined, {
+    alias: 'aria-describedby',
+  });
 
   /**
    * The value this radio button represents.
@@ -96,10 +119,14 @@ export class HlmRadio<T = unknown> {
   public readonly value = input.required<T>();
 
   /** Whether the checkbox is required. */
-  public readonly required = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly required = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /** Whether the checkbox is disabled. */
-  public readonly disabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly disabled = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
 
   /**
    * Event emitted when the checked state of this radio button changes.
@@ -118,7 +145,11 @@ export class HlmRadio<T = unknown> {
         this._document.querySelector(`label[for="${this.inputId()}"]`);
 
       if (!labelElement) return;
-      this._renderer.setAttribute(labelElement, 'data-disabled', isDisabled ? 'true' : 'false');
+      this._renderer.setAttribute(
+        labelElement,
+        'data-disabled',
+        isDisabled ? 'true' : 'false',
+      );
     });
   }
 }

@@ -1,7 +1,10 @@
-import { Directive } from '@angular/core';
-import { classes } from '@nuclia/ui-spartan/utils';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 
-export const hlmCode = 'relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold';
+import { Directive } from '@angular/core';
+import { classes } from '@progress/pdp-ui-spartan/utils';
+
+export const hlmCode =
+  'relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold';
 
 @Directive({
   selector: '[hlmCode]',

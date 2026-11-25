@@ -1,4 +1,10 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmFieldLegend, HlmFieldSet } from '../../../field/src/index';
 import { HlmLabelImports } from '../../../label/src/index';
 import { HlmRadioGroupImports } from '../index';
@@ -14,15 +20,24 @@ const meta: Meta<RadioGroupStoryArgs> = {
   title: 'Spartan/Radio Group',
   component: HlmRadioGroup,
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [...HlmRadioGroupImports, ...HlmLabelImports, HlmFieldSet, HlmFieldLegend] })],
+  decorators: [
+    moduleMetadata({
+      imports: [
+        ...HlmRadioGroupImports,
+        ...HlmLabelImports,
+        HlmFieldSet,
+        HlmFieldLegend,
+      ],
+    }),
+  ],
   parameters: {
     docs: {
       description: {
         component: `Lets users choose one option from a set of mutually exclusive choices. Use it when the available options should remain visible for comparison, such as selecting a plan or delivery method.
-Import <code>HlmRadioGroupImports</code> from <code>@nuclia/ui-spartan/radio-group</code>. Put an <code>hlmRadioGroup</code> container around several <code>hlm-radio</code> items, each with a unique <code>value</code> and an <code>hlm-radio-indicator</code> child.
+Import <code>HlmRadioGroupImports</code> from <code>@progress/pdp-ui-spartan/radio-group</code>. Put an <code>hlmRadioGroup</code> container around several <code>hlm-radio</code> items, each with a unique <code>value</code> and an <code>hlm-radio-indicator</code> child.
 
 The group exposes <code>name</code>, <code>value</code>, <code>disabled</code> and <code>required</code>, and emits <code>valueChange</code>; it works with Angular forms. <code>hlm-radio</code> accepts <code>inputId</code>, <code>disabled</code> and emits <code>change</code>.
-Link each radio to an <code>hlmLabel</code> through <code>inputId</code> and <code>for</code>, and give the group an <code>aria-label</code> or wrap it in a <code>fieldset</code> with a <code>legend</code>. Use <code>hlmFieldSet</code> and <code>hlmFieldLegend</code> from <code>@nuclia/ui-spartan/field</code> for consistent label-to-options spacing.`,
+Link each radio to an <code>hlmLabel</code> through <code>inputId</code> and <code>for</code>, and give the group an <code>aria-label</code> or wrap it in a <code>fieldset</code> with a <code>legend</code>. Use <code>hlmFieldSet</code> and <code>hlmFieldLegend</code> from <code>@progress/pdp-ui-spartan/field</code> for consistent label-to-options spacing.`,
       },
     },
   },

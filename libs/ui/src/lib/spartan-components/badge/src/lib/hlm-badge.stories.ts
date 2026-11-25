@@ -1,8 +1,15 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { HlmBadgeImports } from '../index';
 import { HlmBadge } from './hlm-badge';
 
-type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
+type BadgeVariant =
+  'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
 
 interface BadgeStoryArgs {
   variant: BadgeVariant;
@@ -22,7 +29,7 @@ const meta: Meta<BadgeStoryArgs> = {
     docs: {
       description: {
         component: `Highlight a status, count, or short label.
-Import <code>HlmBadgeImports</code> from <code>@nuclia/ui-spartan/badge</code> and apply <code>hlmBadge</code> to an element (or use <code>hlm-badge</code>).
+Import <code>HlmBadgeImports</code> from <code>@progress/pdp-ui-spartan/badge</code> and apply <code>hlmBadge</code> to an element (or use <code>hlm-badge</code>).
 
 Choose a <code>variant</code> to convey meaning; apply it to an anchor to get hover styles for the <code>default</code>, <code>secondary</code>, <code>destructive</code>, and <code>outline</code> variants.`,
       },
@@ -36,7 +43,14 @@ Choose a <code>variant</code> to convey meaning; apply it to an anchor to get ho
     variant: {
       description: 'Visual style of the badge.',
       control: 'select',
-      options: ['default', 'secondary', 'destructive', 'outline', 'ghost', 'link'],
+      options: [
+        'default',
+        'secondary',
+        'destructive',
+        'outline',
+        'ghost',
+        'link',
+      ],
     },
     label: {
       description: 'Badge text.',

@@ -1,8 +1,13 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import type { BooleanInput } from '@angular/cdk/coercion';
 import { Directive, booleanAttribute, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { buttonVariants, type ButtonVariants } from '@nuclia/ui-spartan/button';
-import { classes } from '@nuclia/ui-spartan/utils';
+import {
+  buttonVariants,
+  type ButtonVariants,
+} from '@progress/pdp-ui-spartan/button';
+import { classes } from '@progress/pdp-ui-spartan/utils';
 
 @Directive({
   selector: '[hlmPaginationLink]',
@@ -33,7 +38,9 @@ import { classes } from '@nuclia/ui-spartan/utils';
 })
 export class HlmPaginationLink {
   /** Whether the link is active (i.e., the current page). */
-  public readonly isActive = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  public readonly isActive = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
   /** The size of the button. */
   public readonly size = input<ButtonVariants['size']>('icon');
   /** The link to navigate to the page. */

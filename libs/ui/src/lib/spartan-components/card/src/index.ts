@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+
 import { HlmCard } from './lib/hlm-card';
 import { HlmCardAction } from './lib/hlm-card-action';
 import { HlmCardContent } from './lib/hlm-card-content';
