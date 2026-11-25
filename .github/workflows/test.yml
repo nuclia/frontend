@@ -34,6 +34,8 @@ jobs:
           client-id: ${{ vars.GHAPP_NUCLIA_SERVICE_BOT_ID }}
           private-key: ${{ secrets.GHAPP_NUCLIA_SERVICE_BOT_PK }}
           owner: nuclia
+          repositories: data-platform
+          permission-contents: read
       - name: Install project dependencies
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
