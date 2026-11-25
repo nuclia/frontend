@@ -100,9 +100,20 @@ jobs:
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
 
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.GHAPP_NUCLIA_SERVICE_BOT_ID }}
+          private-key: ${{ secrets.GHAPP_NUCLIA_SERVICE_BOT_PK }}
+          owner: nuclia
       - name: Install project dependencies
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GIT_TERMINAL_PROMPT: '0'
         run: |-
           yarn install --immutable
+          gh auth setup-git --hostname github.com
           yarn missdev-ci
 
       - name: Unit tests
