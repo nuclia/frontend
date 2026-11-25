@@ -69,6 +69,7 @@ Thumbs.db
 
 .angular
 /libs/pastanaga-angular/
+/libs/pdp-ui/
 /libs/chrome-ext/src/lib/vendor
 /libs/sdk-core/protobuf/build
 
