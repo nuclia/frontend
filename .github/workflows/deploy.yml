@@ -103,7 +103,7 @@ jobs:
       - name: Install project dependencies
         run: |-
           yarn install --immutable
-          yarn missdev
+          yarn missdev-ci
 
       - name: Unit tests
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo
