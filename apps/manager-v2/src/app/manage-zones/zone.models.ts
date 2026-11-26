@@ -18,7 +18,7 @@ export interface ZoneSummary {
   created: string;
   modified: string | null;
   '@id': string;
-  cloud_provider: 'AWS' | 'GCP';
+  cloud_provider: 'AWS' | 'GCP' | 'AZURE';
   private: boolean;
   origin: string | null;
   component_rollout: { [key: string]: boolean };
@@ -31,7 +31,7 @@ export interface Zone {
   creator: string;
   created: string;
   modified: string;
-  cloud_provider: 'AWS' | 'GCP';
+  cloud_provider: 'AWS' | 'GCP' | 'AZURE';
   private: boolean;
   origin: string | null;
   component_rollout: { [key: string]: boolean };
@@ -42,7 +42,7 @@ export interface ZoneAddPayload {
   slug: string;
   title: string;
   creator: string;
-  cloud_provider: 'AWS' | 'GCP';
+  cloud_provider: 'AWS' | 'GCP' | 'AZURE';
   private?: boolean;
   origin?: string | null;
 }
@@ -50,7 +50,7 @@ export interface ZoneAddPayload {
 export interface ZonePatchPayload {
   slug?: string;
   title?: string;
-  cloud_provider?: 'AWS' | 'GCP';
+  cloud_provider?: 'AWS' | 'GCP' | 'AZURE';
   private?: boolean;
   origin?: string | null;
   component_rollout?: { [key: string]: boolean | null };
