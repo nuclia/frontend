@@ -226,10 +226,12 @@ export class TasksAutomationService {
     return tasks.map((task) => {
       return {
         ...task,
-        validation: {
-          ...task.validation,
-          properties: resolveSchemaReferences(task.validation.properties, task.validation.$defs),
-        },
+        validation: task.validation
+          ? {
+              ...task.validation,
+              properties: resolveSchemaReferences(task.validation.properties, task.validation.$defs),
+            }
+          : undefined,
       };
     });
   }

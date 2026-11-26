@@ -231,7 +231,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   unsupportedProviders = ['none'];
 
   get properties() {
-    return this.taskDefinition?.validation.properties;
+    return this.taskDefinition?.validation?.properties || {};
   }
   get filterProperties() {
     return this.properties?.['filter']?.['anyOf']?.[0]?.properties;

@@ -24,7 +24,7 @@ export interface TaskDefinition {
  * Full definition of a task, including its schema.
  */
 export interface TaskFullDefinition extends TaskDefinition {
-  validation: {
+  validation?: {
     $defs: { [property: string]: any };
     properties: { [property: string]: any };
     required: string[];
