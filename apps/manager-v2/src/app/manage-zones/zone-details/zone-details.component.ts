@@ -24,7 +24,10 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     id: new FormControl('', { nonNullable: true }),
     slug: new FormControl('', { nonNullable: true, validators: [Validators.required, ValidSlug()] }),
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    cloud_provider: new FormControl<'AWS' | 'GCP'>('GCP', { nonNullable: true, validators: [Validators.required] }),
+    cloud_provider: new FormControl<'AWS' | 'GCP' | 'AZURE'>('GCP', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     private: new FormControl(false, { nonNullable: true }),
     origin: new FormControl<string | null>(null, { nonNullable: false }),
     creator: new FormControl('', { nonNullable: true }),
@@ -158,13 +161,13 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      const { id, slug, title, private: isPrivate, origin, components } = this.zoneForm.getRawValue();
+      const { id, slug, title, cloud_provider, private: isPrivate, origin, components } = this.zoneForm.getRawValue();
       const component_rollout = components.reduce(
         (acc, component) => ({ ...acc, [component.id]: component.overridden ? component.enabled : null }),
         {} as Record<string, boolean | null>,
       );
       this.zoneService
-        .updateZone(id, { slug, title, private: isPrivate, origin: origin || null, component_rollout })
+        .updateZone(id, { slug, title, cloud_provider, private: isPrivate, origin: origin || null, component_rollout })
         .pipe(switchMap(() => this.zoneService.getZone(id)))
         .subscribe({
           next: (zone) => {
