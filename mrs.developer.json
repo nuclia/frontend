@@ -6,11 +6,12 @@
     "package": "@guillotinaweb/pastanaga-angular",
     "tag": "2.72.4"
   },
-  "pdp-ui": {
+  "data-platform": {
     "url": "git@github.com:nuclia/data-platform.git",
     "https": "https://github.com/nuclia/data-platform.git",
-    "path": "/frontend-angular/libs/ui",
-    "package": "@progress/pdp-ui",
+    "package": {
+      "@progress/pdp-ui": "/frontend-angular/libs/ui/src/lib/ui-components"
+    },
     "branch": "main"
   }
 }
